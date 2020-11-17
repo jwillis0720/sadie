@@ -1,0 +1,35 @@
+>IMGT000013|TRDV1*01|Macaca mulatta_17573|F|V-REGION|524994..525280|287 nt|1| | | | |287+39=326| | |
+gcccagaaggttactcaagcccagtcatcagtatccatgccagtggagaaagcagtcacc
+ctgaactgccagtatgaaacaagttcgtgg...............tcatatgaccttttt
+tggtacaagcaacttcccggcaaagagatgattttccttattcgccagggt.........
+............tcttctgaacagaatgcaagagat...ggtcgctattctgtcaacttc
+aagaaagaagctagcttcatcgccttaaccatttcagccttacagctagaagactcagca
+acatacttctgtgctctccgggaact
+>IMGT000013|TRDV2*01|Macaca mulatta_17573|F|V-REGION|840870..841157|288 nt|1| | | | |288+36=324| | |
+gctgttgagttggtgcctgaacaccaaacagtgattgtgtcagtgggggaccctgccacc
+ctcaagtgctccatgaaaggagaagcaatc............agtaactactatatcaac
+tggtacaggaagaccctaggtaacacaatgactttcatataccgagaaaag.........
+............ggcatctatggccctggtttcaag...gacaatttccaaggtgacatt
+gatactgaagagaaccaggctgtacttaagatccttgcaccatcagagagagatgaaggg
+tcttactactgtgccagtgacatc
+>IMGT000013|TRDV3*01|Macaca mulatta_17573|F|V-REGION|888001..888290|290 nt|1| | || |290+30=320| |rev-compl|
+tgtgacaaagtaactcagagttccccggaccagatggtggcgagtggcagtgaggtggta
+ctgctctgcacttacgacagtacatattca...............gatccaggtttattc
+tggtaccgcataaggccagattataattttcagtttgtcttctatggggataaa......
+......agcagatctcacggttcatattttgctaaa...ggacggttttctgtgaagcac
+cttctaacccagaaagcctttcacttggtaatctctccagtgagtactgaagacagtgcc
+acttactactgtgccatgag
+>IMGT000026|TRDV3*02|Macaca mulatta|F|V-REGION|127040..127329|290 nt|1| | || |290+30=320| | |
+tgtgacaaagtaactcagagttccccggaccagatggtggcgagtggcagtgaggtggta
+ctgctctgcacttacgacagtacatattca...............gatccaggtttattc
+tggtaccgcataaggccagattataattttcagtttgtcttctatggggataaa......
+......agcagatctcacggttcatattttgctaaa...ggacggttttctgtgaagcac
+cttctgacccagaaagcctttcacttggtaatctctccagtgagtactgaagacagtgcc
+acttactactgtgccatgag
+>IMGT000013|TRDV4*01|Macaca mulatta_17573|F|V-REGION|820452..820739|288 nt|1| | | | |288+36=324| | |
+gatataattttgaaaccggataccaaagcactgactgtcctcattggggaggctgctacc
+ttccgttgcagtgtaacaggaggcgacctg............aagaactatcaaataagc
+tggtataagaagagtgaagataactctctgattttgatctccaaactaagc.........
+............aacaattctaatgacaatttaggg...aataatttcaaggtgaaaatc
+gatactttaaaaagtcaatttatgcttgacattcaaaaagcaacaacacaagatgttggg
+acttactactgtgcgtctgatatc
