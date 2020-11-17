@@ -1,0 +1,84 @@
+>IMGT000009|IGKV1-1*01|Capra hircus_San Clemente|ORF|V-REGION|404464..404750|287 nt|1| | | | |287+48=335| | |
+gacatccaggtgacccagtctccatcctccctatctgcatgtctaggagacagagtctcc
+atcacttgccaggccagtcagaacatt..................gacactaaattagcc
+tggtatcaacagaaaccaaggaaagctcctaagctcctcatctatgcagta.........
+............tccaggtcaccctcctggttccca...tcccagttcagtggcagtgga
+......tttgggatagatttcaccctcaccatcagcagcctgaaggctgatgatattgca
+acttactactgtcagcaggatcacggtttacctcc
+>IMGT000009|IGKV1-17*01|Capra hircus_San Clemente|P|V-REGION|290988..291274|287 nt|1| | | | |287+48=335| | |
+gacctccagatgattcagtctctatcctccctgtctgcatctctaggagacagagtctcc
+atcacttgtcaggccagtcagagtgtt..................agaaataatttacag
+tggtatcaagagaaaccagggaaagctcctgagttcctcttctgtgacaca.........
+............accagtgtgcacacaggggtccca...tcccggttcagtggcagtgga
+......tctgggacagattacgccttcaccaccagcagcctggaggctgacgattttgca
+gcttattagtgtaaacaggaaaacagtagacctcc
+>IMGT000009|IGKV1-21*01|Capra hircus_San Clemente|P|V-REGION|271652..271932|281 nt|1| | || |281+54=335| | |
+gacctccagatgacccagtctccatcttccccgtttgcatctctaggagat......gcc
+atcacttggcaggccagtcagagcatt..................agcaagtacttagcc
+tggtatcaacagaaaccagggaaagctcctaagctcctgatctttcataca.........
+............tccagactgcacacaggggtccca...tcccggttcagtggcagtgga
+......tctgggacagattacaccctcaccatcagcgagctggaggctgacgatgttgca
+acttattactgtcagcagtataatagtatacctcc
+>IMGT000009|IGKV1-4*01|Capra hircus_San Clemente|F|V-REGION|380263..380549|287 nt|1| | | | |287+48=335| | |
+gacatccaggtgacccagtctccatcctccctgtctgcatctctaacagagagagtctcc
+atcacttgccggaccagtcagagcgtt..................agcaactacttaaac
+tggtatcaacagaaaccagggcaagctcctaagctcctgatctattatgca.........
+............accagattgcacaccgatgtccca...tcccgattcagtggcagtgga
+......tctgggacagattacaccctcaccatcagcagcctggaggctgacgatgctgca
+acttattactgtctacagggttatagtacacctcc
+>IMGT000009|IGKV1-6*01|Capra hircus_San Clemente|P|V-REGION|364717..365003|287 nt|1| | | | |287+48=335| | |
+gacatccaggtgacctagtctccatccgtcctgtctgcatctctaggagacagagtttcc
+atcacttgccaggccagtcagagtgtt..................agcaaatggttagct
+tggtatcagcagaaaccagggcaagctcctaagttgctcacctatgtagca.........
+............tcgaatttgcaaaccggggtctca...tccaggtttggtggcagttga
+......tctgggacagacttcactgttgccatcagcagcctggaggctgaagatgttgca
+acttattactgtctacagtatgatagcacacctcc
+>IMGT000009|IGKV1-7*01|Capra hircus_San Clemente|P|V-REGION|354473..354756|284 nt|1| | | | |284+51=335| | |
+ggcctccagatgactcagtctccatcc...ctgtctgcctctctaggaaacagagtagcc
+atcatttgccgggccagttaaagcatt..................agcaaatggttagac
+aggtatcagcagaaatcagggtgagttcctaagctcctggtctatgcagca.........
+............tccagtttgggaactggggccccc...tcccggttcagtggcagtgga
+......tctggggcagatttcactctcaccatgagcagcctggaggctgaagatgctgca
+acttattactggctacaaactgatagcacacctcc
+>IMGT000009|IGKV2-11*01|Capra hircus_San Clemente|ORF|V-REGION|335445..335748|304 nt|1| | | | |304+33=337| | |
+gatattgtgctgacccagactcccctctccctgtctgtcatccctggagggacggtctcc
+atctcctgcaagtcttcgcagagtctgaaatacagt...gatggaaaaacctatttgtcc
+tggtttcaacataaaccaggccagtctccacggcgattgatctatcaggtt.........
+............tccaaccgtaacactggggtccca...gacaggttcaccggcagtggg
+......gcagagacagatttcacacttccaatcagcagtgtgcaggctgaggatgctgga
+gtctattgctcttttcaagctacatattatgatcccc
+>IMGT000009|IGKV2-14*01|Capra hircus_San Clemente|F|V-REGION|309123..309424|302 nt|1| | | | |302+33=335| | |
+gatgttgtgctgacccagactcccctctccctgtctgtcatccctggagggacggcctct
+atctcctgcaagtcttcgcagagtctgaaatatagt...gatggaaacacctatttgtac
+tggtttcaacataaaccaggccagtctccacggcgattgatctatctagtt.........
+............tccaatcgtgacactggggtccca...gacaggttcaccggcagtggg
+......gcagagacagatttcacacttacaatcagcagtgtgcaggctgaggatgctgga
+gtctattactgttttcaagctataaattatcctcg
+>IMGT000009|IGKV2-15*01|Capra hircus_San Clemente|F|V-REGION|297582..297883|302 nt|1| | | | |302+33=335| | |
+gctattgttctgacccagactccacgctccctgtctgtcatccctggagagacggcctcc
+atctcctgcagagcaagtcagagcgttcaaaataga...tatggagacaattttttgcac
+tggtatgtgcagaagcccagccagtctccgcagctcctgatctatgcagct.........
+............tctaaccgtgcctctggagtctca...gacaggttcactggcagtggg
+......tcagggacagattttaccctcaaaatcagcagggtggaggctgaggatgctgga
+gtttattattgccagcaaagtaaagaaactcctcc
+>IMGT000009|IGKV2-8*01|Capra hircus_San Clemente|F|V-REGION|350580..350881|302 nt|1| | | | |302+33=335| | |
+gatgttgtgctgacccagactccactctccctgtctgtcatccctggggagacggcctcc
+atctcctgcaagtctagtcagagcctggtacatagt...gatggaaaaacctatttgaat
+tggattaaacataaaccaggccaatcaccagagggtctgatctatcaggtt.........
+............tccaaccgttactctggggtctca...gacaggctcactggcagtggg
+......tcagggacagatttcacatttacaatcagcagagtgcaggctgaggatgctgga
+gtctactactgttaccaaggtacagaagctcctcc
+>IMGT000009|IGKV2-9*01|Capra hircus_San Clemente|F|V-REGION|341350..341651|302 nt|1| | | | |302+33=335| | |
+gctatgatgcagacccagactctacgctccctgtctgtcattcatggagagaaggcctcc
+atctcctgcagagccagtcagagcattcaaaataga...tatggatacaactttttgcac
+tggtatgtgcagaagcccagccagtctccacagctcctgatctatagggct.........
+............tctaactgggagtctggggtccca...gacagattcacaagcagtggg
+......ttaggggcagataccatcctcatagtcagtagggtggaggctgaggatgctaga
+gtttactactgccagcagagtttacaagcacctcc
+>IMGT000009|IGKV8-3*01|Capra hircus_San Clemente|ORF|V-REGION|395820..396108|289 nt|1| | | | |289+48=337| | |
+gaggctgtgctctaccagactccagcctacatcgctgtacccctaggagagagcatctcc
+atcacttgcagagccaatcaaagcatt..................agtgattacttaagc
+tggcataagcagaaacctggacaggctcctatgattctcatctatgatgct.........
+............gataatcgtcgtaatggtgtccca...gagaggttcactgcgactcaa
+......tctgggacagattttgttttcacaatcagccagatagaagctgatgatgctgcc
+atgtattactgccagcagtcttatgtgtttcctccca

@@ -1,0 +1,42 @@
+>IMGT000016|TRDV1-1*01|Tursiops truncatus|F|V-REGION|5770..6056|287 nt|1| | | | |287+39=326| | |
+gcccagaaagttactcaagtccagcgagccatgtccagtcagctaggggaggcggtcacc
+ttgagctgtcagtatgaaacaagcttgagc...............tggtacgatattttt
+tggtataagcagcttcccagtggagagatgactttccttattcatcagagt.........
+............tcttctggccaaaatgcaaagaat...ggccgctattctgtaaacttt
+caggaaagacataaattcatcagcctcaccatttcaggcttactggtggaagattctgca
+aactacttctgtgctctctgggaact
+>IMGT000017|TRDV1-1D*01|Tursiops truncatus|F|V-REGION|19367..19653|287 nt|1| | | | |287+39=326| | |
+gtccagaaagttactcaagtccagccagccatatccagtcagctaggggaggcggtcacc
+ttgagctgtcagtatgaaacaagcttgagc...............tggtacgttattgtt
+tggtataagcagcttcccagtggagagatgactttccttattcatcagatt.........
+............tcttctgaccaaaatgcaaagaat...ggccgctattctgtaaacttt
+cagaaaagacataaattcatcagcctcaccatttcagccttactggtggaagattctgca
+aactacttctgtgctctctgggacct
+>IMGT000018|TRDV1-1N*01|Tursiops truncatus|F|V-REGION|28832..29118|287 nt|1| | | | |287+39=326| | |
+gcccagaaagttactcaactccagccagccatatccagtcagctaggggaggcggtcacc
+ttgagctgtcagtatgaaacaagcttgagc...............tggtacgttattgtt
+tggtataagcagcttcccagtggagagatgactttccttattcatcagatt.........
+............tcttctgaccaaaatgcaaagaat...ggccgctattctgtaaacttt
+cagaaaagacataaattcatcagcctcaccatttcaggcttactggtggaagattctgca
+aactacttctgtgctctccgggaact
+>JH481615|TRDV2*01|Tursiops truncatus|F|V-REGION|41808..42094|287 nt|1| | | | |287+36=323| | |
+gctgtcacgttggtgcctcaaaaccaagcaaggagtgtgtctgtgggggaatctgtcacc
+ctcaggtgctccatgaaaggagactccatc............agtaactactataccttc
+tggtacaggaaaacaccgggtaacacaatgactctcatataccgagaaggg.........
+............ggcacatatggccctggtttcgaa...gacaacttccaaggtgaaatt
+gatctttcaaacaaccaggctgtgctgaatatcctggaggcatcagagagagatgaagga
+tcttactactgtgcctcgaccac
+>JH481615|TRDV3*01|Tursiops truncatus|P|V-REGION|91790..92083|294 nt|1| | | | |294+30=324| |rev-compl|
+tgtaaccaagtgacccagatttcccaggagcagatactggtgagtggcagtgaggtgaca
+ctacaatgcattttccaaaccacatactta...............gatccagtcttatac
+tggtaccaaataagaccagatcgttccttctagtttgtcctgcacaggaataac......
+......attaaatcccatgatgcggatcttgctcgg...ggtagattttccgtgcagcac
+agcctgacccacaaaaccttccacttggtgatctcctcagtgaggcctgaagacagtgcc
+acttactactgtggcttgcggtcc
+>JH481615|TRDV4*01|Tursiops truncatus|P|V-REGION|20412..20699|288 nt|1| | | | |288+36=324| | |
+gatgtaattttggaaccagagaccaaaactctgactgttctccttggggagcctgccacc
+ttccgttgcagcataactggaggggacttg............aagaactatcagatgagc
+tggtatgagaagaatgaaaataattccctgactttagtgtacagattaagc.........
+............aataattctaatgaaaaggaaagg...agtaatttcaaagggaaaatt
+gatgctttaaaaagtcggtacatactcaacattcaaaaaacaacagtaaaagacgttgga
+acttactactgtgggtccaacatc

@@ -1,0 +1,266 @@
+>AY644517|TRGV1-1*01|Bos taurus|F|V-REGION|145761..146057|297 nt|1| | | | |297+36=333| | |
+tcttccaacgccaaaggggcccagatgtcagtcactggcaagact......tgggagact
+gcttctttcacttgcgatcttacacaagatgcc.....................acatat
+atccacctgtacaaacaacaggaggggatggctccccaacgccttttctactatgatgtc
+tac......tacaccaagattcagttcgaatcaggaaccaaaaaagaaaaatacagtgtt
+tataaagtc...acaggaaggagctacagatttgcaatcctaaatctggaagacagtgat
+tctgggatgtactactgtgctgtctgggataag
+>D16119|TRGV1-1*02|Bos taurus|(F)|V-REGION|55..342|288 nt|1| | | | |288+36=324| | |
+tcttccaacgccaaaggggcccagatgtcagtcactggcaagact......tgggagact
+gcttctttcacttgcgatcttacacaagaagcc.....................acatat
+atccacctgtacaaacaacaggaggggatggctccccgacgccttttctactatgatgtc
+tac......tactccaagattcagttcgaatcaggaaccaataaagaaaaatacagtgtt
+tataaagtc...acaggaaggagctacagatttgcaatcctaaatctggaagacagtgat
+tctgggatgtactactgtgctgtc
+>D16131|TRGV1-1*03|Bos taurus|(F)|V-REGION|55..346|292 nt|1| | | | |292+36=328| | |
+tcttccaacgccaaaggggcccagatgtcagtcactggcaagact......tgggagact
+gcttctttcacttgtgatcttacacaagatgcc.....................acatat
+atccacctgtacaaacaacaggaggggatggctccccaacgccttttctactatgatgtc
+tac......tacaccaagattcagttcgaatcaggaaccaaaaaagaaaaatacagtgtt
+tataaagtc...acaggaaggagctacagatttgcaatcctaaatctggaagacagtgat
+tctgggatgtactactgtgctgtctggg
+>NW_937068|TRGV10-1*01|Bos taurus|F|V-REGION|9092..9402|311 nt|1| | | | |311+24=335| |rev-compl|
+gatattccaataacacaacgcataacatcaattaccaagaaaaaa......ggaaatacg
+gcatttcttgaatgccaaataaaaatagataagttaaag.........aagaatgtatac
+atgcactggtaccgacagaaaccagagcagcctctaaaacgagttctgtatatttcctcc
+aat.........gagaatgttgttcacgaacaagggattagtgaggaaagatatgaagca
+aggaaatggccgagtaactcactggtgagcctcaggatacaccaggctactgaagaggat
+gcggggctctactattgcgcctgctgggtggaaca
+>AY644517|TRGV2-1*01|Bos taurus|F|V-REGION|63919..64218|300 nt|1| | | | |300+33=333| | |
+tcttccaacacagaaggggagaagatgtcaatcactaaggcaactgggtctgggtcgtct
+gttgaaatcatttgtgatcttattacccaaacc..................ctcaaatat
+atccactggtacaagtaccaggagggcacagctcctcgacgccttctttactacgacatc
+tcc......tactcaaaggttgtgttggaatcaggagtcagtgaagggaagtacaaagtt
+tataaa.........gagaagagctatacttttgcaatcttaaacctgcaagaaagtgat
+tctggaatgtactactgtgctgcctgggagaag
+>NW_937068|TRGV3-1*01|Bos taurus|F|V-REGION|23381..23684|304 nt|1| | | | |304+27=331| |rev-compl|
+ttatcaaaagtggagcaggcccagatctccctttccacagaagta......aagaaaagt
+attaacatacgttgcaagatagagagcacgaatttt............gaatcagaaact
+gtttactggtaccggcagaaaaaggatcaggctttggagcatctggtttatgtgacctca
+acc.........acaactgcagctcgaaatcaagtagatgggaagaacaaaattgaggca
+agaaaagatgctcgaatgttcacttcgacccttacggtaaatttcatagaaaaagaagat
+gtgggcatttactactgtgctggctgggact
+>U73187|TRGV3-1*02|Bos taurus|(F)|V-REGION|55..354|300 nt|1| | | | |300+27=327| | |
+ttatcaaaagtggagcaggcccagatctccctttccacagaagca......aagaaaagt
+attaacatacattgcaagatagagagcacaaatttt............gaatcagaaatt
+gtttactggtaccggcagaaaaagaatcaggctttggagcatctggtttatgtgacctca
+acc.........acaactgcagctcgaaatcaagtagatggaaagaacaaaattgaggca
+agaaaagatgctcgaatgttcacttcgacccttacggtaaatttcatagaaaaagaagat
+gtgggcatttactactgtgctggctgg
+>NW_937068|TRGV3-2*01|Bos taurus|F|V-REGION|17460..17763|304 nt|1| | | | |304+27=331| |rev-compl|
+ttatcaaaagtggagcaggcccagatctccctttccacagaagca......aagaaaagt
+attgacatacattgcaagatagagagcacaaatttt............gaatcagacact
+gttcactggtaccggcagaaattgaatcaggttttggagcatctggtttatgtgacctca
+atc.........acaactgcagctcgaaatcaagtagatgggaagaacaaaattgaggca
+agaaaagatgctcgaatgttcacttcgacccttacggtaaatttcatagaaaaagaagat
+gtgggcatttactactgtgctggctgggact
+>U73186|TRGV3-2*02|Bos taurus|(F)|V-REGION|55..355|301 nt|1| | | | |301+27=328| | |
+ttatcaaaagtggagcaggcccagatctccctttccacagaagca......aagaaaagt
+attgacatacattgcaagatagagagcacaaatttt............gaatcagacact
+gttcactggtaccggcagaaattgaatcaggttttggagcatctggcttatgtgacctca
+atc.........acaactgcagctcgaaaacaagtagatgggaagaacaaaattgaggca
+agaaaagatgctcgaatgttcacttcgaccttgacggtaaatttcatagaaaaagaagat
+gtgggcatttactactgtgctggctggg
+>DQ179592|TRGV4-1*01|Bos taurus|(F)|V-REGION|1..249|249 nt|1| | | | |249+69=318|partial in 5'| |
+..............................tctacccgaagacca......gacagaaca
+gtgcacataagttgcaagctgtcaggggttcccctg............gagaatgccatt
+atgcactggtatcaagagaaagaaggggagcccctgaaacgaatcctttatggctca...
+...............gctaacagttataagctggacaaacctaattcccgcttggagata
+gataacaaa...aagaatggaatcttttacctgataatcaataatgttgtcaagtccgat
+gaagccacctactactgt
+>AY644518|TRGV5-1*01|Bos taurus|F|V-REGION|95124..95408|285 nt|1| | | | |285+48=333| | |
+tcttccaacttg............atgttaatcactagtaagact......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggacggccccccgacgccttttatactacgacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggagctatacatttgcaatcctaaatctgcaagcaagtgat
+tccggcatatactactgtgctatctgggataag
+>DQ179595|TRGV5-1*02|Bos taurus|(F)|V-REGION|52..321|270 nt|1| | | | |270+48=318|partial in 3'| |
+tcttccaacttg............atgttaatcactagtaagact......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtgcaaacatgaggaggggacggccccccgacgccttttatactgcgacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggagctatacatttgcaatcctaaatctgcaagcaagtgat
+tccggcatatactactgc
+>D16126|TRGV5-1*03|Bos taurus|(F)|V-REGION|52..336|285 nt|1| | | | |285+48=333| | |
+tattccaacttg............atgttaatcactagtaagact......ggggagact
+gcttccttcccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggacggccccccgacgccttttatactacgacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccaagtc
+tataagggc...acagggaggagctatacatttgcaatcctaaatctgcaagcaagtgat
+tccggcatatactactgtgctatctgggataag
+>D16128|TRGV5-1*04|Bos taurus|(F)|V-REGION|52..334|283 nt|1| | | | |283+48=331| | |
+tcttccaacttg............atgttcatcactagtaagact......ggggagact
+gcttcgttgccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggactgccccccgactccttttatactactacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggagctatacatttgcaatcctaaatctgcaagcaagtgat
+tccggcatatactactgtgctatctgggata
+>D16130|TRGV5-1*05|Bos taurus|(F)|V-REGION|52..336|285 nt|1| | || |285+48=333| | |
+tcttccaacttg............atgttaatcactagtaagaca......ggggagact
+gcttcgttcccttgtgatcttacacaaggggca.....................acctat
+atccacttgtacaaacatgaggaggggacggccacaagacgcattttatactacgacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccaagtc
+tataagggc...acagggaggagctatacatttgcaatcctaaatctgcaagaaagtgat
+tccggcatatactactgtgctatctgggataag
+>AY644518|TRGV5-2*01|Bos taurus|(F)|V-REGION|134770..135054|285 nt|1| | | | |285+48=333| | |
+tcttccaacttg............atgttaatcactagtaatact......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggatggccccccgacgtcttttatactacgacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggagctatacatttacaatcgtaaatctgcaagcaagtgat
+tccggcatatactactgtgctatctgggataat
+>D16122|TRGV5-2*02|Bos taurus|(F)|V-REGION|52..332|281 nt|1| | || |281+48=329| | |
+tcttccaacttg............atgttaatcactagtaatact......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggatggccccccgacgtcttttatactacgacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggaggtatacatttacaatcgtaaatctgcaagcaagtgat
+tccggcatatactactgtgctatctggga
+>D13653|TRGV5-2*03|Bos taurus|(F)|V-REGION|52..333|282 nt|1| | || |282+48=330| | |
+tcttccaacttg............atgttaatcactagtaatact......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggatggccccccgacgtcttttatactacgacagc
+tac......aactcaaagactgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggagctatacatttacaatcgtaaatctgcaagcaagtgat
+tccggcatatactactgtgctatcaataga
+>D16125|TRGV5-2*04|Bos taurus|(F)|V-REGION|52..324|273 nt|1| | | | |273+48=321| | |
+tcttccaacttg............atgttcatcactagtaatact......ggggagact
+gcttcgttgccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggatggccccccgacttcttttatactattacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggagctatacatttacaatcgtaaatctgcaagcaagtgat
+tccggcatatactactgtgct
+>D16127|TRGV5-2*05|Bos taurus|(F)|V-REGION|52..329|278 nt|1| | | | |278+48=326| | |
+tcttccaacttg............atgttcatcactagtaatact......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggatggccccccgacttcttttatactactacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggagctatacatttgcaatcctaaatctgcaagcaagtgat
+tccggcatatactactgtgctatctg
+>D13652|TRGV5-2*06|Bos taurus|(F)|V-REGION|52..334|283 nt|1| | | | |283+48=331| | |
+tcttccaacttg............atgttaatcactagtaatact......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggatggccccccgacgtcttttatactacgacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggaggtatacatttacaatcgtaaatctgcaagcaagtgat
+tccgggatatactactgtgctatctgggata
+>D13649|TRGV5-2*07|Bos taurus|(F)|V-REGION|52..333|282 nt|1| | | | |282+48=330| | |
+tcttccaacttg............atgttaatcactagtaatact......ggggagact
+gcttcgttcccttgtgctcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggatggccccccgacgtcttttatactatgacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaagaaaataccatgtc
+tataagggc...acagggaggagctatacatttacaatcgtaaatctgcaagcaagtgat
+tccgggatatactactgtgctatctgggat
+>D16124|TRGV5-2*08|Bos taurus|(F)|V-REGION|52..330|279 nt|1| | | | |279+48=327| | |
+tcttccaacttg............atgttaatcactagtaatact......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+atccacttgtacaaacatgaggaggggatggccccccgacgtcttttatactatgacagc
+tac......aactcaaaggctgtgcttgaatcaggaatcagtggaacaaaataccatgtc
+tataagggc...acagggaggagctatacatttacaatcgtaaatctgcaagcaagtgat
+tcaggcatatactactgtgctatctgg
+>D16120|TRGV5-2*09|Bos taurus|(F)|V-REGION|52..335|284 nt|1| | | | |284+48=332| | |
+tcttccaacttg............atgttcatcactagtaataca......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+attcacttgtacaaacatgaggaggggatggccccccgacgtcttttatactacgacagc
+tac......aactcaaaggcgtgcttgaatcaggaatcagtggaacaaaataccatgtct
+attatgggc...acagggaggaggtatacatttacaatcgtaaatctgcaagcaagtgat
+tccggcatatactactgtgctatctgggataa
+>D16133|TRGV5-2*10|Bos taurus|(F)|V-REGION|52..330|279 nt|1| | | | |279+48=327| | |
+tcttccaacttg............atgttcatcactagtaataca......ggggagact
+gcttcgttcccttgtgatcttacacaaggggcc.....................acctat
+attcacttgtacaaacatgaggaggggatggccccccgacgtcttttatactatgacagc
+tac......aactcaaaggcgtgcttgaagcaggaatcagtggaacaaaataccatgtct
+attatgggc...acagggaggagctatacatttacaatcgtaaatctgcaagcaagtgat
+tccggcatatactactgtgctatctgg
+>AY644518|TRGV6-1*01|Bos taurus|F|V-REGION|123913..124210|298 nt|1| | | | |298+36=334| | |
+gagatcagggtgttccagcggtccgtgatggtggggcacgcaggt.........ggagct
+atcactctgccctgtcagatcagtaggtctgtg.....................gattac
+gtccactggttccgccaactggagggccaggcccctgagaggcttctctatctagccttg
+tcc......aagcgggatgtgcagtgggattcggtcctaagaggtgataaagtcaacgcg
+gcccgcggcgcggatggcaagagctacaccatgtccttgaggaagctggcgaagagcgac
+gaaggactgtactactgtgctacctggggatcgg
+>DQ179597|TRGV6-1*02|Bos taurus|(F)|V-REGION|88..369|282 nt|1| | | | |282+36=318|partial in 3'| |
+gagatcagggtgttccagcggtccgtgatggtggggcacgcgggt.........ggagct
+ctcactatgccctgtcagatcagtaagtctgtg.....................gattac
+gtccactggttccgccaactggagagccaggcccctgagaggcttctctatctagccttg
+tcc......aagcgggatgtgcagtgggattcggtcctaagaggtgataaagtcaacgcg
+gcccgcggcgcggatggcaagagctgcaccatgtccttgaggaagctggcaaagagcgac
+gaaggactgtaccactgt
+>AC172685|TRGV6-2*01|Bos taurus|F|V-REGION|52688..52985|298 nt|1| | | | |298+36=334| | |
+gagatcagggtgttccagcggtccgtgatggtggggcacgcgggt.........ggagct
+ctcactatgccctgtcagatcagtaagtctgtg.....................gattac
+gtccactggttccgccaactggagggccaggcccctgagaggcttctctatctagccttg
+tcc......aagcgggatgtgcagtgggattcggtcctaagaggtgataaagtcaacgca
+gcccgcggcacagatggcaagagctgcaccatgtccttgaggaagctggcgaagagcgac
+gaaggactgtactactgtgctacctggggatcgg
+>NW_937068|TRGV7-1*01|Bos taurus|F|V-REGION|13399..13704|306 nt|1| | | | |306+30=336| |rev-compl|
+caattaactttggtgcaaactgaagtatcagttactggaacaaga......gaaaagagt
+ataattatgtcttgcaaggtgttctctaaggacttt............agcaaagattac
+atccactggtaccggcaaaaaccagatcaaggtttagaacagctactttttgtcttagat
+............gcccctgcgctaaacgacttaggagggaagaaaaacaagcttgaggcc
+agaaaagataaaccctcttccacttctaccttgaaaataagtttcttagagaaagaagat
+gaggccacatactactgtgccggctggttgcttgcc
+>AY735449|TRGV7-1*02|Bos taurus|(F)|V-REGION|55..358|304 nt|1| | | | |304+30=334| | |
+caattaactttggtgcaaactgaagtatcagttactggaacaaga......gaaaagagt
+ataattatgtcttgcaaggtgttctctaaggacttt............agcaaagattac
+atccactggtaccggcaaaaaccagatcaaggtttagaacagctactttttgtcttagat
+............gcccctgcgctaaacgacttaggagggaagaaaaacaagcttgaggcc
+agaaaagataaaccctcttccacttctaccttgaaaataagtttcttagagaaagaagat
+gaggccacatactactgtgctggctggttgcttg
+>AY644517|TRGV8-1*01|Bos taurus|F|V-REGION|44073..44363|291 nt|1| | | | |291+42=333| | |
+tcttccaacatggaagaggacaagttgtcagtcatgagggctact......gggtcatct
+attgtaatcgattgtgatcttacaggaagc...........................tat
+atccactggtacaaattccaggagggagctgtaccccgacgcctcctctactacgatgtc
+tcc......aactcaaaggctgtgttggactcaggaatcagtgaagggaaataccatgct
+tacaaaggc...acagggaagagctacacgtttgtaatctccaacttgcaagaaagtgat
+tctggcacctactactgtgctgtctgggagaag
+>AY644517|TRGV8-2*01|Bos taurus|F|V-REGION|49811..50086|276 nt|1| | | | |276+57=333| | |
+tcttccaacatggaagaggacaagttgtcagtcatgagggcgact......gggtcatct
+gttgtaatcgattgtgatcttacaggaagc...........................tat
+atccactggtacaaattccaggagggagctgtaccccgacgcctcctctactacgatgtc
+tac......tactcaaaggttgagttggattcaggaatcagtgaaaggaaatatcgtgtt
+tacaaaggc..................aaaattttaatctccaacttgcaagaaagtgat
+tctggcacctactactgtgctgtctgggagaag
+>DQ179600|TRGV8-2*02|Bos taurus|(F)|V-REGION|1..242|242 nt|1| | | | |242+76=318|partial in 5' and in 3' | |
+...................acaagttgtcagtcatgagggctact......gggtcatct
+gttgtaatcgattgtgatcttacaggaagc...........................tat
+atccactggtacaaattccaggagggagctgtaccccgacgcctcctctactacgatgtc
+tac......tactcaaaggttgagttggattcaggaatcagtgaaaggaaatatcgtgtt
+tacaaaggc..................aaaattttaatctccaacttgcaagaaagtgat
+tctggcacctactactgt
+>AY644517|TRGV8-3*01|Bos taurus|F|V-REGION|23922..24212|291 nt|1| | | | |291+42=333| | |
+tcttccaacatggaagaggacaagttgtcagtcatgagggcgact......gggtcatct
+gttgtaatcgagtgtgatcttacaggaagc...........................tat
+atccactggtacaaattccaggagggagctgtacccggacgccttctctactacgatgtc
+tac......tactcaaaggttgtgctgggctcaggaatcagtgaagggaaataccacgtt
+tacaaaggc...acagggaagagctacacatttgtaatctccaacttgcaagaaagtgat
+tctggcacctactactgtgctgtctgggagaag
+>D13648|TRGV8-3*02|Bos taurus|(F)|V-REGION|55..341|287 nt|1| | | | |287+42=329| | |
+tcttccaacatggaagaggacaagttgtcagtcatgagggctact......gggtcatct
+gttgtaatcgattgtgatctcacaggaagc...........................tat
+atccactggtacaaattccaggagggagctctaccccgacgtcttctctactacgatgtc
+tac......tactcaaaggttgtgctgggctcaggaatcagtgaagggaaataccacgtt
+tacaaaggc...acagggaagaggtacagtgttgtaatctccaacttgcaagaaagtgat
+tctggcatctactactgtgccgtctggga
+>AY644517|TRGV8-4*01|Bos taurus|F|V-REGION|33868..34158|291 nt|1| | | | |291+42=333| | |
+tcttccaacatggaagaggacaagttgtcagtcatgagggcgact......gggtcatct
+gttgtaatggattgtgatcttacaggaagc...........................tat
+atccactggtacaaattccaggacggagctgtaccccgacgccttctccactacattgtc
+tcc......aactcaaaggttgtgttggactcaggaatcagtgaagggaaataccacgtt
+tacaaaggc...acagggaagagctacacgtttgtaatctccaacttgcaagaaagtgat
+tctggcacctactactgtgctgtctgggagaag
+>AY644517|TRGV9-1*01|Bos taurus|F|V-REGION|95537..95836|300 nt|1| | | | |300+33=333| | |
+tcttccaacatggaaggcgacaagatgtcaatcaccagggcaact......gggtcctct
+gctgtaatcccgtgtgatcttcctacacaaaac..................aagcaatat
+atccactggtacaaattccaggagggaactgtaccccgacgccttctctactatgatgtc
+tac......tactcaaaggttgtgctggaaccaggaatcagtccagggaaataccatggc
+tatgaagac...acagacaagatatatacatttgtaatctcaaatcttcaagaaagtgat
+tctggcgtgtaccgctgcgctgtctgggagaag
+>AY644517|TRGV9-2*01|Bos taurus|F|V-REGION|118073..118372|300 nt|1| | | | |300+33=333| | |
+tcttccaacatggaagacgagaggatgtcaatcaccagggcaact......gggtcctct
+gctgtaatcccgtgtgatcttcctacacaaaac..................aagcaatat
+atccactggtacaaattccaggagggaactgtaccccgacgccttctctactacgatgtc
+tcc......tactcaaaggttgtgttggaatcaggaatcagtccagggaaataccatggc
+tatgaaggc...acagacaagatgtataaatttgtaatctcaaatcttcaagaaagtgat
+tctggcgtgtaccgctgcgctgtctgggagaag

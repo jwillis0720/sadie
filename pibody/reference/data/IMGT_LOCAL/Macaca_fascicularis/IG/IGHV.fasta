@@ -1,0 +1,615 @@
+>BK009022|IGHV1-1*01|Macaca fascicularis|F|V-REGION|143..438|296 nt|1| | | | |296+27=323| | |
+caggtgcagctggtgcagtctggggct...gagattaagcagcctggggcctcagtgaag
+ctctcctgcaaggcttct...ggatataccttc............actagctactacatg
+cactgggtgagacaggcccctggacaaggccttgagtggataggactgatctccccttac
+......aatggtaacaaaggctacgcacagaacttccag...ggcagagtcaccataact
+acggacacgtccacgagcacaggctacatggagctgagcagcctgagatctgaggacaca
+gccgtgtattactgtacaagaga
+>BK009031|IGHV1S1*01|Macaca fascicularis|F|V-REGION|143..438|296 nt|1| | | | |296+27=323| | |
+gaggtccagctggtgcagtctggggct...gagttgaagaagcctggggcctcagtgaag
+gtctcctgcaaggtttcc...ggatacaccttc............accgaattatccatg
+cactgggtgcgacaggtccctggaaaagggcttgagtggatgggaggtgttgatcctgta
+......tatggtgaaataatacacgcagagaagttccag...ggcagagtcaccatgacc
+gaggacacgtctacagacacagcctacatggagctgagcagcctgagatctgaggacacg
+gccgtgtattactgtgcgagaga
+>BK008958|IGHV1S10*01|Macaca fascicularis|F|V-REGION|144..439|296 nt|1| | | | |296+27=323| | |
+caggtccagctggtgcagtccggggct...gaggtgaagaagcctggggcctcagtgaag
+gtttcctgcaaggcttct...ggattcaccttc............ggcagctatgctatc
+agctgggtgcgacaggcccctggacaagggcttgagtggatgggagggatcatccctctt
+......gttggtataacaaactacgcagagaagttccag...ggcagagtcacgattacc
+gcggacacgtccacaagcacagcctacatggagctgagcagcctgagatctgaggacacg
+gccgtgtattactgtgcgagagg
+>BK008959|IGHV1S13*01|Macaca fascicularis|P|V-REGION|1..239|239 nt|1| | | | |239+84=323|partial in 5'| |
+............................................................
+gtctcctgcaaggcttct...ggatacatcttt............actagctctgctatg
+tagtgggtgcgacaggcccctggacaaggccttgagtggataggagtgatcatcattggc
+......aatggtaacacaggctatgcacagatgttccag...ggcagagtcaccattacc
+agggacacgtccatgagcacagcctacgtggagctgagcagcctgagatccgaggacacg
+gccgtgtattactgtgcggcaga
+>BK008916|IGHV1S2*01|Macaca fascicularis|F|V-REGION|143..438|296 nt|1| | | | |296+27=323| | |
+caggtgcagctggtgcagtctggggct...gaggtgaagaagcctggatcctcagtgaag
+gtctcctgcaaggcttcc...ggatacaccttc............actgactactacatg
+cactgggtgcgacaggcccctggacaagggcttgagtggatgggagaaatcaacccaaaa
+......actggtggcacaaactatgcacagaagttccag...ggcagagtcaccatgacc
+agagacacatcgacgagcacagcctacatggagctgagcagcctgagatctgaggacacg
+gccgtgtattactgtgcgagaga
+>BK008924|IGHV1S4*01|Macaca fascicularis|P|V-REGION|143..440|298 nt|1| | | | |298+27=325| | |
+caggtgcagcaggtgcagtctggggct...gaggtgaagcagcctgggtcctcagtgaag
+gtctcctgcaaggcttct...ggatacaccttt............actagctctgttatg
+cagtgggtgcgacaggcccctggacaaggccttcagtagataggacggatctgcccttac
+......aatggtaacacgaagtatgcacagaacttccag...ggcagagtcaccatgacc
+acggacacgtccacgagcacagcctgcatggagctgagcagcctgagatctgaggacaca
+gccgtgtattactgtgcgagagaca
+>BK008936|IGHV1S6*01|Macaca fascicularis|P|V-REGION|140..435|296 nt|1| | | | |296+27=323| | |
+caggcccagctggtgcagtctggggct...gaggtgaggaagcctctgtcctcagtgaag
+atctccttcaaggcttct...ggatacaccttc............gccaacaacttcatg
+cactgggtgtgacaggcccctggacaaggacttgagtggatgggatggatgaacactggc
+......aatggtaacacaaaatatgcacagaagttccat...ggcagagtcaccataacc
+agggacacgtccatgagcacagcctacacggagttgagcagcctgagatctgaggacacg
+gccgtgtattactgcgcaagaga
+>BK008952|IGHV1S8*01|Macaca fascicularis|P|V-REGION|143..438|296 nt|1| | | | |296+27=323| | |
+caggtccagctggtgcagtctggggct...gacgggaagaagcctgggtcctcagtgaag
+gtctcctgcaaggcttct...ggatacatcttt............actagctctgctatg
+tagtgggtgcgacaggcccctggacaaggccttgagtggataggagtgatcatcattggc
+......aatggtaacacaggctatgcacagatgttccag...ggcagagtcaccattacc
+agggacacgtccatgagcacagcctacgtggagctgagcagcctgagatccgaggacacg
+gccgtgtattactgtgcggcaga
+>BK008956|IGHV1S9*01|Macaca fascicularis|F|V-REGION|144..439|296 nt|1| | | | |296+27=323| | |
+caggtccagctggtgcagtccggggct...gaggtgaagaagcctggggcctcagtgaag
+ctctcctgcaaggcttct...ggttacaccttt............accagctactatata
+aactgggtgagacaggcccctgaacaagtgcttgactggatgggatggattaaccctagc
+......aatggtaatacaggctacgcacagaagttccag...ggcagagtcaccatgacc
+agggacacgtccacaagcacagcctacatggagctgaacagcctgagatctgaggacacg
+gccgtgtattactgtgcgagaga
+>BK008919|IGHV2-1*01|Macaca fascicularis|F|V-REGION|144..444|301 nt|1| | | | |301+24=325| | |
+caggtgaccttgaaggagtctggtcct...gcgctggtgaaacccacacagaccctcacg
+ctgacctgcaccttctct...gggttctcactcagc......actagtggtatgggtgtg
+ggctggatccgtcagccctcacggaagaccctggagtggcttgcacacatttattgggat
+.........gatgataagcgctacagcacatctctgaag...agcaggctcaccatctcc
+aaggacacctccaaaaaccaggtggttctgacaatgaccaacatggaccctgtggacaca
+gccacatattactgtgcacggagac
+>BK009028|IGHV2S1*01|Macaca fascicularis|F|V-REGION|144..444|301 nt|1| | | | |301+24=325| | |
+caggtgaccttgaaggagtctggtcct...gcgctggtgaaacccacacagaccctcacg
+ctgacctgcaccttctct...gggttctcactcacc......actagtggaatgggtgtg
+ggctggatccgtcagcccccagggaaggccctggaatggcttgcaagcatttattgggat
+.........gatgataaatactacagcacatctctgaag...agcaggctcaccatctcc
+aaggacacctccaaaaaccaggtggttctaacaatgaccaacatggaccctgtggacaca
+gccacatattactgtgcacggagac
+>BK009049|IGHV2S2*01|Macaca fascicularis|F|V-REGION|144..444|301 nt|1| | | | |301+24=325| | |
+caggtcaccttgaaggagtctggtcct...gcgctagtgaaacccacacagaccctcacg
+ctgacctgcaccttctct...gggttctcactcagc......acttctggaatgggtgtg
+ggctggatccgtcagcccccagggaaggccctggagtggctggcacgcattgattgggat
+.........gatgataaatactacagcccatctctgaag...agcaggctcaccatctcc
+aaggacacctccaaaaaccaggttgtccttacaatgaccaacatggaccctgtggacaca
+gccacatattactgtgcacggggag
+>BK009026|IGHV3-10*01|Macaca fascicularis|F|V-REGION|161..456|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtgacgactacatg
+gagtgggtccgccaggctccaggaaaggggctggagtgggttggacaaattaatcctaat
+......gggggtaccacattcctcatggattccgtgaag...ggccgattcaccatctcc
+agagacaacgccaagaacacgctttatctgcaaattaacagcctgaaaatagaggacacg
+gccgtgtattactgtactagaca
+>BK009027|IGHV3-11*01|Macaca fascicularis|F|V-REGION|161..450|290 nt|1| | | | |290+33=323| | |
+gaggtgcagctggcggagtctggggga...ggcttggtccagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccatt............agcagctactggatg
+agctgggtctgccaggctccgggaaaggggctggagtggctttcagacatttatggt...
+.........agtaccatgtactacggagactctgtgaag...ggcctattcaccgtctcc
+agagacaatgccaagaactcgctgtatctgcaaatgaacagtctgagagccgaggacacg
+gccgtgtattactgtactagaga
+>BK009033|IGHV3-12*01|Macaca fascicularis|F|V-REGION|164..465|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtccggggga...ggcttggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtgattatgctatg
+gactgggtccgccaggctccaggaaaggggctggagtgggtaggtttcattagaagcaaa
+gcttatggtgggacagcagaatacgccgcgtctgtgaaa...ggcagattcaccatctcc
+agagatgattcaaagaacacggcgtatctgcaaatgagcagcctgaaaaccgaggacacg
+gccgtgtattactgtactaggga
+>BK009035|IGHV3-14*01|Macaca fascicularis|F|V-REGION|161..456|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctgggggc...ggcttggcaaagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtagctactggatg
+cactgggttcgccaggcaccagggaaggggctggagtggatctcagctattaatagtgct
+......ggtagtagcacatactatgcagactccgtgaag...ggcagattcaccatctcc
+agagagaacgccaagaacacactgtatcttcaaatggacggcctgagagctgaggacacg
+gctgtctattactgtgcgggaga
+>BK009047|IGHV3-20*01|Macaca fascicularis|F|V-REGION|157..458|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtgcagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtaactactacatg
+cactgggtccgccaggctcaagggaaagggctagagtgggtaggtttaataagaaacaaa
+gctaacagttacacgacagaatatgctgcggctgtgaaa...ggcagattcaccatctca
+agagatgattcaaagaacacgctgtatctgcaaatgagcagcctgaaaaccgaggacaca
+gccctgtattactgtactaaaca
+>BK009048|IGHV3-21*01|Macaca fascicularis|ORF|V-REGION|161..450|290 nt|1| | | | |290+33=323| | |
+gaggtgcagctggcggagtctggggga...ggcttggtccagcctggccggtccctgaga
+ccctcctgtgcagcctct...ggattcactttc............agtagctatggcatg
+cactgggtccgccaggctccggaagaggggctggagtgggtttcatacattggtagt...
+.........agtaccatgtactacgcagactccgtgaag...ggccgattcaccatctcc
+agagacaatgccaagaactcgctgtatctgcaaatgaacagcctgagagccgaggacacg
+gctgtgtattactgtgtgagaga
+>BK009051|IGHV3-22*01|Macaca fascicularis|F|V-REGION|161..458|298 nt|1| | | | |298+27=325| | |
+gaggtgcagctggtggagtctggggga...ggcttggtacagcctggggggtccctgaga
+ctctcttgtacaggctct...ggattcaccttc............agtagctactacatg
+tactggatccgccaggctccggggaaggggctgcagtgggtctcagctattaatactggt
+......gggggtagcacatggtacacagactccgtgaag...ggcagattcaccatctcc
+aaagagaacgccaagaacacactgtatcttcaaatggacagcctgagagctgaggacacg
+gctgtctattactgtgcaaaagaca
+>BK009054|IGHV3-24*01|Macaca fascicularis|P|V-REGION|162..457|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctggagga...ggcctggcaaagcctggggggtccctgaga
+ctctcctgtgcagcattt...ggattcaccttc............agtagctactagatg
+cactgggttcaccaggctccagggaagtggctaaagtgggtctcagctatcagtaatggt
+......ggtattaacacatactacccagattctatgaag...ggccaattcaccatctcc
+agagacaccaccaagaactcactgtatctgcaaatgaacagcctgagagtggaggacacg
+gctgtgtattactgcatgagaga
+>BK009016|IGHV3-5*01|Macaca fascicularis|ORF|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggcgggtccctgaga
+ccctcctgtgcagcctct...ggattcaccttc............agtagttctgctatg
+cactgggtccgccaggcttctgggaaaggactggagtgggttggacgtattagaagcaaa
+tctaacaattacgcgacagaatacgccgcatcggtgaaa...ggcagattcaccatctcc
+agagatgattcaaagaacacggcgtgtctgcaaatgagcagcctgaaaaccgaggacacg
+gccgtgtattactgtgctagaga
+>BK009018|IGHV3-6*01|Macaca fascicularis|F|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtgaccactacatg
+ttctgggtccgccaggctccaggaaaggggctggagtgggtgggtttcattagaagcaaa
+gcttacggtgggacagcagaatacgccgcgtctgtgaaa...ggcagattcaccatctcc
+agagatgattccaaaagcatcgcctatctgcaaatgagcagcctgaaaaccgaggacacg
+gccgtgtattactgtactaggga
+>BK009019|IGHV3-7*01|Macaca fascicularis|F|V-REGION|153..448|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttt............ggtgattatggcatg
+cactgggtccgccaggctccgggaaagggactggagtgggtctcatccattagtaacact
+......ggtaaaaccatatactacgctgactccgtgaag...ggccgattcaccgtctcc
+agagacaacgccaagaactcgctgtctctgcaaatgagcagcctgagagccgaggacacg
+gccgtgtattactgtactagaga
+>BK009024|IGHV3-9*01|Macaca fascicularis|F|V-REGION|161..456|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctgggggc...ggcttggcaaagcctggggggtccctgaga
+ctctcctgcgcagcctcc...ggattcaccttc............agtgactactacatg
+gactgggtccgccaggctccagggaaggggctggagtgggtctcacgtattagtaatggt
+......ggtggtagcacatggtacgcagactccgtgaag...ggcagattcaccatctcc
+agagagaacgccaagaacacactgtatcttcaaatgaacagcctgagagctgaggacacg
+gctgtctattactgtgcgagaga
+>BK009043|IGHV3S10*01|Macaca fascicularis|F|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctgggggttccctgaga
+ctctcctgtgcagcctcc...ggattcaccttc............agtaactactggatg
+agctgggtccgccaggctccagggaaggggctggagtgggttggatttattaaaaacaaa
+gctgatggtggaacagcagattacgccgcgtctgtgaaa...ggcagattcaccatctca
+agagatgattcaaagaacacactgtatctgcaaatgagcagcctgaaaaccgaggacacg
+gccgtgtattactgtactagaca
+>BK009044|IGHV3S11*01|Macaca fascicularis|F|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctgggggttccctgaga
+ctctcctgtgcagcctcc...ggattcaccttc............agtaactactggatg
+agctgggtccgccaggctccagggaaggggctggagtgggttggatttattaaaaacaaa
+gccgatggtggaacagcagcatacgccgaatctgtgaaa...ggcagattcactatctca
+agagatgattcaaagaacacactgtacctgcaaatgaacagcctgaaaaccgaggacacg
+gccgtgtattactgtactagaga
+>BK009046|IGHV3S12*01|Macaca fascicularis|P|V-REGION|161..453|293 nt|1| | | | |293+27=320| | |
+gacatgcagctggtggagtctttggga...agcttgttgtagcctggggcatccgtgaga
+ctttcccttgcagcctct...ggattcaccttt............tgtaggtactggatg
+agctgggtccaccaggctccagggaaagggctggagtaggtctcatttttgagtagtagt
+......ggaggcagcacaagctatgcggactctgtgaag...ggtccattcaccatctcc
+agagatgatgccaagaaatcactgtatctacaagtgaacagcctgagagctgaagatagt
+gctatgtattaccgtggtgg
+>BK008914|IGHV3S14*01|Macaca fascicularis|ORF|V-REGION|159..450|292 nt|1| | | | |292+24=316| | |
+gaggtgcacctggtggagtccggggga...ggcttggcaaaacctgaggggtccctgaga
+ctctcctatgcagcctctgcaggattcaccttc............agtagctactacatg
+aactgtgtccgccaggctccagggaataggctggagtgggttagacaagttaatcctaat
+......gggggtagcacatacctcacagactccgggaag...ggccgattcaccatcccc
+agagataacgccaagaacacacttcatctgcaaatgaacaggctgaaaaccgagaacaca
+gccatgtattactgta
+>BK008917|IGHV3S15*01|Macaca fascicularis|F|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtacagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttt............ggtgattatggcatg
+agctgggtccgccaggctccagggaaggggctggagtgggttggccgtattagaaacaaa
+gctaacagttacacgacagaatacgccgcgtctgtgaaa...ggcagattcaccatctca
+agggatgattcaaagaacacactgtatctgcaaatgagcagcctgaaaaccgaggacacg
+gccgtgtattactgtactagaca
+>BK008918|IGHV3S16*01|Macaca fascicularis|F|V-REGION|161..456|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggagggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtagttacgacatg
+agctgggtccgccaggctccgggaaaggggctggagtgggtctcattcattagtaacact
+......ggtaaaaccatatactacgctgactccgtgaag...ggccgattcaccatctcc
+agagacaacgccaagaactcgctgtctctgcaaatgagcagcctgagagccgaggacacg
+gccgtgtattactgtactagaga
+>BK008923|IGHV3S17*01|Macaca fascicularis|F|V-REGION|161..453|293 nt|1| | | | |293+30=323| | |
+gtggagcagctggtggagtctggggga...ggcttggtacagcctggggcgtccctgaga
+ctgtcctgtgcagcctct...gaattcaccttc............agtagctatgacatg
+cactgggttcgccaggctccagggaagggtctggagtgggtatcagctattagcattggc
+.........ggtggcacatactacccagactctgtgaag...ggtcgattcaccatctcc
+agagacaatgccaagaactccttgtatcttcaaatgaacagcctgagagctgaggacact
+gctgtgtattattgtgcaagaga
+>BK008928|IGHV3S18*01|Macaca fascicularis|F|V-REGION|160..455|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctgggggc...ggcttggcaaagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcagcttc............agtgactactacatg
+tactgggtccgccaggctccagggaaggggctggagtgggtctcaggtattagttatact
+......ggtggtagcacatactatgcagactccgtgaag...ggcagattcaccatctcc
+agagagaacgccaagaacacactgtatcttcaaatggacagcctgagagctgaggacacg
+gctgtctattactgtgcgagaga
+>BK008930|IGHV3S19*01|Macaca fascicularis|F|V-REGION|161..456|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtacagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtagctactggatg
+tactgggtccgccaggctccagggaaggggctggagtgggtctcacgtattagtagtgat
+......gggagtagcacaagctacgcagactccgtgaag...ggccgattcaccatctcc
+agagagaacgccaagaactcactgtatctgcaaatgaacagtttgagagctgaagacacg
+gccgtgtattactgtgcgaaaga
+>BK008931|IGHV3S20*01|Macaca fascicularis|F|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcctggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtagttctgctatg
+cactgggtccgccaggcttctgggaaaggactggagtgggttggacgtattagaagcaaa
+tctaacaattacgagacaggatacgctgcgtcggtgaaa...ggcaggttcaccatctcc
+agagatgattcaaagaacacggcgtatctgcaaatgaacagcctgaaaaccgaggacacg
+gccgtgtattactgcaccacaga
+>BK008932|IGHV3S21*01|Macaca fascicularis|F|V-REGION|1..257|257 nt|1| | | | |257+66=323|partial in 5'| |
+..........................................cctggagggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtgaccactacatg
+gactgggtccgccaggctccagggaaggggctggagtgggtctcaagtattagcggtagc
+......agtagtaacacattgtacccagactctgtcaag...ggccgattcaccatctcc
+agagacaacgccaagaacacgctgtatctgcaaatgaacagcccgagagccgaggacacg
+gctgtctattactgtgcgagaga
+>BK008933|IGHV3S22*01|Macaca fascicularis|F|V-REGION|172..473|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtgactactacatg
+agctgggtccgccaggctccagggaaggggccggagtgggtaggtttcattagaaacaaa
+gctaatggtgggacagcagaatacgccgcgtctgtgaaa...ggcagattcaccatctca
+agagatgattccaaaagcattgccagtctgcaaatgaacagcctgaaaaccgaggacacg
+gccgtgtattactgtgctagaga
+>BK008934|IGHV3S23*01|Macaca fascicularis|F|V-REGION|161..456|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggcggagtctggggga...ggcttggtacagcctggggggtccctgaga
+ctctcctgtgcagcctcc...ggattcaccttc............agtagctacgaaatg
+cactgggtccgccaggctccagggaaggggctggagtccgtctcagttattggtggtgat
+......agtagttacacacactacgcagactctgtgaag...ggccgattcaccatctcc
+agagacaacgccaagaactcgctgtctctgcaaatgaacagcctgagagccgaggacacc
+gccgtgtattactgtgcgagaca
+>BK008941|IGHV3S25*01|Macaca fascicularis|F|V-REGION|161..456|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctgggggc...ggcttggcaaagcctgggggatccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtagctactggatg
+tactgggtccgccaggctccagggaaggggctggagtggatctcagctattagtagtggt
+......gggggtagcacatactacgcagactccgtgaag...ggccgattcaccatctcc
+agagacaactcaaagaacacgctctccctgcaaatgaacagcctgagagctgaggacacg
+gccgtgtattactgtgcgaaaga
+>BK008944|IGHV3S26*01|Macaca fascicularis|F|V-REGION|161..456|296 nt|1| | | | |296+27=323| | |
+gacgtgcagctggtggagtctggggga...ggcttggtaaagcctggggggtccctgaga
+ctctcttgtgtagcctct...gggttcaccttc............agtagctatgttatg
+cactgggtccgccaggctccaggaaagggtctggagtgggtctcagttattagtgaaagt
+......ggtggtaccatatactacgcagactccgtgaag...ggccgattcaccatctcc
+agagacaacgccaagaactcactgtttctgcaaatgaacagcctgagagccgaggacacg
+gccgtgtattactgtactagaga
+>BK008963|IGHV3S27*01|Macaca fascicularis|P|V-REGION|172..469|298 nt|1| | | | |298+27=325| | |
+gaggtgcagctgattgagtccatagag...gacctgagacaacctgggaagttcctgaga
+ctctcctgtgtagcctct...ggattcgcctgc............agtagctactgaatg
+agctgggttcaccagtctccagggaaggggctggagtgagcaatagatgtaaaatacgat
+......ggaagtcagatataccatgcagactctgtgaag...ggcagattctcaatctcc
+aacgacaattctaagaacttgctgtatctgcaaatgaatagtctgagagctgaggacttg
+gccatgtatggctgtacataaggtc
+>BK008975|IGHV3S29*01|Macaca fascicularis|F|V-REGION|160..455|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctgggggc...ggcttggcaaagcctggggggtccctgaga
+ctctcctgcgcagcctct...ggattcaccttc............agtgactactacatg
+cactgggtccgccaggcttcagggaaggggctggagtgggtctcaagtattagtaatggt
+......ggtggtagcacatggtacgcagactccgtgaag...ggcagattcaccatctcc
+agagagaacgccaagaacacactgtatcttcaaatggacggcctgagagctgaggacacg
+gctgtctattactgtgcgagaga
+>BK008976|IGHV3S30*01|Macaca fascicularis|F|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggcgcagctgatggaaactggcgga...ggcttggtacagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtgaccactacatg
+cagtgggtccgccaggctccagggaaggggttggagtgggtaggattaattagaaacaaa
+gctgatggtgagacaacagactacgctgcatctgtgaaa...ggcagattcaccatctcc
+agagatgattcgaaaagcatcacctatctgcaaatgaacaacctgaaaaccgaggacacg
+gccgtgaattactgtgcgaggaa
+>BK008980|IGHV3S32*01|Macaca fascicularis|F|V-REGION|161..456|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctggagga...ggcttggttcagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtagctacggcatg
+cactgggtctgccaggctccagggaaggggctggagtgggtggcagttatatcgtatgat
+......ggaagtcagaaatactacgcagactctgtgaag...gaccgattcaccatctcc
+agagacaattccaataacatgctatatcttcaaatgaacaacctgaaattggaggacacg
+gccgtgtattactgtgcgacaga
+>BK008981|IGHV3S33*01|Macaca fascicularis|P|V-REGION|161..458|298 nt|1| | | | |298+27=325| | |
+gaggtgcagctgattgagtccacagag...gacctgagacaacctgggaagttcctgaga
+ctctcctgtgtagcctcc...agattcgcctgc............agtagctactgaatg
+agctgggttcacaagactccagggaaggggctggagggagtaatagatataaaatatgat
+......ggaagtcggatataccgtgtagactcagtgaag...ggcagattctcgatctcc
+aaagacaatgctaggaactcgctgtacctgcaaatgaacagttggagagctgaggacatg
+gccctctatggctgtacagaaggtc
+>BK008987|IGHV3S35*01|Macaca fascicularis|F|V-REGION|156..451|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtacagcctggggcgtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtagcaccaggatg
+aactggatccgacaggctccagggaagaggctggagtgggtgactgacataaagtatgat
+......ggaagtgagaaatactatgtagactctgtgaag...ggccgattcaccatctcc
+agagacaatgccaagaactccctctatctgcaaatgaacagcctgagagctgaggacaca
+gccgtgtattactgtgtgagaga
+>BK008993|IGHV3S38*01|Macaca fascicularis|P|V-REGION|161..465|305 nt|1| | | | |305+18=323| | |
+gaggcacagttggtggagcctggggtagacttggtacagcctggagggggttccctgaga
+ctctcctctgcagcctct...ggattcaccttc............aggagccactggatg
+cactgagtcttccaggctccagggaacagactgaaatggatctcatgtattagcaatgat
+aggagtagcacacgttacacacattctgtgaagttctga...ttccccatctccagaagc
+aatgtcgagaacaagaacacactctatctggaaatgaacagtttgagacctgagtacaca
+gccatgtattactgtgccagaga
+>BK009015|IGHV3S4*01|Macaca fascicularis|F|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtaaccactacatg
+tactgggtccgccaggctccaggaaaggggctggagtgggtaggtttcattagaagcaaa
+gcttatggtgggacagcagaatacgccgcgtctgtgaaa...ggcagattcaccatctcc
+agagatgattcaaagaacacggcgtatctgcaaatgagcagcctgaaaaccgaggacacg
+gccgtgtattactgtactaggga
+>BK008995|IGHV3S40*01|Macaca fascicularis|F|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...gccttggcacagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtgactactacatg
+gactgggtccaccaggctccagggaagggcctggagtgggttggccgtattagaaacaaa
+gctaacagttacacgacagaatacgccgcgtctgtgaaa...ggcagattcaccatctca
+agggatgattcaaagaacacactgtatctgcaaatgagcagcctgaaaaccgaagacacg
+gccgtgtattactgtgctagaga
+>BK008996|IGHV3S41*01|Macaca fascicularis|F|V-REGION|160..455|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctgggggc...ggcttggcaaagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcagcttc............agtgactactacatg
+tactgggtccgccaggctccagggaaggggctggagtgggtctcaagtattagtggtagc
+......agtagtagcacatactacccagactctgtcaag...ggccgattcaccatctcc
+agagacaacgccaagaacacgctgtatctgcaaatgaacagcccgagagccgaggacacg
+gctgtctattactgtgcgagaga
+>BK008997|IGHV3S42*01|Macaca fascicularis|P|V-REGION|164..456|293 nt|1| | | | |293+30=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggggggtccctgaga
+ctctcctgt............ggattcaccttc............agtgaccactacatg
+agctgggtccgccaggctccagggaaggggccggagtgggtaggtttcatgagaaacaaa
+gctaatggtggaacaacagaatacgccacgtctgtgaaa...ggcagattcactatctca
+agaggtgattccaaaagcatcgccagtctgcaaatgagcagcctgaaaaccgaggacacg
+gccgtgtattactgtgccagaaa
+>BK008998|IGHV3S43*01|Macaca fascicularis|F|V-REGION|160..455|296 nt|1| | | | |296+27=323| | |
+gaggtgaagctggtagagtctggggga...ggcttggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtaactactggatg
+ttctgggtccgccaggctccagggaaggggctggagtgggtctcaagtattagtggtagc
+......agtagtagcacatactacccagactctgtcaag...ggccgattcaccatctcc
+agagacaacgccaagaacacgctgtatctgcaaatgaacagcctgagagctgaggacacg
+gctgtctattactgtgcgagaga
+>BK009000|IGHV3S44*01|Macaca fascicularis|F|V-REGION|161..453|293 nt|1| | | | |293+30=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggggggtccctgaga
+ctctcctgtgcagcctcc...ggattcacctcg............ggtaactctgacttg
+atctggatccgccaggctccagggaagggtctggagtgggtctcatacattagtagtggt
+.........ggtagcatatactactcagactctgtcaag...ggccgattcaccatctcc
+agagacaacgccaagaacacgctgtatctgcaaatgagcagcctgagagtggaggacacg
+gccgtgtattactgtgcaaaaga
+>BK009002|IGHV3S45*01|Macaca fascicularis|F|V-REGION|161..462|302 nt|1| | | | |302+21=323| | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtaacgcctggatg
+aactgggtccgccaggctccagggaaggggctagtgtgggttgcccgtattaaaagcaaa
+gctaatggtgagacagcagattacgccgcatctgtgaaa...ggcagattcaccatctca
+agagacgattcaaagaacacactgtacctgcaaatgaacagcctgaaaaccgaggacacg
+gccgtgtattactgcaccacaga
+>BK009004|IGHV3S46*01|Macaca fascicularis|F|V-REGION|161..431|271 nt|1| | | | |271+27=298|partial in 3'| |
+gaggtgcagctggtggagtctgggggc...ggcttggcaaagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcagcttc............agtgactactacatg
+tactgggtccgccaggctccagggaaggggctggagtgggtctcacgtattagtaatggt
+......ggtggtagcacatggtacgcagactccgtgaag...ggcagattcaccatctcc
+agagagaacgccaagaacacactgtatcttcaaatggacggcctgagagctgaggaca
+>BK009060|IGHV3S48*01|Macaca fascicularis|ORF|V-REGION|161..455|295 nt|1| | | | |295+30=325| | |
+gaggtgcagctggtggagtctgaggga...aattttgtgcagcctggagggtccctgaga
+ctctcttgtgcagcctct...ggattcaccttt............agcagctgtgatttg
+gactggattcgccatgctccaggaaaggggctggagtgggtctctggtattagtattgct
+.........ggtagcacatattatgcaaactctgtaaaa...ggccgattcgccatctcc
+agaggcaatgccaaaaacacactatatcttcaaatgtacagtctgatagctgaagacaca
+gccatttattactgtgtgagtgaag
+>BK009020|IGHV3S5*01|Macaca fascicularis|F|V-REGION|161..453|293 nt|1| | | | |293+30=323| | |
+gaggtgcagctggtggagtctggagga...ggcttggtccagcctggggggtccctgaga
+ctctcctgtgcagcctct...ggattcaccttc............agtagctatggcatg
+agctgggtccgccaggctccagggaaggggctggagtgggtctcagctattagtagtggt
+.........ggtagcacatactacgcagactccgtgaag...ggccgattcaccatctcc
+agagacaactcaaagaacacgctctccctgcaaatgaacagcctgagagctgaggacacg
+gccgtgtattactgtgcgaaaga
+>BK008942|IGHV3S50*01|Macaca fascicularis|P|V-REGION|163..460|298 nt|1| | | | |298+27=325| | |
+gaggtgcagctgattgagtccacagag...aacctgagacaacctgggaagttcctgaga
+ctctcctatgtagcctcc...agattcgcctgc............agtagctactgaatg
+agctgagttcaccagtctccagggaaggggctggagtaagtaataggtataaaatatgat
+......ggaagtcacatacaccatgcagactctctgaag...ggcagattcaccatctcc
+aaagacaatgctaagaactcgctgtatctgcaaatgaacagtcagatagctgaggacatc
+gccatgtaaggctgtacatagggtt
+>BK008962|IGHV3S51*01|Macaca fascicularis|P|V-REGION|138..435|298 nt|1| | | | |298+27=325| | |
+gaggtgcagctgattgagtccacagag...gacctgagacaacctgggaagttcctgaga
+ctctcctgtgtagcctcc...ggattcgccttc............agtagcttctgaatg
+agctgggttcaccagtctccagggaaggggctggagtgagcaatagatgtaaaatacgat
+......ggaagtcagatataccatgcagacgctgtgaag...ggcagattctcaatctcc
+aacgacaattctaagaacttgctgtatctgcaaatgaatagtctgagagatgaggacatg
+gccatgtatggctgtacataaggtc
+>BK008985|IGHV3S52*01|Macaca fascicularis|P|V-REGION|112..403|292 nt|1| | | | |292+27=319| | |
+gaggtgcagttgctgaagtctggggga...gacttggaacagcctggggggtccctgaga
+ctctcctgtacagtatct...gggttcactttc............agtagcaactggatg
+tactgggtctgccaggctccagggaaaggacttgagtgggtctcatgtgttagtagtgat
+......tggagtagcacacgctacacacattctgtgaag...ttctgattcaccatcccc
+agaaacaatgccaagaacaccctctatctggaaatgaacagtttgagagctgaggacacg
+accatgtattactgtgcca
+>BK008986|IGHV3S53*01|Macaca fascicularis|P|V-REGION|148..445|298 nt|1| | | | |298+27=325| | |
+gaggtgcagctgattgagtccacagag...gacctgagacaacctgggaagctcctgaga
+ctctcctgtatagcctcc...agattcgcctgc............agtagcttgtgaatt
+agccaagttcaccagtctcccgggaaagggctgcagtgagtaatagatatgaaatatgat
+......ggaagtcagatatgccatggagactatgtgaag...ggcagattctccatctcc
+aaggacaatgctaagaactcgctgcatctgcaaatgaatagtctgagagctgaggacatg
+gccctctatggctgtacataaggtc
+>BK009037|IGHV3S7*01|Macaca fascicularis|P|V-REGION|12..307|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtggagtctggggga...gcctcggtacagcctggggcgtccctgaga
+ctctgctgtgcagcctct...ggattcaccttc............agtagcaccaggatg
+aactggatccgacaggctccagggaagaagctggagtgggtgactgacataaagtaggat
+......ggaagtgagaaatactatgtagactctgtgaag...ggccgattcaccatctcc
+agagacaatgccaagaactccctctatctgcaaatgaacagcctgagagctgaggacaca
+gccgtgtattactgtgtgagaga
+>BK009041|IGHV3S9*01|Macaca fascicularis|ORF|V-REGION|161..455|295 nt|1| | | | |295+30=325| | |
+gaggtgcagctggtggagtctgaggga...aattttgtgcagcctggagggtccctgaga
+ctctcttgtgcagcctct...ggattcaccttt............agcagctgtgatttg
+gactggattcgccatgctccaggaaaggggctggagtgggtctctggtattagtattgct
+.........ggtagcacatattatgcaaactctgtaaaa...ggccgattcgccatctcc
+agaggcaatgccaaaaacacactatatcttcaaatgtacagtctgatagctgaagacaca
+gccatttattactgtgtgagtgaag
+>BK009029|IGHV4-2*01|Macaca fascicularis|F|V-REGION|141..436|296 nt|1| | | | |296+27=323| | |
+cagctgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatc............agcagtaactactgg
+agctggatccgccagcccccagggaagggactggagtggattggacgtatctctggtagt
+......ggtgggagcaccgactacaacccctccctcaag...agtcgagtcaccatttca
+acagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK008950|IGHV4S10*01|Macaca fascicularis|F|V-REGION|141..436|296 nt|1| | | | |296+27=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatc............agcggttactactgg
+agctggatccgccagtccccaggaaagggactggagtggattgggtatatctatggtagt
+......ggtagtagcaccaactacaacccctccctcaag...agtcgagtcaccatttca
+aaagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaaa
+>BK008961|IGHV4S11*01|Macaca fascicularis|F|V-REGION|141..436|296 nt|1| | | | |296+27=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctctatc............agcagtaactactgg
+agctggatccgccagcccccagggaagggactggagtggattgggtatatctatggtagt
+......ggtagtagcaccaactacaacccctccctcaag...agtcgagtcaccctgtca
+gtagacacgtccaagaaccagctctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK008966|IGHV4S12*01|Macaca fascicularis|F|V-REGION|141..442|302 nt|1| | | | |302+21=323| | |
+caggtgcagctgcaggagtcgggccca...ggagtggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatcagc......agtggttactactactgg
+agctggatccgccagcccccagggaaggggctggagtggattgggggtatctatagtaat
+......agtgagagtaccaactacaacccctccctcaag...agtcgagtcaccatttca
+aaagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK008977|IGHV4S13*01|Macaca fascicularis|F|V-REGION|141..439|299 nt|1| | | | |299+24=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatc.........agcagtagtaactggtgg
+agctggatccgccagcccccagggaagggactggagtggattggacgtatctctggtagt
+......ggtgggagcaccagctacaacccgtccctcaag...agtcgagtcaccatttca
+aaagacacgtccaagaatcagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaaa
+>BK008926|IGHV4S14*01|Macaca fascicularis|F|V-REGION|141..439|299 nt|1| | | | |299+24=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctctatc.........agcagtggttactactgg
+ggctggatccgccagcccccagggaaggggctggagtggattgggagtatctatggtagt
+......ggtgggagcaactaccttaacccgtccctcaag...agtcgagtcaccctgtca
+gtagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK008945|IGHV4S15*01|Macaca fascicularis|F|V-REGION|141..439|299 nt|1| | | | |299+24=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggttactccatc.........agcagtggttactactgg
+ggctggatccgtcagcccccagggaagggactggagtatattgggtatatcagtggtagt
+......agtgggagcacctactacaacccctccctcaag...agtcgagtcaccatttca
+aaagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK008955|IGHV4S16*01|Macaca fascicularis|F|V-REGION|141..436|296 nt|1| | | | |296+27=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatc............agcagtaactactgg
+agctggatccgccagcccccagggaaagggctggagtggattgggaatattgatggtaat
+......actgcggacaccaactacaacccctccctcaag...agtcgagtcaccatttca
+aaagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK008964|IGHV4S17*01|Macaca fascicularis|F|V-REGION|141..442|302 nt|1| | | | |302+21=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatcagc......ggtggttactactactgg
+agctggatccgccagcccccagggaaggggctggagtggattgggaatatctatggtaat
+......agtgcgagcacctactacaacccctccctcaag...agtcgagtcaccatttca
+aaagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgccagaga
+>BK008968|IGHV4S18*01|Macaca fascicularis|F|V-REGION|141..439|299 nt|1| | | | |299+24=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatc.........agcgatagttactggtgg
+agctggatccgccagcccccagggaaggggctggagtggattgggtatatctatggtagt
+......agtacgagcaccaactacaacccctccctcaag...agtcgagtcaccatttca
+aaagacacgtccaagaaccagttctccttgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK008971|IGHV4S19*01|Macaca fascicularis|F|V-REGION|141..439|299 nt|1| | | | |299+24=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcagagaccctgtcc
+ctcacctgcgctgtctct...ggtggctctatc.........agcagtagtaactggtgg
+agctggatccgccagcccccagggaaagggctggagtggattgggaatatcggtggtagt
+......agtggtagcacctactacaacccctccctcaag...agtcgagtcaccatttca
+aaagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK009034|IGHV4S2*01|Macaca fascicularis|ORF|V-REGION|12..310|299 nt|1| | | | |299+24=323| | |
+caggtgcagttgcaggagttgggtcct...ggactggagaagccctctcagaccgtctcc
+ctcccctgcactgtctct...ggtttctccataaca......accagtagtacctactgg
+cattggattcaaaagccactgggaaaagggcttcagtggctgggagaaataggttattct
+.........agagtcaccaaatacaacccatccttctgg...agccacagcagcatctcc
+tgtgacacattgaaaaaaccgttattcctccagctgagctctgtgacctcggaggacaca
+gctctgtgttactgtgtgagagg
+>BK008911|IGHV4S5*01|Macaca fascicularis|F|V-REGION|141..436|296 nt|1| | | | |296+27=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatc............agcggttactactgg
+aactggatccgccaaccaccagggaaggggctggagtggattgggtatatcggtggtagt
+......agtgggagcacctactacaacccctccctcaag...agtcgagtcaccatttca
+acagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaaa
+>BK008920|IGHV4S6*01|Macaca fascicularis|F|V-REGION|141..436|296 nt|1| | | | |296+27=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgccc
+ctcacctgcactgtctct...ggtgcctccatc............agcagtaactactgg
+agctggatccgccagcccccagggaagggactggagtggattggacgtatctatggtagt
+......ggtgggagcaccgactacaacccctccctcaag...agtcgagtcaccatttca
+atagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK008938|IGHV4S7*01|Macaca fascicularis|F|V-REGION|141..439|299 nt|1| | | | |299+24=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatcagc.........agtggttactactgg
+agctggatccgccagcccccagggaaggggctggagtggattgggtatatctatggtagt
+......agtgggagcacctactacaacccctccctcaag...agtcgagtcaccatttca
+aaagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacg
+gccgtgtattactgtgcgagaga
+>BK008949|IGHV4S9*01|Macaca fascicularis|F|V-REGION|141..439|299 nt|1| | | | |299+24=323| | |
+caggtgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctct...ggtggctccatc.........agcagtagtaactggtgg
+agctggatccgccagtccccagggaaggggctggaatggattgggggtatctatggtagt
+......ggtgggagcaccgaatacaacccctccctcaag...agtcgagtcaccatttca
+atagacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacc
+gccgtgtattactgtgcgagaca
+>BK009012|IGHV5-1*01|Macaca fascicularis|ORF|V-REGION|140..433|294 nt|1| | | | |294+27=321| | |
+gaggtgcagctggtgcagtctggagca...gaggtgaaaaggcccggggagtctctgagg
+atctcctgtaagacttct...ggatacagcttt............accagctactggatc
+agctgggtgcgccagatgcccgggagagaactggagtggatggggagcatccatcctggg
+......acctctgataccagatacaacccgtccttccaa...ggccaggtcaccatctca
+gccgacagctccatcagcactgtctacctgcagtggagcagcctgaaggcctcggactcc
+gccatgtattattgtgcaaga
+>BK009040|IGHV5-2*01|Macaca fascicularis|F|V-REGION|140..435|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtgcagtctggagca...gaggtgaaaaggcccggggagtctctgaag
+atctcctgtaagacttct...ggatacagcttt............accagctactggatc
+agctgggtgcgccagatgcccgggaaaggcctggagtggatgggggcgattgatcctagt
+......gattctgataccagatacagcccgtccttccaa...ggccaggtcaccatctca
+gccgacaagtccatcagcaccgcctacctgcagtggagcagcctgaaggcctcggactcc
+gccacgtattactgtgcgaaaga
+>BK008990|IGHV5S1*01|Macaca fascicularis|F|V-REGION|140..435|296 nt|1| | | | |296+27=323| | |
+gaggtgcagctggtgcagtctggagca...gaggtgaaaaggcccggggagtctctgagg
+atctcctgtaagacttct...ggatacagcttt............accagcagctggatc
+agctgggtgcgccagatgcccgggaaaggcctggagtggatggggagcatctatcctggt
+......gattctgataccagatacaacccgtccttccaa...ggccacgtcactatctca
+gccgacaagtccatcagcaccacctacctgcagtggagcagcctgaaggcctcggacacc
+gccacgtattactgtgcgaaagt
+>BK009057|IGHV6-1*01|Macaca fascicularis|F|V-REGION|144..448|305 nt|1| | | | |305+18=323| | |
+caggtgcagctgcaggagtcaggtcca...ggactggtgaagccctcacagaccctgtca
+ctcacctgtgccatctcc...ggggacagtgtctct......agcaacagtgctacttgg
+aactggatcaggcagtcgccatcgagaggccttgagtggctgggaaggacatactacagg
+tcc...aagtggtataatgattatgcacaatctgtgcaa...aatcgaataagcatcaac
+ccagacacatccaagaaccagttctccctgcagctgaactctgtgacccccgaggacatg
+gccgtgtattactgtgcaagaga
+>BK009008|IGHV7-1*01|Macaca fascicularis|F|V-REGION|142..437|296 nt|1| | | | |296+27=323| | |
+caggtgcagctggtgcagtctgggcct...gaggtgaagcagcctggggcctcagtgaag
+gtctcctgcaaggcttct...ggttacagcttc............accacctatggtatg
+aattgggtgcgacaggcccctggacagggccttgagtggatgggatggatgaacacctac
+......actgggaacccaacgtatgcccagggcttcaca...gaacggtttgtcttctcc
+atggacacctctgtcagcacagtgtacctgcagatcagcagcctaaagggtgaggacacg
+gccgtgtattactgtgcaagata
+>BK008935|IGHV7S1*01|Macaca fascicularis|F|V-REGION|142..437|296 nt|1| | | | |296+27=323| | |
+caggtgcagctggtgcagtctggggct...gaggtgaagcagccgggggcctcagtgaag
+gtctcctgcaaggcttct...ggttacaccttc............actagctatggtatg
+aattggctgcgacaagcccctggacaacggcttgagtggatgggagggatcaacaccaac
+......actgggaacccaacatatgcccagggcttcaaa...gaacgatttaccttctcc
+atggacacctctatcagcacggcatatctgcagatcagcagcctaaaggctgaggacact
+gccgtgtattactgtgcaagaca
+>BK008948|IGHV7S3*01|Macaca fascicularis|P|V-REGION|142..437|296 nt|1| | | | |296+27=323| | |
+caggtgcagctggtgcagtttgggcct...gaggtgaagcagcctgtggcctcagtgaag
+gtcttctgcaaggcttct...ggttacagcttt............accacctatggtatg
+aattgggtgagacaggtccctggagaagggcttgagtggatgggatggatgaacatcaac
+......actgggaacccaatgtatgcccagggctaaaca...ggacggtttgtcttctcc
+atggacacctctgtcagcacagtgtacctgcagatcagcagcctaaaggctgaggacacg
+gccgtgcattactgtatgagagc
+>BK008965|IGHV7S5*01|Macaca fascicularis|P|V-REGION|142..437|296 nt|1| | | | |296+27=323| | |
+caggtgcagctggtgcagtttgggcct...gaggtgaagcagcctgtggcctcagtgaag
+gtttactgcaaggcttct...ggttacagcttt............accacctatggtatg
+aattgggtgagacaggtccctggagaagggcttgagtggatgggacggatgaacaccaac
+......actgggaacccaacgtatgcccagggctaaaca...ggatggtttgtcttctcc
+atgggcacctctgtcagcacagtgcatctgcagatcagcagcctaaaggctgaggacacg
+gccatgcattactgtacgagaga
+>BK008954|IGHV7S7*01|Macaca fascicularis|P|V-REGION|142..437|296 nt|1| | | | |296+27=323| | |
+caggtgcagctggtgcagtttgggcct...gaggtgaagcagcctgtggcctcagtgaag
+gttttctgcaaggcttct...ggttacagcttt............accacctatggtatg
+aattgggtgagacaggtccctggagaagggcttgagtggatgggatggatgaacatcaac
+......actgggaacccaacgtatgcccagggctaaaca...ggatggtttgtcttctcc
+atggacacctctgtcagcacagtgcatctgcagatcagcagcctaaaggctgaggacatg
+gccgtgcattactgtacgagaga
+>BK008970|IGHV7S9*01|Macaca fascicularis|P|V-REGION|145..440|296 nt|1| | | | |296+27=323| | |
+caggtgcagctggtacagtttgggcct...gaggcgaagcagcctgtggcctcagtgaag
+gttttctgcaaggcttct...ggttacagcttt............accacctatggtatg
+aattgggtgagacaggtccctggagaagggcttgagtggatggggtggatgaacatcaac
+......actgggaacccaacgtatgcccagggctaaaca...ggacggtttgtcttctcc
+atggacacctctgtcagcacagggcatctgcagatcagcagcctaaaggctgaggacacg
+gccatgcattactgtacgagaga

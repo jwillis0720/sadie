@@ -1,0 +1,289 @@
+>IMGT000008|IGLV1-1*01|Gallus gallus_Red Jungle fowl|F|V-REGION|30975..31257|283 nt|1| | | | |283+63=346| | |
+caggcagcgctgact...cagccgtcctcg...gtgtcagcgaacccgggagaaaccgtc
+aagatcacctgctccggggataggagc...........................tactat
+ggctggtaccagcagaaggcacctggcagtgcccctgtcactctgatctatgacaac...
+..................accaacagaccctcgaacatccct...tcacgattctccggt
+tccaaa......tccggctccacagccacattaaccatcactggggtccaagccgacgac
+gaggctgtctattactgtgggagtgcagacagcagcagtactgctg
+>M24403|IGLV1-1*02|Gallus gallus|F|V-REGION|649..931|283 nt|1| | | | |283+63=346| | |
+caggcagcgctgact...cagccgtcctcg...gtgtcagcaaacccgggagaaaccgtc
+aagatcacctgctccggggataggagc...........................tactat
+ggctggtaccagcagaaggcacctggcagtgcccctgtcactgtgatctatgctaac...
+..................accaacagaccctcggacatccct...tcacgattctccggt
+tccaaa......tccggctccacagccacattaaccatcactggggtccaagccgacgac
+gaggctgtctattactgtgggagtgcagacagcagcagtactgctg
+>IMGT000008|IGLV1-11*01|Gallus gallus_Red Jungle fowl|P|V-REGION|19824..20106|283 nt|1| | | | |283+63=346| |rev-compl|
+caggcagcactgact...cagccggcctcg...gtgtcagcaaacctgggaggaaccgtc
+aagatcacctgctccgggggtagtggc...........................agctac
+ggctggttccagcagaagtctcctggcagtgcccctgtcactgtgatctataacaac...
+..................aacaacagaccctcggacatccct...tcacgattctccggt
+tccaaa......tccggctccacagccacattaaccatcactggggtccaagccgaggac
+gaggctgtctatttctgtggtggctacgacagcagcacttatgctg
+>M15142|IGLV1-11*02|Gallus gallus|P|V-REGION|47..329|283 nt|1| | | | |283+63=346| |rev-compl|
+caggcagcgctgact...cagccggcctcg...gtgtcagcaaacctgggaggaaccgtc
+aagatcacctgctccgggggtggtggc...........................agctat
+ggctggttccagcagaagtctcctggcagtgcccctgtcactctgatctataacaac...
+..................aacaacagaccctcggacatccct...tcacgattctccggt
+tccaaa......tccggctccacagccacattaaccatcactggggtccaagccgaggac
+gaggctgtctatttctgtggtggctacgacagcagcacttatgctg
+>IMGT000008|IGLV1-13*01|Gallus gallus_Red Jungle fowl|P|V-REGION|18215..18504|290 nt|1| | | | |290+57=347| | |
+caggcagcgctgact...cagccggcctca...gtgtcagcaaacctgggaggaaccgtc
+aagctcacctgctccgggagtagcagtggc.....................tatggttat
+ggctggtaccagcagaagtctcctggcagtgcccctgtcactctgatctatagcaac...
+..................gacaagagaccctcggacatccct...tcacaattctccggt
+tctaaa......tccggctccacgggcacattaaccatcactggggtccaagccgaggac
+gaggctgtctatttctgtgggaatgcagacagcagcagtactgatac
+>IMGT000008|IGLV1-14*01|Gallus gallus_Red Jungle fowl|P|V-REGION|17544..17826|283 nt|1| | | | |283+63=346| | |
+caggcagcgctgact...ctgccagactca...ttatcagcaaacctgggagaaactgtc
+aggataacctggtctggaggtagctat...........................gattat
+ggttggcaccagcagaaatcacctggcagtgcccctgtcactgtgatctataacaac...
+..................aacaagagaccctcagacatccct...tcacgattctccggt
+gcccta......tccggctccacagccacattaaccatcactggggtccgagccgaggac
+gaggctgtctatttctgtggtgcctgggaaagcagcagtaatcctg
+>M15145|IGLV1-14*02|Gallus gallus|P|V-REGION|30..312|283 nt|1| | | | |283+63=346| | |
+caggcagcgctgact...ctgccagactca...ttatcagcaaatctgggagaaactgtc
+aggataacctggtctggaggtagctat...........................gattat
+ggttggcaccagcagaaatcacctggcagtgcccctgtcactgtgatctatagcaac...
+..................aacaagagaccctcggacatccct...tcacgattctccggt
+gcccta......tccggctccacagccacattaaccatcactggggtccgagccgaggac
+gaggctgtctatttctgtggtgcctgggaaagcagcagtaatcctg
+>IMGT000008|IGLV1-15*01|Gallus gallus_Red Jungle fowl|P|V-REGION|16405..16690|286 nt|1| | | | |286+60=346| |rev-compl|
+caggcagcactgactcagcagccggcctcg...gtgtcagcaaacccaggagaaaccgtc
+aagatcacctgctctgggggcagctat...........................agctat
+ggctggttccagcagaagtctcctggcagtgcccttgtcactgtgatctactgggat...
+..................gatgagagaccctcgggcatccct...tcacgattctccggt
+tccaca......tccggctccacgggcacattaaccatcactggggtccaagccgaggac
+gaggctgtctattactgtgggagcttcgacagcagcactgatagtg
+>M15146|IGLV1-15*02|Gallus gallus|P|V-REGION|25..310|286 nt|1| | | | |286+60=346| |rev-compl|
+caggcagcactgactcagcagccggcctcg...gtgtcagcaaacccaggagaaaccgtc
+aagatcacctgctctgggggcagctat...........................agctat
+ggctggttccagcagaagtctcctggcagtgcccttgtcactgtgatctactgggat...
+..................gatgagagaccctcgggcatccct...tcacgattctccggt
+tccaca......tccggctccacgggcacattaaccatcactggggtccgagctgaggac
+gaggctgtctattactgtgggagcttcgacagcagcactgatagtg
+>IMGT000008|IGLV1-15-1*01|Gallus gallus_Red Jungle fowl|P|V-REGION|16270..16380|111 nt|1| | | | |111+135=246|partial in 5' and in 3' | |
+............................................................
+.....................agccat...........................gagtat
+ggctggttccaggagaaa...cctggtagtggtgctgtgactgtgatccacagtgac...
+..................accaacagaccctcgaacatccct...tcacaattctccagt
+tccacc
+>IMGT000008|IGLV1-16*01|Gallus gallus_Red Jungle fowl|P|V-REGION|15809..15979|171 nt|1| | | | |171+57=228|partial in 5'|rev-compl|
+caggcagcaccgact...cagctggccttc...atgtcagcaaacccaggagaaaccgtc
+aagatcacctgctcaggcagtagcgat...........................gcttat
+ggctggtaccagcagaagtctcctggcggtgcccctgtcactgtgatctatggtaac...
+..................accggtagactcttaagcatccct...tca
+>M15148|IGLV1-16*02|Gallus gallus|P|V-REGION|10..180|171 nt|1| | | | |171+57=228|partial in 5'|rev-compl|
+caggcagcaccgact...cagctggccttc...atgtcagcaaacccaggagaaaccgtc
+aagatcacctgctcaggcagtagcgat...........................gcttat
+ggctggtaccagcagaagtctcctggcagtgcccctgtcactgtgatctatggtaac...
+..................accggtagactctaggacatccct...tca
+>IMGT000008|IGLV1-17*01|Gallus gallus_Red Jungle fowl|P|V-REGION|14593..14800|208 nt|1| | | | |208+138=346|partial in 5'| |
+............................................................
+.....................cacaac...........................tactat
+ggctggtaccagcagaagtcacctggcagtgcccctgtcactctgatctatgctaac...
+..................accaacaggccctcgaacatccct...tcacgattctccggt
+tctgga......tccggctccacaaacacattaaccatcactggggtccgagccgaggac
+gaggctgtctattactgtggtggctacgacggcagcactgatgctg
+>IMGT000008|IGLV1-19*01|Gallus gallus_Red Jungle fowl|P|V-REGION|13768..14065|298 nt|1| | | | |298+48=346| |rev-compl|
+caggcagcgctgact...cagccggcctcg...gtgtcagcaaacctgggaggaaccgtc
+gagatcacctgctccgggggtggcagcgatgat............ggaagttattactat
+agctggcaccagcagaagtctcctggcagtgcccctgtcactgtgatctatagcaac...
+..................aaccagagaccctcgaacatccct...tcacgattctccggt
+tccaca......tccggctccacaagcacattaaccatcactggggtccaagccgacgac
+gaggctatctattactgtgggagctgggatagcagcactgaagctg
+>M15150|IGLV1-19*02|Gallus gallus|P|V-REGION|19..316|298 nt|1| | | | |298+48=346| |rev-compl|
+caggcagcagtgact...cagccggcctcg...gtgtcagcaaacctgggaggaaccgtc
+gagatcacctgctccgggggtagcagcgatgat............ggaagttattactat
+agctggcaccagcagaagtctcctggcagtgcccctgtcactgtgatctatagcaac...
+..................aaccagagaccctcgaacatccct...tcacgattctccggt
+tccaca......tccggctccacaagcacattaaccatcactggggtccaagccgacgac
+gaggctatctattactgtgggagctgggatagcagcactgaagctg
+>IMGT000008|IGLV1-2*01|Gallus gallus_Red Jungle fowl|P|V-REGION|28108..28316|209 nt|1| | | | |209+138=347|partial in 5'| |
+............................................................
+.....................atcaac...........................cactat
+ggctggtaccagcagaaggcacctagcagtgcccctgtcactctgatctactatgat...
+..................gatgagagaccctcgaacatccct...tcacgattctccggt
+tccaaa......tccggctccacacacacattaaccatcactggggtccaagccgacgac
+gaggctgtctattactgtgggaatgaagacagcagcggtactggtgc
+>M12437|IGLV1-2*02|Gallus gallus|P|V-REGION|87..295|209 nt|1| | | | |209+138=347|partial in 5'| |
+............................................................
+.....................atcaac...........................cactat
+ggctggtaccagcagagggcacctggcagtgcccctgtcactctgatctactatgat...
+..................gatgagagaccctcgaacatccct...tcacgattctccggt
+tccaaa......tccggctccacacacacattaaccatcactggggtccaagccgacgac
+gaggctgtctattactgtgggaatgaagacagcagcggtactgtggc
+>M15096|IGLV1-2*03|Gallus gallus|P|V-REGION|10..218|209 nt|1| | | | |209+138=347|partial in 5'| |
+............................................................
+.....................atcaac...........................cactat
+ggctggtaccagcagaaggcacctagcagtgtccctgtcactctgatctactatgat...
+..................gatgagagaccctcgaacatccct...tcacgattctccggt
+tccaaa......tccagctccacacacacattaaccatcactggggtccaagccgatgac
+gaggctgtctattactgtgggaatgaagacagcagcggtactggtgc
+>IMGT000008|IGLV1-20*01|Gallus gallus_Red Jungle fowl|P|V-REGION|13032..13317|286 nt|1| | | | |286+60=346| | |
+gaggcagaactcatt...cagccgacctcg...gtgtcagcaaaccctggggaaactgtc
+aagatcacctgcagtggaggtatcggc........................cagtggtat
+ggctggtaccagcagaagtcacctggcagtgtgcctgtcactgtgatcaatgctaac...
+..................accaacagaccctcgaacatccct...tcacgattctccggt
+tcgctc......tccgtattcacacacacattaaccatcactggggtccaagctgaggat
+gaggctgtctattactgtggtgcctacgacagcagctatgttggta
+>M15151|IGLV1-20*02|Gallus gallus|P|V-REGION|43..328|286 nt|1| | | | |286+60=346| | |
+gaggcagaactcatt...cagccgacctcg...gtgtcagcaaaccctggggaaactgtc
+aagatcacctgcagtggaggtatcggc........................cagtggtat
+ggctggtaccagcagaagtcacctggcagtgtgcctgtcactgtgatcaatgctaac...
+..................accaacagaccctcgaacatccct...tcccgattctccggt
+tccctc......tccgtattcacacacacattaaccatcactggggtccaagccgaggat
+gaggctgtctattactgtggtgcctacgacagcagctatgttggta
+>IMGT000008|IGLV1-21*01|Gallus gallus_Red Jungle fowl|P|V-REGION|12463..12746|284 nt|1| | | | |284+63=347| |rev-compl|
+caaagtaacctgact...cagccaacctca...gtgtcagcaaacccaggagaaactgtc
+aagatcacctgctctggtagcagcagc...........................tactat
+ggctggatccagcagaaatcacctggcagtgcccctgtcactgtgatttatgatagc...
+..................agcagcagaccctcggacatccct...tcacgattctccggt
+tccaaa......tccggctccacggccacattaaccatcactggggtccaagtcgaggac
+gaggctgtctattactgtggtgattgggacaggagcaatagtgctgg
+>IMGT000008|IGLV1-21-1*01|Gallus gallus_Red Jungle fowl|P|V-REGION|12121..12219|99 nt|1| | | | |99+33=132|partial in 3'| |
+caggcagcgctgact...cagccggcctcg...gtgtcagcgaacctgggaggaacagtc
+aagatcacctgcaccagggatgacagc...........................tggtat
+ggctggcacctg
+>IMGT000008|IGLV1-21-2*01|Gallus gallus_Red Jungle fowl|P|V-REGION|11432..11536|105 nt|1| | | | |105+123=228|partial in 5' and in 3' | |
+............................................................
+............ccacagaccatcttt...........................tactac
+agctggtaccagcagaagacgcctggcagtgcatctgtcactgtgatctatgctgac...
+..................accaacagacccaccaacaccacg...ggg
+>M15154|IGLV1-21-2*02|Gallus gallus|P|V-REGION|1..105|105 nt|1| | | | |105+123=228|partial in 5' and in 3' | |
+............................................................
+............ccacagaccatcttt...........................tactac
+agcgggtaccagcagaagacgcctggcagtgcatctgtcactgtgatctatgctgac...
+..................accaacagacccaccaacaccacg...ggg
+>IMGT000008|IGLV1-22*01|Gallus gallus_Red Jungle fowl|P|V-REGION|11040..11322|283 nt|1| | | | |283+63=346| | |
+caggcagcgctgact...cagccatcctcg...gtgtcagcaaacctgggaggaaccgtc
+gagatcacctgctccgggggtagcaac...........................aactat
+ggctggtatcagcagaagtctcctggcagtgcccctgtcactgtgatctatcaaaac...
+..................accaagaggccctcgggtctctct...tcataactttcttgt
+tcctca......tctggctctgcaaacacgttaaccatcactggggtccaagccaaggat
+gaggctgtctattactgtggtggctgggatagctgctgcctgagtc
+>M15155|IGLV1-22*02|Gallus gallus|P|V-REGION|43..325|283 nt|1| | | | |283+63=346| | |
+caggcagcgctgact...cagccatcctcg...gtgtcagcaaacctgggaggaaccgtc
+gagatcacctgctccgggggtagcaac...........................aactat
+ggctggtatcagcagaagtctcctggcagtgcccctgtcactgtgatctatcaaaac...
+..................accaagaggccctcgggtctctct...tcataactttcttgt
+tcctca......tccggctctgcaaacacattaaccatcactggggtccaagccaaggat
+gaggctgtctattactgtggtggctgggatagctgctgcctgagtc
+>IMGT000008|IGLV1-23*01|Gallus gallus_Red Jungle fowl|P|V-REGION|9977..10259|283 nt|1| | | | |283+63=346| |rev-compl|
+ctctctcctctgact...cagccggcctcg...gtgtcagcgaacccgggagaaaccgtt
+gagatcacctgctccggggatagcagc...........................tactat
+ggctggtaccagcagaaggcacctggcagtgcccctgtcactgtgatctatgacaac...
+..................accaacagaccctcgaacatccct...tcacgattctccggc
+tcccca......ggcagaaccacaagcacgttaaccatcactggggtccaagtcgaggac
+gaggctgtctattactgggggaactgggatgacagcactgatgctg
+>M12438|IGLV1-3*02|Gallus gallus|P|V-REGION|134..395|262 nt|1| | | | |262+84=346| | |
+caggcagcgctgact...cagccggcctcg...gtgtcagcaaacctgggaggaaccgtc
+gagatcacctgctccgggggttacagc...........................ggctat
+gcctgc.....................agtgcccctgtcactgtgatctataatggc...
+..................aataacagaccctcggacatccct...tcacgattctccggt
+tctgga......tccggctccacaaacacattaaccatcactggggtccaagccgaggac
+gaggctatctattactgtgggagcatagacagcagcatcacagcaa
+>IMGT000008|IGLV1-4*01|Gallus gallus_Red Jungle fowl|P|V-REGION|26973..27148|176 nt|1| | | | |176+171=347|partial in 5'| |
+............................................................
+............................................................
+.....................cctggcagtgcccctgtctctgtgatctatagcagc...
+..................accaacagaccctcaaacatccct...tcacgattctccggt
+tccaaa......tctggctccacacacacattaaccatcactggggtccaagccgatgac
+gaggctgtctattactgtgggagcacagacagcagctatgttggtat
+>M12439|IGLV1-4*02|Gallus gallus|P|V-REGION|120..295|176 nt|1| | | | |176+171=347|partial in 5'| |
+............................................................
+............................................................
+.....................cctggcagtgcccctgtctctgtgatctatagcagc...
+..................accaacagaccctcaaacatccct...tcacgattctccggt
+tccaaa......tccggctccacgggcacattaaccatcactggggtccaagccgatgac
+gaggctgtctattactgtgggagcacagacagcagctatgttggtat
+>IMGT000008|IGLV1-5*01|Gallus gallus_Red Jungle fowl|P|V-REGION|25350..25632|283 nt|1| | | | |283+63=346| |rev-compl|
+caggcagcagtgact...cagccggcctca...gtgtcagcaaacctgggaggaaccgtc
+aagatcacctgctccgggagtagtggc...........................agctat
+ggctggtatcagcagaagtcacctggcagtgcccctgtcactgtgatctattacaac...
+..................gacaagagaccctcggacatccct...tcacgattctccggt
+tccaaa......tccggctccatgggcacattaaccatcactggggtccaagccgaggac
+gaggctgtctatttctgtgggagcagggacagcagctatgttggta
+>IMGT000008|IGLV1-6*01|Gallus gallus_Red Jungle fowl|P|V-REGION|24112..24320|209 nt|1| | | | |209+138=347|partial in 5'| |
+............................................................
+.....................gttaac...........................aactac
+ggctggttccagcagaagtcacctggcagtgctcctgtcactgtgatctatggtagc...
+..................accagtagaccctcaaacatccct...tcacgattctccggt
+tccgag......tccggctccacagccacattaaccatcactggggtccgagccgaggac
+gaggctgtctattactgtgggagtgcagacagcagtggtgctggtcc
+>M15138|IGLV1-6*02|Gallus gallus|P|V-REGION|19..227|209 nt|1| | || |209+138=347|partial in 5'| |
+............................................................
+.....................gttaac...........................aactac
+ggctggttccagcagaagtcacctggcagtgctcctgtcactgtgatttatggtagc...
+..................accagtagaccctcaaacatccct...tcacgattctccggt
+tccaag......tccggctccacagccacattaaccatcactggggtccgagccgaggac
+gaggctgtctattactgtgggagtgcagacagcagtggtgctggtcc
+>IMGT000008|IGLV1-7*01|Gallus gallus_Red Jungle fowl|P|V-REGION|22680..22968|289 nt|1| | | | |289+57=346| | |
+caggcagcactgact...cagccggcctcg...gtgtcagcaaacctgggaggaaccgtc
+aagatcacctgctccgggggtggcagcagc.....................tatggttac
+agctggcaccagcagaagtctcctggcagtgcccctgtcactgtgatctatagcaac...
+..................gacaagagaccctcggacatccct...tcacgattctccggt
+tccgca......tccggctccacagccacattaaccatcactggggtccaagtcgaggac
+gaggctgtctattactgtgcgaacttcgacagcagcagtactgctg
+>IMGT000008|IGLV1-8*01|Gallus gallus_Red Jungle fowl|P|V-REGION|22133..22421|289 nt|1| | | | |289+57=346| |rev-compl|
+caggcagcagtgact...cagccggcctcg...gtgtcagcaaacccaggagaaaccgtc
+aagatcacctgctccgggggtggtagcagc.....................agctactat
+ggctggtaccagcagaagtctcctggcagtgcccttgtcactgtgatctatgaaagc...
+..................agcaagagaccctcgaacatccct...tcacgattctccggt
+tccaca......tccggctccacaaacacattaaccatcactggggtccaagccgacgac
+gaggctgtctatttctgtgggagctacgacagcagtgctggttatg
+>M15137|IGLV1-8*02|Gallus gallus|P|V-REGION|18..306|289 nt|1| | | | |289+57=346| |rev-compl|
+caggcagcagtgact...cagccggcctcg...gtgtcagcaaacccaggagaaaccgtc
+aagatcacctgctccgggggtggtagcagc.....................agctactat
+ggctggtaccagcagaagtctcctggcagtgcccttgtcactgtgatctatgaaagc...
+..................accaagagaccctcgaacatccct...tcacgattctccggt
+tccaca......tctggctccacaagcacattaaccatcactggggtccaagccgaggac
+gaggctgtctatttctgtgggagctacgacagcagtgctggttatg
+>IMGT000008|IGLV1-9*01|Gallus gallus_Red Jungle fowl|P|V-REGION|21134..21431|298 nt|1| | | | |298+48=346| | |
+caggcagcgctgact...cagccggcctcg...gtgtcagcaaacccaggagaaaccgtc
+aagatcacctgctccgggggtggcagctatgct............ggaagttactattat
+ggctggtaccagcagaagtctcctggcagtgcccctgtcactgtgatctatgacaac...
+..................accaacagaccctcgaacatccct...tcacgattctccggt
+tcccca......tccggctccacaaacacattaaccatcactggggtccaagtcgaggac
+gaggctatctatttctgtgggagctacgaaggcagcactagtgctg
+>M15140|IGLV1-9*02|Gallus gallus|P|V-REGION|30..327|298 nt|1| | | | |298+48=346| | |
+caggcagcgctgact...cagccggcctcg...gtgtcagcaaacccaggagaaaccgtc
+aagatcacctgctccgggggtggcagctatgct............ggaagttactattat
+ggctggtaccagcagaaggcacctggcagtgcccctgtcactgtgatctatgacaac...
+..................accaacagaccctcgaacatccct...tcacgattctccggt
+tcccta......tccggctccacaaacacattaaccatcactggggtccaagtcgaggac
+gaggctatctatttctgtgggagctacgaaggcagcactagtgctg
+>M15095|IGLV1S1*01|Gallus gallus|F|V-REGION|359..641|283 nt|1| | | | |283+63=346| | |
+caggcagcgctgact...cagccgtcctcg...gtgtcagcgaacccgggaggaaccgtc
+aagatcacctgctccggggatagcagc...........................tactat
+ggctggtaccagcagaaggcacctggcagtgcccctgtcactgtgatctatgacaac...
+..................accaacagaccctcgaacatccct...tcacgattctccggt
+tccaaa......tccggctccacagccacattaaccatcactggggtccgagccgacgac
+aatgctgtctattactgtgcgagtacagacagcagcagtactgcag
+>M15156|IGLV1S11*01|Gallus gallus|P|V-REGION|19..313|295 nt|1| | || |295+51=346| | |
+tctctcctcttgact...cagccggcctcg...gtgtcagcgaacccgggagaaaccgtt
+gagatcacctgctccggggatagcagctac...............tatggctggtactat
+ggctggtaccagcagaaggcacctggcagtgcccctgtcactctgatctatgacaac...
+..................accaacagaccctcgaacatccct...tcacgattctccggc
+tcccca......ggcagaaccacaagcacattaaccatcactggggtccaagtcgaggac
+gaggctgtctattactgggggaactgggatgacagcactgatgctg
+>M15099|IGLV1S2*01|Gallus gallus|P|V-REGION|43..331|289 nt|1| | | | |289+57=346| | |
+caggcagcgctgact...cagccgtcctcg...gtgtcagcaaacctgggaggaaccgtc
+aagatcacctgctccgggagtgacagcagc.....................tatggttac
+agctggcaccagcagaagtctcctggcagtgcccctgtcactctgatctatagcaac...
+..................gacaagagaccctcggacatccct...tcacgattctccggt
+tccgca......tccggctccacagccacattaaccatcactggggtccaagtcgaggac
+gaggctgtctattactgtgcaaacttcgacagcagcagtactgctg
+>M15144|IGLV1S5*01|Gallus gallus|P|V-REGION|50..339|290 nt|1| | | | |290+57=347| | |
+caggcagcgctgact...cagccggcctca...gtgtcagcaaacctgggaggaaccgtc
+aagctcacctgctccgggggtagcagtggc.....................tgtggttat
+ggctggtatcagcagaagtcacctggcagtgcccctgtcactctgatctattacaac...
+..................aacaagagaccctcggacatccct...tcacgattctccggt
+tccaaa......tccggctccacgggcacattaaccatcactggggtccaagccgaggac
+gaggctgtctattactgtgggaatgcagacagcagcagtactgatac
+>M15152|IGLV1S8*01|Gallus gallus|P|V-REGION|47..327|281 nt|1| | | | |281+66=347|partial in 3'|rev-compl|
+......aacctgact...cagccagcctca...gtgtcagcaaacccaggagaaactgtc
+aagatcacctgctctggtagcagcagc........................agctactat
+ggctggatccagcagaaatcacctggcagtgcccctgtcactgtgatttatgatagc...
+..................agcagcagaccctcggacatccct...tcacgattctccggt
+tccaaa......ttcggctccacggccacattaaccatcactggggtccaagtcgaggac
+gaggctgtctattactgtggtgactgggacaggagcaatagtgctgg

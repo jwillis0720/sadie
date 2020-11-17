@@ -1,0 +1,56 @@
+>IMGT000045|TRDV2-1*01|Felis catus_Abyssinian|ORF|V-REGION|410749..411038|290 nt|1| | | | |290+36=326| | |
+gctgagaaagtgatccaaatgcagaatacggtaataattcaggaaggaaaagctgccacc
+atggagtgcaagtatgaaaccagttggagt............aattactatactttgtat
+tggtacaaacagcctcccagtggaaggatgcatttcctcatttaccaggat.........
+............gaaagcaagccaaatgcaaagcag...ggtcgcctctccatgaacttt
+caaaagacagaaaaatccatcgctctcaccatctctctcgtacaactggcagactcggcg
+gtgtatttctgtgctctcagtagttc
+>IMGT000045|TRDV3*01|Felis catus_Abyssinian|F|V-REGION|733499..733789|291 nt|1| | | | |291+33=324| | |
+tgtgaccatgtgacccagagccccccgtaccagacagtggcaagcggcagtaaggtgaca
+ctgttctgcacttaccacacaacatactca...............aacccggatttatac
+tggtaccgaataaggccagatcgttcctttcagtttatcctctacagggataac......
+......actcgatccaaagatgcagattttactcag...ggtcgtttttgggtgtggcac
+agtcagtcccagaaaaccttccacttggtgatctcg...gtggagcctgaagacagtgcc
+acatactactgcgccatctatccc
+>IMGT000045|TRDV4*01|Felis catus_Abyssinian|ORF|V-REGION|656614..656901|288 nt|1| | | | |288+36=324| | |
+gatatcgttttgaaaccagacaccgaaaccctgactgttctagttggggagcctgccacc
+ttccgatgcagcataacgggaggagactgg............aaaaattatcaagtgagc
+tggtataagaaaaatgaagataactccttgactttagtatacagactaagc.........
+............aacagttctaatgccaatataagc...agtaatttcaaaggaaatatc
+gatgctttaaagggccaatgtatacttgacattcaaagagcaacaataaaagacactggg
+acctactactgtgcgtccgatatc
+>IMGT000045|TRDV5-1*01|Felis catus_Abyssinian|F|V-REGION|537086..537374|289 nt|1| | | | |289+39=328| | |
+acacagagtgtcactcaaactccaggtccagtgaataaacaagagagagaatctgtgagc
+ttgcactgtagtttcacactcagctatact...............tactatgtgatgagc
+tggtttcgacagctttccaatggaaagatgactgaaatcattaatctttat.........
+............tctactagcacaaacaccaagaaa...ggacgatattctgtatctcat
+cagaaaggaaacaaagccctaagtctcaccatcacaggcttgatgcctacagactcaggc
+gtctatttctgtgctgttggagaagctc
+>IMGT000045|TRDV5-2*01|Felis catus_Abyssinian|F|V-REGION|551851..552139|289 nt|1| | | | |289+39=328| | |
+acacagagcatcactcaatctccaagttcagtgcaggaaaaagagggagaatctgtgacc
+ttggactgccgtttcacactcaactttgat...............tactacgtgatgagc
+tggtatcaacagctttccaatggaaaaatgactgaaatcatttatcttgta.........
+............tctactagcacaaacactagggaa...ggacgatattctgtgtcacat
+tgggcaagagacaaaaccctaaggctcaccatcacaggcttgatgcccacagactcaggc
+atctatttctgtgctgttggagaagctc
+>IMGT000045|TRDV5-3*01|Felis catus_Abyssinian|F|V-REGION|564473..564761|289 nt|1| | | | |289+39=328| | |
+acacagagcgtcactcaatatccaagttcggtgcataaacaagagggagaatctgcgaat
+ttgttctgccgtttcacactcagctatact...............tactatgtgatgagc
+tggtttcaacagccttccaatggaaagatgactgaaatcatttatctttat.........
+............tctgatagcacaaacaacaagaaa...ggacgatattctgtgtcatat
+caggcaagagacaaagctctaaggctcaccatcacaggcttgatgcctacagactcaggc
+gtctatttctgtgctgttggagaagctc
+>IMGT000045|TRDV5-5*01|Felis catus_Abyssinian|F|V-REGION|602864..603152|289 nt|1| | | | |289+39=328| | |
+acgcagggcatcactcaatctccaagtttagtgcaggaaaaagagggagaatctgtgaca
+ttgaactgccgtttcacactcagctatact...............tactatgtgatgagg
+tggtatcaacagctttccaatagaaagatgactgaaatcatttatctttat.........
+............tctgctagcacgaacactagaaca...ggacgatattctgtgtcacat
+cagaaaggaaacaaagctgtaagtctcaccatcacaggcttaatgcctacagactcaggc
+atctatttctgtgctgttggagaagctc
+>IMGT000045|TRDV5-6*01|Felis catus_Abyssinian|ORF|V-REGION|613587..613874|288 nt|1| | | | |288+39=327| | |
+acacagagcatcactcaatatccaagttcagtgcataaacgggagaaacaatctgtgacc
+ttggactgcattttcacactcagctacact...............tactatgtgatgagc
+ttctttcaacagctttccaatggaaacatgactgaaatcattaatctttat.........
+............tctgctagcacaaacactaggaaa...ggacgatattctgtgtcacat
+cagaaaggaaacaaagccctaaagctcactatcacaggcttgatgtctacagactcaggt
+gtctatttctgtgctgttagagaactc

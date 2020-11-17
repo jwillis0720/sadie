@@ -1,0 +1,637 @@
+>IMGT000014|IGHV1-1*01|Gallus gallus_Red Jungle fowl|F|V-REGION|95049..95351|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccagaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttatggcatgggt
+tgggtgcgacaggcgcccggcaaggggctggagtgggtcgctggtattggcagcagt...
+...ggtagtggcacagcatacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaagctgctggt
+>IMGT000014|IGHV1-10*01|Gallus gallus_Red Jungle fowl|P|V-REGION|80109..80411|303 nt|1| | | | |303+24=327| |rev-compl|
+atcagggcttgttctgttcttaggaga...gccctgcagacacccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agtgattacagcatgcag
+tgggtgcgccaggcgcccggcaaggggctggagtgggtcgctggtattcactgcact...
+...ggcagttacacatactacgggccggcggtgaag...ggccgtgccaccatcgcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+atctactactgcgccaaagcttatggt
+>IMGT000014|IGHV1-11*01|Gallus gallus_Red Jungle fowl|P|V-REGION|79117..79419|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaagggctccgggttcaccttc............agcagtaatggcatggcc
+tgggtgcgacaggcgcccggcaaggggctggagttcgtcgctggtattggcaacact...
+...ggtagatacacaggctacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctacttctgcgccaaaactactggt
+>IMGT000014|IGHV1-12*01|Gallus gallus_Red Jungle fowl|P|V-REGION|78159..78458|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggtttgacttc............agcagttatgagatgcag
+tgggtgtgacaggcgcccggcaaagggttggagtgcgtcgcaagtatttacagcagt...
+...ggtagtggcacaaactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacactgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaagatgct
+>IMGT000014|IGHV1-13*01|Gallus gallus_Red Jungle fowl|P|V-REGION|77051..77350|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccggcttcaccttc............agtgaccgtggcatgcac
+tgggtgcgacaggcgcccggaaaggggctggagttcgtcgcgggtattaatgctgct...
+...ggtagtggcacaggatatggggcagcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+atctactactgcgccaaaagtgct
+>IMGT000014|IGHV1-14*01|Gallus gallus_Red Jungle fowl|P|V-REGION|76114..76404|291 nt|1| | | | |291+27=318| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttacaccatgcag
+tgggtgcgacaggcgcccggcaaggggctcgaatgggtcgctggtatctgtagtggt...
+......agtagcacatactacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgtgtgaaa
+>IMGT000014|IGHV1-15*01|Gallus gallus_Red Jungle fowl|P|V-REGION|75590..75889|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttacgacatggcc
+tgggtgcaacaggagcccagcaaagggctggaacacgtcgcaagtattagcagtgat...
+...ggtagtgacacagcatatggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-16*01|Gallus gallus_Red Jungle fowl|P|V-REGION|74397..74699|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccggggac...ggcctccagacgcccggaggagggctcagc
+ctcatctgcaaggcctccgggttcaccttc............agcagttattccatggag
+tgggtgcgacaggcgcccggcaaggggctggagtgggtcgctggtattgagaatgat...
+...ggtagtaccacattctacgggccggcggtggat...ggccgtgccaccatctcgaag
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcaccaaagctgctggt
+>IMGT000014|IGHV1-17*01|Gallus gallus_Red Jungle fowl|P|V-REGION|73900..74202|303 nt|1| | | | |303+24=327| | |
+ttctgggctggttctgatcttatgaga...tccctcttgacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttacagcataggt
+tggatgtgacaggtgcccggcaaagggctggagtgggtcggtgttattagcagcagt...
+...ggtagtagcacagcatatggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaaggtgctagt
+>IMGT000014|IGHV1-18*01|Gallus gallus_Red Jungle fowl|P|V-REGION|73272..73574|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agtgaccgtggcatgcac
+tgggtgcgccaggcgcccggcaaggggctggaatacgtcggtgctattagcggtgat...
+...ggtagtagcacaagttacgcacccgcggtgagg...ggccgtgccaccatctcgagg
+gacaatgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+atctactactgcgccaaagctgctggt
+>IMGT000014|IGHV1-19*01|Gallus gallus_Red Jungle fowl|P|V-REGION|72499..72801|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccggcttcaccttc............agcagttatgagatgcag
+tgggtgcgacaggcgcccggcaaagggctggagtgggtcgctggtattggcagcact...
+...ggtagtggcacaagatacgggtcggcggtgcag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccacaagtcctgga
+>IMGT000014|IGHV1-2*01|Gallus gallus_Red Jungle fowl|P|V-REGION|87193..87495|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcttcaacatgttc
+tgggtgcgacaggctccaggcaaggggctggaatacgtcgcagctattagcaatgat...
+...ggtagttggacaggctacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacactgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccagaggtggtggt
+>IMGT000014|IGHV1-20*01|Gallus gallus_Red Jungle fowl|P|V-REGION|71551..71853|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggatgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcttcaacatgttc
+tgggtgcgacaggcgcccggcaaagggctggaatacgtcgctcaaattagcagcact...
+...ggtagtagcacatactacgcgccggcagtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctacttctgcacgagaggtggtggt
+>IMGT000014|IGHV1-21*01|Gallus gallus_Red Jungle fowl|P|V-REGION|70774..71073|300 nt|1| | | | |300+24=324| | |
+ttctgggccagttctgatcttaggaga...tccctccagaaggccggagcagggctcagc
+ctcatctgcaaggcctccgggttcaccttc............agcagttatgccatgaac
+tgggtgcgacaggcgcctggcaaggggctggaatacgtcggtcttattagcagcagt...
+...ggtactaccacaaaatacggggcagcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaaattgct
+>M30325|IGHV1-21*02|Gallus gallus|P|V-REGION|1..257|257 nt|1| | | | |257+67=324|partial in 5'| |
+...........................................ccggagcagggctcagc
+ctcatctgcaaggcctccgggttcaccttc...............agttatgccatgaac
+tgggtgcgacaggcgcctggcaaggggctggaatacgtcggtcttattagcagcagt...
+...ggtactaccacaaaatacggggcagcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaaattgct
+>IMGT000014|IGHV1-22*01|Gallus gallus_Red Jungle fowl|P|V-REGION|70146..70448|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............atccatttctggatgaac
+tgggtgcgacaggcacccggcaaggggttggaattcatcgcgagtattagcaacact...
+...ggtagttacacagcatacggggcagcggtgaag...ggccgtgccaccatctcgagg
+gacgacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgtgccaaagattttggt
+>IMGT000014|IGHV1-23*01|Gallus gallus_Red Jungle fowl|P|V-REGION|69389..69691|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaagggctccgggttcaccttc............agcagttacgacatggcc
+tgggtgcgacaggagcccagcaaagggctggaatacgtcgcaagtattagcaatact...
+...ggtagtgacacatcatacgggccggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaaactacttgt
+>IMGT000014|IGHV1-25*01|Gallus gallus_Red Jungle fowl|P|V-REGION|67893..68195|303 nt|1| | | | |303+24=327| | |
+ttctgggccggttctgatcttatgaga...tccctcctgatgcccggaggagggctcagc
+cttgtctgcaaggcctccgggttcaccttc............agcagccatggcatgggc
+tgggtgcgacaggcacccggcaaggggctggaatacgtcgcaagtattagcagtgat...
+...ggtagtgacacatcatacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaagctgctggt
+>IMGT000014|IGHV1-26*02|Gallus gallus_Red Jungle fowl|P|V-REGION|67268..67567|300 nt|1| | | | |300+27=327| |rev-compl|
+gccgtgacgttggatgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttctccttc............agcagttacaccatgcag
+tgggtgcgccaggcgcccggcaaggggctggaatgggtcgctggtatttacagtggt...
+......agtagcacatactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+atctacttctgcgccaaaagtgctggt
+>IMGT000014|IGHV1-28*01|Gallus gallus_Red Jungle fowl|P|V-REGION|66100..66399|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcttctacatgttc
+tgggtgcgccaggcgcccggcaaggggctggaatacgtcgctcaaattagcagcact...
+...ggtagtagcacatactacgggtcgacggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-28N*01|Gallus gallus_Red Jungle fowl|P|V-REGION|31654..31953|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcttctacatgttc
+tgggtgcgccaggcgcccggcaaggggctggaatacgtcgctcaaattagcagcact...
+...ggtagtagcacatactacgggtcgacggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-3*01|Gallus gallus_Red Jungle fowl|P|V-REGION|86066..86368|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggaacgctcagc
+ctcgtctgcaagggctccgggttcaccttc............agcagcttctacatgttc
+tgggtgcaccaggcgcccggcaaggggctggaattcgtcgccagaattaacagtggt...
+...ggtagttacacagactacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacgatgggcagaacacactgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaatatgctggt
+>IMGT000007|IGHV1-30*01|Gallus gallus_Red Jungle fowl|P|V-REGION|48316..48615|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccggcttcaccttc............agcgattatggcatgggc
+tggatgcgacaggcacccggcaaggggctggagtacgtcactgctattaacaatttt...
+...ggcaatagcacgggctatgcggcggcggtgaag...ggccatgccaccatctcgagg
+gacaatgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-30*02|Gallus gallus_Red Jungle fowl|P|V-REGION|65138..65437|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccggcttcaccttc............agcgattatggcatgggc
+tggatgcgacaggcacccggcaaggggctggagtacgtcactgctattaacaatttt...
+...ggcaatagcacgggctatgcggcggcggtgaag...ggccatgccaccatctcgagg
+gacaatgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-30D*01|Gallus gallus_Red Jungle fowl|P|V-REGION|36774..37073|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccggcttcaccttc............agcgattatggcatgggc
+tggatgcgacaggcacccggcaaggggctggagtacgtcactgctattaacaatttt...
+...ggcaatagcacgggctatgcggcggcggtgaag...ggccatgccaccatctcgagg
+gacaatgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-30N*01|Gallus gallus_Red Jungle fowl|P|V-REGION|30692..30991|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccggcttcaccttc............agcgattatggcatgggc
+tggatgcgacaggcacccggcaaggggctggagtacgtcactgctattaacaatttt...
+...ggcaatagcacgggctatgcggcggcggtgaag...ggccatgccaccatctcgagg
+gacaatgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-31*01|Gallus gallus_Red Jungle fowl|P|V-REGION|64194..64496|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggaacgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcgtcaacatgttc
+tgggtgcgacaggcgcccggaaaggggctggaattcgtcgcgggtatttacagcact...
+...ggtagtggcacaggatacgcgccggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcactctgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaaactgctggt
+>IMGT000014|IGHV1-32*02|Gallus gallus_Red Jungle fowl|P|V-REGION|63422..63721|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaagggctccgggttcaccttc............agcagttatgccatgggt
+tggatgcgccaggcacccggcaaggggctggagtatgtcgcgggtattagaagtgat...
+...ggtagtaacccaaactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcaccagaagtgct
+>IMGT000014|IGHV1-34*01|Gallus gallus_Red Jungle fowl|P|V-REGION|62227..62526|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggaacgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagctatcagatgaac
+tggatccgacaggcgcccggcaaagggctggagttcgtcgctgctattaacagattt...
+...gggaatagcacgggtcatggggcggcagtgaag...ggccgtgtcaccatctcgagg
+gacgatgggcagagcacagtgaggctgcagctgagcaacctcagggctgaggacaccgcc
+acctactactgcgccaagggtgct
+>IMGT000014|IGHV1-35*01|Gallus gallus_Red Jungle fowl|P|V-REGION|61344..61643|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttctccatc............agcagttacgacatgggt
+tggatgcgccaggcgcccggcaaagggctggagttcgtcgcagttattaatgctgct...
+...ggtagtggcacaaactacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaagatgct
+>M30323|IGHV1-35*02|Gallus gallus|P|V-REGION|90..389|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttctccatc............agcagttacgacatgggt
+tggatgcgccaggcgcccggcaaagggctggagttcgtcgcagttattaatgctgct...
+...ggtagtggcacaaactacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaagatgct
+>IMGT000014|IGHV1-36*01|Gallus gallus_Red Jungle fowl|P|V-REGION|60844..61146|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccctc............agcagctacgacatgctc
+tgggtgcgacaggcgcccggcaaggggctggaattcgtcgctcaaattaccagtagt...
+...ggtggtagcacatactacggggcagcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccagagctccttgt
+>M30322|IGHV1-36*02|Gallus gallus|P|V-REGION|100..402|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccctc............agcagctaccacatgctc
+tgggtgcgacaggcgcccggcaaggggctggaattcgtcgctcaaattaccagtagt...
+...ggtggtagcacatactacggggcagcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccagagctccttgt
+>IMGT000014|IGHV1-38*01|Gallus gallus_Red Jungle fowl|P|V-REGION|59199..59501|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggtttgacttc............agcagtaatgccatgggt
+tgggtgcgacaggcgcccggcaaggggctggaatgggtcgctggtattgatgatgat...
+...ggtagtttcacactctacgcgccggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccagaagtcctggt
+>IMGT000014|IGHV1-39*01|Gallus gallus_Red Jungle fowl|P|V-REGION|58313..58615|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacaccgaaaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttacggcatgaac
+tgggtgcgacaggcgcccggcaaggggctggaattcgtcgcatgtattaatgctgct...
+...ggtagtagcacaaactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaagatgctagt
+>IMGT000014|IGHV1-4*01|Gallus gallus_Red Jungle fowl|P|V-REGION|84939..85241|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaagggctccgggttcaccttc............agcagcttcaacatgttc
+tgggtgcgacaggctccaggcaaggggctggaatacgtcgcagctattagcaatgat...
+...ggtagtagcacaagctacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcaccagaggtggtggt
+>IMGT000014|IGHV1-40*01|Gallus gallus_Red Jungle fowl|P|V-REGION|57816..58118|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagtaatgccatggag
+tgggtgcgccaggctcccggcaaggggctggagtgggtcgctggtattgagaatgat...
+...ggtagtagcacattctacgggccggcggtggat...ggccgtgccaccatctcaaag
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaagcttctggt
+>IMGT000014|IGHV1-41*01|Gallus gallus_Red Jungle fowl|P|V-REGION|56613..56915|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaagggctccgggttcgacttc............agcagttatgagatgcag
+tgggtgcgacaggcgcccggcaaggggctggagtgggtcggtgttattagcagcagt...
+...ggtagtagcacagcatatggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaaactacttgt
+>IMGT000014|IGHV1-42*01|Gallus gallus_Red Jungle fowl|P|V-REGION|55665..55970|306 nt|1| | | | |306+21=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggtttccgggttcttctccttc.........agcagttatgccatgatg
+tgggtgcgacagacacccagcaagagtctggagtgggtcgcgggtattagtggtgct...
+...ggtagtagcacatggtacgcgacggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcacccgatcttcttgt
+>IMGT000014|IGHV1-43*01|Gallus gallus_Red Jungle fowl|P|V-REGION|54540..54839|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttatggcatgcac
+tgggtgcgacaggcgcccggcaaggggctggagtggcttgcaggtatctacagtggc...
+...agtagttacatatactacgcgccggcggtgaag...ggccgtgccaccatctcaagg
+gatgacgggcagagcacgctgaagttggagctgatcaacatcactgctgaggacaccgcc
+acctacttctgtgcgaaaaatgat
+>IMGT000014|IGHV1-44*01|Gallus gallus_Red Jungle fowl|P|V-REGION|53754..54056|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccaaaggcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagccatggcatgttc
+tgggtgcgacaggcgcccggcaaggggctggaatacgtcgctgaaattaccagtact...
+...ggtagtgagacagcatacggggcggcggtgaag...ggccgtgccaccatctcgaag
+gacaacgggcagagcacagtgaggctgcagctgaacaaccccagggctgaggacaccggc
+acctactactgcgccaaaagcagttat
+>IMGT000014|IGHV1-45*01|Gallus gallus_Red Jungle fowl|P|V-REGION|52754..53053|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttatggcatgcac
+tgggtgcgacaggcgcccggcaaggggctggagtggcttgcaggtatctacagtggc...
+...agtagttacatatactacgcgccggcggtgaag...ggccgtgccaccatctcaagg
+gatgacgagcagagcacgctgaagttggagctgatcaacatcactgctgaggacaccgcc
+acctacttctgtgcgaaaaatgat
+>IMGT000014|IGHV1-46*01|Gallus gallus_Red Jungle fowl|P|V-REGION|51968..52270|303 nt|1| | | | |303+24=327| | |
+gctgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcactcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagccatggcatgttc
+tgggtgcgacaggcgcccggcaaggggttggaatatgtcgctgaaattaccagtact...
+...ggtagtgagacagcatacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaaccccagggctgaggacaccggc
+acctactactgcgccaaaagcagttat
+>IMGT000014|IGHV1-47*01|Gallus gallus_Red Jungle fowl|P|V-REGION|50968..51267|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttatggcatgcac
+tgggtgcgacaggcgcccggcaaggggctggagtggcttgcaggtatctacagtggc...
+...agtagttacatatactacgcgccggcggtgaag...ggccgtgccaccatctcaagg
+gatgacgagcagagcacgctgaagttggagctgatcaacatcactgctgaggacaccgcc
+acctacttctgtgcgaaaaatgat
+>IMGT000014|IGHV1-48*01|Gallus gallus_Red Jungle fowl|P|V-REGION|50185..50487|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccaaaggcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagccatggcatgttc
+tgggtgcgacaggcgcccggcaaggggctggaatacgtcgctgaaattaccagtact...
+...ggtagtgagacagcatacggggcggcggtgaag...ggccgtgccaccatctcgaag
+gacaacgggcagagcacagtgaggctgcagctgaacaaccccagggctgaggacaccggc
+acctactactgcgccaaaagcagttat
+>IMGT000014|IGHV1-49*01|Gallus gallus_Red Jungle fowl|P|V-REGION|49185..49484|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttatggcatgcac
+tgggtgcgacaggcgcccggcaaggggctggagtggcttgcaggtatctacagtggc...
+...agtagttacatatactacgcgccggcggtgaag...ggccgtgccaccatctcaagg
+gatgacgagcagagcacgctgaagttggagctgatcaacatcactgctgaggacaccgcc
+acctacttctgtgcgaaaaatgat
+>IMGT000014|IGHV1-5*01|Gallus gallus_Red Jungle fowl|P|V-REGION|83812..84114|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaagggctccaggttcaccttc............agcagttatggcatggga
+tggatgcgccaggcgcccggcaaggggctggaattcgtcgccagaattaacagtggt...
+...ggtagttacacagactacggggcagcggtgaag...ggccgtgccaccatctcgagg
+gacgacgggcagagcacactgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaagctgctggt
+>IMGT000014|IGHV1-50*01|Gallus gallus_Red Jungle fowl|P|V-REGION|48399..48701|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggatgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccatg............agcagttatgagatgcag
+tgggtgcgacaggcgcccggcaaagggctggagtgggtcgctggtattggcagcact...
+...ggtagtggcacaagatacgggtcggcggtgcag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaaagcagttat
+>IMGT000014|IGHV1-51*01|Gallus gallus_Red Jungle fowl|P|V-REGION|47429..47728|300 nt|1| | | | |300+27=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttctccatc............agcagttacaccatgcag
+tgggtgcgccaggcgcccggcaaggggctggaatgggtcgctggtatttacagtggt...
+......agtagcacatactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+atctacttctgcgccaaaagtgctgct
+>M30329|IGHV1-51*02|Gallus gallus|P|V-REGION|24..323|300 nt|1| | | | |300+27=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttacaccatgcag
+tgggtgcgccaggcgcccggcaaggggctggagtgggtcgctggtatttacagtggt...
+......agtagcacatactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctacttctgcgccaaaagtgctgct
+>IMGT000014|IGHV1-53*01|Gallus gallus_Red Jungle fowl|P|V-REGION|46261..46560|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacattggacgagtccgggggc...ggcctccagacgcccgggggagcgctcagc
+ctcgtctgcaagggctccgggttcaccttc............agcagcttctacatgttc
+tgggtgcgccaggcgcccggcaaggggctggaatacgtcgctcaaattagcagcact...
+...ggtagtagcacatactacgcgccggcagtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacacctcc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-54*01|Gallus gallus_Red Jungle fowl|P|V-REGION|45312..45611|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcgattatggcatgggc
+tggatgcgacaggcacccgggaaggggctggaatacgtcgctgctattaacagtttt...
+...ggcaatagcacgggctatgcggcggcggtgaag...ggccgtgccaccatctcgagg
+gacagcgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-55*01|Gallus gallus_Red Jungle fowl|P|V-REGION|44989..45291|303 nt|1| | | | |303+24=327| |rev-compl|
+aggacagaggtgtggaggtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcttcaacatgttc
+tgggtgcgacaggcgcccagcaaggggctggaattcgtcgcagctattagcagcact...
+...ggtagttacacaagctacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcaccagaagtcctggt
+>IMGT000014|IGHV1-56*01|Gallus gallus_Red Jungle fowl|P|V-REGION|44240..44542|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctctgggttcaccttc............agcgattatggcatgggt
+tggatgcggcaggctcccggcaaagggctgcaatatgttgccagaattaacagtgct...
+...ggtagttacacaaactacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacactgaggctgcagctgaacaacctcagggctgaggacaccggc
+atctactactgcacgagaggtggtgct
+>IMGT000014|IGHV1-57*01|Gallus gallus_Red Jungle fowl|P|V-REGION|43611..43913|303 nt|1| | | | |303+24=327| |rev-compl|
+ttctgggctggttctgatcttatcaga...tccctccagatgcccggaggagggctcagc
+ctcgtctgcaagggctccgggtacaccttc............agcagttacgccatgaac
+tgggtgcgacaggcgcccggcaaggggctggagtgggtcgctggtattggcagcact...
+...ggtagtagcacaggatatgggccggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccagagctgctggt
+>IMGT000014|IGHV1-58*01|Gallus gallus_Red Jungle fowl|P|V-REGION|42844..43146|303 nt|1| | | | |303+24=327| | |
+ttctgggccggttctgatcttatgaga...tccctccagaagcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agtggtttcctcatgttc
+tgggtgcgccaggcgcccagcaaggggctggaatacgtcgcagttattagccctgat...
+...ggtagtaccccaaaatacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacgacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaaaatgctgat
+>IMGT000014|IGHV1-59*01|Gallus gallus_Red Jungle fowl|P|V-REGION|42222..42518|297 nt|1| | | | |297+24=321| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccaggttcaccttc............agtgattataacatgggt
+tggatgtgacatgcgcccggcaaagggctggagtctgtcgcgggtattagcagtgat...
+...ggtagtagcacaggctacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagctcagtgaggctgcagctgaacaacctcaaggctgaggacaccggc
+atctacttctgcacgagatgt
+>IMGT000014|IGHV1-6*01|Gallus gallus_Red Jungle fowl|P|V-REGION|82685..82987|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccaggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaagggctccgggttcaccttc............agcagttatggcatgcag
+tgggtgcgccaggcgcccggcaaggggctggagtgggtcgctggtattgagaatgat...
+...ggtagtagcacatggtacgcgacggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacactgaggctgcagctgaacaacctcagggctgaggacactgcc
+acctcctactgtgccagagttacacgt
+>IMGT000014|IGHV1-60*01|Gallus gallus_Red Jungle fowl|P|V-REGION|41272..41571|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctctgggttcaccttc............agcgattatggcatgggc
+tggatgagacaggcacccggcaaggggctggaatacgtcactgctattaacagtttt...
+...ggcaatagcacgggctatgcggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcacgaaatgtgct
+>M30335|IGHV1-60*02|Gallus gallus|P|V-REGION|100..399|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctctgggttcaccttc............agcgattatggcatgggc
+tggatgcgacaggcacccggcaaggggctggaatacgtcactgctattaacaatttt...
+...ggcaatagcacgggctatgcggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcacgaaatgtgct
+>IMGT000014|IGHV1-61*02|Gallus gallus_Red Jungle fowl|P|V-REGION|40325..40630|306 nt|1| | | | |306+21=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggtttttcttcttt.........agcagttatgccatgatg
+tgggtgcgacagacacccagcaagagtctgtagtggatcgctggtattagaggtgct...
+...ggtagtagcacatggtacgcgacagcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgtgccaaaagtgctgat
+>M30337|IGHV1-61*03|Gallus gallus|P|V-REGION|7..312|306 nt|1| | | | |306+21=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcactcagc
+ctcgtctgcaaggcctccgggtttttcttcttt.........agcagttatgccatgatg
+tgggtgcgacagacacccagcaagagtctgtagtggatcgctggtattagaggtgct...
+...ggtagtagcacatggtacgcgacggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgtgccaaaagtgctgat
+>IMGT000014|IGHV1-61-1*01|Gallus gallus_Red Jungle fowl|P|V-REGION|39548..39850|303 nt|1| | | | |303+24=327| | |
+ttctgggccggttctgatcttatgaga...tccctcctgatgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agtggttacctcatgttc
+tgggtgcgccaggcgcccagcaaggggctggaatacgtcgcagttattagccctgat...
+...ggtagtaccccaaaatacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacgacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+atctactactgcgccaaagctgctggt
+>IMGT000014|IGHV1-61-2*01|Gallus gallus_Red Jungle fowl|P|V-REGION|38923..39222|300 nt|1| | | | |300+27=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacacccggaggagggctcagc
+ctcgtctgcaaggcctccgggttctccatc............agcagttacaccatgcag
+tgggtgcgccaggcgcccggcaagggactggaatgggtcgctggtatttacagtggt...
+......agtagcacatactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+atctacttctgcgccaaaagtgctgct
+>IMGT000014|IGHV1-62*01|Gallus gallus_Red Jungle fowl|P|V-REGION|29748..30050|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggaacgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcgtcaacatgttc
+tgggtgcgacaggcgcccggaaaggggctggaattcgtcgcgggtatttacagcact...
+...ggtagtggcacaggatacgcgccggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcactctgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaaactgctggt
+>IMGT000014|IGHV1-62D*01|Gallus gallus_Red Jungle fowl|P|V-REGION|35831..36133|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggaacgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcgtcaacatgttc
+tgggtgcgacaggcgcccggaaaggggctggaattcgtcgcgggtatttacagcact...
+...ggtagtggcacaggatacgcgccggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcactctgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaaactgctggt
+>IMGT000014|IGHV1-62D-2*01|Gallus gallus_Red Jungle fowl|P|V-REGION|34328..34627|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcgacttc............agcagttacgacatggcc
+tgggtgcgacaggagcccagcaaagggctggaatacgtcgcaagtattagcagtgat...
+...ggtagtgacacatcatacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcacgagagttggt
+>IMGT000014|IGHV1-62D-3*01|Gallus gallus_Red Jungle fowl|P|V-REGION|33578..33877|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggaacgctcagc
+ctcgtctgcaaggcctccgggtttgacttc............agcagttacgacatggcc
+tgggtgcaacaggagcccagcaaagggctggagttcgtcgctgctattaacagattt...
+...gggaatagcacgggttatggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacgatgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctacttctgcacaaaacttgct
+>IMGT000014|IGHV1-63*02|Gallus gallus_Red Jungle fowl|P|V-REGION|28975..29274|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttatgccatgggt
+tggatgcgccaggcacccggcaaggggctggagtatgtcgcgggtattagaagtgat...
+...ggtagtaacccaaactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcaccagaagtgct
+>IMGT000007|IGHV1-70*01|Gallus gallus_Red Jungle fowl|P|V-REGION|17144..17446|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacaccgaaaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttacggcatgaac
+tgggtgcgacaggcgcccggcaaggggctggaattcgtcgcatgtattaatgctgct...
+...ggtagtagcacaaactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaagatgctagt
+>IMGT000007|IGHV1-71*01|Gallus gallus_Red Jungle fowl|P|V-REGION|16647..16949|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccaggttcaccttc............agcagtaatgccatggag
+tgggtgcgccaggctcccggcaaggggctggagtgggtcgctggtattgagaatgat...
+...ggtagtagcacattctacgggccggcggtggat...ggccgtgccaccatctcaaag
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaagcttctggt
+>IMGT000014|IGHV1-72*01|Gallus gallus_Red Jungle fowl|P|V-REGION|22180..22482|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaagggctccgggttcgacttc............agcagttatgagatgcag
+tgggtgcgacaggcgcccggcaaggggctggagtgggtcggtgttattagcagcagt...
+...ggtagtagcacagcatatggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaaactacttgt
+>IMGT000014|IGHV1-73*01|Gallus gallus_Red Jungle fowl|P|V-REGION|21233..21538|306 nt|1| | | | |306+21=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggtttccgggttcttctccttc.........agcagttatgccatgatg
+tgggtgcgacagacacccagcaagaggctggagtgggtcgcgggtattagtggtgct...
+...ggtagtagcacatggtacgcgacggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcacccgatcttcttgt
+>IMGT000014|IGHV1-74*01|Gallus gallus_Red Jungle fowl|P|V-REGION|20102..20401|300 nt|1| | | | |300+24=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggaggactcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttatggcatgcac
+tgggtgcgccaggcgcccggcaaggggctggagtggcttgcaggtatctacagtggc...
+...agtagttacatgtactacgcgccggcggtgaag...ggccgtgccaccatctcaagg
+gatgacgagcagagcacgctgaagttggagctgatcaacatcactgctgaggacaccgcc
+acctacttctgtgcgaaaaatgat
+>IMGT000014|IGHV1-75*01|Gallus gallus_Red Jungle fowl|P|V-REGION|19316..19618|303 nt|1| | | | |303+24=327| | |
+gccgtgacattggacgagtccgggggc...ggcctccaaacgcccggaggagggctcagc
+ctcatctgcaaggcctccgggttcaccttc............agcagccatggcatgttc
+tgggtgcgacaggcgcccggcaaggggctggaatatgtcgctgaaattaccagtact...
+...ggtagtgagacagcatacggggcggcggtggat...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaaccccagggctgaggacaccgcc
+acctactactgcgccaaaagcagttat
+>IMGT000014|IGHV1-76*01|Gallus gallus_Red Jungle fowl|P|V-REGION|18315..18617|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttctccttc............agtgaccgtggcatgcac
+tgggtgcgacaggcacccggcaaggggctggagtgggtcgcgggtatttacagcagt...
+...ggtagtagcacatactacgcgccggcggtgaag...ggccgtgccaccatcacgagg
+gacgtcgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaagagtctggt
+>IMGT000014|IGHV1-77*01|Gallus gallus_Red Jungle fowl|P|V-REGION|17745..18044|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcatctgcaaggcctccgggttctctatc............ggcggttacatcatgcac
+tgggtgcgccaggcgcccggaaaggggctggaatacgttgcgggtattgatgctggt...
+...ggtggcgtcacatggtatggggcagcggtgaag...ggccgtgccaccatcacgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcgccaaggatggt
+>IMGT000014|IGHV1-78*01|Gallus gallus_Red Jungle fowl|P|V-REGION|16730..17032|303 nt|1| | | | |303+21=324| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggaacgctcagc
+ctcgtctgcaagggctccgggttcaccttc............agtgaccgtggcatgggt
+tgggtgcgacaggcgcctggcaaggggctggaatacgtcgccagtattagcagtggtagt
+...ggtagtagcacagcatacgggttggcagtgaag...ggccgtgccaccatctcgagg
+gacgatgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccagaagtcat
+>IMGT000014|IGHV1-79*01|Gallus gallus_Red Jungle fowl|P|V-REGION|15447..15746|300 nt|1| | | | |300+24=324| |rev-compl|
+gaacctgtgtgtgacgtcgcactgaca...cggctccggatgcccagaagagggctcagc
+ctcatctgcaaggcctccgggttcaccttc............agcagcttccacatgttc
+tgggtgcgacaggagcccggcaaagggctggagtgggtcgctggtattgatgatggt...
+...ggtagttacacaggatatggggcggcggtggat...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacactgcc
+acctactactgcgccagagattat
+>IMGT000014|IGHV1-80*01|Gallus gallus_Red Jungle fowl|P|V-REGION|13889..14188|300 nt|1| | | | |300+24=324| | |
+atcagggccgattcttttctcatgaga...tccctccagaagcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttactgcatgcag
+tgggtgcgacaggcgcccggcaaggggctggaatgggtcgctgctattgatgatgat...
+...ggtagtttcacactctacggggcggtggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaagggtgct
+>IMGT000014|IGHV1-81*01|Gallus gallus_Red Jungle fowl|P|V-REGION|11477..11779|303 nt|1| | | | |303+24=327| |rev-compl|
+gccgtgacgttggacgagtccgggggc...ggcctccatacacccggaggagcgctcagc
+ctcgtctgcaagggctccgggttcacctta............agcagttacagcatgggt
+tgggtgcgacaggcgcctggcaaagggctggaatgggtcgctggtattgatgatgat...
+...ggtagtttcacagcatacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctattactgcgccaaaagtgctggt
+>IMGT000014|IGHV1-9*01|Gallus gallus_Red Jungle fowl|P|V-REGION|80839..81138|300 nt|1| | | | |300+24=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccggcttcaccttc............agcagttacgccatgtac
+tgggtgcgacaggcgcccggcaaagggttggagtgggtcgcctatattaacagtggt...
+...ggtggtagcacatactacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctacttctgcgccaaagatgtt
+>M30319|IGHV1S1*01|Gallus gallus|F|V-REGION|344..646|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaagagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagttacaacatgggt
+tgggtgcgacaggcgcccggcaaggggctggagttcgtcgctggtattgacaacact...
+...ggtagatacacaggctacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaagctgctggt
+>M30334|IGHV1S10*01|Gallus gallus|P|V-REGION|8..310|303 nt|1| | | | |303+24=327| | |
+gccgtgacattggacgagtccgggggc...ggcctccagacgcccggaagagcgctcagc
+ctcgtctgcaagggctccgggttcaccttc............agcagcttctacatgttc
+tgggtgcgccaggcgcccggcaaggggctggaatacgtcgctcaaattagcagcact...
+...ggtagtagcacatactacgcgccggcagtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcacgagaggtggtgct
+>M30326|IGHV1S2*01|Gallus gallus|P|V-REGION|93..395|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcatctgcaaggcctccggatacagcttc............atccatttctggatgaac
+tgggtgcgacaggcgcccggcaaggggttggaattcatcgccagtattagcaacact...
+...ggtagttacacagcatacggggcggcggtgaag...ggccgtgccaccatctcgagg
+gacgacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctacttatgtgccagagattttggt
+>M30327|IGHV1S3*01|Gallus gallus|P|V-REGION|91..393|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcttcaacatgttc
+tgggtgcgacaggcgcccggcaaggggctggaatacgtcgctgaaattagcggcact...
+...ggtagtagcacatactacgcgccggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcgccaaagctgctggt
+>M30328|IGHV1S4*01|Gallus gallus|P|V-REGION|81..383|303 nt|1| | | | |303+24=327| | |
+gccgtgagattggacaagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcatctgcaaggcctccgggttcaccttc............agcagttattccatggag
+tgggtgcgccaggcgcccggcaaggggctggagtgggtcgctggtattgagaatgat...
+...ggtagtaccacattctacgggccggcggtggat...ggccgtgccaccatctcgaag
+gacaacgggcagagcacagtgaggctgctgctgaacaacctcagggctgaggacaccgcc
+acctactactgcaccagagctccttgt
+>M30330|IGHV1S5*01|Gallus gallus|P|V-REGION|1..285|285 nt|1| | | | |285+42=327|partial in 5'| |
+..................tttatgaga...tccctcctgatgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagccatggcatgggc
+tgggtgcgacaggcacccggcaaggggctggaatatgtcggtgttattagcagcagt...
+...ggtagtaccacaaaatacggggtagcggtgcag...ggccgtgccaccatctcgaag
+gacaatgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcacgagaggtggtgct
+>M30338|IGHV1S7*01|Gallus gallus|P|V-REGION|98..394|297 nt|1| | | | |297+27=324| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagggctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagtttctacatgtac
+tgggtgcgccaggcgcccggcaaggggctggaattcgtcgctcaaattaccagtagt...
+......ggtagcacatactacgggtcggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacacctcc
+acctacttctgcacgagatgtgct
+>M30339|IGHV1S8*01|Gallus gallus|P|V-REGION|20..322|303 nt|1| | | | |303+24=327| | |
+gccgtgacgttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggtctccgggttcgacttc............agcagttacgacatgtac
+tgggtgcaacaggagcccagcaaagggctggaatacgtcgctcaaattagcagcact...
+...ggtagtagcacatactacgcgccggcagtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccgcc
+acctactactgcacgagaggtggtggt
+>M30331|IGHV1S9*01|Gallus gallus|P|V-REGION|1..295|295 nt|1| | | | |295+32=327|partial in 5'| |
+........gttggacgagtccgggggc...ggcctccagacgcccggaggagcgctcagc
+ctcgtctgcaaggcctccgggttcaccttc............agcagcgtcaacatgttc
+tgggtgcgacaggcgcccggaaaggggctggaattcgtcgcgggtatttacagcact...
+...ggtagtggcacaggatatgcgccggcggtgaag...ggccgtgccaccatctcgagg
+gacaacgggcagagcacagtgaggctgcagctgaacaacctcagggctgaggacaccggc
+acctactactgcacgaaatgtgcttac

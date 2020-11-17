@@ -1,0 +1,228 @@
+>AF003840|IGHJ1*01|Hydrolagus collie|F|J-REGION| | | | | | | | | | |
+actataacccttactactggggacgaggcacgaaggtgacggtgactgaag
+>AF336087|IGHJ1*01|Orectolobus maculatus|(F)|J-REGION| | | | | | | | | | |
+cccgagaaaggagttggcaccgtactgaccgtgaga
+>L38965|IGHJ1*01|Ginglyomostoma cirratum|F|J-REGION| | | | | | | | | | |
+acagctatgaatacggaggtggcactgtcgtgactgtaaatcct
+>U08009|IGHJ1*01|Raja eglanteria|F|J-REGION| | | | | | | | | | |
+tcttgactactggggtgcaggaacctcgctgacagagacttcag
+>U40560|IGHJ1*01|Carcharhinus plumbeus|(F)|J-REGION| | | | | | | | | | |
+tttgattattgggggaatggaaccttcgtggaagtgacttca
+>U50611|IGHJ1*01|Carcharhinus leucas|(F)|J-REGION| | | | | | | | | | |
+tatcttgattattgggggagcggaaccttcgtggaagtcaattca
+>X13447|IGHJ1*01|Heterodontus francisci|F|J-REGION| | | | | | | | | | |
+acgccatggactactggggacaagggaccatggtgacggtgactgcag
+>X15124|IGHJ1*01|Leucoraja erinacea|(F)|J-REGION| | | | | | | | | | |
+actatcttgactactggggagaaggcaccatggtgacggtaaccagcg
+>AF003856|IGHJ10*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+tatcttgactactggggacaaaggaccatgctgacagtgaatgac
+>U18717|IGHJ10*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcatgcggagatggcactttcgtgactgtgaatcct
+>Z11784|IGHJ10*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+ctcgactactggggacaagggaccatggtgacggtgactgca
+>AF003857|IGHJ11*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+gactactggggacaagggaccatgctgacagtgactgac
+>U18686|IGHJ11*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tacggagctgacactgtcgtgactgtcaatcct
+>Z11785|IGHJ11*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+atctcgactactggggacaagggaccatggtgacggtgactgaa
+>AF003858|IGHJ12*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+tatcttgactactggggacaagggaccatgctcacagtgactgac
+>U18687|IGHJ12*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcatgtggagctggcactgccgtgactgtgaatcct
+>Z11786|IGHJ12*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+ctatctcgactactggggacaagggaccatggtgacggtgactgta
+>AF003859|IGHJ13*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+tatcttgactactggggacaagggaccatgctgacagtgactgac
+>U18714|IGHJ13*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tacggcagtggcactgtactgactgtgaatcct
+>Z11787|IGHJ13*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+actatctcgactactggggacaagggaccatggtgacggtaagtgca
+>AF003860|IGHJ14*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+tatcttgactactggggacaagggaccatgctgacagtgactgac
+>U18718|IGHJ14*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcatgcggagatggcactgccgtgactgtgaatcct
+>Z11788|IGHJ14*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+ctatctcgactactggggacaagggaccatggtgacggtgactgca
+>AF003861|IGHJ15*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+tatcttgaatactggggacaagggaccatgctgacagtgactgac
+>U18713|IGHJ15*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tacggaggtggcactgtcgtgactgtcaatcct
+>Z11789|IGHJ15*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+ctcgactactggggacaggggaccatggtgacggtgactgca
+>U18700|IGHJ16*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+atctatgatgaatgcggagatggcactgccgtgactgtgaatcct
+>Z11791|IGHJ16*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+caccatggactactggggacaagggaccatggtgacggtgacttca
+>U18702|IGHJ17*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggagatggcactgtcgtgactgtgaatcct
+>Z11792|IGHJ17*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+tggactactggggacaagggaccatggtgacggtgactgta
+>U18715|IGHJ18*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggaggtggcactgtcgtgactgtgaatcct
+>X03748|IGHJ18*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+tactattttgacttttggggacaagggaccatggtgacggtgactgca
+>U18726|IGHJ19*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tacggaggtggcactgtcgtgactgtgaatcct
+>AF003946|IGHJ2*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+gactactggggacaaggcaccatggtgacagtgactgacg
+>AF336088|IGHJ2*01|Orectolobus maculatus|(F)|J-REGION| | | | | | | | | | |
+gtgtggtggggagctggcaccgtactgaccgtgaaa
+>L38966|IGHJ2*01|Ginglyomostoma cirratum|F|J-REGION| | | | | | | | | | |
+acagctttgatgaatacggaggtggcactgtcgtgactg
+>U08010|IGHJ2*01|Raja eglanteria|(F)|J-REGION| | | | | | | | | | |
+cttgactactggggtgcaggaacctcgctgacagtgacttca
+>U50605|IGHJ2*01|Carcharhinus plumbeus|(F)|J-REGION| | | | | | | | | | |
+tttgatttttgggggagcggaaccttcgtggaagtgacttca
+>U50612|IGHJ2*01|Carcharhinus leucas|(F)|J-REGION| | | | | | | | | | |
+gattattgggggagcggaaccttcgtggaagtgacttca
+>X13449|IGHJ2*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+tctatggactactggggacaagggaccatggtgacagtgactgca
+>X15125|IGHJ2*01|Leucoraja erinacea|(F)|J-REGION| | | | | | | | | | |
+actctcctaactactggggaggaggcagcatggtgacggtaacctgcg
+>U18693|IGHJ20*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcagtaggagatggcactgccgtgactgtgaatcct
+>U18725|IGHJ21*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggagagggcactgccgtgactgtcaaccct
+>U18685|IGHJ22*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gctgcatgcggtcatggcactgccgtgactgtgacttct
+>U18688|IGHJ23*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tacggaggtggcactgtcgtgactgtgaatcct
+>U18724|IGHJ24*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggcgacggcactaccgtgactgttcatcct
+>U18696|IGHJ25*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcctgcggacctggcactaccgtgactgtgaatcct
+>U18705|IGHJ26*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcatgcggacatggcactgccgtgactgtgaatgcc
+>U18703|IGHJ27*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcatgcggtcatggaactgccgtgactgtgaatcct
+>U18682|IGHJ28*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggagatggaactgccgtgacggtgaatcct
+>U18706|IGHJ29*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcatgcggagatgccactgccgtgactgtgaatcct
+>AF003839|IGHJ3*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+cttgactactggggacaagggaccatgctgacagtgactgac
+>AF336089|IGHJ3*01|Orectolobus maculatus|(F)|J-REGION| | | | | | | | | | |
+gactataaaggaggtgacacccttttgaccgtgaaa
+>L38967|IGHJ3*01|Ginglyomostoma cirratum|F|J-REGION| | | | | | | | | | |
+acagctatgaatacggaggtggcactgtcgtgactg
+>U08011|IGHJ3*01|Raja eglanteria|(F)|J-REGION| | | | | | | | | | |
+tcttgactactggggtgcaggaacctcgctgacagtgacttca
+>U50604|IGHJ3*01|Carcharhinus plumbeus|(F)|J-REGION| | | | | | | | | | |
+tttgattactgggggagcggaaccttcgtggaagtgacttca
+>U50613|IGHJ3*01|Carcharhinus leucas|(F)|J-REGION| | | | | | | | | | |
+tatcttgattattgggggagcggaacctccctggaagtgacttca
+>X16146|IGHJ3*01|Leucoraja erinacea|(F)|J-REGION| | | | | | | | | | |
+tatcctgactactggggaggaggaaccatggtgacggtaaccagcg
+>Z11777|IGHJ3*01|Heterodontus francisci|F|J-REGION| | | | | | | | | | |
+actatctcgactactggggacaagggaccatggtgacggtgactgcag
+>U18704|IGHJ30*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcatgtggagatggcactgtcgtgactgtgagtcct
+>U18681|IGHJ31*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggagatggcactgccgtgactgtgaatcct
+>U18684|IGHJ32*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcatgcggagatggcactgccgtgactgtgaatcct
+>U18708|IGHJ33*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggagataacactgccgtgactgtgaatcct
+>U18722|IGHJ34*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcatgcggacatggcactacagtgactgtcgctcca
+>U18683|IGHJ35*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggagatggcactgttttgactgtgaatcct
+>U18690|IGHJ36*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gctgcatgcggagatggcactgccgtgactgtgaatcct
+>U18695|IGHJ37*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcatgcggactcggcactgccgtgactgtgaatcct
+>U18712|IGHJ38*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcgtgcggagatggcactgccgtgactgtgaatcct
+>U18719|IGHJ39*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gctgcatgcggagatggcactgccgtgactgtgaatcct
+>AF004359|IGHJ4*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+gactactggggacaaggcaccatggtgacagtgactgac
+>AF336090|IGHJ4*01|Orectolobus maculatus|(F)|J-REGION| | | | | | | | | | |
+gaaagacctggcaccgcattaaccgtgaaa
+>L38968|IGHJ4*01|Ginglyomostoma cirratum|F|J-REGION| | | | | | | | | | |
+acaactatgctgcatgcggcgacggcactgccgtgactt
+>M29672|IGHJ4*01|Leucoraja erinacea|(F)|J-REGION| | | | | | | | | | |
+tggcttgagtactggggtgcaggaacctcgctgacagtgacttca
+>U08012|IGHJ4*01|Raja eglanteria|(F)|J-REGION| | | | | | | | | | |
+cttgaatactggggtgcaggaacctcgctgacagtgacttca
+>U50607|IGHJ4*01|Carcharhinus plumbeus|(F)|J-REGION| | | | | | | | | | |
+ggggattattgggggaagggaaccttcgtggaagtgacttca
+>U50614|IGHJ4*01|Carcharhinus leucas|(F)|J-REGION| | | | | | | | | | |
+cttgatggttggggaagcggaaccttcttggaagtgactcca
+>Z11776|IGHJ4*01|Heterodontus francisci|F|J-REGION| | | | | | | | | | |
+acatcatggactactggggacaagggaccatggtgacggtgactgcag
+>U18691|IGHJ40*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tacggaggtggcactgtcgtgactgtgaatcct
+>U18694|IGHJ41*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcatgcggagatggcactgccgtgactgtgaatcct
+>U18720|IGHJ42*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gctgcatgcggagatggcactgccgtgactgtgaatcct
+>U18698|IGHJ43*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggaggcggcactgacgtgactgtgaatacg
+>U18692|IGHJ44*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gctgcatgcggagatggcactgccgtgactgtgaat
+>U18707|IGHJ45*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcatgcggagatggcactgc.gtgactgtgaatcct
+>U18699|IGHJ46*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcatgtggagatggcacctccgtgactgtgaatcct
+>U18710|IGHJ47*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcatgcggagatggcactgccgtgactgtgaatcct
+>U18689|IGHJ48*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gctgcctgcggagagggcactgccgtgactgtgaatcct
+>U18709|IGHJ49*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatgctgcatgcggggacggcactaccgtgactgtgaagcct
+>AF004360|IGHJ5*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+gactactggggacaaggcaccatggtgacagtgactgac
+>AF336091|IGHJ5*01|Orectolobus maculatus|(F)|J-REGION| | | | | | | | | | |
+tacgagaaaggagctggcaccgtactgaccgtgaaa
+>M29679|IGHJ5*01|Leucoraja erinacea|(F)|J-REGION| | | | | | | | | | |
+actatctcgactactggggacaagggaccatggtgacggtgactgca
+>M92851|IGHJ5*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+ggttactggggacaaggaaccatggtgaccgtgactaca
+>U50606|IGHJ5*01|Carcharhinus plumbeus|(F)|J-REGION| | | | | | | | | | |
+tcacgttattgggggagcggaaccttcgtggaagtgacttca
+>X13448|IGHJ5*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+acaccatggactactggggacaagggaccatggtgacggtgactgcag
+>U51450|IGHJ50*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+cttgactactggggagacggaacctttctggaagtgacttca
+>U18697|IGHJ51*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tgcggagatggcactgccgtgactgtgaaccct
+>U18723|IGHJ52*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcatgcggagatggcactgccgtgactgtgaatcct
+>AF003853|IGHJ6*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+aacccttactactggggacgaggcacgaaggtgacagtgactgaa
+>AF327520|IGHJ6*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcgttggactactggggacaagggaccagagtaacggtaact
+>AF336092|IGHJ6*01|Orectolobus maculatus|(F)|J-REGION| | | | | | | | | | |
+aacgagaaaggagctggcaccgtactgaccgtgaaa
+>U50608|IGHJ6*01|Carcharhinus plumbeus|(F)|J-REGION| | | | | | | | | | |
+tttgattattgggggagcggaaccttcatggaagtgacttca
+>Z11779|IGHJ6*01|Heterodontus francisci|F|J-REGION| | | | | | | | | | |
+actatctcgactactggggacaagggaccatggtgacggtgactgcag
+>AF003841|IGHJ7*01|Hydrolagus collie|F|J-REGION| | | | | | | | | | |
+actaccttgactgctggggacaaggcaccatggtgacagtgactaacg
+>AF336093|IGHJ7*01|Orectolobus maculatus|(F)|J-REGION| | | | | | | | | | |
+gacgaggaaggggctggcaccgtactgaccgtgaaa
+>U18701|IGHJ7*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+gcatgcggatcaggcactgccgtgactgttactcct
+>U50609|IGHJ7*01|Carcharhinus plumbeus|(F)|J-REGION| | | | | | | | | | |
+tttgattattgggggaatggaaccttcgtggaagtgacttca
+>Z11781|IGHJ7*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+tatctcgactactggggacaagggaccatggtgacggtgactgca
+>AF003854|IGHJ8*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+gactactggggacaagggaccatgctgacagtgaatgat
+>AF336094|IGHJ8*01|Orectolobus maculatus|(F)|J-REGION| | | | | | | | | | |
+gggggagctggcaccgtattaaccgtgaaa
+>U18680|IGHJ8*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tacggaggtggcactggcgtgactgtgaatcct
+>U50610|IGHJ8*01|Carcharhinus plumbeus|(F)|J-REGION| | | | | | | | | | |
+tttgatgtctgggggaatggaaccttcgtggaagtgacttca
+>Z11782|IGHJ8*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+ctcgctcactggggacaagggaccatggtgacggtgactgca
+>AF003855|IGHJ9*01|Hydrolagus collie|(F)|J-REGION| | | | | | | | | | |
+gactactggggacaagggaccatgctgacagtgaatgat
+>U18716|IGHJ9*01|Ginglyomostoma cirratum|(F)|J-REGION| | | | | | | | | | |
+tatggaggtggcactgtcgtgactgtgaatcct
+>Z11783|IGHJ9*01|Heterodontus francisci|(F)|J-REGION| | | | | | | | | | |
+actacctcgactactggggacaagggaccatggtgacggtgactgca
