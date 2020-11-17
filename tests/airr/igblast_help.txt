@@ -1,0 +1,249 @@
+USAGE
+  igblastn [-h] [-help] [-germline_db_V germline_database_name]
+    [-num_alignments_V int_value] [-germline_db_V_seqidlist filename]
+    [-germline_db_D germline_database_name] [-num_alignments_D int_value]
+    [-germline_db_D_seqidlist filename]
+    [-germline_db_J germline_database_name] [-num_alignments_J int_value]
+    [-germline_db_J_seqidlist filename] [-auxiliary_data filename]
+    [-min_D_match min_D_match] [-V_penalty V_penalty] [-D_penalty D_penalty]
+    [-J_penalty J_penalty] [-num_clonotype num_clonotype]
+    [-clonotype_out clonotype_out] [-allow_vdj_overlap]
+    [-organism germline_origin] [-domain_system domain_system]
+    [-ig_seqtype sequence_type] [-focus_on_V_segment] [-extend_align5end]
+    [-extend_align3end] [-min_V_length Min_V_Length]
+    [-min_J_length Min_J_Length] [-show_translation] [-db database_name]
+    [-dbsize num_letters] [-entrez_query entrez_query] [-query input_file]
+    [-sra accession] [-out output_file] [-evalue evalue]
+    [-word_size int_value] [-gapopen open_penalty] [-gapextend extend_penalty]
+    [-searchsp int_value] [-sum_stats bool_value] [-ungapped] [-lcase_masking]
+    [-query_loc range] [-strand strand] [-parse_deflines] [-outfmt format]
+    [-show_gis] [-num_descriptions int_value] [-num_alignments int_value]
+    [-line_length line_length] [-num_threads int_value] [-remote] [-version]
+
+DESCRIPTION
+   BLAST for Ig and TCR sequences
+
+OPTIONAL ARGUMENTS
+ -h
+   Print USAGE and DESCRIPTION;  ignore all other parameters
+ -help
+   Print USAGE, DESCRIPTION and ARGUMENTS; ignore all other parameters
+ -version
+   Print version number;  ignore other arguments
+
+ *** Input query options
+ -query <File_In>
+   Input file name
+   Default = `-'
+    * Incompatible with:  sra
+ -sra <String>
+   Comma-separated SRA accessions
+    * Incompatible with:  query
+ -query_loc <String>
+   Location on the query sequence in 1-based offsets (Format: start-stop)
+ -strand <String, `both', `minus', `plus'>
+   Query strand(s) to search against database/subject
+   Default = `both'
+
+ *** General search options
+ -db <String>
+   Optional additional database name
+ -out <File_Out>
+   Output file name
+   Default = `-'
+ -evalue <Real>
+   Expectation value (E) threshold for saving hits 
+   Default = `20'
+ -word_size <Integer, >=4>
+   Word size for wordfinder algorithm (length of best perfect match)
+ -gapopen <Integer>
+   Cost to open a gap
+ -gapextend <Integer>
+   Cost to extend a gap
+
+ *** Formatting options
+ -outfmt <String>
+   alignment view options:
+     3 = Flat query-anchored, show identities,
+     4 = Flat query-anchored, no identities,
+     7 = Tabular with comment lines
+     19 = Rearrangement summary report (AIRR format)
+   
+   Options 7 can be additionally configured to produce
+   a custom format specified by space delimited format specifiers.
+   The supported format specifiers are:
+   	    qseqid means Query Seq-id
+   	       qgi means Query GI
+   	      qacc means Query accesion
+   	   qaccver means Query accesion.version
+   	      qlen means Query sequence length
+   	    sseqid means Subject Seq-id
+   	 sallseqid means All subject Seq-id(s), separated by a ';'
+   	       sgi means Subject GI
+   	    sallgi means All subject GIs
+   	      sacc means Subject accession
+   	   saccver means Subject accession.version
+   	   sallacc means All subject accessions
+   	      slen means Subject sequence length
+   	    qstart means Start of alignment in query
+   	      qend means End of alignment in query
+   	    sstart means Start of alignment in subject
+   	      send means End of alignment in subject
+   	      qseq means Aligned part of query sequence
+   	      sseq means Aligned part of subject sequence
+   	    evalue means Expect value
+   	  bitscore means Bit score
+   	     score means Raw score
+   	    length means Alignment length
+   	    pident means Percentage of identical matches
+   	    nident means Number of identical matches
+   	  mismatch means Number of mismatches
+   	  positive means Number of positive-scoring matches
+   	   gapopen means Number of gap openings
+   	      gaps means Total number of gaps
+   	      ppos means Percentage of positive-scoring matches
+   	    frames means Query and subject frames separated by a '/'
+   	    qframe means Query frame
+   	    sframe means Subject frame
+   	      btop means Blast traceback operations (BTOP)
+   	    staxid means Subject Taxonomy ID
+   	  ssciname means Subject Scientific Name
+   	  scomname means Subject Common Name
+   	sblastname means Subject Blast Name
+   	 sskingdom means Subject Super Kingdom
+   	   staxids means unique Subject Taxonomy ID(s), separated by a ';'
+   			 (in numerical order)
+   	 sscinames means unique Subject Scientific Name(s), separated by a ';'
+   	 scomnames means unique Subject Common Name(s), separated by a ';'
+   	sblastnames means unique Subject Blast Name(s), separated by a ';'
+   			 (in alphabetical order)
+   	sskingdoms means unique Subject Super Kingdom(s), separated by a ';'
+   			 (in alphabetical order) 
+   	    stitle means Subject Title
+   	salltitles means All Subject Title(s), separated by a '<>'
+   	   sstrand means Subject Strand
+   	     qcovs means Query Coverage Per Subject
+   	   qcovhsp means Query Coverage Per HSP
+   	    qcovus means Query Coverage Per Unique Subject (blastn only)
+   When not provided, the default value is:
+   'qseqid sseqid pident length mismatch gapopen gaps qstart qend sstart send
+   evalue bitscore', which is equivalent to the keyword 'std'
+   Default = `3'
+ -show_gis
+   Show NCBI GIs in deflines?
+ -num_descriptions <Integer, >=0>
+   Number of database sequences to show one-line descriptions for
+   Not applicable for outfmt > 4
+   Default = `10'
+ -num_alignments <Integer, >=0>
+   Number of database sequences to show alignments for
+   Default = `10'
+ -line_length <Integer, >=1>
+   Line length for formatting alignments
+   Not applicable for outfmt > 4
+   Default = `60'
+
+ *** Query filtering options
+ -lcase_masking
+   Use lower case filtering in query and subject sequence(s)?
+
+ *** Restrict search or results
+ -entrez_query <String>
+   Restrict search with the given Entrez query
+    * Requires:  remote
+
+ *** Statistical options
+ -dbsize <Int8>
+   Effective length of the database 
+ -searchsp <Int8, >=0>
+   Effective length of the search space
+ -sum_stats <Boolean>
+   Use sum statistics
+
+ *** Extension options
+ -ungapped
+   Perform ungapped alignment only?
+
+ *** Ig-BLAST options
+ -germline_db_V <String>
+   Germline database name
+ -num_alignments_V <Integer>
+   Number of Germline sequences to show alignments for
+   Default = `3'
+ -germline_db_V_seqidlist <String>
+   Restrict search of germline database to list of SeqIds's
+ -germline_db_D <String>
+   Germline database name
+ -num_alignments_D <Integer>
+   Number of Germline sequences to show alignments for
+   Default = `3'
+ -germline_db_D_seqidlist <String>
+   Restrict search of germline database to list of SeqIds's
+ -germline_db_J <String>
+   Germline database name
+ -num_alignments_J <Integer>
+   Number of Germline sequences to show alignments for
+   Default = `3'
+ -germline_db_J_seqidlist <String>
+   Restrict search of germline database to list of SeqIds's
+ -auxiliary_data <String>
+   File containing the coding frame start positions for sequences in germline
+   J database
+ -min_D_match <Integer, >=5>
+   Required minimal consecutive nucleotide base matches for D genes 
+ -V_penalty <Integer, (>-4 and <0)>
+   Penalty for a nucleotide mismatch in V gene
+   Default = `-1'
+ -D_penalty <Integer, (>-5 and <0)>
+   Penalty for a nucleotide mismatch in D gene
+   Default = `-2'
+ -J_penalty <Integer, (>-4 and <0)>
+   Penalty for a nucleotide mismatch in J gene
+   Default = `-2'
+ -num_clonotype <Integer, >=0>
+   Number of top clonotypes to show 
+   Default = `100'
+ -clonotype_out <File_Out>
+   Output file name for clonotype info
+ -allow_vdj_overlap
+   Allow V(D)J genes to overlap.  This option is active only when D_penalty
+   and J_penalty are set to -4 and -3, respectively
+ -organism <String>
+   The organism for your query sequence. Supported organisms include human,
+   mouse, rat, rabbit and rhesus_monkey for Ig and human and mouse for TCR.
+   Custom organism is also supported but you need to supply your own germline
+   annotations (see IgBLAST web site for details)
+   Default = `human'
+ -domain_system <String, `imgt', `kabat'>
+   Domain system to be used for segment annotation
+   Default = `imgt'
+ -ig_seqtype <String, `Ig', `TCR'>
+   Specify Ig or T cell receptor sequence
+   Default = `Ig'
+ -focus_on_V_segment
+   Should the search only be for V segment (effective only for non-germline
+   database search using -db option)?
+ -extend_align5end
+   Extend V gene alignment at 5' end
+ -extend_align3end
+   Extend V gene alignment at 3' end
+ -min_V_length <Integer, >=9>
+   Minimal required V gene length
+   Default = `9'
+ -min_J_length <Integer, >=0>
+   Minimal required J gene length
+   Default = `0'
+ -show_translation
+   Show translated alignments
+
+ *** Miscellaneous options
+ -parse_deflines
+   Should the query and subject defline(s) be parsed?
+ -num_threads <Integer, >=1>
+   Number of threads (CPUs) to use in the BLAST search
+   Default = `4'
+    * Incompatible with:  remote
+ -remote
+   Execute search remotely?
+    * Incompatible with:  num_threads
+
