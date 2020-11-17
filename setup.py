@@ -41,7 +41,7 @@ setup(
     zip_safe=False,
     keywords=["airr", "annotating", "antibodies"],
     entry_points={
-        "console_scripts": ["airr=pibody.airr.app:airr"],
+        "console_scripts": ["airr=pibody.airr.app:run_airr"],
     },
     test_suite="tests",
     cmdclass={"tests": PyTest},

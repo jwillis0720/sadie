@@ -6,7 +6,8 @@ import filetype
 from Bio import SeqIO
 
 from .util import get_verbosity_level
-from .airr import Airr, AirrTable
+from .airr import Airr
+from .airrtable import AirrTable
 from .igblast import IgBLASTN
 
 
@@ -38,7 +39,7 @@ from .igblast import IgBLASTN
 @click.option(
     "--file_format", "-f", type=click.Choice(["json", "csv", "gb"]), help="output file type format", default="csv"
 )
-def run(verbose, query, species, scfv, out, compress, file_format):
+def run_airr(verbose, query, species, scfv, out, compress, file_format):
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
     logger = logging.getLogger("Airr")
