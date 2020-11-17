@@ -1,6 +1,5 @@
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio.Alphabet import IUPAC
 import datetime
 from Bio.SeqFeature import FeatureLocation, SeqFeature
 
@@ -101,7 +100,7 @@ class GenBank:
     @sequence.setter
     def sequence(self, seq):
         if isinstance(seq, str):
-            self._sequence = Seq(seq, IUPAC.extended_dna)
+            self._sequence = Seq(seq)
         elif isinstance(seq, Seq):
             self._sequence = seq
         else:
