@@ -569,7 +569,8 @@ class AirrTable:
                 logger.debug("no cdr3 ends are present")
                 return
             candidate_rows["fwr4"] = candidate_rows.apply(
-                lambda x: str(x["sequence"])[int(x["cdr3_end"]) : int(x["j_sequence_end"]) + 1], axis=1,
+                lambda x: str(x["sequence"])[int(x["cdr3_end"]) : int(x["j_sequence_end"]) + 1],
+                axis=1,
             )
             candidate_rows["fwr4_aa"] = candidate_rows["fwr4"].apply(lambda x: str(Seq(x).translate()))
             candidate_rows["fwr4_start"] = candidate_rows["cdr3_end"] + 1
@@ -604,6 +605,12 @@ class AirrTable:
         else:
             logger.debug(f" You shouldn't have gotten here {[fw1,cdr1, fw2, cdr2, fw3,cdr3,fw4]}")
             return False
+
+    def get_sanitized_antibodies(self):
+        """
+        Get only entries with full length productive reads
+        """
+        return self.sanitized_antibodies
 
     def join(self, *args, **kwargs):
         return self._table.join(*args, **kwargs)
@@ -692,7 +699,10 @@ class ScfvAirrTable:
     def set_index(self, *args, **kwargs):
         return self._joined_table.set_index(*args, **kwargs)
 
-    def get_joined_and_sanatized(self):
+    def get_sanatized_antibodies(self):
+        """
+        Get only productive full length scfv reads with heavy and light chains
+        """
         _heavy_clean = AirrTable(self.heavy).sanitized_antibodies
         _light_clean = AirrTable(self.light).sanitized_antibodies
         _heavy_clean = _heavy_clean.set_index(self.join_on)
