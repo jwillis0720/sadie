@@ -259,7 +259,7 @@ class Airr:
     1  GU272045.1  CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGT...   IGH       False         True        True  ...       375  GGCTGGTGGGCCCGACTACCGTAATGGGTACAAC         34  NaN          0   human
     """
 
-    def __init__(self, species: str, igblast_exe="igblastn", temp_directory="."):
+    def __init__(self, species: str, igblast_exe="igblastn", temp_directory=".airr_tmp"):
         """Airr constructor
 
         Parameters
@@ -292,6 +292,11 @@ class Airr:
         self.igblast.aux_path = self.germline_data.aux_path
         self.igblast.organism = species
         self.temp_directory = temp_directory
+        self._create_temp = False
+        if self.temp_directory:
+            if not os.path.exists(temp_directory):
+                self._create_temp = True
+                os.makedirs(temp_directory)
 
         # Init pre run check to make sure everything is good
         # We don't have to do this now as it happens at execution.
@@ -395,6 +400,10 @@ class Airr:
             scfv_airr = self._run_scfv(file)
             if not scfv_airr.table.empty:
                 scfv_airr.loc[:, "species"] = self.species
+            if _filetype:
+                os.remove(file)
+            if self._create_temp:
+                shutil.rmtree(self.temp_directory)
             return scfv_airr
 
         else:
@@ -403,6 +412,10 @@ class Airr:
             logger.info(f"Ran blast on  {file}")
             result.loc[:, "species"] = self.species
             result = AirrTable(result)
+            if _filetype:
+                os.remove(file)
+            if self._create_temp:
+                shutil.rmtree(self.temp_directory)
         return result
 
     def _run_multi_file(self, file):
