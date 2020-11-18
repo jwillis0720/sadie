@@ -4,16 +4,16 @@
 name: Python Package Ubuntu
 on:
   push:
-    branches: [ master ]
+    branches: [ gh-actions ]
   pull_request:
-    branches: [ master ]
+    branches: [ gh-actions ]
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.8]
     steps: 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -23,9 +23,14 @@ jobs:
         uses: actions/checkout@v2
       - name: Install w/dependencies
         run: |
+          sudo apt-get install libuv1-dev  -y
+          curl -sS -o igblast.tar.gz  ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.16.0/ncbi-igblast-1.16.0-x64-linux.tar.gz
+          tar -xvf igblast.tar.gz
+          sudo cp ncbi-igblast*/bin/igblast* /usr/local/bin
           python -m pip install --upgrade pip
           pip install pytest
           pip install .
-    # # - name: Test with pytest
-    #   run: |
-    #     pytest
+          igblastn -help
+      - name: Test Airr
+        run: |
+         pytest
