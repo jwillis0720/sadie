@@ -3,3 +3,4 @@ click
 filetype
 sqlalchemy
 pandas
+wheel
