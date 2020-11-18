@@ -1,0 +1,44 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python Package Ubuntu
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        python-version: [3.6,3.7,3.8]
+    steps: 
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+            python-version: ${{ matrix.python-version }}
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Install IgBlast Mac
+        if: ${{runner.os}} == macOS
+        run: |
+          curl -sS -o igblast.tar.gz  ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.16.0/ncbi-igblast-1.16.0-x64-macosx.tar.gz
+      - name: Install IgBlast Linux
+        if: ${{runner.os}} == Linux
+        run: |
+          sudo apt-get install libuv1-dev  -y
+          curl -sS -o igblast.tar.gz  ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.16.0/ncbi-igblast-1.16.0-x64-linux.tar.gz
+      - name: Install w/dependencies
+        run: |
+          tar -xvf igblast.tar.gz
+          sudo cp ncbi-igblast*/bin/igblast* /usr/local/bin
+          python -m pip install --upgrade pip
+          pip install pytest
+          pip install .
+          igblastn -help
+      - name: Test Airr
+        run: |
+         pytest tests/airr
