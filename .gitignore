@@ -21,3 +21,5 @@ dist/
 pip-log.txt
 .vscode
 pibody.code-workspace
+.coverage
+coverage.xml
