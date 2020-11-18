@@ -8,8 +8,8 @@ from pkg_resources import resource_filename
 from Bio.Seq import Seq
 import pandas as pd
 
-from pibody.airr import AirrTable
-from pibody.airr.airrtable import MissingAirrColumns
+from pybody.airr import AirrTable
+from pybody.airr.airrtable import MissingAirrColumns
 
 logger = logging.getLogger()
 

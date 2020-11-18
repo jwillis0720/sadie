@@ -6,8 +6,8 @@ import logging
 import glob
 import pytest
 import tempfile
-from pibody.airr import Airr, BadSpecies
-from pibody.airr import app
+from pybody.airr import Airr, BadSpecies
+from pybody.airr import app
 
 logger = logging.getLogger()
 

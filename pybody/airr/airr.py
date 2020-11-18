@@ -81,11 +81,11 @@ class GermlineData:
     --------
     >>> gd = GermlineData('human')
     >>> gd.base_dir
-    /Users/jwillis/repos/pibody/airr/data/germlines
+    /Users/jwillis/repos/pybody/airr/data/germlines
     >>> gd.v_gene_dir
-    /Users/jwillis/repos/pibody/airr/data/germlines/blastdb/Ig/human/human_V'
+    /Users/jwillis/repos/pybody/airr/data/germlines/blastdb/Ig/human/human_V'
     >>> gd.aux_path
-    /Users/jwillis/repos/pibody/airr/data/germlines/aux_data/human_gl.aux
+    /Users/jwillis/repos/pybody/airr/data/germlines/aux_data/human_gl.aux
     """
 
     def __init__(self, species: str, receptor="Ig"):
@@ -134,7 +134,7 @@ class GermlineData:
         -------
         str
            this is not a qualified path but a glob path.
-           ex. /Users/jwillis/repos/pibody/airr/data/germlines/blastdb/Ig/human/human_V
+           ex. /Users/jwillis/repos/pybody/airr/data/germlines/blastdb/Ig/human/human_V
            human_V does not exists but it's the prefix to human_V.nod and other files used by blast
         """
         return self._v_gene_dir
@@ -151,7 +151,7 @@ class GermlineData:
         -------
         str
            this is not a qualified path but a glob path.
-           ex. /Users/jwillis/repos/pibody/airr/data/germlines/blastdb/Ig/human/human_D
+           ex. /Users/jwillis/repos/pybody/airr/data/germlines/blastdb/Ig/human/human_D
            human_D does not exists but it's the prefix to human_V.nod and other files used by blast
         """
         return self._d_gene_dir
@@ -172,7 +172,7 @@ class GermlineData:
         -------
         str
            this is not a qualified path but a glob path.
-           ex. /Users/jwillis/repos/pibody/airr/data/germlines/blastdb/Ig/human/human_J
+           ex. /Users/jwillis/repos/pybody/airr/data/germlines/blastdb/Ig/human/human_J
            human_D does not exists but it's the prefix to human_V.nod and other files used by blast
         """
         self._j_gene_dir = directory
@@ -185,7 +185,7 @@ class GermlineData:
         -------
         Path
            the fully qualified path to the species auxilary data
-           ex:/Users/jwillis/repos/pibody/airr/data/germlines/aux_data/human_gl.aux
+           ex:/Users/jwillis/repos/pybody/airr/data/germlines/aux_data/human_gl.aux
         """
         return self._aux_path
 
