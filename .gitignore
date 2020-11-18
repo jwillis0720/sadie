@@ -24,3 +24,4 @@ pibody.code-workspace
 .coverage
 coverage.xml
 .coverage.*
+upload_cov.sh
