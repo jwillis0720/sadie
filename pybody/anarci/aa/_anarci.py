@@ -67,7 +67,7 @@ from Bio.SearchIO.HmmerIO import Hmmer3TextParser as HMMERParser
 # Import from the schemes submodule
 from ._schemes import *
 from ._germlines import all_germlines
-from antibody.exception import LongHCDR3Error
+from ...antibody.exception import LongHCDR3Error
 
 all_species = list(all_germlines["V"]["H"].keys())
 logger = logging.getLogger("ANARCI")

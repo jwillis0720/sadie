@@ -7,7 +7,7 @@ import pickle
 import filetype
 import logging
 import pandas as pd
-from antibody import chain
+from ..antibody import chain
 
 from .numbering import scheme_numbering
 
