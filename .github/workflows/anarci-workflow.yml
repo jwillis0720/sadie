@@ -21,4 +21,5 @@ jobs:
             curl -sS -o hmmer.tar.gz http://eddylab.org/software/hmmer/hmmer-3.3.1.tar.gz 
             tar -xzf hmmer.tar.gz
             cd hmmer-3.3.1
+            make
             make install
