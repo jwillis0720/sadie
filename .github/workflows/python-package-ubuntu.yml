@@ -4,9 +4,9 @@
 name: Python Package Ubuntu
 on:
   push:
-    branches: [ gh-actions ]
+    branches: [ master ]
   pull_request:
-    branches: [ gh-actions ]
+    branches: [ master ]
 
 jobs:
   build-test:
