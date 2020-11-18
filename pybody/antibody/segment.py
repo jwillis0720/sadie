@@ -4,7 +4,6 @@ import warnings
 
 # Third Party
 from Bio.Seq import Seq
-from Bio.Alphabet import generic_dna, generic_protein
 from Bio.pairwise2 import align
 from Bio.SeqRecord import SeqRecord
 from Bio.Align import MultipleSeqAlignment
@@ -47,7 +46,6 @@ class AntibodySegment:
         >>> segment = AntibodySegment("DIQMTQSPASLSASLGETVSIECLAS")
         """
         self._sequence = str(sequence)
-        self._alphabet = generic_dna
         self.start_index = 0
         self.germline = ""
         self._alignment = ""

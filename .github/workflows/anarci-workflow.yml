@@ -1,0 +1,30 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+name: Anarci
+on:
+  push:
+    branches: [ add_anarci ]
+  pull_request:
+    branches: [ add_anarci ]
+
+jobs:
+  build-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        python-version: [3.8]
+    steps: 
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+            python-version: ${{ matrix.python-version }}
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Install HMMER Mac
+        if: ${{runner.os == 'macOS'}}
+        run: |
+            curl -sS -o hmmer.tar.gz  wget http://eddylab.org/software/hmmer/hmmer-3.3.1.tar.gz 
+            tar -xzvf hmmer.tar.gz
+            cd hmmer-3.3.1
+            make install

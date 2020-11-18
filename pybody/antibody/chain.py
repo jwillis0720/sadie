@@ -6,7 +6,6 @@ import warnings
 # Third Party
 from Bio.Seq import Seq
 from Bio.pairwise2 import align
-from Bio.Alphabet import generic_dna, generic_protein
 from Bio.SeqRecord import SeqRecord
 from Bio.Align import MultipleSeqAlignment
 
