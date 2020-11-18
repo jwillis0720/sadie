@@ -28,7 +28,7 @@ from .aa._anarci import check_for_j, dataframe_output, number_sequences_from_ali
 from .numbering import scheme_numbering
 from .exception import AnarciDuplicateIdError, BadAnarciArgument, BadRequstedFileType
 from .result import AnarciResult, AnarciResults
-from utility import split_fasta
+from ..utility import split_fasta
 
 logger = logging.getLogger("ANARCI")
 
