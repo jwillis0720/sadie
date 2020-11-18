@@ -46,6 +46,9 @@ jobs:
           pip install pytest
           pip install .
           igblastn -help
+      - name: Test Antibody
+        run: |
+         pytest tests/antibody
       - name: Test Airr
         run: |
          pytest tests/airr
