@@ -25,6 +25,7 @@ jobs:
       - name: Dump runner context
         env:
           RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
       - name: Install IgBlast Mac
         if: ${{runner.os == 'macOS'}}
         run: |
