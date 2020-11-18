@@ -15,16 +15,20 @@ jobs:
         os: [macos-latest, ubuntu-latest]
         python-version: [3.6,3.7,3.8]
     steps: 
+      - name: Install HMMER
+        run: |
+            wget http://eddylab.org/software/hmmer/hmmer-3.3.1.tar.gz 
+            tar -xzf hmmer-3.3.1.tar.gz
+            cd hmmer-3.3.1
+            ./configure
+            make -j 2
+            make install
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
             python-version: ${{ matrix.python-version }}
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJson(runner) }}
-        run: echo "$RUNNER_CONTEXT"
       - name: Install IgBlast Mac
         if: ${{runner.os == 'macOS'}}
         run: |
@@ -45,3 +49,6 @@ jobs:
       - name: Test Airr
         run: |
          pytest tests/airr
+      - name: Test Anarci
+        run: |
+         pytest tests/anarci
