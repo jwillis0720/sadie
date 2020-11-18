@@ -48,6 +48,6 @@ jobs:
           pip install .
       - name: Test
         run: |
-          pytest --cov=pybody --cov-report=xml tests/
+          pytest --cov=./pybody --cov-report=xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.15
