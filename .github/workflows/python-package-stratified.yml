@@ -44,17 +44,20 @@ jobs:
           sudo cp ncbi-igblast*/bin/* /usr/local/bin
           python -m pip install --upgrade pip
           pip install pytest
+          pip install pytest-cov
           pip install .
-          igblastn -help
-      - name: Test Antibody
+      - name: Test
         run: |
-         pytest tests/antibody
-      - name: Test Airr
-        run: |
-         pytest tests/airr
-      - name: Test Anarci
-        run: |
-         pytest tests/anarci
-      - name: Test Reference
-        run: |
-         pytest tests/reference
+          pytest --cov=pybody --cov-report=xml tests/pytest --cov=pybody --cov-report=xml tests/antibody   
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml
+          files: ./coverage1.xml,./coverage2.xml
+          directory: ./coverage/reports/
+          flags: unittests
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          path_to_write_report: ./coverage/codecov_report.gz
+          verbose: true
