@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [ubuntu-latest]
         python-version: [3.8]
     steps: 
       - name: Install HMMER Mac
@@ -22,5 +22,5 @@ jobs:
             tar -xzf hmmer-3.3.1.tar.gz
             cd hmmer-3.3.1
             ./configure
-            make
+            make -j 2
             make install
