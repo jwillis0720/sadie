@@ -28,20 +28,20 @@ class PyTest(test):
 
 
 setup(
-    name="pibody",
+    name="pybody",
     version="0.0.1",
     python_requires=">=3.6",
-    description="PiBody: The Complete Antibody Library",
+    description="Pybody: The Complete Antibody Library",
     author="Jordan R Willis",
     author_email="jwillis0720@gmail.com",
     url="https://github.com/jwillis0720/",
-    packages=find_packages(include=["pibody*"], exclude=["tests*", "docs"]),
+    packages=find_packages(include=["pybody*"], exclude=["tests*", "docs"]),
     include_package_data=True,
     install_requires=requirements,
     zip_safe=False,
     keywords=["airr", "annotating", "antibodies"],
     entry_points={
-        "console_scripts": ["airr=pibody.airr.app:run_airr"],
+        "console_scripts": ["airr=pybody.airr.app:run_airr"],
     },
     test_suite="tests",
     cmdclass={"tests": PyTest},

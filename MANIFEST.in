@@ -1,4 +1,4 @@
-recursive-include pibody/antibody/data/* *
-recursive-include pibody/reference/data/* *
-recursive-include pibody/anarci/data/* *
-recursive-include pibody/airr/data/* *
+recursive-include pybody/antibody/data/* *
+recursive-include pybody/reference/data/* *
+recursive-include pybody/anarci/data/* *
+recursive-include pybody/airr/data/* *

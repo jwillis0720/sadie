@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 
 # package level
-from pibody import airr
+from pybody import airr
 
 loger = logging.getLogger()
 
