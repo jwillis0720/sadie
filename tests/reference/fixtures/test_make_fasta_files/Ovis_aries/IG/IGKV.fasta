@@ -1,0 +1,84 @@
+>IMGT000010|IGKV1-1*01|Ovis aries_Texel|P|V-REGION|129468..129754|287 nt|1| | | | |287+48=335| | |
+gacatccaggtgacccagtctccatcctccctatctgcatctctagcagacaaagtctcc
+atcacttgccaggccagtcagaacact..................gacactaaattagcc
+tggtatcaacagaaaccaaggaaagctcctaagctcctcatctatgcagta.........
+............tccaggtcgccctcctggttccca...tcccagttcagtggcagtgga
+......tttgggatagatttcaccctcaccatcagcagcctgaaggctgatgatattgca
+gcttactactgtcagcaggatcacggtttacctcc
+>IMGT000010|IGKV1-17*01|Ovis aries_Texel|P|V-REGION|29851..30137|287 nt|1| | | | |287+48=335| | |
+gacctccagatgattcagtctctatcctccctgtctgcatctctaggagacagagtctcc
+atcacttgtcgggccagtcagagtgtt..................agaaataatttacag
+tggtatcaagagaaaccagggaaagctcctaatttcctcatctgtgacaca.........
+............accagtgtgcacacaggggtccca...tcccggttcagtggcagtgga
+......tctgggacagattacaccttcaccaccagcagcctggaggctgacgattttgca
+gcttattagtgtaaacaggataacagtagacctcc
+>IMGT000010|IGKV1-21*01|Ovis aries_Texel|ORF|V-REGION|11056..11336|281 nt|1| | | | |281+54=335| | |
+gacctccagatgacccagtctccatcttccccgtttgcatctctaggagat......gcc
+atcacttggcaggccagtcagagcatt..................agcaagtacttagct
+tggtatcaacagaaaccagggaaagctcctaagctcctgatctatcatgca.........
+............tccagactgcacacaggggtccca...tcctggttcagtggcagtgga
+......tctgggacagattacaccctcaccatcagcaagctggaggctgatgatgttgca
+acttattactgtcagcagtataatagtacacctcc
+>IMGT000010|IGKV1-4*01|Ovis aries_Texel|F|V-REGION|105158..105444|287 nt|1| | | | |287+48=335| | |
+gacatccaggtgacccagtctccatcctccctgtctgcatctctaacagagagagtctcc
+atcacttgccggaccagtcagagcgtt..................agcaactacttaaac
+tggtatcaacagaaaccagggcaagctcctaagctcctgatctattatgca.........
+............accagattgcacaccgatgtccca...tcccggttcagtggcagtgga
+......tctgggacagattacaccctcaccatcagcagcctggaggctaacgatactgca
+acttattactgtctacagtatgatagtacacctcc
+>IMGT000010|IGKV1-6*01|Ovis aries_Texel|P|V-REGION|89338..89622|285 nt|1| | || |285+48=333| | |
+gacatccagatgacctagtctccatccgtcctgtctgcatctctaggagacagagtttcc
+atcacttgccaggccagtcagagtgtt..................agcaaatggttagct
+tggtatcagcagaaaccagggcaagctcctaagctgctcacctatgtagca.........
+............tccaatttgcaaaccggggtctca...tccaggtttggtggcagtgga
+......tctgggacagacttcactgttgccatcagcagcctggaggctgaagatgttgca
+acttattactgtctacagtatgatagcacacct
+>IMGT000010|IGKV1-7*01|Ovis aries_Texel|P|V-REGION|79201..79484|284 nt|1| | || |284+51=335| | |
+gacctccagatgactcagtctccatcc...ctgtctgcctctctaggaaacagagtatcc
+atcatttgctgggccagtcaaagcatt..................agcaaatggttagac
+aggtatcagcagaaatcagggtgagttcctaagctcctggtctatgcagca.........
+............tccagtttgggaactggggccccc...tcccggttcagtgacagtgga
+......tctggggcagatttcactctcaccacgagcagcctggaggctgaagatgctgca
+acttattactggctacaaactgatagcacacctcc
+>IMGT000010|IGKV2-14*01|Ovis aries_Texel|F|V-REGION|59865..60166|302 nt|1| | | | |302+33=335| | |
+gatgttgtgctgacccagactcccctctccctgtctgtcacccctggagggacggtctct
+atctcctgcaagtcttcgcagagtctgaaatatagt...gatggaaacacctatctgtac
+tggtttcaacataaaccaggccagtctccacagctattgatctatcaggtg.........
+............tccaaccgttacactggggtccca...gacaggttcactggcagtggg
+......gcagagacagatttcacacttacaatcagcagtgtgcaggctgaggatgctgga
+gtctattactgtcttcaagctataaattatcctcg
+>IMGT000010|IGKV2-15*01|Ovis aries_Texel|P|V-REGION|36544..36845|302 nt|1| | | | |302+33=335| | |
+gctattgttctgacccagactccacgctccctgtctgtcatccctggagagacggcctcc
+atctcctgcagagcaagtcagagcgttcaaaataga...tacggagacaattttttgcac
+tggtatgtgcagaagcccagccagtctccgcagctcctgatctatgcagct.........
+............tctaaccgtgcctctggagtctca...gacaggttcactggcagtggg
+......tcagggacagattttaccctcaaaatcagcagggtggaggctgaggatgctgga
+gtttattattgccagcaaagtaaagaaactcctcc
+>IMGT000010|IGKV2-8*01|Ovis aries_Texel|F|V-REGION|74953..75254|302 nt|1| | | | |302+33=335| | |
+gatgttgtgctgacccaaactccactctccctgtctgtcatccctggggagacggcctcc
+atctcctgcaagtctagtcagagcctggtacatagt...gatggaaatacctatttgaat
+tggattcaacataaaccaggccaatcaccacagggtctgatctatcaggtt.........
+............tccaaccgttactctggagtctca...gacaggctcactggcagtggg
+......tcagggacagatttcacatttacaatcagcagtgtgcaggctgaggatgctgga
+gtctactactgttaccaaggtacagaagctcctcc
+>IMGT000010|IGKV2-9*01|Ovis aries_Texel|P|V-REGION|65779..66080|302 nt|1| | | | |302+33=335| | |
+gctattacgcagacacagactctacgctccctgtctgtcatccctggagagacggcctcc
+atctcctgcaaagccaatcagagcattcaaaataga...tatggagacaattttttgcac
+tggtatgtgcagaagtccagccacgctccacagctcatgatttatagggct.........
+............tctaactgggagtcttaggtccca...gacaggttcacaagcagtggg
+......tcagagacagatttcatcctcaaaatcagcagggtggaggctgaggatggtgaa
+atttactactgccagcagagtttacaagcacgtcc
+>IMGT000010|IGKV6-5*01|Ovis aries_Texel|F|V-REGION|96512..96798|287 nt|1| | | | |287+48=335| | |
+gagattattctgacccagtctccagccctcctgtataaaacttcaggggaggaagccgcc
+atcacctgctgggccagccaggacact..................gacagcagcttgcac
+tggtaccagcagaaatcaaatcaggctcccaagttccttataaagtatgcc.........
+............tcccagtccatctcatggatccca...tctcaggtcagcagaagtgga
+......tctgggacagatttcaccctcaccatcactagtctcgaagctgaagatgctgca
+acgtcttactgtcagcagagctataatactgctca
+>IMGT000010|IGKV8-3*01|Ovis aries_Texel|F|V-REGION|121006..121292|287 nt|1| | | | |287+48=335| | |
+gaggctgtgctctaccagactccagcctacattgctgtacccctaggagagagcatctcc
+atcacttgcagagccaatcaaagcatt..................agtgattacttaagc
+tggcataagcagaaacctggccaggctcctatgattctcatctatgatgct.........
+............gataatcgtcttaatggtgtccca...gagaggttcactgcgactcaa
+......tctgggacagaatttgttttcacaatcagccaggtagaggctgatgatgctgcc
+atgtattactgccagcagtcttatgtgcttcctcc

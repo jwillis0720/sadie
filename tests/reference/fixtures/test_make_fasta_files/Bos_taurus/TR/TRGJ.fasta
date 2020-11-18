@@ -1,0 +1,32 @@
+>AY644518|TRGJ1-1*01|Bos taurus|F|J-REGION|102107..102166|60 nt|3| | | | |60+0=60| | |
+acagctcaggctggaggaagatatttggagaaggagctaacatcatagtaactcctcctg
+>AY644518|TRGJ1-2*01|Bos taurus|F|J-REGION|105094..105143|50 nt|2| | | | |50+0=50| | |
+gaataattacataaaaaacttcaatgttggagcaaaactcattgtcacag
+>D16127|TRGJ1-2*02|Bos taurus|(F)|J-REGION|337..384|48 nt|1| | | | |48+0=48|partial in 3'| |
+aataattacataaaaaacttcaatgttggagtaaaactcattgtcaca
+>D16129|TRGJ1-2*03|Bos taurus|(F)|J-REGION|339..381|43 nt|2| | | | |43+0=43|partial in 3'| |
+ttacataaaagacttcaatgttggagcaaaactcattgtcaca
+>AC172685|TRGJ2-1*01|Bos taurus|F|J-REGION|236573..236632|60 nt|3| | | | |60+0=60| | |
+acagctcaggctggaggaagatatttggagaaggagctaacatcatagtaactcctcctg
+>D16120|TRGJ2-1*02|Bos taurus|(F)|J-REGION|338..396|59 nt|3| | | | |59+0=59|partial in 3'| |
+acagctcaggcgggaggaagatttttggagaaggagctaacatcatagtaactcctcct
+>D16118|TRGJ2-1*03|Bos taurus|(F)|J-REGION|343..399|57 nt|1| | | | |57+0=57|partial in 3'| |
+agctcaggctggaggaagatacttggagaaggagctaacatcatagtaactcctcct
+>AY644518|TRGJ2-2*01|Bos taurus|F|J-REGION|138048..138097|50 nt|2| | | | |50+0=50| | |
+gaatagttacttaaaaaacttcaatgttggagcaaaactcattgtcacag
+>D16121|TRGJ2-2*02|Bos taurus|(F)|J-REGION|341..387|47 nt|3| | | | |47+0=47|partial in 3'| |
+atagttacttaaaaaactacaatgttggagcaaaactcattgtcaca
+>D16128|TRGJ2-2*03|Bos taurus|(F)|J-REGION|335..372|38 nt|3| | | | |38+0=38|partial in 3'| |
+ttaaaaacttcaatgttggatcaaaactcattgtcaca
+>AY644517|TRGJ3-1*01|Bos taurus|F|J-REGION|124776..124835|60 nt|3| | | | |60+0=60| | |
+atagtgcaggctggaagaagatatttggaaaagcaactgagctcatagtagctcctcctg
+>D13648|TRGJ3-1*02|Bos taurus|(F)|J-REGION|348..405|58 nt|2| | | | |58+0=58|partial in 3'| |
+tagtgcaggctggaagaagatatttggaaaaggaactgagctcatagtagctcctcct
+>AY644517|TRGJ4-1*01|Bos taurus|F|J-REGION|155562..155608|47 nt|2| | | | |47+0=47| | |
+aaagaagatatttggaaaaggaactaagctcataatagctccccatg
+>AY644517|TRGJ4-2*01|Bos taurus|F|J-REGION|158951..159000|50 nt|2| | | | |50+0=50| | |
+taataattacaaaaaaaacttcaatgttggaacaaaacttgttgtcacag
+>NW_937068|TRGJ5-1*01|Bos taurus|F|J-REGION|570..629|60 nt|3| | | | |60+0=60| |rev-compl|
+acagttcaacctggatcaaggtatttggtgaaggaactaagctcgtagtaatacctcctg
+>AC172685|TRGJ6-1*01|Bos taurus|F|J-REGION|65112..65161|50 nt|2| | | | |50+0=50| | |
+gaatttaaacaacatgatctttggtgaaggaacaaaagttttcgtcctag

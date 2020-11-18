@@ -52,3 +52,6 @@ jobs:
       - name: Test Anarci
         run: |
          pytest tests/anarci
+      - name: Test Reference
+        run: |
+         pytest tests/reference

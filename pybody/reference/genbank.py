@@ -6,7 +6,6 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 from Bio import Seq, SeqIO, SeqRecord
-from Bio.Alphabet import IUPAC
 from Bio.SeqFeature import FeatureLocation, SeqFeature
 
 # Module level
@@ -20,10 +19,15 @@ def generate_gb_record(sequence, name, description):
 
     # Create a sequence
     # sequence_string = str(sequence)
-    sequence_object = Seq.Seq(str(sequence), IUPAC.extended_dna)
+    sequence_object = Seq.Seq(str(sequence))
 
     # Create a record
-    record = SeqRecord.SeqRecord(sequence_object, id=name, name=name, description=description,)
+    record = SeqRecord.SeqRecord(
+        sequence_object,
+        id=name,
+        name=name,
+        description=description,
+    )
     return record
 
 
@@ -154,8 +158,6 @@ def generate_j(aux_path, imgt_fasta, outpath):
                 short_name = sequence.id.split("|")[1]
                 functional = sequence.description.split("|")[3]
                 functional = functional.replace("(", "")
-                functional = functional.replace(")", "")
-                record_name = functional + "|" + short_name
                 sequence_strip = str(sequence.seq).replace(".", "")
                 j_record = generate_gb_record(sequence_strip, short_name, sequence.description)
                 try:
@@ -304,4 +306,3 @@ def generate_genbank(imgt_fasta, imgt_db, aux_path, outpath):
     generate_j(aux_path, imgt_fasta, outpath)
     generate_d(imgt_fasta, aux_path, outpath)
     # do d Genes
-

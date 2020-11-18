@@ -2,20 +2,17 @@
 import glob
 import logging
 import os
+import re
 import tempfile
 from pprint import pformat
+
+import pandas as pd
+from pybody.anarci import Anarci
+from Bio import Seq, SeqIO
 from numpy import nan
-import re
 
 from .imgt import assign_index_position, multiindex_pivot
-import pandas as pd
-from antibody.anarci import Anarci
-from Bio import Seq, SeqIO
-
-from .settings import RENAME_DICT_TRANSLATE
-
-# from pandasgui import show
-from .settings import MOTIF_LOOKUP
+from .settings import MOTIF_LOOKUP, RENAME_DICT_TRANSLATE
 
 logger = logging.getLogger(__name__)
 # from gspread_pandas import Spread, Client
@@ -84,7 +81,6 @@ def generate_v_segment_data(imgt_db_engine):
         [type]: [description]
     """
     imgt_db_unique = pd.read_sql("imgt_unique", con=imgt_db_engine, index_col="index")
-    imgt_db_all = pd.read_sql("imgt_all", con=imgt_db_engine, index_col="index")
     v_segment_only_clean = imgt_db_unique.loc[
         (imgt_db_unique["gene_segment"] == "V")
         & (imgt_db_unique["functional"] == "F")
@@ -368,11 +364,11 @@ def generate_j_gene_data(engine):
     j_region.loc[:, "reading_frame"] = j_region["fasta_header"].str.split("|").str.get(7)
     # show(j_region, settings={"block": True})
     chain_dfs_append = []
-    for common, species_df in j_region.groupby(["common"]):
+    for _, species_df in j_region.groupby(["common"]):
         species_df = species_df.drop("reading_frame", axis=1).join(
             species_df[["nt_sequence_no_gaps", "reading_frame"]].apply(translate_j_segment, axis=1)
         )
-        for chain_type, chain_df in species_df.groupby(species_df["gene"].str[0:4]):
+        for _, chain_df in species_df.groupby(species_df["gene"].str[0:4]):
             split_fw4_segments = chain_df.loc[
                 chain_df.index, ["common", "aa_sequence_no_gaps", "gene", "reading_frame", "nt_sequence_no_gaps"]
             ].apply(split_fw4, axis=1)

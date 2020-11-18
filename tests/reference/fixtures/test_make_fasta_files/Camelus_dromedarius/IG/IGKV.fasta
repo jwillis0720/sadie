@@ -1,0 +1,91 @@
+>IMGT000061|IGKV1-12*01|Camelus dromedarius_African|ORF|V-REGION|95911..96197|287 nt|1| | | | |287+48=335| | |
+gctacccaggtgacccagtctccctcctccctgtctgcgtctctgggagacacagtcacc
+atcacctgccgggccagtcagagcatc..................agcaatgagttatcc
+tggtatcagcagaaaccagggcaagctcctaagctcctgatctatgatgca.........
+............tccagtttgcacactggggtccct...tccaagttcagtggcagtgga
+......tcagggacaagtttcaccctcaccatcagcggcgtggaggctgaagatgccgga
+acttactacagtcagcagtattacagagcgcctcc
+>IMGT000061|IGKV1-26*01|Camelus dromedarius_African|F|V-REGION|37086..37372|287 nt|1| | | | |287+48=335| | |
+gctacccaggtgacccagtctccctcctccctgtctgcatctctgggagacacagtcacc
+atcacctgccaggccagtcagagcatt..................agcagttacttagcc
+tggtatcagcagaaaccagggcaagttcctaagctcctgatctatgatgca.........
+............tccagtctgtacaccggggttcct...ttgaggttcagtggcagtgga
+......tcagggacaagtttcactctcaccatcagcggcgtggaggctgaagatgtcgga
+acttattactgtcagcagtataacagtgcgcctcc
+>IMGT000061|IGKV1-29*01|Camelus dromedarius_African|F|V-REGION|15615..15901|287 nt|1| | | | |287+48=335| | |
+gctatccagatgacccagtctccctcctccctgtctgcatctctgggagacacagtcacc
+atcacctgccaggccagtcagagcatc..................agcaatgagttatcc
+tggtatcagcagaaaccagggcaagctcctaagctcctgatttatggtgca.........
+............tccagattgcaaaccggggtccct...tccaggttcagtggcagtgga
+......tcagggacaagtttcaccctcaccatcagcggcctggaggctgaagatcttgca
+acttattactgtctgcaggattacagttggcctcc
+>IMGT000061|IGKV1-7*01|Camelus dromedarius_African|ORF|V-REGION|112389..112675|287 nt|1| | | | |287+48=335| | |
+gctactcagatgacccagtctccctcctccctgtctgcatctctgggagacacagtcgcc
+atcacctgccaggccagtcagagcatc..................agcagttacttagcc
+tggcatcagcagaaaccagggcaagctcctaagctcctgatctatggtgca.........
+............tccagcttgcacaccggggtccct...tccaggttcagtggcagtgga
+......tcagggacaagtttcaccctcaccatcagcggtgtggaggctgaagatgtcgga
+acttattactgtctgcagcataacagttaccctcc
+>IMGT000061|IGKV2-13*01|Camelus dromedarius_African|P|V-REGION|95066..95372|307 nt|1| | | | |307+33=340| | |
+gacgttgtgctgacccagaccccaggctccctgtctgtcgtccctggagagtcagcctcc
+atctcctgcaaggctagtcagagcctcgtacacagt...gatggaaagacctatttgtat
+tggctccgacagaagcctggccaatctccacagtgactgatctatcaagtt.........
+............tccaaacgtggctctggggtccca...gacaggttcactggcagcggg
+......tcagggacagatttcaccctgaaaatcagcggggtgaaggctgaggatgctgga
+gtgcattactgtgctcaagctacacagtctcctctcctcc
+>IMGT000061|IGKV2-28*01|Camelus dromedarius_African|F|V-REGION|27071..27372|302 nt|1| | | | |302+33=335| | |
+gaagttgtgctgacccagaccccaggctccctgtctgtcacgcctggggagccggcctcc
+atctcctgcaaggctagtcagagcctcgtacacagt...gatggaaagacctatttgtat
+tggctcctacagaagccaggccaacccccacagcgactgatctatcaagtt.........
+............tccaaccgtggctctggggtccca...gacaggttcactggcagcggg
+......tcagggacagatttcaccctgaaaatcagcggggtgaaggccgaggatgctgga
+gtgtattactgtgctcaagctacacgtgatcgtcc
+>IMGT000061|IGKV2-30*01|Camelus dromedarius_African|F|V-REGION|10451..10743|293 nt|1| | | | |293+33=326| | |
+gacgttgtgctgacccagactccaggctccctgtctgtcacgcctggggagccggcctcc
+atctcctgcagatccactgaaagtcttgaagatagt...gatggagacacgtacttgagt
+tggttcctgcagaaaccaggccagtctccacagctgctgatctatgaggtt.........
+............tccaaccgggcctctggggtccca...gacaggttcactggcagcggg
+......tcagagacagatttcaccctgaaaatcagtggggtgaaggccgaggatgctgga
+gtgtattactgtgcacattctcttcc
+>IMGT000061|IGKV4-4*01|Camelus dromedarius_African|F|V-REGION|120501..120804|304 nt|1| | | | |304+30=334| |rev-compl|
+gacatcgtgatgacccagtctcccagctccgtgactgcgtctgcaggagagaaggtcacc
+atcaattgtaagtccagccagagtgtgttatacagctccaaccagaaaagctacttagct
+tggtaccagcagagacctggacagtctcctaggctgctcatctactatgcg.........
+............tccacccgggaatcgggggtccct...gatcgattcagcggcagtggg
+......tccacaacagatttcactctcacgatcagcagcttccagcctgaagacgcggca
+gtgtattactgccagcaggcttatagtgctccct
+>IMGT000061|IGKV5-2*01|Camelus dromedarius_African|F|V-REGION|128381..128667|287 nt|1| | | | |287+48=335| | |
+gaaacagtcctcacccaatctccagcattagtgtcagcgactccaggagacaaagtcacg
+ctcacctgcaaagccagccaagacatt..................gatgatgacataatg
+tggtatcaacagaaaccaggacaagctcccaggcttattattaaatatgtt.........
+............tctactctcatctctggggttcca...tcccggttcagtggcagtggg
+......tacggaacagactttaacctgacaattgataacatgaaatctgaagatgctgca
+tactatttctgtcaacaagatgataatacacctct
+>IMGT000061|IGKV6-11*01|Camelus dromedarius_African|P|V-REGION|99178..99464|287 nt|1| | | | |287+48=335| | |
+gcgaccgtgctgacccagtccccagccctcctgtctaaggctccaggggacaaagccacc
+atcacctgccgggccagccaaagcgtc..................agcaactacttgcgc
+tggtaccagcagaaaccaaatcagcctcccaagctccttatacagtacgct.........
+............tcccagaccatctcaggggtcccc...gcccggttcatcggcagcgga
+......tctgggacagatttcaccctcaccatcagcagcctggaagccgaagacgctgca
+aagtattactgtcagcagagctacagttcttctcc
+>IMGT000061|IGKV7-5*01|Camelus dromedarius_African|P|V-REGION|116087..116391|305 nt|1| | || |305+30=335| | |
+aacattgtactgacccgttttctagcctctgtgatagcatctccaggggagttggccacc
+atatcctgcagggccagtcggagagtcagtggtattttgggcattattatccttgttaac
+tggtgtaaacagaagccaggacagcctcccaaactcctgatctgtgcagca.........
+............atctgtcgagaacctggagtccca...gccaggttctgtggcagcggt
+......tctgggactgatttcaccctcacaatccatcccgtggaggctgatgatgctgaa
+gaggatttctgccagcacagtaaggaggatcctcc
+>IMGT000061|IGKV8-10*01|Camelus dromedarius_African|F|V-REGION|103906..104192|287 nt|1| | | | |287+48=335| | |
+agcgctgtgctgacccagactccagccatcctctctgtgtccctaagggagagcatctcc
+atcacctgcacggccaatgagagcgtc..................agtgattacgtgagc
+tggtatcagcagaaaccaggacaggctcctaggctgctcatctatgacgct.........
+............gatgatcgttatcctggtgtccca...gacaggttcgttgggcttcag
+......tctgggacacagttcattctcacaatcaacaaggtagaggctgatgacgctgcc
+agttattactgccagcagggttacacggttcctcc
+>IMGT000061|IGKV9-27*01|Camelus dromedarius_African|F|V-REGION|32698..32984|287 nt|1| | | | |287+48=335| | |
+cagatcgccctgactcagtttccagaaagcctggcagcatctcacggaagccttgtctcc
+atcacctgtagaagcagcatagaggta..................ggtacctccatggcc
+tggtaccagcagaaacccaaggaggctcccaggctgctcatctttggggct.........
+............tctgcccgggcctcaggaaccccg...tccaggttccggggaagcggc
+......tctggctctgacttctccctcgccatccacggagtggaagctgaagatgtcgga
+gtgtattactgccagcagcacatcagcctgcctct

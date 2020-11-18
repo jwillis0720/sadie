@@ -1,0 +1,287 @@
+>BX649502|IGHV1-1*01|Danio rerio_Tuebingen|F|V-REGION|178789..179082|294 nt|1| | | | |294+30=324| | |
+ggtcagtctttgacctcctcagactct...gtggtgaaaagaccaggagaatcagtcact
+ctgtcctgcactgtgtctggaatctcaatg............agtagctactggatgcac
+tggatccgccagaaaccaggaaaaggactggagtggattggatatatagacactggc...
+......acaacagcatattacgctcagtctttacaa...ggccag...ttcactatcacc
+aaagacaccagtaaaaacatgctgtatttagaggtgaaaagcctgaagagtgaagacaca
+gctgtttattactgtgcacggact
+>BX649502|IGHV1-2*01|Danio rerio_Tuebingen|F|V-REGION|184862..185156|295 nt|1| | | | |295+30=325| | |
+ggtcagtctttgacctcctcagactct...gtggtgaaaagaccaggagaatcagtcact
+ctgtcctgcactgtgtctggattctcaatg............agcagctactggatgcac
+tggatccgccagaaaccagggaaaggactggagtggatcgggcgaattgatcgtggc...
+......actggcactatttttgctcagtctttacaa...ggccag...ttcaccatcacc
+aaagacaccagtaaaaacatgctgtatttagaggtgaaacagctgaagagtgaagacaca
+gctgtttattactgtgcacgagact
+>BX649502|IGHV1-3*01|Danio rerio_Tuebingen|F|V-REGION|210031..210322|292 nt|1| | | | |292+33=325| | |
+ggtcagtctttgacctcctcagactct...gtggtgaaaagaccaggagagtcagtcact
+ctgtcctgcactgggtctggattctcagtg............ggtgactactggatgcac
+tggatacgccagaaaccagggaaaggacttgaatggattggaggaagatatagc......
+......tcaactgtatattttgctcagtctctacag...ggtcag...ttttccatctca
+acagacaccagcaaaaatatggtgtacctggagataaaaagcctgaagactgaagacgca
+gctgtttattactgtgcacgagaga
+>BX649502|IGHV1-4*01|Danio rerio_Tuebingen|F|V-REGION|216837..217125|289 nt|1| | | | |289+36=325| | |
+ggtcagtcattgacctcctctggttct...gaggtcaagaaacccagagaatcagtcaca
+ctgtcttgtgtggtttctggactctcc..................cttgcctggctgcac
+tggataaggcagaaaccgggaaaaggcctggagtggattggccggattgacagtggc...
+......actgggactatttttgctcagtctctacaa...ggccaa...tttaccatcact
+aaagacaccagcaaaaacatggtgtatttggagataaaaagcctgaaggctgaagatact
+gctgtttattactgtgcaaaagaga
+>AF273897|IGHV1-5*01|Danio rerio|F|V-REGION|471..764|294 nt|1| | | | |294+30=324| | |
+ggtcagtctttgacctcctcagactct...gtggtgaaaagaccaggagaatcagtcact
+ctgtcctgcactgtgtctggattctcaatg............agcagctactacatgcac
+tggatccgccagaaaccagggaaaggactggagtggattggatatatagacactggc...
+......acaacagcatattacgctcagtctttacaa...ggccag...ttcactatcacc
+aaagacaccagtaaaaacatgctgtatttagaggtgaaaagcctgaagagtgaagacaca
+gctgtttattactgtgcacggact
+>BX649502|IGHV10-1*01|Danio rerio_Tuebingen|F|V-REGION|171523..171820|298 nt|1| | | | |298+27=325| | |
+tgtcagacactaactgagtctgaggca...gtgaccatcaaacctggagaatcccataaa
+ctgacatgcactgcttctagttttgatatc............tctggctcctggatggct
+tggatcagacagaaatctggaaaagagctggaatggctggcattgatcagatatgat...
+...agccaggatatgtattactttcagtctgtccaa...ggacgg...ttcaccatctcc
+agagacaacagtaagcagcaggtatatctgcagatgaacagcctgaaggatgaagacact
+gctgtgtattattgtgcaagagagc
+>BX649502|IGHV11-1*01|Danio rerio_Tuebingen|F|V-REGION|186083..186384|302 nt|1| | | | |302+24=326| | |
+ggtcaaacactgactgaatcagagtca...gtagtcatcaaaccaggcaatgaacacaga
+ctgacctgtactttctctgggattgatgtt............ggagatgcagatatatca
+tggataagacaggctgaagggaaagcactggagtggatctcacatatttctgctccaagt
+...ggcagtggcaaatattactctaaagccgttgaa...ggaaga...ttcagcatcacc
+agagacaacagtaaaatgcaggtgtatctgcacatgacaaagctgcagactgaagacact
+ggagtgtattactgtgctagaagaaa
+>BX649502|IGHV11-2*01|Danio rerio_Tuebingen|F|V-REGION|204431..204731|301 nt|1| | | | |301+24=325| | |
+ggtcagacactgactgaatctgagtca...gtaatcatcaaaccaggcaatgaacacaaa
+ctgacctgtactttctctggattgagcgtc............agtagtgctgatatatca
+tggataagacaggctgaaggtaaagggctggagtggatctcacatatttctgctccaagt
+...ggcagtagcaaatattactctaaagccgttgaa...ggaaga...ttcagcatctcc
+agagacaacagtaaaatgcaggtgtatctgcacatgacaaagctgcagactgaagacact
+ggagtgtattactgtgcccgagaaa
+>BX649502|IGHV12-1*01|Danio rerio_Tuebingen|P|V-REGION|190271..190574|304 nt|1| | | | |304+21=325| | |
+tgtaatatcatcctcactcagccaaactctataattctgcagccgggtaactcacttact
+ctcacatgtgaggtgtctggatattctgtaaca......gatgacaattacgcaacagcc
+tggatacgacaacctgcaggaaaagctctggagtggattgtgcacatatggggaggt...
+......ggaggcataactaagaaagacttactggca...aacaag...ttcagcatctgc
+aaaagtgactccagcaacagagtgactcttcaaggacagagttaaaagactgaagacaca
+gctgcgtattactgtgcaagactac
+>BX649502|IGHV13-2*01|Danio rerio_Tuebingen|F|V-REGION|206907..207202|296 nt|1| | | | |296+30=326| | |
+ggcatctccctgacctcatcccctgca...cagattaaagctgctggtcagtcagtcagg
+ttgtcctgtcaaatttctggatacgctctc............acagattatggcacagct
+tggatcagacatcctcctggaaaagccatggaatggatcgggattatatggggtaga...
+......ggatcaatagactctgggaactccttcaag...agtcgc...ttcactatttcc
+agagacacaaggaaaaatgagctgtacttagacatcagcagcctgcagactgaggacaca
+gctgtgtattattgtgcaaagacagc
+>BX649502|IGHV14-1*01|Danio rerio_Tuebingen|F|V-REGION|211778..212073|296 nt|1| | | | |296+27=323| | |
+agtcagacactggttgaatctgaggct...gtagtgattaaaccagaccaatctcataaa
+ctgacctgtaccgcttctggttttaacttt............ggtgactattggatggct
+tggataagacaggctgctgggaaagggccagaatgggtcgcaacactttccaatggc...
+...aacagctatatctattattccgacaaggttaag...ggaaga...tttaccatttca
+cgagatgataacaagaaccagctgtaccttcagatgaacagtcttaaaaccgaagacact
+gctgtttactactgtgcaagaga
+>BX649502|IGHV2-1*01|Danio rerio_Tuebingen|F|V-REGION|177065..177379|315 nt|1| | | | |315+15=330| | |
+gaaattcgattagatcagtcaccttct...gtgacaaagagacctggagaaacagtgaag
+atctcctgtaaaatatctgggttcacaatg............acaagctcctacatgcac
+tggatacggcagaagcctggaaaagctctggagtggattgggagagttgactctggcagc
+agttctagctctgattatcttatctatgcagattctgtgaaaaaccacttcacaatgagt
+gaagacgtatctcaaagtacacagtttcttgaagccaagagtctgagagaagaggacact
+gctgtttattactgtgctcgagcaccagga
+>BX649502|IGHV2-2*01|Danio rerio_Tuebingen|F|V-REGION|183213..183510|298 nt|1| | | | |298+27=325| | |
+gaaattcgattagatcagtcaccttct...gtgacaaagagacctggagaaacggtgaag
+atctcctgtaaaatatctgggtttacaatg............acacgctactacatgcac
+tggatacggcagaagcctggaaaagctctggagtggattgggagagttaactctggc...
+...tctggtagtgctgattatgcagattccatgaaa...aaccaa...ttcactctgagt
+gaggacgtgtctcaaaatatgcaatatcttgaagccaagagtctgagagaagaggacact
+gctgtttattactgtgctcgggagt
+>BX649502|IGHV2-3*01|Danio rerio_Tuebingen|F|V-REGION|208008..208319|312 nt|1| | | | |312+18=330| | |
+gaaattcgattagatcagtcacctgct...gtgacaaagagacctggagaaacagtgaag
+atctcctgtaaaatatctgggtttacaatg............actgagcactacatgcat
+tggatacggcagaagcctggagaagctctggaatggattgggaaaattaatactggcagc
+agttcttgctctgattatcttgtctatgcagactacataaaaaat...accacgatgagt
+gaggatgtttctcaaagtacacaatatcttgaagccaagagtctgagagaagagcacact
+gctatttattactgtgctcgagaaccaggg
+>BX649502|IGHV3-2*01|Danio rerio_Tuebingen|F|V-REGION|187555..187849|295 nt|1| | | | |295+30=325| | |
+tgtcaaacactgagcgagtctgatgca...gtggtcattaaacctggaggatctcacaga
+cttacctgtacaatctctggattcggtggt...............aactatgccatgtca
+tggatcagacagactgcaggaggaggtctggagtggctggcatacatctcatctggc...
+...agtggttctatatactactctcaggcggttcag...aggcgc...ttcaccatctcc
+agagataacagcaagaaccagatgtatctgcagatgaataatatgaagattgaagacact
+gctgtatattattgtgcaagagtgt
+>BX649502|IGHV4-1*01|Danio rerio_Tuebingen|F|V-REGION|123044..123341|298 nt|1| | | | |298+27=325| | |
+cagaatatggagtccatttcatctgag...tcagtgttaaagcctggagaaactctgagt
+ctttcctgtaggggatcaggatttaccttc............ggaagcaacaacatgcac
+tggattagacagcaacctgggaaagcactgatgtggatgggtcgtgtctggtataat...
+...gcacaaggacatgactatgctaatagttttaag...ggacgg...atagaaattacc
+agagacaattcaaaaagcatggtgtatctgaaactgtctgcactgacagaagaggactct
+gctgtgtattactgtgcaagagaag
+>BX649502|IGHV4-2*01|Danio rerio_Tuebingen|F|V-REGION|125075..125369|295 nt|1| | | | |295+30=325| | |
+caaggcatggattcgattgaaagctca...gttcagaaaaagcctggagaaactctgact
+ctgtcctgtagaggatccgggttcagcttt............gactgctgtagcatgcac
+tggatcagacaacaagctggaaaacctcttgtgtggatgggtctgggatacagttct...
+......ggaaatgggcataaggcagaatcctttaag...gagagg...ctggaaatcagc
+agagatgattcaaaaagcatgatgtatatgaaactgtctggactgacagaggaggactcg
+gctgtgtattactgtgcaaaacaag
+>BX649502|IGHV4-3*01|Danio rerio_Tuebingen|F|V-REGION|131285..131582|298 nt|1| | | | |298+27=325| | |
+caaggcatggagtcgattgaaagctca...gttcagaaaaagcctggagaaactctgact
+ctgtcctgcagaggatccgggttcaccttt............agctcctatcacatgcac
+tggatcagacaacaagctggaaaacctcttatgtggattggacgtgtttatagtgat...
+...ggcagtggcaatgactatgctgaatcctttaaa...ggaaga...gctgaaatcacc
+agagataattcaaagagtatgacatatctgaaactatcaggcctgacaacagaagattca
+gccgtgtattactgtgcaagacaat
+>BX649502|IGHV4-5*01|Danio rerio_Tuebingen|F|V-REGION|141966..142266|301 nt|1| | | | |301+24=325| | |
+cagagtctggagtccatcccttcaagttctgtgactaaaaagcctggagaaactttgaat
+ctctcttgtaaaggatctggatttgatttt............ggacagtatggcatgcac
+tggatcagacagcctgcagggaaagcactggactggattggggttatctggtatgat...
+...gccagtaaaacagtgtatgcaaaaagtgttgag...ggacga...atagagatcacc
+agagacaactcaaacaacatggtgtatcttaaactctctggtctgaaaactgaagattca
+gctgtttattactgtgcaagataca
+>BX649502|IGHV4-6*01|Danio rerio_Tuebingen|F|V-REGION|146039..146321|283 nt|1| | | | |283+42=325| | |
+gaaagtatggagtcaattgaaagctca...gtgcagaaaaagcctggagaaactctgact
+ctgtcctgtagaggatccgggttcagcttt............agctcctattacatgcac
+tggattagacaacaagctggaaaacctcttgtgtggattggaggcactggc.........
+............tatggctatgctgagtccttcaaa...ggaaga...gctgaaatcacc
+aaagataattcaaagagtatgacatatctgaaactatcaggcctcacagcagaagattca
+gccgtgtattactgtgcaagacaat
+>BX649502|IGHV4-7*01|Danio rerio_Tuebingen|F|V-REGION|148496..148796|301 nt|1| | | | |301+24=325| | |
+cagagtctggagtccatcccttcaagttctgtgactaaaaagcctggagaaactttaaat
+ctctcttgtaaaggatctggatttgatttt............ggacagtatggcatgcaa
+tggatcagacagcctgcagggaaagcactggactggattggggttatctggagtgat...
+...ggtagtaaaacagtgtatgcaaaaagtgttgag...ggacga...atagagatcacc
+agagacaactcaaacaacatggtgtatctcaaactctctggtctgaaaactgaagattca
+gctgtttattactgtgcaaggtaca
+>BX649502|IGHV4-8*01|Danio rerio_Tuebingen|F|V-REGION|151534..151831|298 nt|1| | | | |298+27=325| | |
+caaaatatggagtcgattgaaagctca...gttcagaagaagcctggagaaactctgact
+ctgtcctgtagaggatctgggttcagcttt............gactgctgtagcatgcac
+tggatcagacaacaagctggaaaacctcttgtgtggattggatatgtttctaatggt...
+...ggtgttagccaaaactatgctgaatctttcaaa...ggccga...actgaaattacc
+agagataattcaaagagtatggtatatctgaaactatcaggcctgacagcggaagactca
+gccatgtattactgtgcaagacaat
+>BX649502|IGHV4-9*01|Danio rerio_Tuebingen|F|V-REGION|153624..153918|295 nt|1| | | | |295+30=325| | |
+caaagtatggagtcgattgaaagctca...gttcagagaaagcttggagaaactctgact
+ctatcatgtagaggatcggggttcagcttt............agctactataacatgcac
+tggatcagacaacaagctggaaaacctcttgtgtggattggacgtgtttatgacagc...
+......actgactatagctatgctgaatccttcaaa...agtaga...gctgaaatcacc
+cgagataattcaaagagtatgacttatctgaaactatcaggcctgacagcagaagattca
+gccgtgtattactgcgcaagacaat
+>BX649502|IGHV5-1*01|Danio rerio_Tuebingen|F|V-REGION|132442..132733|292 nt|1| | | | |292+33=325| | |
+tcattagaactcactcagcctgagtct...ctgactgtacgtcctgatgactctctcact
+atcaactgcagagtctcatattcagtcact...............agtgaacacacagct
+tggattcgtcagcctgcaggaaaagctctggaatggattggagttatctaccataat...
+......ggaggcttagcctacaaggattctctgaaa...agcaag...ttcagcatcagc
+agagacacttccagtaacacaataacactgcaaggaaagaatatgaaagctgaagacaca
+gctgtgtattattgtgccagacata
+>BX649502|IGHV5-2*01|Danio rerio_Tuebingen|ORF|V-REGION|136851..137148|298 nt|1| | | | |298+27=325| | |
+tgtgttgaactgacccagactgattct...attgtcttgaggcctggtcaggttttgacg
+ctgtcttgtaaaatctctggatattcagtgact.........gagagctactgcacaaat
+tttatacgacaagctgcaggaaaagctctggagtggattggaattatctgctatgat...
+......ggaagcttagcctacaaggattctctgaaa...agcaag...ttcagcatcacc
+agagacacttccagtaacacaataacactgcaaggaaataatatgaaagctgaagacaca
+gctgtgtattattgtgccagacgta
+>BX649502|IGHV5-3*01|Danio rerio_Tuebingen|F|V-REGION|140215..140520|306 nt|1| | | | |306+24=330| | |
+tgtgttgaactgacccagactgactct...attgtattaaagcctggtgaggttttgact
+ctgtcctgtaaaatctctggatattcagtcact......gatggcagctactggacccac
+tggatacgacaggctgcaggaaaagctctggaatggattgggcagattggtgccaat...
+......ggctacacaaattataatgataaactgaat...agtaga...tttatattgacc
+aaacacacttccagcaacacggagactctgagtggacagaatatgcagactgaggacaca
+gctgtgtattactgcgccagagagagatac
+>BX649502|IGHV5-4*01|Danio rerio_Tuebingen|ORF|V-REGION|143719..144019|301 nt|1| | | | |301+24=325| | |
+tgtgttgaactgacccagacagattct...attgtcttgaggcctggtcaggtgttgact
+ctgtcttgtaaaatctctggatattcagtgact......gacagcagctattgcactgac
+tttatacgacaggctgcaggaaaagctctggaatgggttggggagatctgtggcagc...
+......ggtaacacatattacagcgataaactgaaa...agtaga...ttcacagttagc
+agagactcttccagcagcagcgtgactctgagtggacagaatatgcagactgaggacaca
+gctgtgtattactgcgccagacaaa
+>BX649502|IGHV5-5*01|Danio rerio_Tuebingen|ORF|V-REGION|149627..149927|301 nt|1| | | | |301+24=325| | |
+tgtgttgaactgacccagacagattct...attgtcttgaggcctggtcaggttttgact
+ctgtcctgtaaaatctctggatattcagtgact......gacagcagctattgcacaaac
+ttcatacgacaggctgcaggaaaagctctggaatgggttggggcaatatgtggtagt...
+......ggtaacacatattacagtgataaactgaaa...agtaga...ttcacagttagc
+agagactcttccagcagcagcgtgactctgagtggacagaatatgcagactgaggacaca
+gctgtgtattattgcgccagagagt
+>BX649502|IGHV5-7*01|Danio rerio_Tuebingen|F|V-REGION|156629..156920|292 nt|1| | | | |292+33=325| | |
+tcatatgaactcactcagtctgattct...ctgactgtccgtcctgatgactctctcact
+atcaactgcaaagtctcatattcagtcaca...............gactacagcacagcc
+tggattcgtcagcctgcaggaaaagctctggagtggattggagtgatctactataat...
+......ggcaacttagactacaaggattctctaaaa...agcaag...ttcagcatcacc
+agagacacttccagtaacacaataacactgcaaggaaagaatgtgaaagctgaagacaca
+gctgtgtattattgtgccagacgta
+>BX649502|IGHV5-8*01|Danio rerio_Tuebingen|ORF|V-REGION|157912..158209|298 nt|1| | | | |298+27=325| | |
+tgtgttgaactaattcagacagattct...attgtcttgaggcctggtcaggttgtgact
+ctgtcttgtaaaatatctggatattcagtgact.........gagagatactgcactcac
+ttcatacgacaggctgcaggaaaagctctggaatgggttggggcaatatgtggtagt...
+......ggtaacacatattacagtgataaactgaaa...agtaga...ttcacagttagc
+agagactcttcaagcagcagcgtgactctgagtggacagaatatgcagactgaggacaca
+gctgtgtattattgcgccagagagt
+>BX649502|IGHV6-1*01|Danio rerio_Tuebingen|F|V-REGION|138210..138507|298 nt|1| | | | |298+27=325| | |
+tgtcagacatttactcagtctgaagct...gtggttaaaaaaccaggagagtcccattca
+cttacatgttcaatagcaggatttacattc............agtagcctttatttacac
+tggatcagacagagccctggaaaagcactggagtggattgcatacatcagcacacaa...
+...agttctcctatttactattctcagtcagtccag...ggaagg...ttcacagtgtcc
+agagatgattccagcagtcagctgtacctgcagatgaacaacctcaagactgaagacact
+gctgtctattactgtgctaaagaga
+>BX649502|IGHV6-2*01|Danio rerio_Tuebingen|ORF|V-REGION|162909..163206|298 nt|1| | | | |298+27=325| | |
+tgtcagactttcactcagtctcaagct...gagttgaaaaaaacaggtgaatcttttcgt
+ctggtatgtaccgcctctggatttacattc............agcagctgctatgcagct
+gtggtgagacaagctcccggtaaagcactggagtggattgcatacatcggcacatac...
+...agttctcctatttactattctcagtcagtccag...ggaagg...ttcacagtgtcc
+agagatgattccagcagtcagctgtacctgcagatgaacaacctcaagactgaagacacc
+gctgtctattactgtgccagagcgg
+>BX649502|IGHV7-1*01|Danio rerio_Tuebingen|F|V-REGION|162116..162401|286 nt|1| | | | |286+39=325| | |
+tgtgttgagctcactcaaccttcatct...atggttgtgaaacctcaagaatcattttcc
+atctcctgcaggatttcagaatcaagc.....................tactgcattaac
+tggatccgtcaatctgctggaagaccgctggaatggcttggatatctctgtagtggt...
+......ggtagcactaacattaaagattcagtggaa...aacaag...atcagtttcacc
+caggacacatccaaaaacacagtgtttctgcagggacgtaattttcagacggaagacaca
+gctgtgtattactgtgccagacaga
+>BX649502|IGHV8-1*01|Danio rerio_Tuebingen|F|V-REGION|164193..164490|298 nt|1| | | | |298+27=325| | |
+tccattgagctgaatcagcctgctttc...aagttggtaaaacctgcggaatcattttct
+cttggctgtaagatcactggatattcagcatca.........ggtggcggctgtaccaac
+tggatacgacactcagctggaaaagccttggaatggattggctggttctgtagatct...
+......ggagatacgggaaccagcagcacaatgaag...aataag...atcagcttcaca
+gccgaaacatccagcaacacagtttttttacaaggtcaaaacttccagtctgaggacaca
+gccgtgtattattgtgcacgcaaga
+>BX649502|IGHV8-2*01|Danio rerio_Tuebingen|F|V-REGION|166467..166767|301 nt|1| | | | |301+24=325| | |
+tgtattgaactggaccagcctcctttc...atggtagtaaaaccaggagaaacgttcacc
+atcgcctgtaagatcactggatattcagcctca......gatggcagcacctgtaccaat
+tggatcagacattcggctggaaaaccgatggaatggattggatatttctgtagttcc...
+......agtagcaagggtgtcacagattcactgaaa...aataaa...atcagtctctct
+tctgaatcctcgaacaatgcagttattttaacaggaagaaacttcatcactgaggacaca
+gctgtgtattactgtgctcgctata
+>BX649502|IGHV8-3*01|Danio rerio_Tuebingen|F|V-REGION|168460..168757|298 nt|1| | | | |298+27=325| | |
+tgtattgaactggatcagcatcctgcc...atggaagtaaaaccagaagaaacattcacc
+atcgtctgtaaaatcactggatattcagcctca.........ggtggtggctatacaaac
+tggatcagacattcagctggaaaacccatggaatggatcggctattttcatacttcc...
+......agtaacaacggtgtcaaagattcactgaag...aataaa...atcagtttctct
+tctgaatcctccagcaatgcagtcattttaacaggaaaaaacttcaacactgaggacaca
+gctgtgtattactgtgttcgcaata
+>BX649502|IGHV8-4*01|Danio rerio_Tuebingen|F|V-REGION|198852..199149|298 nt|1| | | | |298+27=325| | |
+tgtattgaactggatcaacctctagtc...acggtagtaaagccaggtgaaacattcacc
+atcccctgtaagatcactggatattcagcctca.........ggtggtggctatacaaac
+tggatcagacattcagctggaaaacccatggaatggattggctggtttcaatcttcc...
+......agtagcaacggtgtcaaagattcactaaag...aataaa...atcagtttctct
+tctgaatcctccagcaatgcagttattttaacaggaaaaaacttcaacactgaggacaca
+gctgtgtattactgtgctcgcaata
+>BX649502|IGHV9-1*01|Danio rerio_Tuebingen|F|V-REGION|169325..169613|289 nt|1| | | | |289+36=325| | |
+attgtgctcacacagtctgaacagtca...gtaagtgtgtctccgagcggatctgttaag
+ctgacctgtgcatgcagtggattcactctt............agtagctacaggatgcac
+tggatccgtcaggcaccaggaaaaggactggaatggattttgcacttttattca......
+.........aattctgacaatggtgcagctcagtca...gtgcag...ggcagattcaca
+gcatctaaagacagctctaatttctatctgcacatgaatcaactgaagactgaggacact
+gcagtgtattactgtgcaagagaga
+>BX649502|IGHV9-2*01|Danio rerio_Tuebingen|F|V-REGION|172378..172666|289 nt|1| | | | |289+36=325| | |
+gttgtgctcacacagtctgagcggtca...gtaaatgtggctccaggtggtttccacaaa
+ctgagctgtgcctgcagtggatttactctt............aggagcactaacatgtac
+tggattcgtcaggcacctggaaaaggacttgaatggattatttattattattca......
+.........gattctgataaaagcacagctcagtca...gtgcag...ggcagattcacg
+gcatctaaagacagctccaatttatatctgcacatgaatcaacttaagactgaagacagt
+gctgtgtattactgcgcaacacaga
+>BX649502|IGHV9-3*01|Danio rerio_Tuebingen|F|V-REGION|199734..200026|293 nt|1| | | | |293+36=329| | |
+attgtgctcacacagtctgatcagtca...gtaagtgtgtctccgaggggatctgttaag
+ctgacctgtgcatgcagtggattcactctc............agtagcttcaggatgttc
+tggatccatcagacaccaggaaaaggactggaattgattttgaactatttatca......
+.........gattctgacaaaagttcagctcagtca...gtgcag...ggcagatttact
+gcatctaaagacagctctaatttttatctccacatgaatcaactgaagactgaggacact
+ggggtgtattactgtgcaacatacaccag
+>BX649502|IGHV9-4*01|Danio rerio_Tuebingen|F|V-REGION|201864..202152|289 nt|1| | | | |289+36=325| | |
+gttgtgctcacacagtctgaacagtca...gtaaatgtggctccaggtggtttctacaag
+ctgagctgtgcctgcagtggatttagtgtt............agtggcacggccatgcac
+tggatccgtcaggcacctggaaaaggactcgaatggattatttattattattca......
+.........gattcttataagagctcagctgagtca...gtgcag...ggcagattcaca
+gcatctaaagacagctccaatttctatctgcacatgaatcaactgaagactgaagacact
+gctgtgtattactgcgcaacacaga
