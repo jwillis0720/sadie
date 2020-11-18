@@ -32,6 +32,7 @@ jobs:
           pip install pytest
           pip install .
           env
+          igblastn -help
     # # - name: Test with pytest
     #   run: |
     #     pytest
