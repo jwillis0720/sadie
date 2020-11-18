@@ -49,7 +49,7 @@ jobs:
       - name: Test
         run: |
           env
-          pytest --cov ../pybody --cov-report=xml tests/antibody
+          pytest --cov=./ --cov-report=xml tests/antibody
           cat ./coverage.xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.15
