@@ -22,7 +22,7 @@ jobs:
             cd hmmer-3.3.1
             ./configure
             make -j 2
-            make install
+            sudo make install
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
