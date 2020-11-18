@@ -18,8 +18,9 @@ jobs:
       - name: Install HMMER Mac
         if: ${{runner.os == 'macOS'}}
         run: |
-            curl -sS -o hmmer.tar.gz http://eddylab.org/software/hmmer/hmmer-3.3.1.tar.gz 
-            tar -xzf hmmer.tar.gz
+            wget http://eddylab.org/software/hmmer/hmmer-3.3.1.tar.gz 
+            tar -xzf hmmer-3.3.1.tar.gz
             cd hmmer-3.3.1
+            ./configure
             make
             make install
