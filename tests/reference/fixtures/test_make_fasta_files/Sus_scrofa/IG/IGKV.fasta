@@ -1,0 +1,175 @@
+>FP312898|IGKV1-11*01|Sus scrofa|F|V-REGION|15192..15478|287 nt|1| | | | |287+48=335| | |
+gccatccagctgacccagtctccagcctccctggctgcatctctaggagacacagtctcc
+atcacttgccgggccagtcagagcatt..................aacaagtggctagcc
+tggtatcaacaacaagcagggaaagctcctaaactcttgatctattcagca.........
+............tccactttgcaaagtggggtccct...tcccggttcaagggcagtgga
+......tctggcactgatttcaccctcaccatcagtggcctgcaggctgaagatgttgca
+acttattactgtcagcagcatcatagtgcacctcc
+>CU694848|IGKV1-11*02|Sus scrofa|F|V-REGION|115750..116036|287 nt|1| | | | |287+48=335| |rev-compl|
+gccatccagctgacccagtctccagcctccctggctgcatctctaggagacacagtctcc
+atcacttgccgggccagtcagagcatt..................aacaagtggttagcc
+tggtatcaacaacaaccagggaaagctcctaaactcttgatctattcagca.........
+............tccactttgcaaagtggggtccca...tgcgggttcaagggcagtgga
+......tctggcactgatttcaccctcaccatcagtggcctgcaggctgaagatgttgca
+acttattactgtcagcagcatcatagtgcacctcc
+>FP312898|IGKV1-14*01|Sus scrofa|F|V-REGION|48786..49072|287 nt|1| | | | |287+48=335| |rev-compl|
+gccatccagctgacccagtctccagcctccctggctgcatctctaggagacacagtgtcc
+atcacttgccgggcccgtcagagcatt..................agcagttatttagcc
+tggtatcaacaacaaccagggaagactcctaaactccttttttatgatgca.........
+............tgcactttgcaaagtggggtccca...tgcgggttcaagggcagtgga
+......tctggcacccatttcaccgtcaccatcagcggcctgcaggctgaagatgttgca
+acttattattgtcagcagcttaacaatgcacctcc
+>FP312898|IGKV1-7*01|Sus scrofa|F|V-REGION|42163..42449|287 nt|1| | | | |287+48=335| | |
+gccatccagctgacccagtctccagcctccctggctgcatctctaggagacacagtctcc
+atcacttgccgggcccatcagaccatt..................agcagttatttagcc
+tggtatcaacaacaaccagggaagcctcctaaactccttttatgtgatgca.........
+............tgcactttgcaaagtggggtccca...tgcgggttcaagggcagtgga
+......tctggcacccatttcaccctcaccatcagtggcctgcaggctgaagatgttgca
+acttattattgtcagcagcttaacaatgcacctcc
+>CU694848|IGKV1-7*02|Sus scrofa|F|V-REGION|87991..88277|287 nt|1| | | | |287+48=335| |rev-compl|
+gccatccagctgacccagtctccagcctccctggctgcatctctaggagacacagtgtcc
+atcacttgccgggcccgtcagagcatt..................agcagttatttagcc
+tggtatcaacaacaaccagggaagcctcctaaactccttttatgtgatgca.........
+............tgcactttgcaaagtggggtccca...tgcgggttcaagggcagtgga
+......tctggcacccatttcaccgtcaccatcagcggcctgcaggctgaagatgttgca
+acttattattgtcagcagcttaacaatgcacctcc
+>FP312898|IGKV1-9*01|Sus scrofa|F|V-REGION|24916..25202|287 nt|1| | | | |287+48=335| | |
+gccatccagctgacccagtctccagcctccctggctgcatctctaggagacacagtctcc
+atcacttgccgggccagtcagagtgtt..................agcaataatttagcc
+tggtatcaacaacaagcagggaagcctcctaagctcctcatttattgggcc.........
+............tccgctttgcaaagtggagtccct...tcccggttcaagggtagtgta
+......tctggcacagatttcaccctcaccatcagtggcctgcaggctgaagatgttgca
+acttattattgtcagcagcttaacagtgcacctcc
+>CU694848|IGKV1-9*02|Sus scrofa|F|V-REGION|106011..106297|287 nt|1| | | | |287+48=335| |rev-compl|
+gccatccagatgacccagtctccagcctccctggctgcatctctaggagacacagtctcc
+atcacttgccgggccagtcagagtgtt..................agcaataatttagcc
+tggtatcaacaacaagcagggaaggctcctaagctcctcatttactgggcc.........
+............tccactttgcaaagtggagtccct...tcccggttcaagggcagtgta
+......tctggcactgatttcaccctcaccatcagtggcctgcaggctgaagatgttgca
+acttattcttgtcagcagcttaacagtgcacctcc
+>FP312898|IGKV1D-11*01|Sus scrofa|F|V-REGION|60631..60917|287 nt|1| | | | |287+48=335| |rev-compl|
+gccatccagctgacccagtctccagcctccctggctgcatctctaggagacacagtctcc
+atcacttgccgggccagtcagagcatt..................aacaagtggctagcc
+tggtatcaacaacaagcagggaaagctcctaaactcttgatctattcagca.........
+............tccactttgcaaagtggggtccct...tcccggttcaagggcagtgga
+......tctggcactgatttcaccctcaccatcagtggcctgcaggctgaagatgttgca
+acttattactgtcagcagcatcatagtgcacctcc
+>FP312898|IGKV2-10*01|Sus scrofa|F|V-REGION|21360..21661|302 nt|1| | | | |302+33=335| | |
+gccattgtgctgacccagactccactctccctgtcagtcagccctggagagccggcctcc
+atctcctgcaggtccagtcagagcctcgtagacagt...gatggagactcgctattgcac
+tggtacctgcagaaaccaggccagtctccacagctcctgatctatgaggct.........
+............accaacagggcctctggggtccca...gacaggttcagtggcagtggg
+......tcaggcacagatttcaccctgaaaatcagcagggtggaggctgaggatgtggga
+gtttattactgttttcaagctttacaatctcctcc
+>CU694848|IGKV2-10*02|Sus scrofa|F|V-REGION|109560..109861|302 nt|1| | | | |302+33=335| |rev-compl|
+gccattgtgctgacccagactccactctccctgtcagtcagccctggagagccggcctcc
+atctcctgcaggtccagtcagagcctcctacacact...gatggaaagaattatttgaat
+tggtacctgcagaaaccaggccagtctccacagcgattgatctatcaggct.........
+............accaacagggatactggggtccca...gacaggttcagtggcagtgga
+......tcaggcacagatttcaccctgaaaatcagcagggtggaggctgaggatgtggga
+gtttattactgttttcaagctttacaatctcctcc
+>FP312898|IGKV2-12*01|Sus scrofa|F|V-REGION|6765..7066|302 nt|1| | | | |302+33=335| | |
+gccattgtgctgacccagactccactctccctgtccgtcagccctggagagccggcctcc
+atctcctgcaggtccactcagagcctccgaggtagt...tatggaaagaattatttgaat
+tggtaccagcagaaaccaggccagtctccaaagctcttgatctattgggct.........
+............accaacagggcctctggggtccca...gacaggttcagtggcagtagg
+......tcagggaccgatttcaccctgaaaatcatcaggctggaggctgaggatgctgga
+gtttattcctgtttgcaagatatacaatctcctcc
+>CU694848|IGKV2-12*02|Sus scrofa|F|V-REGION|124132..124433|302 nt|1| | | | |302+33=335| |rev-compl|
+gccattgtgctgacccagactccactctcgctgtcagtcagccctggagagccggcctcc
+atctcctgcaggtccactcagagcctccgaggtagt...tatggaaagaattatttgaat
+tggtacctgcagaaaccaggccagtctccaaagctcttgatctattgggct.........
+............accaacagggcctctggggtccca...ggcaggttcagtggcagtagg
+......tcagggaccgatttcaccctgaaaatcatcaggctggaggctgaggatgctgga
+gtttattactgtttgcaagatatacaatctcctcc
+>FP312898|IGKV2-13*01|Sus scrofa|F|V-REGION|56532..56830|299 nt|1| | | | |299+36=335| |rev-compl|
+gccatcgtgctgacccagactccactctccctgtcagtcagccctggagagccggcctcc
+atctcctgcaggtccagtcagagccttgagata......tatggaaacaattttttgagt
+tggtaccagcagaaaccaggccagtctccacagctcctgatctatgaggct.........
+............accaacagggcctctggggtccca...gacaggttcagtggcagtggg
+......tcaggcacagatttcaccctgaaaatcagcagggtggaggctgaggatgcaggc
+gtttactactgccagcaaaataaagaatctcttcc
+>CU694848|IGKV2-13*02|Sus scrofa|F|V-REGION|4457..4755|299 nt|1| | | | |299+36=335| | |
+gccatcgtgctgacccagactccactctccctgtcagtcagccctggagagccggcctcc
+atctcctgcaggtccagtcagagccttgaggaa......tatggaagcaatttgttgagt
+tggtaccagcagaaaccaggccagtctccacagctcctgatctatgaggct.........
+............accaacagggcctctggggtccca...gacaggttcagcggcagtggg
+......tcaggcacagatttcaccctgaaaatcagcagggtggaggctgaggatgcaggc
+gtttattactgccagcaatttaaagaatttcctcc
+>FP312898|IGKV2-5*01|Sus scrofa|P|V-REGION|76570..76868|299 nt|1| | | | |299+36=335| | |
+gccatggtgttgacccagagtgcaatcttcctttcagttcagccgggagcgccggcctcc
+atttcctgcaggtccagttagagccttgagagt......tatagttacaatttcttgagt
+tggtaccagcagaaaccaggccagtcgccaaggctcctgatttattttgct.........
+............acaaacaaggcctctggtgtccca...gacaggttcagtggcagtggg
+......tcaggcacagatttcaccttgaagatcagcagggtggaggctgaggatgcaggc
+gtttattactgccagcaaaataaagaatctcttcc
+>FP312898|IGKV2-6*01|Sus scrofa|F|V-REGION|75179..75477|299 nt|1| | | | |299+36=335| | |
+gccatcgtgctgacccagagtccactctccctgtcagtcagccctggagcgccggcctcc
+atctcctgcaggtccagtcagagccttgagagt......tatagttacaatttcttgagt
+tggtaccagcagaaaccaggccagtcgccaaggctcctgatctattttgct.........
+............acaaacaaggcctctggtgtccca...gacaggttcagtggcagtggg
+......tcaggcacagatttcaccttgaagatcagcagggtggaggctgaggatgcaggc
+gtttattactgccagcaaaataaagaatctcttcc
+>CU694848|IGKV2-6*02|Sus scrofa|F|V-REGION|81969..82267|299 nt|1| | | | |299+36=335| |rev-compl|
+gccatcgtgctgacccagactccactctccctgtcagtcagccctggagagccggcctcc
+atctcctgcaggtccagtcagagccttgaggaa......tatggaagcaatttgttgagt
+tggtaccagcagaaaccaggccagtctccacagctcctgatctatggtggt.........
+............accaacagggcctctggggtccca...gacaggttcagtggcagtggg
+......tcaggcacagatttcaccctgaaaatcagcagggtggaggctgaggatgcaggc
+gtttactactgccagcaaaataaagaatctcctcc
+>FP312898|IGKV2-8*01|Sus scrofa|F|V-REGION|34713..35011|299 nt|1| | | | |299+36=335| | |
+gccatcgtgctgacccagactccactctccctgtcagtcagccctggagagccggcctcc
+atctcctgcaggtccagtcagagccttgagata......tatggaagcaatttcttgagt
+tggtaccagcagaaaccaggccagtctccacagctcctgatctatgaggct.........
+............accaacagggcctctggggtccca...gacaggttcagtggcagtggg
+......tcaggcacagatttcaccctgaaaatcagcagggtggaggctgaggatgcaggc
+gtttattactgccagcaacataaagaatctcctcc
+>CU694848|IGKV2-8*02|Sus scrofa|F|V-REGION|96800..97101|302 nt|1| | | | |302+33=335| |rev-compl|
+gccatcgtgctgacccagactccactctccctgtcagtcagccctggagagccggcctcc
+atttcctgcaggtccagtcagagcctcgtagacagt...gatggagactcgctattgcac
+tggtacctgcagaaaccaggccagtcgccaaggctcttattctattttgct.........
+............accaacagggcctcttgggtccca...gagaggttcagtggcagtggg
+......tcaggcacagatttcaccctgaaaatcagcagggtggaggctgaggatgcaggc
+gtttattactgccagcaatataaagaatttcctcc
+>CU928807|IGKV2/OR3-1*01|Sus scrofa|P|V-REGION|155027..155328|302 nt|1| | | | |302+33=335| | |
+gccatcgtgctgacccagaccccacttcccctgtcagtcagccctggagagccagtctcc
+atctcctgtaagtccagtcagagcctcctacacaga...ggtagaaacaattatctgcat
+tggtacctgcagaaaccaggccagtctctacaaaacctgatctattatgct.........
+............accaacacagcctctggggtccct...gacaggttcagtggcagtggg
+......ttagggacagatttcaccctaaaaatcagcagcatggaggctgaggatgtggga
+gttcattactgccagcaaagcagataatatcctcc
+>FP312898|IGKV2D-12*01|Sus scrofa|F|V-REGION|69018..69319|302 nt|1| | | | |302+33=335| |rev-compl|
+gccattgtgctgacccagactccactctcgctgtcagtcagccctggagagccggcctcc
+atctcctgcaggtccactcagagcctccgtggtagt...tatggaaagaattatttgaat
+tggtaccagcagaaaccaggccagtctccaaagctcttgatctattgggct.........
+............accaacagggcctctggggtccca...gacaggttcagtggcagtagg
+......tcagggaccgatttcaccctgaaaatcatcaggctggaggctgaggatgctgga
+gtttattactgtttgcaagatatacagtctcctcc
+>FP312898|IGKV3-3*01|Sus scrofa|ORF|V-REGION|90491..90780|290 nt|1| | | | |290+45=335| |rev-compl|
+gaaattgtgctgacccagtctgcagcccccaaggctgtttcccaagaggagagtgtcatc
+atcacctgcaacggcagcccaggtgtaagc...............accaacaaattacac
+tggtaccaactgaagaccggagcccctcccaggctccttatttatagcaca.........
+............tcaagcttggccttctgggtccca...acccgcttcagtggcagtgga
+......tctgggacctcttactctcgcaccatcagcagcgtggcagctcaagatgctgca
+gactattactgccagcagtctagcagcttcccacc
+>CU694848|IGKV3-3*02|Sus scrofa|ORF|V-REGION|69733..70022|290 nt|1| | | | |290+45=335| | |
+gaaattgtgctgacccagtctgcagcctccaaggctgtttcccaaggggagaatgtcatc
+atcacctgcaatggcagcccaggtgtaagc...............accaacaaattacac
+tggtaccaactgaagaccggagcccctcccaggctccttatttatagcaaa.........
+............tcaagcttggccttctgggtccca...acccgcttcagtggcagtgga
+......tctgggacctcttactcttgcaccatcagcagcgtggcagctcaagatgctgca
+gactattactgccagcagtctagcagcttcccacc
+>FP312898|IGKV5-4*01|Sus scrofa|ORF|V-REGION|87500..87786|287 nt|1| | | | |287+48=335| | |
+gaaacaacagtcactcaatctccagcatttgtgtcagcgaccccaggagacaaagttaac
+atcacccgcaaagccagccaagacatt..................gatgatgatatcatg
+tgctatcaacagaagccaggagaagcccctaagctccttattaaatatgct.........
+............tccattcacatcactggggttcca...acccggttcagtggcagtggg
+......tatggaacagattttactctgacaattggaaacatgatatctgaagatgctaca
+tattatttctgtcaacaagatgataatgtacctct
+>CU694848|IGKV5-4*02|Sus scrofa|ORF|V-REGION|72204..72490|287 nt|1| | | | |287+48=335| |rev-compl|
+gaaacaacactcactcaatctccagcatttgtgtcagcgaccccaggagacaaagttaac
+atcacccgcaaagccagccaagacatt..................gatgatgatatcatg
+tgctatcaacagaagccaggagaagcccctaggctccttattaaatatgct.........
+............tccattcacatcactggggttcca...acccggttcagtggcagtggg
+......tatggaacagattttactctgacaattggaaacatgatatctgaagatgctaca
+tattatttctgtcaacaagatgataatgtacctct

@@ -1,0 +1,629 @@
+>IMGT000048|TRDV1-12*01|Ovis aries_Rambouillet|F|V-REGION|811300..811592|293 nt|1| | | | |293+36=329| | |
+gcccagaaagttacccaagaccagccatacataaccagtcaaatagggcaatctgtcatt
+ctgaactgtcggtatgaagtaaggtggagtggg............tacacgcactacctt
+ttttggtataagcaacttcccagtggagagatgactttccttattcgtcaggaa......
+...............tcttctggcccgaatgcaaggaat...ggccgctactctgtaaac
+tttcagagagcacagaacactatcagcctcaccatttcagccttacagttggaagactct
+gcaaagtacttttgtgcagtctgggaact
+>OviAri_3_chr7|TRDV1-12*02|Ovis aries_Texel|P|V-REGION|54472..54704|233 nt|1| | | | |233+96=329|partial in 3'|rev-compl|
+............................................................
+ctgaactgtcggtatgaagtaagttggagtggg............tacacgcactacctt
+ttttggtataagcagcttcccagtggagagatgactttccttattcgtcaggaa......
+...............tcttctggcccgaatgcaaggaac...gaccgctactctgtaaac
+tttcagagagcacagaacaccatcagcctcaccatttcagccttacagttggaagactct
+gcaaagtacttttgtgcagtctgggaact
+>IMGT000048|TRDV1-13*01|Ovis aries_Rambouillet|F|V-REGION|906127..906419|293 nt|1| | | | |293+36=329| | |
+gcccagaaagttacccaagaccagccatacataaccagtcaaatagggcaatctgtcatt
+ctgaactgtcggtatgaagtaaggtggagtggg............tacacgcactacctt
+ttttggtataagcagcttcccagtggagagatgactttccttattcgtcaggaa......
+...............tcttctggcctgaatgcaaggaat...ggccgctactctgtaaac
+tttcagagtgcacagaacaccatcagcctcaccatttcagccttacagttggaagactcc
+gcaaagcacttttgtgcagtctgggaact
+>IMGT000048|TRDV1-14*01|Ovis aries_Rambouillet|ORF|V-REGION|941632..941891|260 nt|1| | | | |260+69=329| | |
+gcccagaaagttattcaagacccgccagacatacccagtcgagttggggaatcagttacc
+ctaaactgtcggtgtgaaacaagttggaga..................agtttcaacatt
+ttttggtacaagcaccttcccagtggagagatgattttccttacaagg............
+....................................gat...ggccactactctataaat
+tttgacagattaagtaaatcctccagcctcaccatttcaaccttacaacttgaagattct
+gcaaagtacttctgtgctctctgggaact
+>AJ786836|TRDV1-17*02|Ovis aries_Altamurana|ORF|V-REGION|280..539|260 nt|1| | | | |260+69=329| | |
+gcccagaaagttattcaagaccagccagacatacccagtcgagttggggaatcagttacc
+ctaaactgtcggtatgaaacaagtcggagc..................agttacagcatt
+ttttggtacaagcaccttcccagtggagagatgatttttcttacaagg............
+....................................gat...ggccgctactctataaat
+tctgccagatcacgtaaatcctccagcctcaccatttcaaccttacaactggaagattct
+gcaaagtacttctgcgttctctgggaact
+>IMGT000048|TRDV1-18*01|Ovis aries_Rambouillet|F|V-REGION|1016853..1017145|293 nt|1| | | | |293+36=329| |rev-compl|
+gcccagaaagttactcaagaccagccagacataacccgtcaagtggagcagtcagtcact
+ctgaactgtctgtatgacataagttggtacatg............ggcgcctactccatt
+ttttggttcaagcagcttcccaggggacagatgatttacctcattcgtcagtat......
+...............tcagaagatgggaatgcaagggac...ggccgctactctgtaaac
+ttccagaaagcagataagtccatcagcctcaccatttcagccttacagctggaagatact
+gcaaagtacttctgtgctctccgtgaact
+>NW_004080352|TRDV1-18*02|Ovis aries_Texel|F|V-REGION|2235..2527|293 nt|1| | | | |293+36=329| | |
+gcccagaaagttactcaagaccagccagacataacccgtcaagtggagcagtcagtcact
+ctgaactgtctgtatgaagtaagttggtacatg............gacgcctactccatt
+ttttggttcaagcagcttcccaggggacagatgatttacctcatttgtcagtat......
+...............tcagaagatgggaatgcaagggac...ggccgctactctgtaaac
+ttccagaaagcagataagtccatcagcctcaccatttcagccttacagctggaagatact
+gcaaagtacttctgtgctctccgtgaact
+>IMGT000048|TRDV1-2*01|Ovis aries_Rambouillet|F|V-REGION|292617..292903|287 nt|1| | | | |287+42=329| | |
+gcgcagagagttattcaagaccagccagacatatccggtcaactgggacagtcagtcacc
+ctgaactgtcggtatggaacaacgtggagc..................tattactacgtg
+ttttggtacaagctgcttcccaatggagagatgatttaccttattcatcaggtt......
+...............tcttctggccagaatgcaaggaat...ggccgctactctgtaaat
+tttcagaaagctcgtaaatccatcagcctcaccatttcggatttacagctggaagattct
+gcagagtatttctgtgctctctgggagct
+>NW_004082010|TRDV1-2*02|Ovis aries_Texel|F|V-REGION|2281..2567|287 nt|1| | | | |287+42=329| |rev-compl|
+gcgcagagagttattcaagaccagccagacatatctggtcaactgggacagtcagtcacc
+ctgaactgtcggtatggaacaacgtggagc..................tattactacgtg
+ttttggtacaagctgcttcccaatggagagatgatttaccttattcatcaggtt......
+...............tcttctggccagaatgcaaggaat...ggccgctactctgtaaat
+tttcagaaagctcgtaaatccatcagcctcaccatctcagatttacagctggaagactct
+gcagagtatttctgtgctctctgggagct
+>IMGT000048|TRDV1-20*01|Ovis aries_Rambouillet|ORF|V-REGION|1053817..1054076|260 nt|1| | | | |260+69=329| | |
+gcccagaaagttattcaagacccgccagacatacccagtcgagttggggaatcagttatc
+ctaaactgtcggtatgaaacaagtcggagc..................agttacagcatt
+ttttggtacaagcaccttcccagtggagagatgatttttcttacaagg............
+....................................gat...ggccgctactctataaat
+tctgacagatcacgtaaatcctccagcctcaccatttcaaccttacaactggaagattct
+gcaaagtacttctgcgctctctgggaact
+>IMGT000048|TRDV1-21*01|Ovis aries_Rambouillet|F|V-REGION|1065276..1065568|293 nt|1| | | | |293+36=329| | |
+gctcagaaagttacccaataccagccatacataaccagtcaaataggccaatctgtcatt
+ctgaactgtcggtatgaagtaaggtggagtggg............tacacgcactacctt
+ttttggtataagcaacttcccagtggagagatgactttccttattcgtcaggaa......
+...............tcttctggcctgaatgcaaggaat...ggccgctactctgtaaac
+tttcagagagcacagaacaccatcagcctcaccatttctgccttacagttggaagactcc
+gcaaagtacttttgtgcagtctgggaact
+>IMGT000048|TRDV1-22*01|Ovis aries_Rambouillet|F|V-REGION|1091421..1091713|293 nt|1| | | | |293+36=329| | |
+gcccagaatgttactcaaaaccagacagtcataatcagtcaagtggggaagatagtcacc
+cttaactgtcagtatgaaattagcaggaatgta............catgactactggatt
+ttttggtaccagcagcttcccagtggagagatgacttacctcattcatcagtat......
+...............tcagaagacaggaatgaaagggat...ggccgctactctgtaaac
+ttccagaaagcacgtaaatccatcagcctcactatttcattcttaaaactggaacattct
+gcaaagtatttctgtgctctctgggtaca
+>IMGT000048|TRDV1-23*01|Ovis aries_Rambouillet|ORF|V-REGION|1126036..1126292|257 nt|1| | | | |257+72=329| | |
+gcccagaaagttattcaagacccgccagacatatccaatcgaactggggaatcagttacc
+ctaaattgtcggtatgaaacaagccag.....................agccattacatt
+ttttggtacaagcaccttcccagtggagagatgattttccttacaaag............
+....................................gat...ggccgcttctctatacat
+tttgacagagtacataaatcctctagcctcaccatttcaaccttacaattggaagattct
+gcaaagtacttctgtgctctctgggaact
+>NW_004083226|TRDV1-25*02|Ovis aries_Texel|F|V-REGION|5136..5392|257 nt|1| | | | |257+72=329| | |
+gcccagaaagttattcaagacccgccagacatatccaatcgaactggggaatcagttacc
+ctaaattgtcggtatgaaacaagccag.....................agccgttacatt
+ttttggtacaagcaccttcccagtggagagatgattttccttacaaag............
+....................................gat...ggccgcttctctatacat
+tttgacagagtacataaatcctccagcctcaccatttcaaccttacaattggaagattct
+gcaaagtacttctgcgctctctgggaact
+>IMGT000048|TRDV1-26*01|Ovis aries_Rambouillet|P|V-REGION|1186359..1186645|287 nt|1| | | | |287+42=329| | |
+gcccagaaagttactcaagaccagccagacatatccagtcaagttggggagtcagccacc
+atgaactgtcagtatgagacaagttggaga..................agttataacagt
+ttttagtataagcagcttcctagtggagagatgatttaccttatcggccagaat......
+...............tcttatagcccaaatgcaagggat...ggccgctactccataaat
+tatcagagatcccgtaaagccatcagcctcattatctcagccttaaagctggaagactct
+gcaaagtacttctgtgctctctgggaact
+>NW_004081259|TRDV1-26*02|Ovis aries_Texel|P|V-REGION|2925..3211|287 nt|1| | | | |287+42=329| |rev-compl|
+gcccagaaagttattcaagaccagccagacatatccagtcaagttggggagtcagccacc
+atgaactgtcagtatgagacaagttggaga..................agttataacagt
+ttttagtataagcagcttcccagtggagagatgatttaccttatcggccagaat......
+...............tcttatagcccaaatgcaagggat...ggccgctactccataaat
+tatcagagatcccgtaaagccatcagcctcattatctcagccttatagctggaagactct
+gcaaagtacttttgtgctctctgggaact
+>IMGT000048|TRDV1-27*01|Ovis aries_Rambouillet|F|V-REGION|1203798..1204083|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaagaccagccacatatatctagccaagtggggcagtcagtcacc
+ctgaattgtcggtatgaaacaagctggagc..................ctttactatctt
+ttttggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcagaatacagcaacgcaagggac...ggccgctactctgtaaac
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctctgtgact
+>IMGT000048|TRDV1-28*01|Ovis aries_Rambouillet|P|V-REGION|1245020..1245305|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccaagtggggcagtcagtcacc
+ctgaattgtcggtatgaaacaagttggagc..................gcttactacctt
+tattggtacaagcaacttcccagtggacagatgacttacgttattcatcagggt......
+...............tcagaagtgataaacgcaagggaa...gaccgctactctgtaaac
+tttaagaaagcagataaatccatcagcctcaccatttcagccttacaactggaagactct
+gcaaagtacttctgtgctctctgtgact
+>IMGT000048|TRDV1-2D*01|Ovis aries_Rambouillet|F|V-REGION|1956194..1956480|287 nt|1| | | | |287+42=329| | |
+gcgcagagagttattcaagaccagccagacatatccggtcaactgggacagtcagtcacc
+ctgaactgtcggtatggaacaacgtggagc..................tattactacgtg
+ttttggtacaagctgcttcccaatggagagatgatttaccttattcatcaggtt......
+...............tcttctggccagaatgcaaggaat...ggccgctactctgtaaat
+tttcagaaagctcgtaaatccatcagcctcaccatttcggatttacagctggaagattct
+gcagagtatttctgtgctctctgggagct
+>IMGT000048|TRDV1-3*01|Ovis aries_Rambouillet|F|V-REGION|389151..389437|287 nt|1| | | | |287+42=329| | |
+gcgcagagagttattcaagaccagccagacatatccagtcaactgggacagtcagtcacc
+ctgaactgtcggtatggaacaacctggagc..................tcttactacctg
+ttttggtacaagctgcttcccagcggagagatgatttaccttattcatcaggtt......
+...............tcttctggccagaatgcaaggaat...ggccgctactctgtaaat
+tttcagaaagctcgtaaatccatcagcctcaccatttcagatttacagctggaagactct
+gcagagtatttctgtgctctctgggagct
+>IMGT000048|TRDV1-30*01|Ovis aries_Rambouillet|P|V-REGION|1444637..1444929|293 nt|1| | | | |293+36=329| |rev-compl|
+gcccagcaagtaactcaagtccagacagctgtacccagtcaagtggggcagacagtcacc
+ctgaattgttgatatgaagtaagttggaccacg............gactactactacatt
+ttttggtataaacagcttcccaggggagagatgactttgcttattcatcagtat......
+...............tcagaatacagtaatgcaaggaac...gaccgctactctgtaaac
+ttccagaaagcacacaaatccatcagcctcatcatttcagccttacagctcgaagactct
+gcaaagtacttctgtgctctctgggagct
+>IMGT000048|TRDV1-31*01|Ovis aries_Rambouillet|F|V-REGION|1500440..1500726|287 nt|1| | | | |287+42=329| |rev-compl|
+gcacagaaagttattcaagaccagccagacatatccagtcaactgggacagtcagtcacc
+ctgaactgtcggtatgcaacaacctggagc..................tattactacctg
+ttttggtacaagctgcttcccaatggagagatgatttaccttattagtcaggtt......
+...............tcttctggccagaatgcaaggaat...ggccgctactctgtaaat
+tttcagaaagctcgtaaatccgtcagcctcaccatttcagacttacagctggaagattct
+gcagagtatttctgtgctctctgggagct
+>IMGT000048|TRDV1-32*01|Ovis aries_Rambouillet|F|V-REGION|1539239..1539524|286 nt|1| | | | |286+42=328| |rev-compl|
+gcccagaaagttactcaagaccagccagatgtatccagccaagtggggcagtcagtcacc
+ttgaattgtcggtatgaaacaagctggagc..................tattacaacctt
+tattggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcagaaaacagcaacacaaggaat...ggccgctactctgtaaac
+ttccagaaagcagataaatccatcagcctcatcatttcacctttacagctggaagattct
+gcaaagtatttctgtgctctctgtgact
+>IMGT000048|TRDV1-33*01|Ovis aries_Rambouillet|F|V-REGION|1563005..1563297|293 nt|1| | | | |293+36=329| |rev-compl|
+gcccagcaagtaactcaagtccagacagctgtacccagtcaagtggggcagacagtcacc
+ctgaattgtcgatatcaagtaagttggaccatg............gccttctactacatt
+ttttggtataaacagcttcccaggggagagatgactttgcttattcgtcagtat......
+...............tcagaacacggtaatacaaggaat...ggccgctactctgtaaac
+ttcctgaaagcacataaatccatcagcctcatcatttcagccttacagcgcgaagactct
+gcaaagtacttctgtgctctctgggagct
+>OviAri_2_chr7|TRDV1-33*02|Ovis aries_Texel|P|V-REGION|299563..299855|293 nt|1| | | | |293+36=329| | |
+gcccagcaagtaactcaagtccagacagctgtacccagtcaagtggggcagacagtcacc
+ctgaattgttgatatgaagtaagttggaccacg............ggcttctactacatt
+ttttggtataaacagcttcccaggggagagatgactttgcttattcgtcagtat......
+...............tcagaacacggtaatacaaggaat...ggccgctactctgtaaac
+ttcctgaaagcacataaatccatcagcctcatcatttcagccttacagcgcgaagactct
+gcaaagtacttctgtgctctctgggagct
+>IMGT000048|TRDV1-34*01|Ovis aries_Rambouillet|F|V-REGION|1589668..1589954|287 nt|1| | | | |287+42=329| |rev-compl|
+acgcagagagttattcaagaccagacagacatatccggtcaactgggacagtcagtcacc
+ctgaactgtcggtatgcaacaacctggagc..................tattactacatg
+ttttggtacaagctgcttcccagtggagagatgatttaccttattcatcaggtt......
+...............tcttctggccagaatgcaaagaat...ggccgctactctgtaaat
+attcagaaagctcaaaaatccatcagcctcaccatttcagatttacagctggaagattct
+gcagagtatttctgtgctttctgggagct
+>OviAri_2_chr7|TRDV1-34*02|Ovis aries_Texel|P|V-REGION|270875..271151|277 nt|1| | | | |277+42=319|partial in 3'| |
+gcgcagagagttattcaagaccagccagacatatccggtcaactgggacagttagtcacc
+ctgaactgtcggtatgcaacaacctggagc..................tattactacgtg
+ttttggtacaagctgcttcccagcggagagatgatttaccttattcatcaggtt......
+...............tcttctggccagaatgcaaagaat...ggccgctactctgtaaat
+attcagaaagctcaaaaatccatcagcctcaccatttcagatttacagctggaggattct
+gcagagtatttctgtgctt
+>IMGT000048|TRDV1-35*01|Ovis aries_Rambouillet|F|V-REGION|1620342..1620628|287 nt|1| | | | |287+42=329| |rev-compl|
+gcacagaaagttattcaagaccagccagacatatccagtcaactgggacagtcagtcacc
+ctgaactgtcggtatgcaacaacctggagc..................tcttactacctg
+ttttggtacaagctgcttcccagtggagagatgatttaccttattcgtcaggtt......
+...............tcttctggccagaatgcaaggaat...ggccgctactctgtaaat
+tttcagaaagctcgtaaatccatcagcctcaccatttcagatttacagctggaagattct
+gcagagtatttctgtgctctctgggagct
+>IMGT000048|TRDV1-39*01|Ovis aries_Rambouillet|F|V-REGION|1779731..1780023|293 nt|1| | | | |293+36=329| | |
+tcccagaaagttactcaataccagccagacataatcagtcaagtgcggaacgtagtcatc
+ctgaactgtcggtatgaaacaagttggaacgtg............tacacctactggata
+ttttggtacaagcagcttcccagtggagagatgacttacctcattcctcagtat......
+...............tcagaagatgggaatgaaagggac...ggccactactctgtaaac
+tttcagaaagcacataagttcatcagcctcaccatttcatccttaaagctggagcattct
+ggaaaatacttctgtactctctgggaacg
+>IMGT000048|TRDV1-40*01|Ovis aries_Rambouillet|F|V-REGION|1792972..1793263|292 nt|1| | | | |292+36=328| | |
+gcccagagtgttactcaagaccagccagacatactcagtgaagtggggaagacaatcacg
+ctgaactgtcggtatgaaacaagttgggacatg............ttgagctactacatt
+ttttggtacaagcagcttcccagtggaaagatgacttatcttattcgtcagcat......
+...............tcagatgatgggaatgcaagggac...ggccgctactctgtaaac
+ttccagaaagctcataagtccatcagcctcaccatttcagccttagagctggaagattct
+gcaaagtacttctgcgttctcagagtat
+>NW_004082507|TRDV1-40*02|Ovis aries_Texel|F|V-REGION|47603..47894|292 nt|1| | | | |292+36=328| |rev-compl|
+gcccagagtgttactcaagaccagccagacatactcagtgaagtggggaagacaatcacg
+ctgaactgtcggtatgaaacaagttgggacatg............ttgagctactacatt
+ttttggtacaagcagcttcccagtggaaagatgacttatcttattcgtcagcat......
+...............tcagatgatgggaatgcaagggac...ggccgctactctgtaaac
+ttccagaaagctcataagtccatcagcctcaccatttcagccttagagctggaagattct
+gcaaagtacttctgcattctcagagtat
+>IMGT000048|TRDV1-41*01|Ovis aries_Rambouillet|P|V-REGION|1797646..1797905|260 nt|1| | | | |260+69=329| | |
+gcccaaaaagttattcaagatcaaccagacatattcactcagattggagaggcagtcacc
+atgaactgtcggtgtgaaacaagttggagc..................agttacaacatt
+ttttggtataagcaaccccccagtggagagatgattttccttacaagg............
+....................................gat...ggccactactctataaac
+tttcagagatcacgtaaatcctgaagcttcaccatttcaaccttacaactagaagattct
+gcaaagtactcctgtgctctctttgaatt
+>IMGT000048|TRDV1-42*01|Ovis aries_Rambouillet|F|V-REGION|1813571..1813863|293 nt|1| | | | |293+36=329| | |
+tcccagaaagttactcaatatcagccagacataaccagtcaagtgcggaacgtagtcatc
+ctgaactgtcggtatgaaacaagttggaacgtg............tacacctactggata
+ttttggtacaagcagcttcccagtggagagatgacttacctcattcctcagtat......
+...............tcagaagatgggaatgaaagggac...ggccactactctgtaaac
+tttcagaacgcacataagttcatcagcctcaccatttcatccttaaagctggagcattct
+ggaaaatacttctgtgctctctgggaacg
+>IMGT000048|TRDV1-43*01|Ovis aries_Rambouillet|F|V-REGION|1826342..1826633|292 nt|1| | | | |292+36=328| | |
+gctcagagtgttactcaagaccagccagacatactcagtgaagtggggaaaacagtcacc
+ctgaactgtcggtatgaaacaagttgggacatg............ttctactaccacatt
+ttttggtacaagcagcttcccagtggacagatgacttatcttattcgtcagtat......
+...............tcagatgatgggaatgcaagggat...ggccgctactctgtaaac
+ttccagaaagctcataagtccatcagcctcaccatttcagccttagagctggaagactct
+gcaatgtacttctgtgttctcagagtat
+>AJ786831|TRDV1-43*03|Ovis aries_Altamurana|F|V-REGION|282..573|292 nt|1| | | | |292+36=328| | |
+gctcagagtgttactcaagaccagccagacatactcagtgaagtggggaaaacagtcacc
+ctgaactgtcggtatgaaacaagttgggacatg............ttctactaccacatt
+ttttggtacaagcaacttcccagtggacagatgacttatcttattcgtcagtat......
+...............tcagatgatgggaatgcaagggat...ggccgctactctgtaaac
+ttccagaaagctcataagtccatcagcctcaccatttcagccttagagctggaagactct
+gcaatgtacttctgtgttctcagagtat
+>IMGT000048|TRDV1-44*01|Ovis aries_Rambouillet|ORF|V-REGION|1837883..1838142|260 nt|1| | | | |260+69=329| | |
+ccccagaaagttattcaagaccaaccagacatattcactcagattggagaggcagtcact
+gtgaactgttggtctgaaacaagttggagc..................agttataatatt
+ctttggtataagcaacctcccagtggagagatgaatttccttacaagg............
+....................................gat...ggccactactctataaat
+tttcagagatcatttaaatcctccagcctcaccatttcaaccttacaactggaagattct
+gcaaagtactcctgtgctctctttgaact
+>IMGT000048|TRDV1-45*01|Ovis aries_Rambouillet|P|V-REGION|1868159..1868428|270 nt|1| | | | |270+42=312|partial in 3'| |
+gcccagagagttactcaaggccagccagacatttccactcaagttagggagatagtcacc
+ctgagctgtcgatatgagacagatcacagc..................cattacaaaatt
+ttttggtataaacaacttcccagtggagagatgatttaccttattggtcaagat......
+...............tcttctagccaaaatgcaaggtat...ggccgctactccgtaaat
+tttaagatatcacgtaaattcatcagcctcacgatttcagacttagagctggaagactct
+gcaaagtacttc
+>IMGT000048|TRDV1-46*01|Ovis aries_Rambouillet|F|V-REGION|1890108..1890393|286 nt|1| | | | |286+42=328| | |
+gcccaggaagttactcaaaaccggccagatatatccagccaagtggggcaacccatcgcc
+ctgaattgtcgctatgaaacaagctggagc..................tattactacctt
+gtttggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcaggatacagcaatgcaaggaat...ggccgctactctgtaaac
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctctgtgact
+>AJ786829|TRDV1-46*02|Ovis aries_Altamurana|ORF|V-REGION|270..555|286 nt|1| | | | |286+42=328| | |
+gcccaggaagttactcaaaaccggccagatatatccagccaagtggggcaacccatcgcc
+ctgaattgtcgctatgaaacaagctggagc..................tattactacctt
+gtttggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcaggatacagcaatgcaaggaat...ggccgctactctgtaaac
+tttaagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctctgtgact
+>IMGT000048|TRDV1-48*01|Ovis aries_Rambouillet|F|V-REGION|2016743..2017029|287 nt|1| | | | |287+42=329| | |
+gcccagagagttactcaaaaccagccagacatttccactcaagttggggagatagtcacc
+ctcagctgtcgatatgagacagttcagagc..................cattatcacatt
+ttttggtacaaacaacttcccagtggagagatgatttaccttattggtcatgat......
+...............tcttctagccagaatgcaagatat...ggccgttactctgtaaat
+tttaagatatcacgtaaattcatcagcctcacgatttcagacttagagctggaagactct
+gcaaagtacttctgcactctctgggaact
+>IMGT000048|TRDV1-49*01|Ovis aries_Rambouillet|F|V-REGION|2031774..2032078|305 nt|1| | | | |305+24=329| | |
+gcccagagagttactcaaaaccagtcagacatttccactcaagttggggagatagtcact
+ctgagctgtcgatatgagacagttcagagccatgagacagttcagagccattaccacatt
+ttttggtacagacaacttcccagtggagagatgatttacattattggtcatggt......
+...............tcttctagccagaatgcaaggtat...ggccgctactctgtaaat
+tttcagatatcacgtaaattcatcagcctcacgatttcagacttagagctggaagactct
+gcaaagtacttctgcactctctgggaact
+>IMGT000048|TRDV1-5*01|Ovis aries_Rambouillet|F|V-REGION|621298..621590|293 nt|1| | | | |293+36=329| | |
+gcccagaaagttacccaagaccagccatacataaccagtcaaacagggcaatctgtcatt
+ctgaactgtcggtatgaagtaaggtggagtggg............tacacgcactacctt
+ttttggtataagcaacttcccagtggagagatgactttccttattcgtcaggaa......
+...............tcttctggcctgaatgcaaggaat...ggccgctactctgtaaac
+tttcagagagcacagaacaccatcagcctcaccatttctgccttacagttggaagactcc
+gcaaagtacttttgtgcagtctgggaact
+>OviAri_3_chr7|TRDV1-5*02|Ovis aries_Texel|F|V-REGION|53181..53473|293 nt|1| | | | |293+36=329| |rev-compl|
+gcccagaaagttacccaagaccagccatacataaccagtcaaacagggcaatctgtcatt
+ctgaactgtcggtatgaagtaagttggagtggg............tacatgcactacctt
+ttttggtataagcagcttcccagtggagagatgactttccttattcgtcaggaa......
+...............tcttctggcccgaatgcaaggaat...ggccgctactctgtaaac
+tttcagagagcacagaacaccatcagcctcaccatttctgccttacagttggaagactcc
+gcaaagtacttttgtgcagtctgggaact
+>AJ786840|TRDV1-5*03|Ovis aries_Altamurana|F|V-REGION|843..1135|293 nt|1| | | | |293+36=329| | |
+gcccagaaagttacccaagaccagccatacataaccagtcaaacagggcaatctgtcatt
+ctgaactgtcggtatgaagtaaggtggagtggg............tacacgcactacctt
+ttttggtataagcaacttcccagtggagagatgactttccttattcgtcaggaa......
+...............tcgtctggcctgaatgcaaggaat...ggccgctactctgtaaac
+tttcagagagcacagaacaccatcagcctcaccatttctgccttacagttggaagactcc
+gcaaagtacttttgtgcagtctgggaact
+>IMGT000048|TRDV1-52*01|Ovis aries_Rambouillet|F|V-REGION|2072729..2073015|287 nt|1| | | | |287+42=329| | |
+gcccagaaagttactcaagaccagccagacatatccagtcaagttggggagtcagccacc
+atgaactgtcagtatgagacaagttggagc..................aggtataacatt
+ttttggtataagcagcttcccagtggagagatgatttaccttattggtcagaat......
+...............tcttatagcccgaatgcaagggat...ggccgctactccataaat
+tttcagagatcccataaagccatcagcctcattatctcagccttaaagctggaagactct
+gcaaagtacttctgtgctctctgggaact
+>IMGT000048|TRDV1-53*01|Ovis aries_Rambouillet|F|V-REGION|2090534..2090819|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccagttgggacagtcagtcacc
+ctgaattgtcggtatgaaacaagctggagc..................gtttactacctt
+tattggtacaagcaacttcccagtggacagatgacttatgttattcatcagggt......
+...............tcacaagtgacaaacgcaaggaaa...gaccgctactctgtaaac
+tttaagaaagcagataaatccatcagcctcacaatttcagccttacaactggaagactct
+gcaaagtacttctgtgctctctctgtct
+>AJ809501|TRDV1-53*02|Ovis aries_Gentile di Puglia|ORF|V-REGION|275..560|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccagttgggacagtcagtcacc
+ctgagttgtcgatatgaaacaagctggagc..................gtttactacctt
+tattggtacaagcaacttcccagtggacagatgacttacgttattcatcagggt......
+...............tcacaagtgacaaacgcaaggaaa...gaccgctactctgtaaac
+tttaagaaagcagataaatccatcagcctcaccatttccgccttacaactggaagactct
+gcaaagtacttctgtgctctctctgtcg
+>IMGT000048|TRDV1-54*01|Ovis aries_Rambouillet|P|V-REGION|2119001..2119287|287 nt|1| | | | |287+42=329| | |
+gcccagaaagttactcaagaccagccagacatatccagtcaagttggggagtcagccacc
+atgaactgtcagtatgagacaagttggaga..................agttataacagt
+ttttagtataagcagcttcccagtggagagatgatttaccttatcggccagaat......
+...............tcttatagcccaaatgcaagggat...ggccgctactccataaat
+tttcagagatcacgtaaagccatcagcctcattatctcagccttaaagctggaagactct
+gcaaagtacttctgtgctctctgggaact
+>AJ786838|TRDV1-54*02|Ovis aries_Altamurana|ORF|V-REGION|830..1116|287 nt|1| | | | |287+42=329| | |
+gctcagaaagttactcaagaccagccagacatatccagtcaagttggggagtcagccacc
+atgaactgtcagtatgagacaagttggaga..................agttataacagt
+ttttcgtataagcagcttcccagtggagagatgatttaccttatcggccagaat......
+...............tcttatagcccaaatgcaagggat...ggccgctactccataaat
+tttcagagatcccgtaaagccatcagcctcattatctcagccttaaagctggaagactct
+gcaaagtacttctgtgctctctgggaact
+>AJ868224|TRDV1-54*03|Ovis aries_Gentile di Puglia|ORF|V-REGION|280..566|287 nt|1| | | | |287+42=329| | |
+gcccagaaagttactcaagaccagccagacatatccagtcaagttggggagtcagctacc
+atgaactgtcagtatgagacaagttggaga..................agttataacagt
+ttttcgtataagcagcttcccagtggagagatgatttaccttatcggccagaat......
+...............tcttacagcccaaatgcaagggat...ggccgctactccataaat
+tttcagagatcccgtaaagccatcagcctcattatctcagccttaaagctggaagactct
+gcaaagtacttctgtgctctctgggaact
+>IMGT000048|TRDV1-56*01|Ovis aries_Rambouillet|P|V-REGION|2157544..2157830|287 nt|1| | | | |287+42=329| | |
+gcccagaaagttactcaagaccagccagacatatccagtcaagttggggagtcagccacc
+atgaactgtcagtatgagacaagttggaga..................agttataacagt
+ttttagtataagcagcttcccagtggagagatgatttaccttatcggccagaat......
+...............tcttacagcccaaatgcaagggat...ggccgctactccataaat
+gttcagagatcacgtaaagccatcagcctcattatctcagccttaaagctggaagactct
+gcaaagtacttctgtgctccctgggaact
+>IMGT000048|TRDV1-57*01|Ovis aries_Rambouillet|F|V-REGION|2175009..2175294|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaagaccagccagatatatccagccaagtggggcagtcagtcacc
+ctgaattgtcggtatgaaacaagctggaga..................gtttactatctt
+ttttggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcaggatacagcaacgcaagggac...ggccgctactctgtaaac
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctctgtgact
+>IMGT000048|TRDV1-60*01|Ovis aries_Rambouillet|F|V-REGION|2207385..2207670|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccaagtggggcagtcagtcacc
+ctgagctgttggtatgaaacaagctggagt..................gtttactacctt
+tattggtacaagcaacttcccagtggacatatgacttatgttattcgtcagggt......
+...............tcagaaatgacaaacgcaaggaaa...gaccgctactctgtaaac
+tttaagaaagcagataaatccatcagcctcaccatttcagccttacaactagaagactct
+gcaaagtacttctgtgctctctctgtcg
+>OviAri_2_chr7|TRDV1-62*02|Ovis aries_Texel|F|V-REGION|180946..181232|287 nt|1| | | | |287+42=329| |rev-compl|
+gcccagaaagttactcaagaccagccagacatatccagtcaagttggggagttagccacc
+atgaactgtcagtatgagacaagttggagc..................agctataacatt
+ttttggtataagcaacttccccgtggagagctgatttaccttattggtcagaat......
+...............tcttatagcccgaatgcaagggat...ggctgctactctataaat
+tttcagagatcccgtaaagccatcaacctcattatctcagccttaaagctggaagactct
+gcaaagtacttctgtgctctctgggaact
+>IMGT000048|TRDV1-63*01|Ovis aries_Rambouillet|F|V-REGION|2254902..2255187|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaagaccagccagatatatccagccaagtggggcagtcagtcacc
+ctgaactgtcggtatgaaacaagctggaga..................gtttactatctt
+ttttggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcaggatacagcaacgcaagggac...ggccgctactctgtaaac
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctctgtgact
+>NW_004082203|TRDV1-63*02|Ovis aries_Texel|F|V-REGION|2031..2316|286 nt|1| | | | |286+42=328| |rev-compl|
+gcccagaaagttactcaagaccagccagatatatccagccaagtggggcagtcagtcacc
+ctgaactgtcggtatgaaacaagctggaga..................gtttactatctc
+ttttggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcaggatacagcaatgcaaggaat...ggccgctactctgtaaac
+tttaagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctctgtgact
+>IMGT000048|TRDV1-65*01|Ovis aries_Rambouillet|F|V-REGION|2283437..2283722|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccaagtggggcagtcagtcacc
+ctgaattgtcggtatgaaacaagctggact..................gcttactacatt
+ttttggtacaagcaacttcccagtggacagatgacttacgttattcgtcagagt......
+...............tcattagtcacaaatgcaacgaaa...gaccgctactcgataaac
+tttaagaaagcagataaatccatcagcctcaccatttcagccttacaactggaagactct
+gcaaagtacttctgtgctctctctgtct
+>IMGT000048|TRDV1-8*01|Ovis aries_Rambouillet|F|V-REGION|730817..731109|293 nt|1| | | | |293+36=329| | |
+gcccagaaagttacccaagaccagccatacataaccagtcaaatagggcaatctgtcatt
+ctgaactgtcggtatgaagtaagttggagtggg............tacatgcactacctt
+ttttggtataagcagcttcccagtggagagataactttccttattcgtcaggaa......
+...............tcttctggcccgaatgcaaggaat...ggccgctactctgtaaac
+tttcagagagcacagaactccatcagcctcaccatttcagccttacagccggaagactcc
+gcaatgtacttctgtgcagtctgggaact
+>AJ786834|TRDV1-8*02|Ovis aries_Altamurana|F|V-REGION|833..1125|293 nt|1| | | | |293+36=329| | |
+gcccagaaagttacccaagaccagccatacataaccagtcaaatagggcaatctgtcatt
+ctgaactgtcagtatgaagtaagttggagtggg............tacatgcactacctt
+ttttggtataagcagcttcccagtggagagataactttccttattcgtcaggaa......
+...............tcttctggcccgaatgcaaggaat...ggccgctactctgtaaac
+tttcagagagcacagaactccatcagcctcaccatttcagccttacagccggaagactcc
+gcaatgtacttctgtgcagtctgggaact
+>AJ868223|TRDV1-8*03|Ovis aries_Gentile di Puglia|ORF|V-REGION|278..570|293 nt|1| | | | |293+36=329| | |
+gcccagaaagttactcaagaccagccatacataaccagtcaaatagggcaatctgtcatt
+ctgaactgtcggtatgaagtaagttggagtggg............tacatgcactacctt
+ttttggtataagcagcttcccagtggagagatgactttccttattcgtcaggaa......
+...............tcttctggcccgaatgcaaggaat...ggccgctactctgtaaac
+tttcagagagcacagaactccatcagcctcaccatttcagccttacagccggaagactcc
+gcaatgtacttctgtgcagtctgggaact
+>IMGT000048|TRDV1-9*01|Ovis aries_Rambouillet|F|V-REGION|753518..753809|292 nt|1| | | | |292+36=328| | |
+gcccagaaagttactcaagaccaaccagacataaccagtcaagtggggcagtcagtgact
+ctgaactgtaagtatgaagtcagttggtacaag............atctcctactccatt
+ttttggtacaagcagcttcccagtggacagatgacttacctcattcgtcagtat......
+...............tcagaaaatgcgaatgcaagggac...ggccgctactctgtaaat
+ttccagaaagcagataagtccatcagccttaccattccagccttacagctaaaagatact
+gcaaagtacttctgtgctgtcacaggct
+>NW_004081110|TRDV1-9*02|Ovis aries_Texel|F|V-REGION|12509..12794|286 nt|1| | | | |286+36=322| |rev-compl|
+gcccagaaagttactcaagaccaaccagacataaccagtcaagtggggcagtcagtgact
+ctgaactgtaagtatgaagtcagttggtacaag............atctcctactccatt
+ttttggtacaagcagcttcccagtggacagatgacttacctcattcgtcagtat......
+...............tcagaaaatgcgaatgcaagggac...ggccgctactctgtaaat
+ttccagaaagcagataagtctatcagccttaccattccagccttacagctaaaagatact
+gcaaagtacttctgtgctgtca
+>OviAri_2_chr7|TRDV1S1*01|Ovis aries_Texel|F|V-REGION|362230..362515|286 nt|1| | | | |286+42=328| |rev-compl|
+gcccagaaagttactcaaaaccagccagatatatccagccaagtggggcaatcagtcacc
+ctgaattgtcggtatgaaacaagctggagc..................tattactacctt
+gtttggtacaagcaacttcccagtggacagataacttaccttattcaacagtat......
+...............tcagaaaacagcaatgcaaggaac...ggccgctactctgtaaac
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagactct
+gcaaagtacttctgtgctctccgtgact
+>NW_004080312|TRDV1S1*02|Ovis aries_Texel|F|V-REGION|1667..1952|286 nt|1| | | | |286+42=328| | |
+gcccaggaagttactcaaaaccggccagatatatccagccaagtggggcaatcagtcacc
+ctgaattgtcggtatgaaacaagctggagc..................tattactacctt
+gtttggtacaagcaacttcccagtggacagataacttaccttattcaacagtat......
+...............tcagaaaacagcaatgcaaggaac...ggccgctactctgtaaac
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagactct
+gcaaagtacttctgtgctctccgtgact
+>AJ786828|TRDV1S1*03|Ovis aries_Altamurana|F|V-REGION|306..591|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaaaaccagccagatatatccagccaagtggggcaatcagtcacc
+ctgaattgtcggtatgaaacaagctggagc..................tattactacctt
+gtttggtacaagcaacttcccagtggacagataacttaccttattcaacagtat......
+...............tcagaaaacagcaatgcaaggaac...ggccgctactctgtaaac
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctccgtgact
+>AJ786832|TRDV1S10*01|Ovis aries_Altamurana|F|V-REGION|1093..1380|288 nt|1| | | | |288+42=330| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccaagtggggcagtcagtcacc
+ctgagttgtcggtatgaaacaagctggagc..................gtttactacctt
+tattggtacaagcaacttcccagtggacagatgacttatgttattcgtcagagt......
+...............tcagaagcgacaaacgaaaggaaa...gagcgctactctgtaaac
+tttaagaaagcagataaatccatcaaactcaccatttcagccttacaactagaagactct
+gcaaagtacttctgtgctctctctctgtct
+>AJ868222|TRDV1S10*02|Ovis aries_Gentile di Puglia|ORF|V-REGION|271..558|288 nt|1| | | | |288+42=330| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccaagtggggcagtcagtcacc
+ctgagttgtcggtatgaaacaagctggagc..................gtttactacctt
+tattggtacaagcaacttcccagtggacagatgacttatgttattcgtcagggt......
+...............tcagaagcgacaaacgcaaggaaa...gagcgctactctgtaaac
+tttaagaaagcagataaatccatcaaactcaccatttcagccttacaactagaagactct
+gcaaagtacttctgtgccctctctctgtct
+>AJ786833|TRDV1S11*01|Ovis aries_Altamurana|F|V-REGION|271..556|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaaaaccagccagatatatccagccaagtggggcaatcagtcacc
+ctgaattgttggtatgaaacaagctggagc..................gattactacttt
+gtttggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcagaatacagcaatgcaagggac...ggccgctactctataaac
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctctgtgact
+>AJ786835|TRDV1S12*01|Ovis aries_Altamurana|F|V-REGION|369..660|292 nt|1| | | | |292+36=328| | |
+gcccagagtgttactcaagaccagccagtcataatcagtgaagtggggaagacaatcacc
+ctgaactgtcggtatgaaacaagttgggacatg............tacacctactggata
+ttttggtacaagcagctttccagtggacagatgacttatcttattcgtcagtat......
+...............tcagaaggtgggaatgcaagggac...ggccgctactctgtaaac
+ttccaggaagctcataagtccatcagcctcaccatttcagccttagagctggaagattct
+gcaatgtacttctgtgttctcagagcat
+>AJ786837|TRDV1S13*01|Ovis aries_Altamurana|ORF|V-REGION|280..571|292 nt|1| | | | |292+36=328| | |
+gcccagaaagttactcaagaccagccagacataacccgtcaagtggagcagtcagtcact
+ctgaactgtctgtatgaagtaagttggtacatg............gacgcctactccatt
+ttttggtacaaacagcttcccaggggacagatgatttacctcattcgtcagtat......
+...............tcagaagatgggaatgcaagggac...ggccgctactctgtaaac
+ttccagaaagcagataagtccatcagcctcaccatttcagctttacagctggaagatact
+gcaaagtacttctgtgtcctcgtgaact
+>AJ786841|TRDV1S14*01|Ovis aries_Altamurana|F|V-REGION|569..855|287 nt|1| | | | |287+42=329| | |
+gcccagaaagttactcaagaccagccagacatatccagtcaagttggggagtcagccgcc
+atgaactgtcagtatgagacaagttggaga..................agttataacagt
+ttttggtataagcagtttcccagtggagagatgatttaccttatcggccagaat......
+...............tcttatagcccaaatgcaagggat...ggccgctactccatacat
+tgtcagagtcaaggtaaagccatcagcctcattatctcagccttaaagctggaagactct
+gcaaagtacttctgtgctctctgggaact
+>AJ809502|TRDV1S15*01|Ovis aries_Gentile di Puglia|ORF|V-REGION|292..584|293 nt|1| | | | |293+36=329| | |
+gcccagcaagtaactcaagtccagacagctgtatccagtcaagtggggcagacagtcacc
+ctgaattgtcgatatgaagtaagttggaccatg............gactactactacatt
+ttttggtataaacagcttcccaggggagagatgactttgcttattcatcagtat......
+...............tcagaatacagtaatgcaaggaac...ggccgctactctgtaaac
+ttccagaaagcacataaatccatcagcctcatcatttcagccttacagctcaaagactct
+gcaaagtacttctgtgctctctgggagct
+>AJ809504|TRDV1S16*01|Ovis aries_Gentile di Puglia|ORF|V-REGION|272..557|286 nt|1| | | | |286+42=328| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccagttgggacagtcagtcacc
+ctgaattgtcggtatgaaacaagctggagg..................tattacaacctt
+ttttgctacaagcaacttcccagtggacagatgacttacgttattcgtcagggt......
+...............tcacaagtgacaaacgcaaggaaa...gagcgctactctgtaaac
+tttaagaaagcagataaatccatcagcctcacaatttcagccttacaactagaagattct
+gcaaagtacttctgtgctctctctgtct
+>AJ809505|TRDV1S17*01|Ovis aries_Gentile di Puglia|ORF|V-REGION|301..593|293 nt|1| | | | |293+36=329| | |
+gcccagaaagttactcaatatcagccagacataaccagtcaagtgtggaacgtagtcatc
+ttgaactgtcagtatgaaacaagttggaacgtg............tacacctactggata
+ttttggtacaagcagcttcccaggggagagataacttacctcattcatcagtat......
+...............tcagaagatgggaatgaaagggac...ggccactactctgtaaac
+tttcaggaagcacataagttcatcagcctcaccatttcatccttaaagctggagcattct
+ggaaaatacttctgtgctctctgggaatg
+>AJ809506|TRDV1S18*01|Ovis aries_Gentile di Puglia|ORF|V-REGION|272..563|292 nt|1| | | | |292+36=328| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccaagtggggcagtcagtcacc
+ctgaattgtcggtatgaaacaagttggaacatg............ttgagctactacatt
+ttttggtacaagcagcttcccagtggacagatgacttatcttattcgtcagcat......
+...............tcagatgatgggaatgcaagggat...ggccgctactctgtaaac
+ttccagaaagctcataagtccatcagcctcaccatttcagccttagagctggaagattct
+gcaaagtacttctgtgttctcagagtat
+>NW_004081954|TRDV1S2*01|Ovis aries_Texel|ORF|V-REGION|3011..3251|241 nt|1| | | | |241+42=283|partial in 3'| |
+gcccagaaagttactcaagaccagtcagatgtatccagccaagtggggcagtcagtcacc
+ctgaattgtcagtatgaaacaagctggagc..................tattacaacctt
+ttttggtacaagcaacttcccagtggacagatgacttacgttattcgtcagagt......
+...............tcattagtcacgaatgcaacgaaa...gaccgctactcgataaac
+tttaagaaagcggataaatccatcagcctcaccatttcagcct
+>NW_004082156|TRDV1S3*01|Ovis aries_Texel|F|V-REGION|1247..1533|287 nt|1| | | | |287+42=329| | |
+gcccagagagttactcaagaccagccagacatttccagtcaagttggggaggtagtcaca
+ctgagctgtcgatatgagacaattcagagc..................cgttacaacatt
+ttttggtacaaacaacttcccagtggagagatgatttaccttattggtcatgat......
+...............tcttctagccagaatgcaagatat...ggccgttactctgtaaat
+tttaagatatcacgtaaattcatcagcctcacgatttcagacttagagctggaagactct
+gcaaagtacttctgcactctctgggaact
+>NW_004082507|TRDV1S4*01|Ovis aries_Texel|F|V-REGION|2739..3025|287 nt|1| | | | |287+42=329| |rev-compl|
+gcccagaaagttactcaagaccagccagacatagccagtcaagttggggagtcagctgcc
+atgaactgtcagtatgagacaagtcggaac..................agttataacatt
+ttttggtataagcagcttcccagtggagagatgatttaccttattggtcagaat......
+...............tcttacagcccgaatgcaagggat...ggccgctactccataaat
+tttctgagatcccttaaagccatcagcctcattatctcagccttaaagctggaagactcg
+gcaaagtacttctgtgctctctgggaact
+>NW_004082507|TRDV1S5*01|Ovis aries_Texel|F|V-REGION|15194..15480|287 nt|1| | | | |287+42=329| |rev-compl|
+gcccagagagttactcaagaccagccagacatttccagtcaagttggggaggtagtcaca
+ctgagctgtcgatatgagacaattcagagc..................cgttacaacatt
+ttttggtacaaacaacttcccagtggagagatgatttaccttattggtcagggt......
+...............tcttccagccagaatgcaaggtat...ggccgctactctgtgaat
+ttacagagatcacgtaaatccatcagcctcacgatttcagacttagagctggaagactct
+gcaaagtacttctgcgctctctgggaact
+>NW_004082507|TRDV1S6*01|Ovis aries_Texel|ORF|V-REGION|43095..43354|260 nt|1| | | | |260+69=329| |rev-compl|
+gcccagaaagttattcaagatcaaccagacatattcactcagattggagaggcagtcacc
+atgaactgtctgtgtgaaacaagttggagc..................agttacaacatt
+ttttggtataagcaaccccccagtggagagatgattttccttacaagg............
+....................................gat...ggccactactctataaac
+tttcagagatcatgtaaatcctccagcctcaccatttcaaccttacaactggaagattct
+gcaaagtactcctctgctctctttgaatt
+>NW_004083566|TRDV1S7*01|Ovis aries_Texel|F|V-REGION|310..596|287 nt|1| | | | |287+42=329| |rev-compl|
+gcccagaaagttactcaagaccagccagatatatccagccaagtggggcagtcagtcacc
+ctgaactgtcggtatgaaacaagctggaga..................gtttactatctt
+ttttggtacaagcaacttcccagtggacagatgacttatgttattcgtcagggt......
+...............tcagaaatgacaaacgcaaggaaa...gaccgctactctgtaaac
+tttaagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctccgtgaact
+>AJ786827|TRDV1S8*01|Ovis aries_Altamurana|F|V-REGION|613..896|284 nt|1| | | | |284+42=326| | |
+gcccagaaagttactcaagaccagtcagatgtatccagccaagtggggcagtcagtcacc
+ctgaattgtcggtatgaaacaagctggagc..................tattacaacctt
+ttttggtacaagcaacttcccagtggacagatgacttacgttatccgtcagggt......
+...............tcacaagcgacaaacgcaaggaaa...gaccgctactctgtaaac
+tttaagaaagcagataaatccatcagcctcaccatttcagccttacaactggaagactct
+gcaaagtacttctgtgctctctgtct
+>AJ786830|TRDV1S9*01|Ovis aries_Altamurana|F|V-REGION|430..716|287 nt|1| | | | |287+42=329| | |
+gcccagaaagttactcaagaccagtcggatgtatccggccaagtggggcagtcagtcacc
+ctgaattgtcggtatgaaacaagttggggt..................gcttactacctt
+ttttggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcaggaaacagcaatgcaaggaac...ggccgctactctgtaaat
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctccgtgaact
+>AJ868220|TRDV1S9*02|Ovis aries_Gentile di Puglia|ORF|V-REGION|273..559|287 nt|1| | | | |287+42=329| | |
+gcccagaaagttactcaagaccagtcggatgtatccggccaagtggggcagtcggtcacc
+ctgaattgtcggtatgaaacaagttggggt..................gcttactacctt
+ttttggtacaagcaacttcccagtggacagatgacttaccttattcaacagtat......
+...............tcaggaaacagcaatgcaaggaac...ggccgctactctgtaaat
+ttccagaaagcagataaatccatcagcctcatcatttcatccttacagctggaagattct
+gcaaagtacttctgtgctctctgtgaact
+>IMGT000048|TRDV2*01|Ovis aries_Rambouillet|ORF|V-REGION|2634383..2634673|291 nt|1| | | | |291+36=327| | |
+gctgtcgtgttggtgcctcaagaccaagaaaagactgtgcctgtggggaaatctgtcacc
+ctcagctgctccatgaaaggagcaatgttcatc............agtaaacactatatt
+ttctggtacaggaagaccccaggtaacacaatgactttcatatacagagaagag......
+...............ggtgtatatggccctgggtttgag...gacaacttccgaggtaaa
+attgataattcaaccaaccaggctatgctggagatcctgaaggcatcagagagagatgaa
+ggattttactactgtgccagtgattac
+>OviAri_1_chr7|TRDV2*02|Ovis aries_Texel|ORF|V-REGION|320846..321136|291 nt|1| | | | |291+36=327| |rev-compl|
+gctgtcgtgttggtgcctcaagaccaagaaaagactgtgcctgtggggaaatctgtcacc
+ctcagctgctccatgaaaggagcaatgttcatc............agtaaacactatatt
+ttctggtacaggaagaccccaggtaacacaatgactttcatatacagagaagag......
+...............ggtgtatatggccctgggtttgag...gacaacttccgaggtaaa
+attgataattcaaccaaccaggctatgctggagatcctgaaggcatcagagagagatgga
+ggattttactactgtgccagtgattac
+>IMGT000048|TRDV3*01|Ovis aries_Rambouillet|F|V-REGION|2765547..2765841|295 nt|1| | | | |295+33=328| |rev-compl|
+tgtaaccaagtgacccagagctccccggagcagagagtggcaagtggccgagaggtgaca
+ctgcagtgcaccttccaaaccacatattca..................aatccagactta
+tactggtaccgaaagacgccagatgctgtcttccagtttgtcctgtacagggacaac...
+.........actagatcccgtgatgcggattttgctcgg...ggtagatttactgtgcag
+catagcgtgagaagcaaaaccttccacttggtgatctcctctgtgaggcctgaagacact
+gccacttactactgtgctttggagctcc
+>AJ810117|TRDV3*02|Ovis aries_Altamurana|F|V-REGION|889..1183|295 nt|1| | | | |295+33=328| | |
+tgtaaccaagtgacccagagctccccggaggagagagtggcaagtggccgagaggtgaca
+ctgcagtgcaccttccaaaccacatattca..................aatccagactta
+tactggtaccgaaagacgccagatgctgtcttccagtttgtcctgtacagggacaac...
+.........actagatcccgtgatgcggattttgctcgg...ggtagatttactgtgcag
+catagcgtgagaagcaaaaccttccacttggtgatctcctctgtgaggcctgaagacact
+gccacttactactgtgctttggagctcc
+>IMGT000048|TRDV5*01|Ovis aries_Rambouillet|F|V-REGION|2568837..2569118|282 nt|1| | | | |282+48=330| | |
+gttgagagcgccgatgtacctaca......gtgtataaaaaagagggggaatctgtgacc
+gtggaatgcaagttctcagtcagctatacg..................tactatatgatg
+tactggtatcgacaaccttccagcggagagatgatttacatgattaatatttat......
+...............tctcaaagcaagcagacaagggaa...ggacgatactctgtggaa
+ttttacaaacccaaccaaatgctgaaactcaccatctcagccttgaagctgagtgactcg
+gccgtctatttctgtgctgtcagagagttc
+>OviAri_1_chr7|TRDV5*02|Ovis aries_Texel|F|V-REGION|388913..389194|282 nt|1| | | | |282+48=330| |rev-compl|
+gttgagagcgctgatgtacctaca......gtgtataaaaaagagggggaatctgtgacc
+gtggaatgcaagttctcagtcagctataca..................tactatatgatg
+tactggtatcgacagccttccagcggagagatgatttacatgattaatatttat......
+...............tctcaaagcaagcagacaagggaa...ggacgatactctgtggaa
+ttttacaaacccaaccaaatgctgaaactcaccatctcagccttgacgctgagtgactcg
+gccgtctatttctgtggtgtcagagagttc

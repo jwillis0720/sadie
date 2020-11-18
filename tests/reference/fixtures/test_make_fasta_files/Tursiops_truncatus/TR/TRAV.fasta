@@ -1,0 +1,133 @@
+>IMGT000017|TRAV14*01|Tursiops truncatus|F|V-REGION|38894..39183|290 nt|1| | | | |290+36=326| | |
+gcccagaaggtaactcaagaccaaccagtaatattagtgcaggagaaggaggttgtgacc
+ctggattgcatatatgacacaaatgagttc...............acttatagtctatac
+tggtacaagcagcccagcagtggggcgatgattctccttattcgtcaggactcttat...
+...aaccagcaaaatgcaacagaa...............ggtcgctactcactgaatttc
+cagaaggcaaacaaatccatcaaacttgccatctcagcttcacagctggaggactctgca
+gtgtatttctgtgcactgagtgagcg
+>IMGT000019|TRAV14*02|Tursiops truncatus|F|V-REGION|4183..4472|290 nt|1| | | | |290+36=326| | |
+gcccagaaggtaactcaagaccaaccagtaatattagtgcaggagaaggagattgtgacc
+ctggattgcatatatgacacaaatgatatc...............acttatagtctatac
+tggtacaagcagcccagcagtggggcgatgattctccttattcgtcaggactcttat...
+...aaccagcaaaatgcaacagaa...............ggtcgctactcactgaatttc
+cagaaggcaaacaaatccatcaaacttgccatctcagcttcacagctggaggactctgca
+gtgtatttctgtgcactgagtgagcc
+>IMGT000017|TRAV16*01|Tursiops truncatus|F|V-REGION|47741..48012|272 nt|1| | | | |272+51=323| | |
+gcccagacagtgactcagcctgaggaccacatctccgtctttgaagggtccccagtgcag
+gtgaagtgcaactactcatattctggg..................agtcctgtgctcttc
+tggtatgtacactaccccaaacaacacctccagttactcctgagacacacc.........
+.........tcgagagagagtatc...............agaggtttcacggctgacctc
+aacaagggtgaggcatccttccacctgaaaaaactatcagctcaagaggaagactcagcg
+gtgtattactgtgctctgaggga
+>IMGT000019|TRAV16*02|Tursiops truncatus|F|V-REGION|13385..13656|272 nt|1| | | | |272+51=323| | |
+gcccagacagtgactcagcctgaggaccacatctccgtctttgaagggtccccagtgcag
+gtgaagtgcaactactcatattctggg..................agtcctgagctcttc
+tggtatgtacactaccccaaacaacacctccagttactcctgagacacagc.........
+.........tcaagagagagtatc...............agaggtttcacggctgacctc
+aacaagggtgaggcatccttccatctgaaaaaactatcagctcaagaggaagactcagcg
+gtgtattactgtgctctgaggga
+>IMGT000017|TRAV17*01|Tursiops truncatus|F|V-REGION|53214..53490|277 nt|1| | | | |277+45=322| | |
+agccagcaaggagaagagaatcttcaggccctgagcatccacgagggtgaaaatgccacc
+atgaactgcagttataaaactgctata.....................gacaccttacat
+tggtacagacaggattcaaggagaggctttgcccacctgattttaatacgttcaaat...
+......gagagagagaagcttagt...............ggaagactgcgagtcacgctt
+gacaactccatcaaaggcagttccctgtccatcacggcttcccaggctgcagacactgct
+acttacctctgtgctacggata
+>IMGT000019|TRAV17*02|Tursiops truncatus|F|V-REGION|18806..19082|277 nt|1| | | | |277+45=322| | |
+agccagcaaggagatgagaatcttcaggccctgagcatccaggagggtgaaaatgccacc
+atgaactgcagttataaaactgctata.....................gacaccttacac
+tggtacagacaggattcaaggagaggctttgcccacctgattttaatacgttcaaat...
+......gagagagagaagcttagt...............ggaagactgcgaggcacgctt
+gacaactccatcaaaggcagttccctgtccatcacggcttcccaggctgcagacactgct
+acttacctctgtgctacggata
+>IMGT000019|TRAV18-1*01|Tursiops truncatus|F|V-REGION|30929..31212|284 nt|1| | | | |284+39=323| | |
+ggagactcagtgaaccagacagaaggcccagtgactgtctcagagggggcacctaggacc
+ctgcactgcacttaccagacctctgatcca...............ggtccctatcttttc
+tggtacgtccagtatctcaacaaagctccgcaactcctcctgaagggctcgaaggca...
+......aaccagagggcagagcat...............caaggttttcaggccactctt
+gttacgagtgacagctccttccacctgcagaaaacctcaatgcaagcatcagactcggct
+gtgtactactgtgctctgagtga
+>IMGT000017|TRAV20-1*01|Tursiops truncatus|F|V-REGION|1944..2217|274 nt|1| | | | |274+48=322| | |
+gaagacaaggtggagcagagtcctcagaccctgaaaatccaggagggagacagtctcatc
+ctcaactgcagctacaccgtcagcaat..................tttaacaggctgctg
+tggtatagacaggatcctgggaagggacctgaacttctcttcgctctttactcagtt...
+......ggggacgaaaagcagaac...............gaaagactaaaagccaccttg
+ttaaag......aagggaagctctctgcacatcgcagcccctaaacctgaagactcagcc
+acttacctctgtgctgtggaga
+>IMGT000018|TRAV20-1D*01|Tursiops truncatus|F|V-REGION|13063..13336|274 nt|1| | | | |274+48=322| | |
+gaagacaaggtggagcagagtcctcagaccctgaaaatccaggagggagacagtctcatc
+ctcaactgcagctacacggtcagcaat..................ttttacgggctactg
+tggtatagacaggatcctgggaagggacccgaacttctcttcgctctttactcagtt...
+......ggggacgaaaagcagaaa...............gaaagactaaaagccaccttg
+ttaaag......aagggaagctctctgcacatcgcagcccctaaacctgaagactcagcc
+acttacctctgtgctgtgaaga
+>JH484271|TRAV37*01|Tursiops truncatus|ORF|V-REGION|4413..4677|265 nt|1| | | | |265+57=322| | |
+caaccactggtggaaaag...............aaagtcaaggaaggcgagagcttcaca
+ctgaactgcagttacacagacagagct..................gttgatttcttccag
+tggtttacgcaggatcccagggaaggcctccactccctgatacaattgttttcaact...
+......gagaaagagaagatcagt...............ggaagattcacagccaggctt
+aacaaaaatgaccagcaattttccctgcacgtgaaggattcccagctcaacgacacaacc
+accttcttatgtgcaacaagtg
+>IMGT000018|TRAV37*02|Tursiops truncatus|ORF|V-REGION|50915..51179|265 nt|1| | | | |265+57=322| | |
+caaccactggtggaaaag...............aaagtcaaggaaggcgagagcttcaca
+ctgaactgcagttacacagacagagct..................gttgatttcttccag
+tggtttacgcaggatcccagggaaggcctccactccctgatacaattgttttcaact...
+......gagaaagagaagatcagt...............ggaagattcacagccaggctt
+aacaaaaatgaccagcaattttccctgcacgtgaaggattcccagctcaacgacacaacc
+accttcttatgtgcaacgagtg
+>JH484271|TRAV38-1*01|Tursiops truncatus|F|V-REGION|8860..9148|289 nt|1| | | | |289+36=325| | |
+gcccaaatggtcactcaacctcaaccagaagtgtctgtgcaagaggcagacacagtgacc
+ctggactgtacgtatagcactagtgacagt...............aattattatttgttg
+tggtacaaacagcctcccagcggggagatgattttcattattggccaagaagcttat...
+...aagcaacagaatgcaaccaac...............agtcgctactctgtgaacttc
+cagaaagaagccaaatccttccgtctcaggatctcagactcccagctggaggatgctgca
+aagtatttctgcgcttacagtggtc
+>JH484271|TRAV38-2*01|Tursiops truncatus|P|V-REGION|12603..12891|289 nt|1| | | | |289+36=325| | |
+gcccagatggtcactcagcctcaaccagaagtgtctgtgcaagaggcagacacagtgacc
+ctagactgtacgtatagcactagtgacagt...............aattattatttgttg
+tggtacaaacggcctcccagcggggagatgattttcattattggccaagaagcttat...
+...aagcaacagaatgcaaccaac...............agtcactactctgtgaacttc
+cagaaagaagccaaatccttccatctcagtatctcagactcccagctggaggatgctgca
+atgtatttctgcacttacagtggtc
+>JH484271|TRAV39*01|Tursiops truncatus|P|V-REGION|35223..35502|280 nt|1| | | | |280+42=322| | |
+gaggtgaaagtggagcaaaggcctccatccctgagcatccaggagggagaagccagtacc
+atctactgcaatcattcaatcactgct..................tccgacagactgcac
+tggtactgacaggatctggggaagagcctggaatctctgttcttattgttgtcaaat...
+......ggggtagtgaagcagaag...............ggaaaattaacagcctccctt
+gataccaaagcccgtcgcagcaccctgcacatcacagcctcccagcctggcctctctgcc
+acctacttctgtgccgtggatg
+>JH484271|TRAV41*01|Tursiops truncatus|F|V-REGION|44232..44502|271 nt|1| | | | |271+51=322| | |
+aaaaatgatgtggagcagagtccccggtacctgagtgccctggaaggagactttgtcaca
+atcaactgcagctactcagaagaaatg.....................accactttacag
+tggttccaacagaatcctggaggaggtgttgtctccttgtttatactgagctta......
+.........gagatgaagaagaaa...............ggaagagtaagtgccacaatc
+aacagaaaagaacgtcacagctccctgcacatctcagcttcacagccccgagacactgcg
+acctacttttgtgctgtagaga
+>IMGT000017|TRAV8-1*01|Tursiops truncatus|F|V-REGION|30134..30417|284 nt|1| | | | |284+39=323| | |
+gcccagtcggtgacccagcctgacggccacatcactgtctctgaaggagcccgtctggag
+ctgaggtgcagctactcatcttcttct..................tcgccctttctcttc
+tggtacatacagtaccccaatcaaggactccagcttctcctgaagtacacatctgga...
+...aacagccttgtctcaggtatc...............aaaggttttgaggctgaattt
+aggaggagtgagaagtccttccacctgaggaaaacatcagccaattggaaagacttgggc
+aagtacttctgtgctctgagtga
+>IMGT000018|TRAV8-1D*01|Tursiops truncatus|F|V-REGION|39591..39874|284 nt|1| | | | |284+39=323| | |
+gcccagtcggtgacccagcctgacggccacatcactgtctctgaaggagcccgtctggag
+ctgaggtgcaactactcatcttcttct..................tcgccctctctcttc
+tggtacgtgcagtacccctatcaaggactccagcttctcctgaagtacacatctgga...
+...aacagccttgtctcaggtatc...............aaaggttttgaggctgaattt
+aggaggagtgagaagtccttccacctgaggaaaacatcagcccattggaaagactcggcc
+aagtacttctgtgctctgagtga
+>IMGT000017|TRAV9*01|Tursiops truncatus|F|V-REGION|43703..43983|281 nt|1| | | | |281+42=323| | |
+gaagactcagtgacccagatggatggccaaatgactcttccagaaggggctgccttgacc
+ataaattgcacttattcagccactggg..................taccccactactttc
+tggtatgttcaatatcctggagaaggtccacaggtccttctgaaagccatgaaggac...
+......aatgagaagagaaccaat...............aaagactttgaagccacatac
+cacaaagaatcaaaatccttccacttggagaaagcctcagtccaagattcagattcggct
+gtgtactactgtgctctgagtga
+>IMGT000019|TRAV9*02|Tursiops truncatus|F|V-REGION|8982..9262|281 nt|1| | | | |281+42=323| | |
+gaagactcagtgacccagatggatggccaaatgactcttccagaaggggctgccttgacc
+ataaattgcacttattcagccactggg..................taccccactactttc
+tggtatgttcaatatcctggagaaggtccacaggtccttctgaaagccatgaaggac...
+......aatgagaagggaaccaat...............aaggagtttgaagccacatac
+cacaaagaatcaaaatccttccacttggagaaagcctcagtccaagattcagattcggct
+gtgtactactgtgctctgagtga

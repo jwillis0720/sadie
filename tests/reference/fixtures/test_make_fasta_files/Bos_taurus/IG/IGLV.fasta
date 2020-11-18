@@ -1,0 +1,341 @@
+>IMGT000046|IGLV1-12*01|Bos taurus_Hereford|F|V-REGION|284111..284406|296 nt|1| | | | |296+45=341| | |
+caggctgtgctgactcagccgccctcc...gtgtccgggtccctgggccagacggtcacc
+atctcctgcaccggaagcagcaacaacatc............gggattttgggtgtgagc
+tggtaccaacagatcccaggatcggcccccagaaccctgatctataatagt.........
+............aacaaacgaccctcgggggtcccc...gaccgattctctggcaccaag
+......tccggcaacacaggcaccctgaccatcgcttcgctccaggctgaggacgaggct
+gattattactgtgcgtctgctgacctcagtcttactagtcc
+>IMGT000046|IGLV1-16*01|Bos taurus_Hereford|P|V-REGION|265941..266239|299 nt|1| | | | |299+42=341| | |
+caggatgtgctgactcagccgtcctcc...gtgtccgggtccctgggtcagaaggtctcc
+atcacctgctctggaagcagcagcaacgttgga.........tatgccaattatgtgagc
+tggcaccaacagaaaccaggatcggcccccagaaccctcatctatggtgcg.........
+............accagtcgagcctcgggggtccct...gaccaattctccggctccaag
+......tctggcaacacagcgactctgaccatcagctcgctccagcctgaggacgaggct
+gattattactgttcatcttatgacagtagcagcaatattgg
+>NW_001493546|IGLV1-16*02|Bos taurus_Hereford|F|V-REGION|31967..32265|299 nt|1| | | | |299+42=341| | |
+caggatgtgctgactcagccgtcctcc...gtgtccgggtccctgggtcagaatgtctcc
+atcacctgctctggaagcagcagcaacgttgga.........tatgccaattatgtgagc
+tggcaccaacagaaacaaggatcggcccccagaaccctcatctatggtgcg.........
+............accagtcgagcctcgggggtccct...gaccaattctccggctccaag
+......tctggcaacacagcgactctgaccatcagctcgctccagcctgaggacgaggct
+gattattactgttcatcttatgacagtagcagcaatattgg
+>IMGT000046|IGLV1-21*01|Bos taurus_Hereford|F|V-REGION|242260..242555|296 nt|1| | | | |296+45=341| | |
+caggctgtgctgactcagccgtcctcc...gtgtccggctccctgggccagagggtctcc
+atcacctgctctggaagcagcaacaacatc............ggtagttatggtgtgggc
+tggtaccaacaggtcccaggatcgggcctcagaaccatcatctatggtagt.........
+............agcagtcgaccctcgggggtcccc...gaccgattctccggctccaag
+......tctggcaacacagccaccctgaccatcagctcgctccaggctgaggacgaggcg
+gattatttctgtgcaactgttgactacagtagcagtactgt
+>IMGT000046|IGLV1-26*01|Bos taurus_Hereford|F|V-REGION|219694..219988|295 nt|1| | | | |295+42=337| | |
+caggctgtgctgactcagccgtcctcc...gtgtccgggtccctgggccagagggtctcc
+atcacgtgctctggaagcagcagcaacgttgga.........tatggcaattatgtgagc
+tggttccaagacatcccaggatcggcccccagaaccctcatctatggtgac.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgaggacgaggca
+gattatttctgtgcatcttatcagagtggtaacacag
+>IMGT000046|IGLV1-31*01|Bos taurus_Hereford|F|V-REGION|197299..197593|295 nt|1| | | | |295+42=337| | |
+caggctgtgctgactcagccgtcctcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaacgttgga.........actggcaattatgtgagc
+tggttccaacagatcccaggatcggcccccagaaccctcatctatggtgcg.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgaggacgaggca
+gattatttctgtgcatcttatcagagtggtaacacag
+>U31887|IGLV1-31*02|Bos taurus|F|V-REGION|167..417|251 nt|1| | | | |251+42=293|partial in 3'| |
+caggctgtgctgactcagccgtcctcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaacgttgga.........tatggcaattatgtgaac
+tggttccaacagatcccaggatcggcccccagaaccctcatctatggtgcg.........
+............accagtcgagcctctggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgagga
+>U31894|IGLV1-31*03|Bos taurus|F|V-REGION|170..420|251 nt|1| | | | |251+42=293|partial in 3'| |
+caggctgtgctgactcagccgtcctcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaatgttgga.........tatggcaattatgtgagc
+tggttccaacagatcccaggatcggcccccagaatgctcatctatggtgcg.........
+............accagtcgagcctctggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgagga
+>IMGT000046|IGLV1-36*01|Bos taurus_Hereford|ORF|V-REGION|178730..179028|299 nt|1| | | | |299+42=341| | |
+caggctgtgctgactcagccgtcctcc...atgtccgggtccctgggccagagggtctcc
+atcaccagctctggaagcagcagcaacgttgga.........tatggcatttatgtgaac
+cagtaccaaaaaatcccaggatcggcccccagaaccctcatctatggtgcc.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgagaacgaggca
+gattatttctgtgcagcttatgacagcagtagcagtgatgg
+>IMGT000046|IGLV1-40*01|Bos taurus_Hereford|F|V-REGION|163757..164055|299 nt|1| | | | |299+42=341| | |
+caggctgtgctgactcagccgtcctcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaacgttggg.........cttggtaattatgtgagc
+tggttccaacagatcccaggatcggcccccagaaccctcatctatggtgcg.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggccgaggacgaggcg
+gattatttctgtgcatctcctgacagtagtagcagtagtta
+>U31891|IGLV1-40*02|Bos taurus|F|V-REGION|170..420|251 nt|1| | | | |251+42=293|partial in 3'| |
+caggctgtgctgactcagccgtcctcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaacgttggg.........cttggtaattatgtgagc
+tggttccaacagatcccaggatcggcccccataaccctcatctatggtgcg.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgagga
+>IMGT000046|IGLV1-43*01|Bos taurus_Hereford|F|V-REGION|151569..151863|295 nt|1| | | | |295+42=337| | |
+caggctgtgctgactcagccgtcctcc...gtgtccgggtccctgggccagagggtctcc
+atcacgtgctctggaagcagcagcaacgttgga.........tatggcaattatgtgagc
+tggttccaagagatcccaggatcggcccccagaaccctcatctatggtgac.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgaggacgaggca
+gattatttctgtgcatcttatcagagtggtaacacag
+>IMGT000046|IGLV1-46*01|Bos taurus_Hereford|P|V-REGION|132877..133175|299 nt|1| | | | |299+42=341| | |
+caagctgtgctgactcaaccgccctcc...atgtctgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaacgttgga.........actggcaattatgttggc
+tggtaccaaatgatcccaggatcggcccccagaaccctcatctaccgtgct.........
+............accagtcgactctcgggggtcccc...gactgattctccgtctccagg
+......tctgggaacacagccaccctgaccatcagctcgcaccaggctgaggacgaggct
+gattattactgtgtatcttaggacagcagtatcagtggtgc
+>IMGT000046|IGLV1-47*01|Bos taurus_Hereford|F|V-REGION|127602..127897|296 nt|1| | | | |296+45=341| | |
+caggctgtgctgactcagccatcatcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaatgtt............ggaaatggatatgtgagc
+tggtaccaactgatcccaggatcggcccccagaaccctcatctatggtgac.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgaggacgaggca
+gattatttctgtgcatctgctgaggatagtagcagtaatgc
+>U31886|IGLV1-47*02|Bos taurus|F|V-REGION|172..419|248 nt|1| | | | |248+45=293|partial in 3'| |
+caggctgtgctgactcagccatcatcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcaacaatgtt............ggaaatggatatgtgagc
+tggtaccaactgtacccaggatcggcccccagaaccctcatctatggtgac.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgagga
+>U31895|IGLV1-47*03|Bos taurus|F|V-REGION|172..419|248 nt|1| | | | |248+45=293|partial in 3'| |
+caggctgtgctgactcagccatcatcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcagtgtt............ggaaatggatatgtgagc
+tggtaccaactgatcccaggatcggcccccagaaccctcatctatggtgac.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgatcatcagctcgctccaggctgagga
+>U31897|IGLV1-47*04|Bos taurus|F|V-REGION|172..419|248 nt|1| | | | |248+45=293|partial in 3'| |
+caggctgtgctgactcagccatcatcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaatgtt............ggaaatggatatgtgagc
+tggtaccaactgaccccaggatcggcccccagaaccctcatctatggtgac.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgagga
+>U31899|IGLV1-47*05|Bos taurus|F|V-REGION|172..419|248 nt|1| | | | |248+45=293|partial in 3'| |
+caggctgtgctgactcagccatcatcc...gtgtccgggtccctgggcgagagggtctcc
+atcacctgctctggaagcagcagcaatgtt............ggaaatggatatgtgagc
+tggtaccaactgatcccaggatcggcccccagaaccctcatctatggtgac.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgagga
+>IMGT000046|IGLV1-51*01|Bos taurus_Hereford|P|V-REGION|105021..105319|299 nt|1| | | | |299+42=341| | |
+caagctgtgctgactcaaccgccctcc...atgtctgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaacgttgga.........actggcaattatgttggc
+tggtaccaaatgatcccaggatcggcccccagaaccctcattgaccgtgct.........
+............accagtcgactctcaggggtcccc...gactgattctccgtctccagg
+......tctgggaacacagccaccctgaccatcagctcgcaccaggctgaggacgaggct
+gattattactgtgtatcttacgacagcagtatcagtggtgc
+>IMGT000046|IGLV1-52*01|Bos taurus_Hereford|F|V-REGION|99754..100049|296 nt|1| | | | |296+45=341| | |
+caggctgtgctgactcagccatcatcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaatgtt............ggaaatggatatgtgagc
+tggtaccaactgatcccaggatcggcccccagaaccctcatctatggtgac.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgaggacgaggca
+gattatttctgtgcatctgctgaggatagtagcagtaatgc
+>IMGT000046|IGLV1-55*01|Bos taurus_Hereford|F|V-REGION|83791..84085|295 nt|1| | | | |295+42=337| |rev-compl|
+caggctgtgctgactcagccgtcctcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgctctggaagcagcagcaacgttgga.........actggcaattatgttggc
+tggttccaacagatcccaggatcagcccccagaaccctcatctatggtgcg.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgaggacgaggca
+gattatttctgtgcatcttatcagagtggtaacacag
+>IMGT000046|IGLV1-58*01|Bos taurus_Hereford|F|V-REGION|71080..71375|296 nt|1| | | | |296+45=341| |rev-compl|
+caggctgtgctgactcagccatcatcc...gtgtccgggtccctgggccagagggtctcc
+atcacctgcaccggaagcagcagcaatgtt............ggaaatggatatgtgagc
+tggttccaacagatcccaggatcggcccccagaaccctcatctatggtgac.........
+............accagtcgagcctcgggggtcccc...gaccgattctccggctccagg
+......tctgggaacacagccaccctgaccatcagctcgctccaggctgaggacgaggca
+gattatttctgtgcagctggtgacagcagtagcagtaatgc
+>IMGT000046|IGLV1-63*01|Bos taurus_Hereford|F|V-REGION|47190..47482|293 nt|1| | | | |293+48=341| |rev-compl|
+caggctgggctaactcagccggcctcc...gtgttcaggactttgggtcagagggtcacc
+atctcttgtactggaagcagcaacaacatt............gggggttattatgtgagc
+tggtaccaacagctcccaggaaaggcccccagactcctgacctatgaaatt.........
+............agcaaacgacccccaggggtccca...gatcgagtctctggctccaag
+......tctggcaactcagcctctctgacc...agctcagttcatgctgaggacgacact
+gattattactgtttctcatgggctgacggcttgaaagtttg
+>IMGT000046|IGLV1-64*01|Bos taurus_Hereford|F|V-REGION|43755..44053|299 nt|1| | | | |299+42=341| |rev-compl|
+caggctgtgctgacccagccgccctcc...gtgtccgggtccctgggccagagggtgacc
+atctcctgcactggaagcagcagcaacatcggt.........ggtggtaattgtgtgggc
+tggtaccaacagatcccaggatcggcccccaaaaccctcatctataggagt.........
+............accagtcgaccctcgggggtccca...gaccgattctccggctccagg
+......tctggcaacacggccaccttgaccatcagctcgctccaggccgaagacgaggcg
+gattactactgtgcaacttacgaaagtagtagttatcatgg
+>IMGT000046|IGLV1-67*01|Bos taurus_Hereford|F|V-REGION|32165..32460|296 nt|1| | | | |296+45=341| |rev-compl|
+caggctgtgctgactcagccgtcctcc...gtgtccggctccctgggccagagggtctcc
+atcacctgctctggaagcagcaacaacatc............ggtagatatggtgtgggc
+tggtaccaacaggtcccaggatcgggcctcagaaccatcatctatggtagt.........
+............agcagtcgaccctcgggggtcccc...gaccgattctccggctccaag
+......tctggcaacacagccaccctgaccatcagctcgctccaggctgaggacgaggcg
+gattatttctgtgcaactggtgactacagtagcagtactgt
+>NW_001493549|IGLV1-67*02|Bos taurus_Hereford|F|V-REGION|188369..188664|296 nt|1| | | | |296+45=341| | |
+caggctgtgctgactcagccgtcctcc...gtgtccggctccctgggccagagggtctcc
+atcacctgctctggaagcagcaacaacatc............ggtagatatggtgtgggc
+tggtaccaacaggtcccaggatcgggcctcagaaccatcatctatggtagt.........
+............agcagtcgaccctcgggggtcccc...gaccgattctccggctccaag
+......tctggcaacacagccaccctgaccatcagctcgctccaggctgaggatgaggcg
+gattatttctgtgtagcttatgacagtagtagcagtattgt
+>U31888|IGLV1-67*03|Bos taurus|F|V-REGION|171..421|251 nt|1| | | | |251+42=293|partial in 3'| |
+caggctgtgctgactcagccgtcctccgtgttaccaggctccctgggccagagggtctcc
+atcacctgctctggaagcagcaacaacatc............ggtagatatggtgtgggc
+tggtaccaacaggtcccaggatcgggcctcagaaccatcatctatggtagt.........
+............agcagtcgaccctcgggggtcccc...gaccgattctccggctccaag
+......tctggcaacacagccaccctgaccatcagctcgctccaggctgagga
+>U31893|IGLV1-67*04|Bos taurus|F|V-REGION|171..418|248 nt|1| | | | |248+45=293|partial in 3'| |
+caggctgtgctgactcagccgtccctc...gtgtccggctccctgggccagagggtctcc
+atcacctgctctggaagcagcaacaacatc............ggtagatatggtgtgggc
+tggtaccaacaggtcccaggatcgggcctcagaaccatcatctatggtagt.........
+............agcagtcgaccctcgggggtcccc...gaccgattctccggctccaag
+......tctggcaacacagccaccctgaccatcagctcgctccaggctgagga
+>IMGT000046|IGLV1-70*01|Bos taurus_Hereford|F|V-REGION|24241..24539|299 nt|1| | | | |299+42=341| | |
+caggctgtgctgacccagccgccctcc...gtgtccgggtccctgggacagagggtgacc
+atctcctgcactggaagcagcagcaacatcggt.........ggtggtaattatgtgggc
+tggtaccaacagatcccaggatcggcccccaaaaccctcatctataggagt.........
+............accagtcgaccctcgggggtccca...gaccgattctccggctccagg
+......tctggcaacacggccaccttgaccatcagctcgctccaggccgaagacgaggcg
+gattactactgtgcaacttacgaaagtagtagttatcatgg
+>IMGT000046|IGLV1-71*01|Bos taurus_Hereford|F|V-REGION|20813..21105|293 nt|1| | | | |293+48=341| | |
+caggctgtgctgactcagctgccctcc...gtgttcaggactttgggtcagagggtcacc
+atctcttgtactggaagcagcaacaacatt............gggggttattatgtgagc
+tggtaccaacagctcccaggaaaggcccccagactcctgacctatgaaatt.........
+............agcaaacgacccccaggggtccca...gatcgagtctctggctccaag
+......tctggcaactcagcctctctgacc...agctcagttcatgctgaggacgacact
+gattattactgtttctcatgggctgacggcttgaaagtttg
+>IMGT000046|IGLV1-73*01|Bos taurus_Hereford|F|V-REGION|15007..15305|299 nt|1| | | | |299+42=341| | |
+caggctgtgctgactcagccgccctcc...gtgtccgggtccctgggccagagggtgacc
+atcacctgcaccggaagcagcagctacgtttcg.........cgtggcaatcatgtgagc
+tggtaccaactgatcccaggattggcccccaaaaccctgatctataatagt.........
+............aacaaacgaccctcgggggtccct...gaccgattctctggcaccaag
+......tccggcaacacaggcaccctgaccatcgcttcgctccaggctgaggacgaggct
+gattattactgtgcgtctgctgacctcagtcttactggtcc
+>IMGT000046|IGLV13-23*01|Bos taurus_Hereford|ORF|V-REGION|233272..233564|293 nt|1| | | | |293+48=341| | |
+caatccgggctgactcaggaggcctcc...gtgtcacggtctctgggtcagtcggtcacc
+ctcacctgcactgggagcagcaacaacgtt............ggattctatggcgcgggc
+tggtcccaacaccgcccaggtgctgcccccagaaccgtggtgctggga............
+............agttctcgaccctcaggcctccca...gcccggctctcgggctcctgt
+......tctggctccaccacctcactgagcatctctgggctccaggctgcggacgaggct
+gactattactgttccctgtgggcccgcagcctcagtgctcc
+>IMGT000046|IGLV2-6*01|Bos taurus_Hereford|F|V-REGION|393156..393452|297 nt|1| | | | |297+42=339| | |
+cagtctggcctgactcagccttcctca...gtgtctgggaatctgggacagacggtcacc
+atctcctgtgctgggaccagcagtgatgtaggg.........gcttataatggtgtgggc
+tggtaccaacagctcccgggctcagcccccaaaactctgatctataatctc.........
+............aacaaacggtcctcagggatccct...gctcggttctctggctccaag
+......tctgggaacacagccaccctgaccatctctgggctccaggctgaggacgaggcc
+gactattactgtagctcatataaaagtggtggtagtgtg
+>IMGT000046|IGLV2-7*01|Bos taurus_Hereford|ORF|V-REGION|377064..377360|297 nt|1| | | | |297+42=339| | |
+cagtctagcctgactcagccttcctca...gtgtctgggaatctgggacagacggtcacc
+atctcctgtgctgggaccagctgtgacgtaggg.........agttataatggtgcgggc
+tggtaccaacagctcccgggctcagcccccaaaactctgatatgtaatgtc.........
+............agcaaacggccctcagggatccct...gactggttctctggctccaag
+......tccggaaacacagccaccctgaccatctctgggctccaggctgaggacgaggct
+gattactattggagctctcctagaagtgatagcactgtg
+>IMGT000046|IGLV2-9*01|Bos taurus_Hereford|F|V-REGION|370756..371052|297 nt|1| | | | |297+42=339| | |
+cagtctggcctgactcagccttcctca...gtgtctgggaatctgggacagactgtcatc
+acctcctgtgctgggaccagcagttatgtaggg.........agttataatggtgtgggc
+tggtaccaacagctcccgggctcagcccccaaaactctaatatataatgtc.........
+............agcaaacggccctcaggaatccct...gaccgcttctctggctccaag
+......tccgggaacacagccaccctgaccgtctctgggctccaggctgaggacgaggcc
+gactactactgtagctcatataaaagtggtggtagtgtg
+>IMGT000046|IGLV3-1*01|Bos taurus_Hereford|P|V-REGION|431266..431556|291 nt|1| | | | |291+51=342| | |
+tcctacgagctgactcagtcacccccg...gcatcgatgtccccaggacagacggccagg
+atcacgtgtggggggcccagcgttgga..................ggtgaaaatgttgag
+tggcaccagcagaagccaggccaggcccgtgcgctggtcacctatggtgac.........
+............gataaccgacccacgggggtccct...gaccagttctctggcgccaac
+......tcagggaacatggccaccctgaccatcagcggggcccgggccaaggatgaggcc
+gactattactgtcagctgtgggacagcagcagtaacaatcct
+>IMGT000046|IGLV3-2*01|Bos taurus_Hereford|F|V-REGION|427195..427479|285 nt|1| | | | |285+51=336| | |
+tcttctcagctgactcagccgcctgcg...gtgtccgtgtccttgggacagacagccagc
+atcacctgccagggagacgacttagaa..................ttgcttagtgcccac
+tggtaccagcagaagccgggccaggcccctgtgctggtcatttatgcagat.........
+............gacaacctggcctcagggatccct...gaccggttctctggctccaaa
+......tcagacaccacggccaccctgaccattcgcggggcccaggccgaagacgaggcc
+gactattattgtcagtcagctgatatcagtggtgtt
+>IMGT000046|IGLV3-3*01|Bos taurus_Hereford|F|V-REGION|422489..422779|291 nt|1| | | | |291+51=342| | |
+tcctatgaactgacacagttgacttca...gtgtcagtggccttgggacagacggccaag
+atcacctgctcgggggagctgctggat..................gaacaatatactcag
+tggtaccagcagaagccgggccaggcccctaagctggtcatttataaagac.........
+............agtaagcggcgctcagggatccct...gaccagttctctggctccagc
+......tccggcaaaacagccatcttgaccatcagtggggtccgtgccgaggatgaagcc
+gactattactgtctgtcgtgggacagtggcagttacaatgtt
+>IMGT000046|IGLV3-4*01|Bos taurus_Hereford|F|V-REGION|410392..410679|288 nt|1| | | | |288+51=339| | |
+tcctatgaactgacccagccgacttca...gtgtcagtggccttgggacagacggccaag
+atcacctgctcgggggacctgctggat..................gaacaatatactcag
+tggtaccagcagaagccgggccagggccctgtgagggtcatttataaagat.........
+............agtgagcggccctcagggatctct...gaccggttctctggctccagc
+......tcaggcaaaacagccacgctgaccatcagcggggcccagaccgaggacgaggcc
+gactattactgtcagtcagctgacagcagtgataatcct
+>IMGT000046|IGLV3-5*01|Bos taurus_Hereford|F|V-REGION|403988..404275|288 nt|1| | | | |288+51=339| | |
+tcttctcagctgactcagccgcctgcg...gtgtccgtgtccttgggacagacggccagc
+atcacctgccagggagacgacttagaa..................agctattatgctcac
+tggtaccagcagaagccaagccaggcccctgtgctggtcatttatgagtct.........
+............agtgagagaccctcagggatccct...gaccggttctctggctccagc
+......tcagggaacacggccaccctgaccatcagcggggcccagactgaggacgaggcc
+gactattactgtcagtcatatgacagcagcggtgatcct
+>IMGT000046|IGLV5-45*01|Bos taurus_Hereford|ORF|V-REGION|141562..141846|285 nt|1| | | | |285+51=336| | |
+cagcctgtgctgactcagtcagactcc...ctgtctgcatctctgggagcatcagccaga
+ctctcctgcaccctgagcaatggctataacatt.........ggcagcttgtctataacc
+tggtgccagcagaagccagggagtcctccccggtacctcctgtcctacaactcagat...
+......tcccaaaagctccagggctccggggtcccc...agacacttctctggatccaaa
+gacacctcgtccaacgcggggctcctgctcatctctgggctgcagacgggggacgaggct
+gta...........................ggttcc
+>IMGT000046|IGLV5-50*01|Bos taurus_Hereford|ORF|V-REGION|113727..114011|285 nt|1| | | | |285+51=336| | |
+cagcctgtgctgactcagtcagactcc...ctgtctgcatctctgggagcatcagccaga
+ctctcctgcaccctgagcaatggctataacatt.........ggcagcttgtctataacc
+tggtgccagcagaagccagggagtcctccccggtacctcctgtcctacaactcagat...
+......tcccaaaagctccagggctccggggtcccc...agacacttctctggacccaaa
+gacacctcgtccaacgcggggctcctgctcatctctgggctgcagacggaggacgaggct
+gta...........................ggttcc
+>IMGT000046|IGLV5-72*01|Bos taurus_Hereford|F|V-REGION|17802..18118|317 nt|1| | | | |317+24=341| | |
+cagcctgtgctgactcagccagtcacc...gtctctgcgtctctgggagcatcagccaga
+ctctcctgcaccctgagcagtggctacaatgtt.........agcaactatagcatatac
+tggtatcagcagaaggcagggaaccctctccggtacctcctgaggttcaaatcagac...
+......tcggataaacaccagggctccggggtcccc...agccgcttctctggatccaaa
+gatgcctcgaccaatgcagggctcctgctcatctctgggctgcagcccgaggacgaggcc
+gactactactgtgctgtgtggcatggcgacactaacgctta
+>IMGT000046|IGLV5-74*01|Bos taurus_Hereford|P|V-REGION|10171..10484|314 nt|1| | | | |314+24=338| | |
+cagcctgtgctgactgagccggcatcc...ccctctgcatatccaggagcatcagccaga
+ctcacctgcaccctgagcagtgggtaccgtgtt.........ggtggctaccaaatgtcc
+tgtttccagcagaaggcagggagccctccctggtacctcctgatgttcaagtcagac...
+......tcggataagccccagggctctggggtcccc...agtcacttctctggatccaag
+gctgcctcagccaacacagggctcctgctcatctccgggctgcagactcaggatgaggct
+gattataactgctactgtccccgaaacactggtattta
+>NW_001493549|IGLV5-74*02|Bos taurus_Hereford|P|V-REGION|162702..163015|314 nt|1| | | | |314+24=338| | |
+cagcctgtgctgactcagccggcatcc...ccctctgcatatccaggagcatcagccaga
+ctcacctgcaccctgagcagtgggtaccgtgtt.........ggtggctaccaaatgtcc
+tgtttccagcagaaggcagggagccctccctggtacctcctgatgttcaagtcagac...
+......tcggataagccccagggctctggggtcccc...agtcacttctctggatccaag
+gctgcctcagccaacacagggctcctgctcatctccgggctgcagactcaggatgaggct
+gattataactgctactgtccccgaaacactggtattta
+>IMGT000046|IGLV8-24*01|Bos taurus_Hereford|P|V-REGION|226314..226612|299 nt|1| | | | |299+45=344| | |
+cagactgtg...atccaggaaccgtca...ctgtcggtgtctccaggagggacggtcacc
+ctcacctgtggactgagctctgggtcagtcact.........acttacaacgaacccagc
+tggtaccagcagaccccaggccaggctcccagaaatgttatctacaacaca.........
+............aacacccgcgcctctggggtccct...gatcgcttctctgcctccatc
+......tctgggaacaaagccaccctcaccatcacgggggcccagcccgaggacaaggct
+gactatcactgcttgctgtaccagggcagtggtagttatggctg
+>IMGT000046|IGLV8-27*01|Bos taurus_Hereford|P|V-REGION|215834..216126|293 nt|1| | | | |293+45=338| | |
+tagactgtg...gcccagaagccgtca...cggccagtgtctccaggagagacggtcacc
+ctcacctgtggactgagctctgggtcagtcaca.........accagtaactaccctagc
+tggttgcagcagaccccaggccaggctccctgactgcttttctatagcaca.........
+............aacagtcgcccgtctggggtctct...aattgcatctctggttccatc
+......tctgggaacaaagccaccctcaccatcacgggggcccagtccgaggacgaagcc
+gattatcactgtggtctgggaactggtagttacaatgc
+>IMGT000046|IGLV8-38*01|Bos taurus_Hereford|F|V-REGION|170742..171040|299 nt|1| | | | |299+45=344| | |
+cagattgtg...atccaggaaccgtca...ctgtcagtgtctccaggagggacggtcacc
+ctcacctgtggactgagctctgggtcagtcact.........acttacaacgaacccagc
+tggtaccagcagaccccaggccaggctcccagaaatgttatctacaacaca.........
+............aacacccgcacctctggggtccct...gatcgcttctctgcctccatc
+......tctgggaacaaagccaccctcaccatcacgggggcccagcccaaggacgaggct
+gactatcactgcttgctgtaccagggcagtggtagttacagctg
+>IMGT000046|IGLV8-44*01|Bos taurus_Hereford|P|V-REGION|147710..148002|293 nt|1| | | | |293+45=338| | |
+tagactgtg...gcccagaagccgtca...cggccagtgtctccaggagagacggtcacc
+ctcacctgtggactgagctctgggtcagtcaca.........accagtaactaccctagc
+tggttgcagcagaccccaggccaggctccctgactgcttttctatagcaca.........
+............aacagtcgcccgtctggggtctct...aattgcatctctggttccatc
+......tctgggaacaaagccaccctcaccatcacgggggcccagtccgaggacgaagcc
+gattatcactgtggtctgggaactggtagttacaatgc
+>IMGT000046|IGLV8-49*01|Bos taurus_Hereford|P|V-REGION|116187..116479|293 nt|1| | | | |293+45=338| | |
+tagactgtg...gcccagaagccgtca...cggccagtgtctccaggagagaaggtcacc
+ctcacctgtggactgagctctgggtcagtcaca.........accagtaactaccccagc
+tggttgcagcagaccccaggccaggctccctgactgcttttctatagcaca.........
+............aacagtcgcccgtctggggtctct...aattgcatctctggttccatc
+......tctgggaacaaagccaccctcaccatcacgagggcccagcccaaggacgaagcc
+gattatcactgtggtctgggaagtggtagttacaatgc

@@ -4,3 +4,5 @@ filetype
 sqlalchemy
 pandas
 wheel
+requests
+bs4

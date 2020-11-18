@@ -1,0 +1,601 @@
+>NW_001114291|TRBV1-1*01|Macaca mulatta|P|V-REGION|94603..94886|284 nt|1| | | | |284+42=326| | |
+gatactgaaattacgcagacaccaaaatacctggtcacaggaatgaggagtaaaaggatg
+atgaaacgtgagcatctgggacat........................gattctttgtat
+tggctcagacagaaagctaagaaatccctggagttcatgttttactacaactgt......
+......aaggaactcactgagaacaagactgtgcca...agtcacttcacacctgaatgc
+cct...gacagctctcgcttataccttcatgtgttcgcgctgcagccagaagactcagct
+ctgtgtctctgtaccagtagccaaga
+>NW_001114291|TRBV10-1*01|Macaca mulatta|F|V-REGION|237222..237508|287 nt|1| | | | |287+39=326| | |
+gatgctgaaatcatccagagcccaagacacaagatcacagagacaggaaggaaggtgacc
+ttgacgtgtcaccagacttggaaccac.....................aacaatatgttc
+tggtaccgacaagacctgggacacgggctgagactgatccattactcatatggt......
+......gttccagacactaacaaaggagaagtccca...gatggctacagtgtctctaga
+tca...aataaagaggatttccccctcactctggagtctgctgcctcctcccagacatct
+gtatatttctgcgccagcagtgagtc
+>NW_001114291|TRBV10-2*01|Macaca mulatta|F|V-REGION|261171..261457|287 nt|1| | | | |287+39=326| | |
+gatgccggaatcacccagagcccgagatacaaggtcacagagacaggaaggcaggtgacc
+ttgacgtgtcaccagacttggagccac.....................agctatatgttc
+tggtaccgacaagatctgggacatgggctgaggctgatccattactcagcaggt......
+......gctggtatcacagataaaggagaagtcccc...gatggctatgttgtctccaga
+tca...aagacagaggatttcctcctcactctggagtcagctacccgctcccaaacatct
+gtgtatttctgtgccagcagtgagtc
+>NW_001114291|TRBV10-3*01|Macaca mulatta|F|V-REGION|449190..449476|287 nt|1| | | | |287+39=326| | |
+gatgctggaatcacccagagcccaagacacaagatcacagagacaggaacaccagtgact
+ctgagatgtcaccagactgagaaccac.....................cgctatatgtac
+tggtatcgacaagacctggggaatgggctgaggctgatccattactcatatggt......
+......gttgaagacactgacaaagtagaagtctca...gatggctacagtgtctctaga
+tca...aagacagaggatttcctcctcactctggagtccgctacccgctcccagacatct
+gtgtacttttgtgccagcagtgaatc
+>NW_001114291|TRBV11-1*01|Macaca mulatta|F|V-REGION|248580..248869|290 nt|1| | | | |290+36=326| | |
+gaagctggagttgcccagtcccccagatataagattacagagaaaagccagactgtggct
+ttttggtgtgatcctatatctggccat.....................gctaccctttac
+tggtaccggcagatcctgggtcagggcccagagcttctggttcagtttcagaat......
+......aagggtatagtagatgattcacagttgcctaaggatcgattttctgcagagagg
+ctc...aaaggagtaaactccactctcaagatccagcctgcagagcttggggactcggcc
+gtgtatctctgtgccagcagcttagc
+>NW_001114291|TRBV11-2*01|Macaca mulatta|F|V-REGION|270328..270617|290 nt|1| | | | |290+36=326| | |
+gaagctggagttgcccagtcccccagatataaggttatagaaaaaagccaggctgtgact
+ttttggtgcaatcctatatctggccat.....................gctaccctttac
+tggtaccagcagatcctgggacagggcccggagcttctggttcaatttcgcaat......
+......aacgatgtagtagatgattcacagttgcctaaggatcgattttctgcagagagg
+ctc...aaaggagtagactccactctcaagatccagcctgcagagcttggggactcggcc
+gtgtatctctgtgccagcagcttagc
+>NW_001114291|TRBV11-3*01|Macaca mulatta|F|V-REGION|460229..460518|290 nt|1| | | | |290+36=326| | |
+gaagctggagtgacccagtctccgagatataagatcacagagaaaaaacagcctgtggct
+ttttggtgcaatcctatttctggccac.....................aataccctttac
+tggtaccggcagaacttgggacagggcccggagcttctggttcaatatgagaat......
+......gaggaagcagtagatgattcacagttgcctaaggatcgattttctgcagagagg
+ctc...aaaggaatagactccactctcaggatccagcctgcagagcttggggactcggcc
+gtgtatctctgtgccagcagcttagc
+>NW_001114291|TRBV12-1*01|Macaca mulatta|ORF|V-REGION|277224..277513|290 nt|1| | | | |290+36=326| | |
+gatgttggcattatccagtcacccaagcatgaggtgacagaaatgggacaagcagtgact
+ctcagatgtgagccaattttaggccac.....................aatctccttttc
+tggtacagacagaccttcatgcagggactggaattgctgagttacttctggagc......
+......caatctattatagatgacgcaggtatgcccatggatggattctcagctgagagg
+cct...gatggaccattctctacttggaagatccagcccacagagcagggggactcggcc
+gtgtgtgtctgtgcaagtcgcttagc
+>NW_001114291|TRBV12-2*01|Macaca mulatta|F|V-REGION|465830..466119|290 nt|1| | | | |290+36=326| | |
+gatgctggagttatccagtcaccccggcataaggtgacagagatgggaaaagaagtgact
+ctgagatgcgaaccaatttcaggccac.....................agctcccttttc
+tggtacagacagaccatgatgcggggactggagttcctgatttactttaacaac......
+......aagtctccgatagatgattcagggatgcccaaggatcgattctcagctacgatg
+cct...gatgcgtcattctccactctgaagattcagccctcagaacccagggactcggct
+gtgtacttctgtgccagcagtttagc
+>NW_001114291|TRBV12-3*01|Macaca mulatta|F|V-REGION|469098..469387|290 nt|1| | | | |290+36=326| | |
+gatgctggagttatccagtcaccccagcatgaggtgacagagatgggaaaagaagtgact
+ctgaggtgcgaaccaatttcaggccat.....................acctacctcttc
+tggtacagacagaccatgatgcggggactggagttcctgatttactttaacaac......
+......aagtctccgatagatgattcagggatgcccaaggatcgattctcagctacgatg
+cct...gaggtatcattctccactctgaagatccagccctcagaacccagggactcggct
+gtgtacttctgtgccagcagtttagc
+>NW_001114291|TRBV12-4*01|Macaca mulatta|F|V-REGION|484440..484729|290 nt|1| | | | |290+36=326| | |
+gatgctggagtcacccagacaccaaggcacaaggtgacagaaatgggacaagaagtaact
+atgagatgtcagccaattttaggccac.....................aatactgttttc
+tggtacagacagaccgtgatgcaaggactggagttgctggtttacttacgcaac......
+......aaggcttctctagatgattcaggaatgcccaaggatcgattctcagcagagatg
+cct...gatgcatctttagccactctgaagatccagccctcagaacccagggactcggct
+gtgtatctttgtgccagtggtttggt
+>AF107742|TRBV12S1*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aaggcacaaggtgacagagatgggacaagaagtaatt
+atgagatgtcagccaattcttggccac.....................aatactgttttc
+tggtatagacagaccgtgatgcaaggactggagttgctgacttacttccgcaac......
+......cagccttctctagatgattcagggatgcccgaggatcgattgtcagcagagatg
+cct...actgcatctttatcctctctgaagatccagccttcagaacccagggactcagct
+gtgtatctttgtgccagtgg
+>NW_001114291|TRBV13*01|Macaca mulatta|F|V-REGION|441886..442172|287 nt|1| | | | |287+39=326| | |
+gctgctggagtcatccagtccccaaggcacctgatcaaagaaaagagggaaacagccact
+ctgcaatgctatcctctccctgaacac.....................gacactgtctac
+tggtaccagcagggtccaggtcagggcccccagttcctcatttcgttttatcaa......
+......aagatgcagagagaaaaaggaagcatccct...gatcgattctcagctcaacag
+ttc...agtgactatcattctgaactgaacatgagctccttggagctgggggactcagcc
+gtgtacctctgtgccagcaacttagg
+>NW_001114291|TRBV14*01|Macaca mulatta|F|V-REGION|491426..491715|290 nt|1| | | | |290+36=326| | |
+gaagctggagttactcagttccccagccacagggtaatagagaagggccaggctgtaact
+ctgagatgtgacccaatttctggacat.....................gattatctttat
+tggtatcgacgtgttatgggaaaagaaataaaatttctgatatactttctgaga......
+......gcgtctatgcaggatgagtccggtatgcccaacaagcgattctcagctgaaagg
+act...ggagggacgtattctactctgaaggtgcagcctgcagaactggaggattctgga
+gtttatttctgtgccagcagccaaga
+>AF107754|TRBV15*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aagataccaggttatccagttgggaaagccagtgact
+ctgagctgttctcaggatctgaaccat.....................gatgccatgtac
+tggtaccagcagaagccaagtcagcccccaaagctgctgttatactactatgac......
+......aaagatttgaacaatgaagcagacacgcct...gataacttccaagccaggagg
+ccg...aatacctctttctgctttcttgacatccgctcatcaggcctgggggatgcggcc
+acatacctgtgtgccagcagc
+>NW_001114291|TRBV15*01|Macaca mulatta|F|V-REGION|497080..497366|287 nt|1| | | | |287+39=326| | |
+gatgtcatggtcatccagaacccaagataccaggttactcagttggaaaagccagtgacc
+ttgagttgttctcagaatctgaaccat.....................aaggtcatgtac
+tggtaccagcagaagccaagtcaggccccaaagctgctgttccactactatgac......
+......aaagattttaacaatgaagcagacacccct...gataacttccaatccaggagg
+cca...aacacttctttctgctttcttgacatccgctcaccaggcctggaggatgcagct
+gtgtacctgtgtgccagcagcaaaga
+>NW_001114291|TRBV16*01|Macaca mulatta|F|V-REGION|502958..503247|290 nt|1| | | | |290+36=326| | |
+ggtgaagaagtcacccagactccaaaacatcttgtcaaaggggaaggacagaaagcaaaa
+ttatattgtgccccaataaaaggatac.....................agttactttttt
+tggtaccaacgggtcctgaaaaaagagttcaagttcttgatttccttccagaat......
+......gaaaatgtctttgatgaaacagggatgcccaaggaaagattttcagctaagtgc
+ccc...ccaaattcaccctgtagccttgagatccaggctacgaagctgaaggattcagca
+gcgtatttttgtgccagcagccaatc
+>NW_001114291|TRBV18*01|Macaca mulatta|F|V-REGION|517586..517875|290 nt|1| | | | |290+36=326| | |
+aatgccggcatcacacagaacccaagacacctggtcaggaggaggggacaggaggcaaga
+ctgagatgcagcccaatgaaaggacac.....................agtcatgtttat
+tggtatcggcagctcccagaggaaggtctgaaattcatggtttatctccagaaa......
+......gaaaaaatcatagatgagtcaggaatgccaaaggaatggttttctgctgaattt
+ccc...aaagaaggccccagcatcctgaggatccagcaggcagagcaagaagactcagca
+gcttatttctgtgccagctcaccacc
+>NW_001114291|TRBV19*01|Macaca mulatta|F|V-REGION|520807..521093|287 nt|1| | | | |287+39=326| | |
+gatggcagaatcactcagtccccaaagtacctgttcagaaaggaaggacagaatgtgacc
+ctgagttgtgaacagaatttgaaccac.....................gatgccatgtac
+tggtaccgacaggacccaggtcaaggactgagattgatctactactcacagata......
+......gtaaatgacattcagaaaggagacatagct...gaagggtacagtgtgtctcgg
+gag...aggaaggaatcctttcctctcactgtgacatcagcccaaaggaacccaacagct
+ttctatctctgtgccagtagtataga
+>AF107760|TRBV2*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................cagccatcaggtcacacggatgggacaggaagtgatc
+ttgcggtgtgtccccatccccaatcac.....................ttaaacttcttt
+tggtacagacaaattttggggaagaaattcgagtttctggtttacttctataat......
+......gataacatctcagacaagtctgaaatattcgatgatagattctcagttaaaagg
+cct...gatggatcaaattttactctgaagattcaatccacaaagccagaggactcagcc
+atgtacttctgtgccagcag
+>NW_001114291|TRBV2-1*01|Macaca mulatta|F|V-REGION|96423..96712|290 nt|1| | | | |290+36=326| | |
+gaacctgaagtcacccagactcccagccatcaggtcacacagatgggacaggaagtgatc
+ttgcggtgtgtccccatccctaatcac.....................ttaaacttctat
+tggtacagacaaatcttggggcagaaagtcgagtttctggttatcttttttgat......
+......aataacatctcagagaagtctgaaatatttgaagatcgattctcagtcggaagg
+cct...gatggatcaaatttcactctgaagatcaagtccacaaagctggaggactcagcc
+atgtacttctgtgccagcagtgaagc
+>NW_001114291|TRBV2-2*01|Macaca mulatta|F|V-REGION|116256..116545|290 nt|1| | | | |290+36=326| | |
+gaacctgaagtcacccagactcccagccatcaggtcacacagatgggacaggaagtgatc
+ttgcggtgtgtccccatctctaatcat.....................ttctacttctat
+tggtacagacaaatcttggggcagaaagtcgagtttctggtttccttctataat......
+......ggtaagatctcagagcagtctgaaatatttgaagatcaattctcagttggaagg
+tct...gatggagtacatttcacgctgaagatcaagtccacaaagctggaggactcagcc
+atgtacttctgtgccagcagtgaagc
+>NW_001114291|TRBV2-3*01|Macaca mulatta|F|V-REGION|132360..132649|290 nt|1| | | | |290+36=326| | |
+gaacctgaagtcacccagactcccagccatcaggtcacacggatgggacaggaagtgatc
+ttgcggtgtgtccccatccctaatcac.....................ttatacttctat
+tggtacagacaaatcttggggcagaaagtcgagtttctggtttacttctataat......
+......ggtgagatctcagagaagtctgaaatatttgaagatcgattctcagttggaagg
+tct...gatggagtacatttcactctgaagatcaagtccacaaagctggaggactcagcc
+acgtacttctgtgccagcagtgaagc
+>NW_001114291|TRBV20-1*01|Macaca mulatta|F|V-REGION|528753..529045|293 nt|1| | | | |293+30=323| | |
+gctgctgtcgtctctcagtatccaagcagggttatctgtaagagaggaacctctgtgaag
+atcgagtgccgttgcctggactttcag..................gccacaactatgttt
+tggtatcgtcagttccagacacagagcctcatactcatggcaacttccaatgagggc...
+......tccggcgtcacatacgagcaaggcgtcaagcaggacaagtttcccatcaaccat
+cca...aacctgaccttctccactctgacagtgaccaatgcccatcctgaagacagcagc
+ttctacatctgcagtgctagaga
+>NW_001114291|TRBV21-1*01|Macaca mulatta|F|V-REGION|539092..539378|287 nt|1| | | | |287+36=323| | |
+gacaccaaggtcacccagagacctagacttctggtcaaagcaaacaaacagaaagcaaag
+atggattgtgttcctgtaaaaggacat.....................agttatgtttac
+tggtatcgtaagaagctggacgaagagctcaagtttttggtttactttcagaat......
+......gaagaaattattcagaaagcagaaataatcaataagagattttcagcccaatgt
+ccc...caaaactcatcctgtaccttggagatccagtccacagagtcaggggacgcagca
+ctgtatttctgtgccagcaaagc
+>NW_001114291|TRBV22-1*01|Macaca mulatta|P|V-REGION|543873..544152|280 nt|1| | | | |280+45=325| | |
+gacccctccctggccagcacctcccttctgggcatgatctgcagcctttatctcttggac
+cttagatgcagacatctatcagat...........................gccatgtac
+tggtactcgcaggacccaaagcaaaatctgagactgatttattacgcaagggtt......
+......gaaacggatattcagagaggagacctaact...gaaggctacagtgtctcccga
+gag...gagaagggcctgtttcttctcatgatgaagttggcccacaccagccaaacagct
+ttgtacttctgtcctgggagcgcac
+>NW_001114291|TRBV23-1*01|Macaca mulatta|F|V-REGION|548069..548358|290 nt|1| | | | |290+36=326| | |
+catgccgaagtcacacagactccaggatatttggtcaaaggaaaaggacagaaaacaaag
+atggattgtacccccgaaaaaggacat.....................acttatgtttat
+tggtatcaacagaatcagaataaagagtttacatttttgatttcctttcagaat......
+......gaacaagttcttcaagaaacggagctgcacaagaagcggttctcatctcaatgc
+ccc...aagaacctaccttgcagcctggagatcccgtcctcggaaccaggagacaccgca
+ctctatctctgtgccagcagccaatc
+>NW_001114291|TRBV24-1*01|Macaca mulatta|F|V-REGION|560072..560359|288 nt|1| | | | |288+39=327| | |
+gatgctgatgttacccagaccccaaggaataagatcgcaaagacaggaaagaggattatg
+ctggaatgttctcagactaagggtcat.....................gatcaaatgtac
+tggtatcgacaagacccaggactggggctacggttgatctattactcctttgat......
+......gtccaagatataaacaaaggagagatctcc...aatggatacagtgtctctcga
+cag...gaacaggctaaattctccctgtccctagagtctgccacccccaaccagacagct
+ctttacttctgtgccaccagtgatttg
+>AF107751|TRBV24S1*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+...........................................aaggaaagaagattatg
+ctggaatgttctcagactaagggtcat.....................gatcaaatgtac
+tggtatcgacaagacccaggactggggctacggttgatctactactcccttggt......
+......gtccgagatataaacaaaggagagatctct...gatggatacagtgtctctcga
+cag...gaacagcctaaattctccctgtccctagagtctgccacccccaaccacacagct
+ctttacttctgtgccaccagttatt
+>NW_001114291|TRBV25-1*01|Macaca mulatta|F|V-REGION|567902..568188|287 nt|1| | | | |287+39=326| | |
+gaagctgatatctaccagaacccaagacaccgtgttatagggacaggaaagaagatcact
+ctggaatgttctcaaaccatgggccat.....................gacaaaatgtac
+tggtatcaacaagatccaggaatggaattacacctcatccactattcctatggg......
+......gttaattccacagagaggggagatttttcc...tctgagtcaacagtctccaga
+cta...aggatagagcattttcccctgaccctggagtctgccagcccctcacacacctct
+cagtacctctgtgccagcagtgaata
+>NW_001114291|TRBV27*01|Macaca mulatta|F|V-REGION|608801..609087|287 nt|1| | | | |287+39=326| | |
+gaagcccaagtgacccagaacccaagatacctcatcacagtgactggaaagaagttgaca
+gtcacttgttctcagaatatgaaccat.....................gagtatatgtcc
+tggtatcgacaagacccaggactgggcctgaggcagatctactattcagttaat......
+......gttgagatggttgataagggagatattcct...gaagggtacaacgtctctcga
+aaa...gagaagaggaatttccccctgatcctggagtcgcccagccccagccagacctct
+ctgtacctctgtgccagcagtttatc
+>AF107739|TRBV28*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................gagatatctagtcaaaaggatgggagagaaagttttt
+ctggaatgtgcccaggacatggaccat.....................gaaagaatgttc
+tggtaccgacaagacccaggtctggggctacggctgatctatttctcctatgat......
+......attacaaacgatgaaaaaggagatgttcct...gacgggtacagcgtctctaga
+gag...aagaaggagcagttctccctgattctggggtctgccagcaccaaccagacatct
+gtgtacctctgcgccagtagct
+>NW_001114291|TRBV28*01|Macaca mulatta|F|V-REGION|614134..614420|287 nt|1| | | | |287+39=326| | |
+gatgtgaaagtaacccagagctcaagatatctaatcaaaaggacaggagagaaagttttt
+ctggaatgtgtccaggatatggaccat.....................gaaagaatgttc
+tggtatcgacaagacccaggtctggggctacggctgatctatttctcatatgat......
+......gttaaactgaacgaaaaaggagatattcct...gaggggtacagtgtctctaga
+gag...aagaaggagcgcttctccctgattctggggtccgccagcaccaaccagacatct
+atgtacctctgtgccagcagtttatc
+>NW_001114291|TRBV29*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+agtgctgtcatctctcaaaagccaagcagggatgtctgtcaacgtggaacctccgtgaag
+atccagtgtcaagtcgatagccaagtc.....................accatgatgttc
+tggtaccgtcagcaacctggacagagcatgacactgattgcaactgcaaatcagggc...
+......tctgaggccacatatgagagtggatttgtcattgacaagtttcccatcagtcgc
+cca...aacctaacattctcaactctaactgtgagcaacacgagccctgaagacagcagc
+atatacctctgcagcgttgaaga
+>NW_001114291|TRBV3-1*01|Macaca mulatta|F|V-REGION|103390..103676|287 nt|1| | | | |287+39=326| | |
+gacacagctgtttcccagactccaaaatacctggtcacacagacaggaaagaacgagtac
+cttaaatgtgaacaaaatctgggccat.....................gatactatgtat
+tggtataagcaggactctaagaaattgctgaagataatgtttagctacaataac......
+......aagcagctcattataaatgaaacagttcca...aatcgcatctcacctgactct
+cca...gacaaagctcatttaaatcttcacatcaagtccctggagcttggtgactctgct
+gtatatttctgtgccagcagccaagg
+>NW_001114291|TRBV3-2*01|Macaca mulatta|F|V-REGION|123850..124136|287 nt|1| | | | |287+39=326| | |
+gacacagctgtttcccagactccaaaatacctggtcacacagacaggaaaggaggagtac
+cttaaatgtgaacaaaatctgggtcat.....................gatactatgtat
+tggtataagcaggactctaagaaattgctgaagataatgtttagctacaataac......
+......aagaagctctttataaatgaaacagtttca...aatcgcttctcacctgactct
+cca...gacaaagctcgtttaattcttcacatcaagcccctggagcttggtgactctgct
+gtgtatttctgtgccagcagccaagg
+>NW_001114291|TRBV3-3*01|Macaca mulatta|F|V-REGION|138878..139164|287 nt|1| | | | |287+39=326| | |
+gacacagctgttttccagactccaaaatacctggtcacacagatgggaaagaaggagtcc
+cttaaatgtgaacaaaatctgggtcat.....................gatactatgtat
+tggtataagcaggactccaagaaattgctgaagataatgtttatctacagtaat......
+......aaggagcccattttaaatgaaacagttcca...aatcgcttctcacctgaatct
+cca...gacaaagctcatttaaatcttcacatcaagtctgtggagcttggtgactctgct
+gtgtatttctgtgccagcagccaagg
+>NW_001114291|TRBV3-4*01|Macaca mulatta|F|V-REGION|176721..177007|287 nt|1| | | | |287+39=326| | |
+gacacagctgtttcccagactccaaaatatctggtcaggcagacgggaaaaaacgagtcc
+cttaaatgtgaacaaaatctgggccat.....................gatgctatgtat
+tggtataagcaggactctaagaaattgctgaagataatgtttatctacaataat......
+......aaggagcccattttaaatgaaacagttcca...tatcgcttctcacctaagtct
+cca...gacaaagctcatttaaatcttcacatcaagtccctggagcttggtgactctgct
+gtatatttctgtgccagcagccaaga
+>NW_001114291|TRBV30*01|Macaca mulatta|F|V-REGION|804422..804705|284 nt|1| | | | |284+39=323| |rev-compl|
+tctcagactgttcatcaatggccagcgaccctggtgcagcctgcgggcagcccgctttct
+ctggagtgcactgtggagggaacatca..................aaccccaacctatac
+tggtaccgacaggctgcaggcaggggcctccagctgctcttctactccattggt......
+.........gttgaccagatcagctctgaggtgccc...cagaatctctcagcctccagg
+ccc...caggacaggcggttcatcctgagttctaagaagctcctcctcagtgactcaggc
+ttctatctctgtgcctggagtgt
+>NW_001114291|TRBV4-1*01|Macaca mulatta|F|V-REGION|108034..108320|287 nt|1| | | | |287+39=326| | |
+gacagtggagttacccaaacaccaaagcacctggtcatgggaatgacaaacaagaagtct
+ttgaaatgtgaacaacatatgggacac.....................agggctgtgtac
+tggtacaagcagaaagttaagaagccgccggagatcatgtttatctacaactat......
+......gagaaactttctattaatgaaagtgtgccc...agtcgcttctcacctgaatgc
+tcc...aagagctctctcttataccttcacctacgcgccctgcagccagaagactcagcc
+ctgtatctctgcgccagcagccaaga
+>NW_001114291|TRBV4-2*01|Macaca mulatta|F|V-REGION|143215..143501|287 nt|1| | | | |287+39=326| | |
+gacactggagttacccagacaccaaagcacctggtcatgggaatgacaaataagaagtct
+ttgaaatgtgaacaacatatgggacac.....................aatgctatgtac
+tggtacaagcagaaagctaagaagccgccggagctcatgtttgtctaccagtat......
+......gagaaactctctattaatgaaagtgtgccc...agtcgcttctcacctgaatgc
+tcc...aagagctctctcttataccttcacctacgcgccctgcagccagaagactcagcc
+ctgtatctctgcgccagcagccaaga
+>NW_001114291|TRBV4-3*01|Macaca mulatta|F|V-REGION|180154..180440|287 nt|1| | | | |287+39=326| | |
+gaaactggagttacgcagacaccaagacacctggtcatgggaatgacaaataagaagtct
+ttgaaatgtgaacaacatctggggcac.....................aatgctatgtac
+tggtacaagcagaaagctaagaagccaccggagctcatgtttgtctacaacttt......
+......aaagaacgggctgaaaacaacagtgtgccc...agtcgcttcgtacctgaatgc
+cca...gacagctctcacttacaccttcacctacacgccctgcagccagaagactcagcc
+ctgtatctctgcgccagcagccaaga
+>AF107746|TRBV4S1*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aaaacacctggtcatgggaatgacaaatgagaagtct
+ttggaatgtgaacaacacctggggcac.....................aatgctatgtac
+tggtacaagcagaaagctaagaggccgccagagctcatgtttgtctacaactat......
+......aaggaaatctatgtaaatgaaagtgtgccc...attcgcttctcacctgaatgc
+ccc...gacagctctcacttacaccttcacctacacgccctgcagccagaagactcggcc
+ctgtatctctgcgccagcagccaaga
+>AF107737|TRBV4S2*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aaaacacctggtcacgggaatgacaaatgagaagtct
+ttggaatgtgaacaacatctggggcac.....................aatgctatgtac
+tggtacaagcagaaagctaagaggccgccggagctcatgttcatctacagactt......
+......caagaacagactgaaaacaatagtgtgccc...agtcgcttctcacctgaatgc
+ccc...gacagctctcacttacaccttcacctacacgccctgcagccagaagactcagcc
+ctgtatctctgcaccagcagccaaga
+>NW_001114291|TRBV5-1*01|Macaca mulatta|P|V-REGION|154002..154287|286 nt|1| | | | |286+39=325| | |
+gaggctggagtcacccaaactcccagatctctgatcaaaatgagaggacagcaagcgaca
+ttgagctgctcccctatctctgggcat.....................aggagtgtgtcc
+tggtaccaacagaccccaggacagggccttcaggtcctcttcgaatacttcagt......
+......gagacacagagacaaaaaggaaacttctct...aatcgattctcagggcgccag
+ttc...tctaactctcgctctgagatgaatgtgagcaccttggagctgggggactcggcc
+ctttatctttgtgccagcagcttgg
+>NW_001114291|TRBV5-10*01|Macaca mulatta|F|V-REGION|424338..424623|286 nt|1| | | | |286+39=325| | |
+gacgctggagtcgtccaaagtcccacgcacctgatcaaaacgagaggacagcaagtgact
+ctgagatgctctcctatctctgggcac.....................aacactgtgtcc
+tggtaccaacaggcactcggtcaggggccccagttgatatttcagtattatcgg......
+......ggggaagacagaggcagaggaaacttccct...gatcgattctcaggtcaccag
+ttc...cctaactatagctctgagctgaatgtgaatgcctcggagatgggggactcggcc
+ctgtatctctgtgccagcagcttgg
+>NW_001114291|TRBV5-2*01|Macaca mulatta|P|V-REGION|183519..183804|286 nt|1| | | | |286+39=325| | |
+gaggctggagtcacccaaaatccaagatctctgatcaaaacaagaggacagcaagtgaca
+ctgagctgctcccctgtctctgggcat.....................aacagtgtgtcc
+tggtaccaacaagctccaggtcagggcctccagtaattgttaaaatatcataat......
+......gggttacagagagtaaaaggaaacttccct...gatcgtttctcagggcaccag
+ttc...cctgactatcactctgagctgaacatgatcaccttggagctggcagacttggcc
+ctgtatctctgtcccagaagtttgg
+>NW_001114291|TRBV5-3*01|Macaca mulatta|ORF|V-REGION|226230..226518|289 nt|1| | | | |289+36=325| | |
+gacactggagtcacccaaagtcccacacacctgatcaaaacgagaggacagcaagtgact
+ctgagatggtctcctatctctgggcac.....................aacactgtgtcc
+tggtaccaacaggcccctggtcaggggccccagtttatcttcgaatatgctaat......
+......gagtcaaggacatcagaaggaaacttccct...catcgattctcagggcgccag
+ttccgtgactatcatcactctgagatgaatgtgagtgccttggagctgggggactcggcc
+ctgtatctctgtgccagcagcttgg
+>NW_001114291|TRBV5-4*01|Macaca mulatta|F|V-REGION|299688..299973|286 nt|1| | | | |286+39=325| | |
+caggctggagtcacccaaagtcccacacacctgatcaaaacgagaggacagcaagtgact
+ctgagatgctctcctatctctgggcac.....................accaatgtgtac
+tggtaccaacaggccctgggtcagggactccagttcatcctttggtatgacgag......
+......gaagaagagagagacagaggaaccttccct...cctagattttcaggtcatcag
+ttc...cctaactatagctctgagctgaatgtgaacgccttggaggtggaggactcggcc
+ctgtatctctgtgccagcagcttgg
+>NW_001114291|TRBV5-5*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gacggtggagtcacccaaagtcccaggcatttgatcaaaacaacaggacagcaagtgaca
+ctgagatgctctcctatctctgggcac.....................accagtgtgtcc
+tggtaccaacaggccctgggtcacgggccccagtttatctttgagtattatgag......
+......gagaaagagagagagagaggcaacttccct...gatcgattctcaggtcaccag
+ttccctaactatagctctgagctgaacgtgaatgccttggaggcgggggactcgagccct
+gtatctctgtgccagcagcttgg
+>NW_001114291|TRBV5-6*01|Macaca mulatta|F|V-REGION|337595..337880|286 nt|1| | | | |286+39=325| | |
+gacactggagtcacccaaagtcccacacacctgatcagaaagagaggacagcaagtgaca
+ctgagatgctctcctatctctgggcac.....................aacactgtgtcc
+tggtaccaacaggccctgggtcaggggccccagtttatctttcagtattatgag......
+......aaggaagagagagagagaggcaactttcct...ggtcgattctcaggtcaccag
+ttc...cctaactatagctctgagctgaatgtgagcgccttgttgctgggggactcagcc
+ctgtatctctgtgccagcagcttgg
+>NW_001114291|TRBV5-7*01|Macaca mulatta|F|V-REGION|353595..353880|286 nt|1| | | | |286+39=325| | |
+gacgctggagtcacccaaagtcccacacacctgatcaaaacgagaggacagcaagtgact
+ttgagatgctctcctatctctgggcac.....................agcagtgtgtcc
+tggtaccaacaggccctgggtcaggggccccagcttatctttgagtattatgag......
+......aaggaagagagagtcagaggcaacttccct...gatcgattctcaggtcgccag
+ttc...cctaactatagctctgagctgaatgtgaacgcctcggagatgggggactcggcc
+ctgtatctctgtgccagcagcttgg
+>NW_001114291|TRBV5-8*01|Macaca mulatta|F|V-REGION|385483..385768|286 nt|1| | | | |286+39=325| | |
+gacactggagtcacccaaagtcccacacacctgattaaaacaagaggacagcaagtgact
+ctgagatgctctcctatctctgggcac.....................agcagtgtgtcc
+tggtaccaacaggccctgggtcaggggccccagtttatctttgagtattatgag......
+......aaggaagagagagagagaggcaacttccct...ggtcgattctcaggtcaccag
+ttc...cctaactatagctctgagctgaatgtgagcgccttgttgctgggggactcggcc
+ttgtatctctgcaccagcagcttgg
+>NW_001114291|TRBV5-9*01|Macaca mulatta|F|V-REGION|405309..405594|286 nt|1| | | | |286+39=325| | |
+gacactggagtcacccaaagtcccacacacctgatcaaaacgagaggacagcaagtgaca
+ctgagatgctctcctatctctgggcac.....................agcaatgtgtac
+tggtaccaacaggccctgggtcaggggccccagtttatctttcagtattatgag......
+......aaggaagagagagagagaggcaacttccct...gatcgattctcaggtcaccag
+ttc...cctaactatagctctgagctgaatgtgagcgccttgttgctgggggactcggcc
+ctgtatctctgtgccagcagcttgg
+>AF107757|TRBV5S1*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aagacacctgatcaaaatgagaggacagcaagtgaca
+ctgaggtgctcccctatctctgggcat.....................gacagagtgtcc
+tggtaccaacaggccccaggacagggccctcagttcctcttcgaatactacaat......
+......gagatacagaatgataaaggaaacttccct...gctcgattctcagggcgccag
+ttc...tctaactatagctctgagatgaatgtgagcggcttggagctgggggactcggcc
+ctttatctttgtgccagcaac
+>AF107759|TRBV5S2*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aagacacctgatcaaaatgagaggacagcaagtgaca
+ctgaggtgctcccctatctctgggcat.....................aacagcgtgtac
+tggtaccaacaggccccaggacaggaccctcagttcctcttcgaatactacaat......
+......gagatacagaatgataaaggaaacttccct...gctcgattctcagggcgccag
+ttc...tctaactatagctctgagatggatgtgagcggcttggagctgggggactcagcc
+ctttatctttgtgccagcaac
+>NW_001114291|TRBV6-1*01|Macaca mulatta|F|V-REGION|161933..162219|287 nt|1| | | | |287+39=326| | |
+aatgctgatgtcactcagagcccaaaattccagatcctgaagacaggacagagcatgaca
+ctgcagtgtgcccaggatatgaaccat.....................aactccatgtac
+tggtatcgacaagacccaggcatggggctgaggctgattcattactcagctgct......
+......gagggtaccactgacccaggagaagtcgcc...gatggctacagtgtctccaga
+tta...aacaaaacggagttcctgctcaggctggagtcggctgctccctcccagacatct
+gtgtacttctgtgccagcagtgaagc
+>NW_001114291|TRBV6-2*01|Macaca mulatta|F|V-REGION|191927..192213|287 nt|1| | | | |287+39=326| | |
+aatgctggtgtcactcagaccccaaaattccaggtcctgaagacaggacagaacatgaca
+ctgaagtgtgcccaggatatgaaccat.....................aactacatgtac
+tggtatcgacaagacccaggcatggggctgaggctgattcattactcagctggt......
+......gaaggtagcactgagaaaggagaagtcccc...aatggctacaatgcctccaga
+tta...aacaaaaaggatttcctgctcaggctggagtcagctgctccctcccagacatct
+atgtacttctgtgccagcagtgaagc
+>NW_001114291|TRBV6-3*01|Macaca mulatta|F|V-REGION|287438..287724|287 nt|1| | | | |287+39=326| | |
+aatgctggtgtcactcagaccccaaaattccaggtcctgaaaacaggacagagcatgaca
+ctgcagtgtgcccaggatatgaaccat.....................gaccgcatgtac
+tggtatcgacaagacccaggcatggggctgaggctgattcattactcagttggt......
+......gaaggtagcactgagaaaggagaagtcccc...gatggctacaatgtcaccaga
+tca...aacacagaggatttcccactcagactggagtcggctgctccctcccagacatct
+gtgtacttctgtgccagcagttactc
+>NW_001114291|TRBV6-4*01|Macaca mulatta|ORF|V-REGION|304972..305258|287 nt|1| | | | |287+39=326| | |
+aacgctggtgtcactcagaccccaaaattccaggtcctgaagacaggacagagcatgaca
+gtgcagtgtgcccaggatatgagccat.....................aactccagttac
+tggtatccacaagacccaggcatgggtctgaggctgattcgttactcagctgct......
+......gctggtgtcactgacaaaggagaagtcccc...agtggctacaatgtctccaga
+tta...aacacagaggatttcccgctcaggctggagtcggctgctccctcccagacatct
+gtgtacttctgtgccagcagttactc
+>NW_001114291|TRBV6-5*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+aatgttggtgtcactcagaccccaaaattccaagtcctgaagacaggacagagcatgaca
+gtgcagtgtgcccaggatatgaaccat.....................aacttcatgtac
+tggtatcgacaagacccaggcatggggctgaggttgattcattactcaggtgct......
+......gctggtactactgataaaggagaagtcccc...agtggctacaatgtctccaga
+tta...aacacagaggatttcccactcagactggagtcggctgatccttcccagacatct
+gtgtacttctgtgccag
+>NW_001114291|TRBV6-6*01|Macaca mulatta|F|V-REGION|359639..359925|287 nt|1| | | | |287+39=326| | |
+aatgctgctgtcaatcagaccccaaaattccaggtcctgaagacaggacagagcatgaca
+ctgcagtgtgcccaggatatgaaccat.....................gaatgcatgtcc
+tggtatcgacaagacccaggcatggggctgaggctgattcattactcagctgct......
+......gctggtatcactgacaaaggagaagtcccc...aatggctacaatgtctctaga
+tca...aacacagaggatttcccgctcaggctggagtcggctgcttcctcccagacatct
+gtgtacttctgtggcagcagttactc
+>NW_001114291|TRBV6-7*01|Macaca mulatta|ORF|V-REGION|392917..393203|287 nt|1| | | | |287+39=326| | |
+aatgctgatgtcactcagacaccaaaattccaggtcctgaagacaggacagagcatgaca
+gtgcagtgtgcccaggatatgaaccat.....................gactgcatgtac
+tggtatcgacaagacccaggcatggggctgaagctgattcattactcagttggt......
+......gctggtatcactgacaaaggagaagtcccc...aatggctacaatgtctccaga
+tta...aacacagaagatttcccgctcaggctggagtcggcggctctctcccagacatct
+gtgtacttctgtgccagcagtgacac
+>NW_001114291|TRBV6-8*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+aatgctggtgtcactcagacaccaaaattccaggtcctgaagacaggacagagcctgaca
+gtgcagtgtgcccaggatatgaaacat.....................gactacatgttc
+tggtatcgacaagacccaggcatggggctgagactgatttattactcagttact......
+......gctggtatcactaccaaaggagaagtcccc...aatggctacaatgtctccaga
+ata...aacacagaggatttcctgctcaggctggagtcgg
+>AF107747|TRBV6S1*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aaaattccaggtcctgaagacaggacagagcatgacg
+ctgcagtgtgcccaggatatgaaccat.....................gacggcatgtac
+tggtatcgacaagacccaggcatggggctgaggctgattcattactcagttgct......
+......gaaggtaccactgccaaaggagaagtctcc...gatggctacaatgtctccaga
+tca...aacacagaggatttcccgctcaggctggaggcagctgctccctcccagacatct
+gtgtacttctgtgccagcagttac
+>AF107752|TRBV6S2*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aaaattccaggtcctgaagacaggacagagcatgacg
+ctgcagtgtgcccaggatatgaaccat.....................gacggcatgtac
+tggtatcgacaagacccaggcatggggctgaggctgattcattactcagctggt......
+......gaaggtaccactgacaaaggagaagtctcc...gaaggctacaaggtctccaga
+tca...aacacagaggatttcccgctcaggctggaggcagctgctccctcccagacatct
+gtatacttctgtgccagcagttac
+>NW_001114291|TRBV7-10*01|Macaca mulatta|ORF|V-REGION|435064..435353|290 nt|1| | | | |290+36=326| | |
+gatgctggagtctcccaagaccccagacacaagatcacaaagacgggacagaatgtatct
+ttcaagtgtgttccaatttccgaacac.....................aaccgcctttac
+tggtaccgacagaccttggggcagggcccagagtttctgacttacttccagaat......
+......gaagctcaacaagacagatcagggctgttcagtgatcggttctctgcagagagg
+cct...gagggatctatctccaccctgatgatccagcacacagagcaaggggacttggcc
+atgtatctctgtgccagcagcttagc
+>NW_001114291|TRBV7-2*01|Macaca mulatta|F|V-REGION|198735..198955|214 nt|1| | | | |214+112=326|partial in 5'| |
+............................................................
+................tttcaggtcat.....................accgccctttat
+tggtaccgacagagcctggggaagggcctggagtttttaatttacttccaaggc......
+......aacgatgcaccagacaaatcagggctgcccagtggtcggttctctgcagagagg
+act...gagggatccgtctccactctgaagatccagcgcacagagcagggggactcggcc
+gtgtatctctgtgccagcagcttagc
+>NW_001114291|TRBV7-3*01|Macaca mulatta|F|V-REGION|221188..221477|290 nt|1| | | | |290+36=326| | |
+ggtgctggagtttcccagtcccccagtaacaaggtcacagagaagggaaaggatgtagcg
+ctcaggtgtgatccaatttcaggtcat.....................gctgtcctttac
+tggtaccgacagaacctggggcagggcctagagtttctaatttacttccaaggc......
+......acgggtgcagcagatgactcagggctgcgcagtgatcgggtctctgcaacacgg
+cct...gaaggatccgtctctactctgaagatccaacacacagagcagggggactcagcc
+atgtacttctgtgccagcagcttaac
+>NW_001114291|TRBV7-4*01|Macaca mulatta|F|V-REGION|291671..291960|290 nt|1| | | | |290+36=326| | |
+ggtgctggagtctcgcagtccccaagatacaaagtcacgaagaggggacaggatgtagct
+ctcaggtgtgatccaatttcgggtcat.....................gagtacctttac
+tggtaccaacaggccctggggcagggcccagcgtttctgacttacttccagaat......
+......gatgctcaacgagacaaatcagggctgcccaatgatcggttctctgcagagagg
+act...gagggatccgtctccactctgaagatccagcgcacacagcagggggactcagcc
+gtgtatctctgtgccagtagcttagc
+>NW_001114291|TRBV7-5*01|Macaca mulatta|F|V-REGION|311130..311419|290 nt|1| | | | |290+36=326| | |
+ggtgctggagtctcccagtccccgaggtacaaagtcacgaagaggggccaggatgtagct
+ctcaggtgtgatccaatttcgggtcat.....................gtagccctttat
+tggtaccgacggactctgggacaggggccagagcttctgacttacttccagaat......
+......gatgctcaaccagacaaatcagggctgcccagtgatcgcttctctgcagagagg
+act...gagggatccgtctccactctgaagatccagtgcacagagcagggggactcagcc
+gtgtttctctgtgccagcagcttagc
+>NW_001114291|TRBV7-6*01|Macaca mulatta|F|V-REGION|326960..327249|290 nt|1| | | | |290+36=326| | |
+ggtgctagagtctcccagtctccaaggtacaaagtcacaaagaggggccaggatgtagct
+ctcagatgtgatccaatttcgggtcat.....................gcaactctttat
+tggtaccaacaggccctaggacagggcccagagcttctgacttacttcagttat......
+......gaagctcaacaagataaatcagggctgcccagtgatcgcttctctgcagagagg
+ccc...gagggatccgtctccactctgaagatccagcgcacagagcagggggactcggcc
+gtgtatctctgtgccagcagcttagc
+>NW_001114291|TRBV7-7*01|Macaca mulatta|F|V-REGION|348526..348815|290 nt|1| | | | |290+36=326| | |
+ggtgctggagtctcccagtccccaaggtacaaagtcacagagaggggacaggatgtagct
+ctcaggtgtgatccaatttcgggtcat.....................gattacctttac
+tggtaccaacaggccctggggcagggcccagagcttctgacttacttcaatgac......
+......aaagctcaaccagacaaatcagggctgcccaatgatcggttctctgcagagagg
+cct...gagggatccgtctccactctgaagatccagcgaacagagcaacgagactcggcc
+gtgtatctctgtgccagcagcttagc
+>NW_001114291|TRBV7-9*01|Macaca mulatta|F|V-REGION|416849..417138|290 nt|1| | | | |290+36=326| | |
+ggtgctggagtctcccagtctcccaggtacaaagtaataaagaagggacaggatgtagct
+ctgaggtgtgatccaatttcgggtcat.....................gcagccctctat
+tggtaccaacaggccctggggcagggcccagagtttctgacttacttcaattat......
+......aaagctcaaccagacaaatcagggctgcccaatgatcggttctctgcagagagg
+cct...gagggatctgtctccactctgacgatccagcgaacagagcagcaggactcggcc
+gtgtatctctgtgccagcagcttagc
+>AF107753|TRBV7S1*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................caggtacaaagtcacaaagaggggacaggatatagct
+ttcaggtgtgatccaatttcgggtcat.....................gtaatgctttat
+tggtaccgacagaccctggagcagagcccagagtttctgacttacttccagtat......
+......gaagttcaacaagacaaatcagggctacccagtgatcggttctccgcagagagg
+gct...gagggatccttctccactctgaagatccagcgcacagagcagcgggactctgcc
+atgtatctctgtgccagcagctca
+>AF107741|TRBV7S2*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................caggtacaaagtcacaaagaggggacaggatatatct
+ttcaggtgtgatccaatttcgggtcat.....................gaaatgctttat
+tggtaccgacagaccctggagcagagcccagagtttctgacttacttccagtat......
+......gaagttcaacaagacaaatcagggctacccagtgatcggttctccgcagagagg
+gct...gagggatccttctccactctgaagatccagcgcacagagcagcgggactctgcc
+atgtatctctgtgccagcagctca
+>AF107758|TRBV7S3*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................caggtacaaagtcacaaagaggggacaggatatatct
+ttcaggtgtgatccaatttcgggtcat.....................gaaatgctttat
+tggtaccgacagaccctggagcagagcccagagtttctgacttacttccagtat......
+......gaagttcaacaagacaaatcagggctacccagtgatcggttctctgcagagagg
+gct...gagggatccttctccactctgaagatccagcacacggagcagcgggactttgcc
+atgtatctctgtgccagcagctca
+>AF107748|TRBV7S4*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................caggtacaaagtcacaaagaggggacaggatatagct
+ttcaggtgtgatccaatttcgggtcat.....................gtaatgctttat
+tggtaccgacagaccctggagcagagcccagagtttctgacttacttccagtat......
+......gaagttcaacaagacaaatcagggctacccagtgatcagttctctgcagagagg
+gct...gagggatccttctccactctgaagatccagcacacggagcagcgggactctgcc
+atgtatctctgtgccagcagcaca
+>AF107750|TRBV7S5*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................caggtacaaagtcacaaagaggggacaggatatatct
+ttcaggtgtgatccaatttcgggtcat.....................gaaatgctttat
+tggtaccgacagaccctggagcagagcccagagtttctgacttacttccagtat......
+......gaagttcaacaagacaaatcagggctacccagtgatcggttctctgcagagagg
+gct...gagggatccttctccactctgaagatccagcacacggagcagcgggactctgcc
+atgtatctctgtgccagcagcggg
+>AF107749|TRBV7S6*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................cagacacaaggttacaaagacgggacagaatgtaact
+tttgggtgtgatccaatttctggacac.....................aaccgcctttat
+tggtaccgacagaccctggagcagagcccagagtttctgacttacttccagtat......
+......gaagttcaacaagacaaatcagggctacccagtgatcggttctccgcagagagg
+gct...gagggatccttctccactctgaagatccagcgcacagagcagcgggactctgcc
+atgtatctctgtgccagcagc
+>AF107755|TRBV7S7*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................cagacacaaggttacaaagacgggacagaatgtaact
+tttgggtgtgatccaatttctggacac.....................aaccgcctttat
+tggtaccgacagaccctggggcagagcccagagtttctgacttacttccagaat......
+......gaagctcaactggacaaatcagggctgcccagtgatcggttctttgcagagagg
+act...gggggatccttctccactctgaagatccagcgcacaaagcagggggactcggcc
+atgtatctctgtgccagcagc
+>AF107740|TRBV7S7*02|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................cagacacaaggttacaaagacgggacagaatgtaact
+tttgggtgtgatccaatttctggacac.....................aaccgcctttat
+tggtaccgacagaccctggggcagagcccagagtttctgacttacttccagaat......
+......gaagctcaactagacaaatcagggctgcccagtgatcggttctttgcagagagg
+act...gggggatccttctccactctgaagatccagcgcacaaagcagggggactcggcc
+atgtatctctgtgccagcagc
+>AF107736|TRBV7S8*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................cagacacaaggttacaaagacgggacagaatgtaact
+tttgggtgtgatccaatttctggacac.....................aaccgcctttat
+tggtaccgacagaccctggggcagagcccagagtttctgacttacttccagaat......
+......gaagctcaactagacaaatcagggctgcccagtgatcggttctttgcagagagg
+act...gggggatccttctccactctgaagatccagcgcacagagcagcgggactctgcc
+atgtatctctgtgccagcagc
+>AF107756|TRBV9*01|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aaagcacctgctcacagcaattggacagcgagtggca
+ctgagatgctcccctaggcctggagac.....................ctctctgtgtac
+tggtaccaacagagcctggaccagagcctccagttcctcattcagtattataat......
+......gggaatgagagagaaaaaggaaacattcct...gaacgattctcaggacaacag
+ttc...cctaacatgagctctgaactaaacctgagctctttggagctgggggactcggct
+ttgtatttctgtgccagcagcgttg
+>AF107745|TRBV9*02|Aotus nancymaae|(F)|V-REGION| | | | | | | | | | |
+.......................aaagcacctgctcacagcaattggacagcgagtggca
+ctgagatgctcccctaggtctggagac.....................ctctttgtgtac
+tggtaccaacagagcctggaccagagcctccagttcctcattcagtattataat......
+......gggaatgagagagaaaaaggaaacattcct...gaacgattctcaggacaacag
+ttc...cctaacatgagctctgaactaaacctgagctctttggagctgggggactcggct
+ttgtatttctgtgccagcagctcgt
+>NW_001114291|TRBV9-1*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gattgtggagtcacacaaaccccaaagcacctgatcacagcaattggacagcaagtgacg
+ctgagatgctcccctaggtctggagac.....................ctctccgtgtac
+tggtaccaacagagcctgggccagggcctccagttcctcattcagtattataat......
+......ggggaagagagagcaaaaggaaacattctt...gaaagattctcagcacaacag
+ttc...gctgacttgcactctgaactaaacctgagctctctggagctgggggactcggcg
+ttgtatttctgtgccagcagcttag

@@ -1,0 +1,161 @@
+>NW_001121240|IGHV1-1*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+caggtgcagctggtgcagtctggggct...gagattaagcagcctggggcctcagtgaag
+ctctcctgcaaggcttctggatataccttc............actagctactacatgcac
+tgggtgagacaggcccctggacaaggccttgagtggataggactgatctccccttac...
+...aatggtaacaaaggctacgcacagaacttccag...ggcagagtcaccataactacg
+gacacgtccacgagcacaggctacatggagctgagcagcctgagatctgaggacacagcc
+gtgtattactgtacgagaga
+>NW_001121240|IGHV2-1*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+caggtgaccttgaaggagtctggtcct...gcgctggtgaaacccacacagaccctcacg
+ctgacctgcaccttctctgggttctcactcagc......actagtggtatgggtgtgggc
+tggatccgtcagccctcacggaagaccctggagtggcttgcacacatttattgggat...
+......gatgataagcgctacagcacatctctgaag...agcaggctcaccatctccaag
+gacacctccaaaaaccaggtggttctaacaatgaccaacatggaccctatggacacagcc
+acatattactgtgcacggagac
+>NW_001121239|IGHV2-2*01|Macaca mulatta|ORF|V-REGION| | | | | | | | | | |
+caggtcaccttgaaggagtctgatcct...gcgctagtgaaacccacacagaccctcacg
+ctgacctgcaccttctctgggttctcactcagc......acttctggaatgggtgtggac
+gggatccgtcagcccccagggaaggccctggagtggcttgcacgcattgattgggat...
+......gatgataaatactacagcccatcgctgaag...agcaggctcaccatctccaag
+gacacctccaagaaccaggttgtccttacaatgaccaacatggaccctgtggacacagcc
+acatattactgtgcacggagac
+>NW_001121240|IGHV3-10*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctctggattcaccttc............agtgacgactacatggag
+tgggtccgccaggctccaggaaaggggctggagtgggttggacaaattaatcctaat...
+...gggggtaccacattcctcatggattccgtgaag...ggccgattcaccatctccaga
+gacaacgccaagaacacgctttatctgcaaattaacagcctgaaaatagaggacacggcc
+gtgtattactgtactagaca
+>NW_001121240|IGHV3-11*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggcggagtctggggga...ggcttggtccagcctggggggtccctgaga
+ctctcctgtgcagcctctggattcaccatt............agcagctactggatgagc
+tgggtctgccaggctccgggaaaggggctggagtggctttcagacatttatggt......
+......agtaccatgtactacggagactctgtgaag...ggcctattcaccgtctccaga
+gacaatgccaagaactcgctgtctctgcaaatgaacagtctgagagccgaggacacggcc
+gtgtattactgtactagaga
+>NW_001121240|IGHV3-12*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtccggggga...ggcttggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctctggattcaccttc............agtgattatgctatggac
+tgggtccgccaggctccaggaaaggggctggagtgggtgggtttcattagaagcaaagct
+tatggtgggacagcagaatacgccgcgtctgtgaaa...ggcagattcaccatctccaga
+gatgattcaaagaacacggcgtatctgcaaatgagcagcctgaaaaccgaggacacggcc
+gtgtattactgtactagaga
+>NW_001121239|IGHV3-13*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctggggca...ggcttggtccagcctggcgggtccctgaga
+ctctcctgtgcagcctctggattcaccttc............agtaactcctggatgagc
+tgggtccgccaggctccaggcaaggggctagagtgggttgcccgtattaaaaggaaagct
+gacggtgagacagcagattacgccgcatctgtgaaa...ggcagattcaccatctcaaga
+gacgattcaaagaacacactgtacctgcaaatgaacagcctgaaaaccgaggacacggcc
+gtgtattactgcaccacaga
+>NW_001121239|IGHV3-14*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctgggggc...ggcttggcaaagcctggggggtccctgaga
+ctctcctgtgcagcctctggattcaccttc............agtaactactggatgcac
+tgggttcgccaggcaccagggaaggggctggagtggatctcagctattaatagtgct...
+...ggtagtagcacatactatgcagactccgtgaag...ggcagattcaccatctccaga
+gagaacgccaagaacacactgtatcttcaaatggacggcctgagagctgaggacacggct
+gtctattactgtgcgggaga
+>NW_001121239|IGHV3-17*01|Macaca mulatta|ORF|V-REGION| | | | | | | | | | |
+gtggtgcagctggtggagtctgaggga...aatttcgtgcagcctggagggtccctgaga
+ctctcctgtgcagtctctggattcaccttt............agcagctgtgatttggac
+tggattcgccatgctccaggaaaggggctggagtgggtctctggtattagtattgct...
+......ggtagcacgtattatgcaaactctgtaaac...agtctattcgccatctccaga
+gaaaatgccaaaaacacactgtatcttcaaatgaacagtctgatagctgaggacacagcc
+atttattactgtgtgagtgaag
+>NW_001121239|IGHV3-18*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctgggggatccctgaga
+ctctcctgtgcagcctctggattcaccttc............agtaactactggatgagc
+tgggtccgccaggctccagggaaggggctggactgggttggatttattaaaaacaaagct
+gatggtggaacagcagcatacgccgaatctgtgaaa...ggcagattcaccatctcaaga
+gatgattcaaagaacacactgtatctgcaaatgagcagcctgaacaccgaggacacggcc
+gtgtattactgtactagaga
+>NW_001121239|IGHV3-20*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctggggga...ggcttggtgcagcctggggggtccctgaga
+ctctcctgtgcagcctctggattcaccttc............agtaactactacatgcac
+tgggtccgccaggctcaagggaaagggctagagtgggtaggtttaataagaaacaaagct
+aacagttacacgacagaatatgctgcggctgtgaaa...ggcagattcaccatctcaaga
+gatgattcaaagaacacgctgtatctgcaaatgagcagcctgaaaaccgaggacacagcc
+ctgtattactgtactaaa
+>NW_001121239|IGHV3-21*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctggggga...ggcctggtacagcctggccggtccctgaga
+ccctcctgtgcagcctctggattcactttc............agtagctatggcatgcac
+tgggtccgccaggctccggaagaggggctggtgtgggtttcatacattggtagt......
+......agtaccatgtactacgcagactccgtgaag...ggccgattcaccatctccaga
+gacaatgccaagaactcgctgtatctgcaaatgaacagcctgagagccgaggacacggct
+gtgtattactgtgtgagaga
+>NW_001121239|IGHV3-22*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagttggtggagtctggggga...ggcttggtacagcctgggggctccctgaga
+ctctcttgtacaggctctggattcaccttc............agtagctactacatgtac
+tgggtccgccaggctccagggaaggggctggagtgggtctcagctattaatactggt...
+...gggggtagcacatggtacacagactccgtgaag...ggccgattcaccatctccaaa
+gagaacgccaagaacacactgtatcttcaaatggacagcctgagagctgaggacacggct
+gtctattactgtgcgaaagaca
+>NW_001121239|IGHV3-24*01|Macaca mulatta|P|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctggagga...ggcctggcaaagcctggggggtccctgaga
+ctctcctgtgcagcatttggattcaccttc............agtagctactagatgcac
+tgggttcaccaggctccagggaagtggctaaagtgggtctcagctatcagtaatggt...
+...ggtattaacacatactacccagattctatgaag...ggccaattcaccatctccaga
+gacaccaccaagaactcactgtatctgcaaatgaacagcctgagagtggaggacacggct
+gtgtattactgcatgagaga
+>NW_001121240|IGHV3-5*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggcgggtccctgaga
+ccctcctgtgcagcctctggattcaccttc............agtagttctgctatgcac
+tgggtccgccaggcttctgggaaaggactggagtgggttggacgtattagaagcaaatct
+aacaattacgcgacagaatacgccgcatcggtgaaa...ggcagattcaccatctccaga
+gatgattcaaagaacacggcgtatctgcaaatgaacagcctgaaaaccgaggacacggcc
+gtgtattactgtgctagaga
+>NW_001121240|IGHV3-6*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggggggtccctgaga
+ctctcctgtgcagcctccggattcaccttc............agtgactactacatgtac
+tgggtccgccaggctccaggaaaggggctggagtgggtgggtttcattagaagcaaagct
+tacggtgggacagcagaatacgccgcgtctgtgaaa...ggcagattcaccatctccaga
+gatgattccaaaagcatcgcctatctgcaaatgagcagcctgaaaaccgaggacacggcc
+gtgtattactgtactaggga
+>NW_001121240|IGHV3-7*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctggggga...ggcttggtccagcctggggggtccctgaga
+ctctcctgtgcagcctctggattcaccttt............ggtgattatggcatgcac
+tgggtccgccaggctccgggaaagggactggagtgggtctcatccattagtaacact...
+...ggtaaaaccgtatactacgctgactccgtgaag...ggccgattcaccgtctccaga
+gacaacgccaagaactcgctgtctctgcaaatgagcagcctgagagccgaggacacggcc
+gtgtattactgtactagaga
+>NW_001121240|IGHV3-9*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtggagtctgggggc...ggcttggcaaagcctggggggtccctgaga
+ctctcctgcgcagcctccggattcaccttc............agtgactactacatggac
+tgggtccgccaggctccagggaaggggctggagtgggtctcacgtattagtaatggt...
+...ggtggtagcacatggtacgcagactccgtgaag...ggcagattcaccatctccaga
+gagaacgccaagaacacactgtatcttcaaatgaacagcctgagagctgaggacacggct
+gtctattactgtgcgaaaga
+>NW_001121240|IGHV4-2*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+cagctgcagctgcaggagtcgggccca...ggactggtgaagccttcggagaccctgtcc
+ctcacctgcgctgtctctggtggctccatc............agcagtaactactggagc
+tggatccgccagcccccagggaagggactggagtggattggacgtatctctggtagt...
+...ggtgggagcaccgactacaacccctccctcaag...agtcgagtcaccatttcaaca
+gacacgtccaagaaccagttctccctgaagctgagctctgtgaccgccgcggacacggcc
+gtgtattactgtgcgagaga
+>NW_001121240|IGHV5-1*01|Macaca mulatta|P|V-REGION| | | | | | | | | | |
+gaggtgcagctggtgcagtctggagca...gaggtgaaaaggcccggggagtctctgagg
+atctcctgtaagacttctggatacagcttt............accagctactggatcagc
+tgggtgcgccagatgcccgggagagaactggagtggatggggagcatccatcctggg...
+...acctctgataccagatacaacccgtccttccaa...ggccaggtcaccatctcagcc
+gacagctccatcagcaccgtctacctgcagtggagcagcctgaaggcctcggactccgcc
+atgtattattgtgcaaga
+>NW_001121239|IGHV5-2*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+gaggtgcagctggtgcagtctggagca...gaggtgaaaaggcccggggagtctctgaag
+atctcctgtaagacttctggatacagcttt............accagctactggatcagc
+tgggtgcgccagatgcccggaaaaggcctggagtggatgggggcgattgatcctagt...
+...gattctgataccagatacagcccgtccttccaa...ggccaggtcaccatctcagcc
+gacaagtccatcagcaccgcctacctgcagtggagcagcctgaaggcctcggacaccgcc
+acgtattactgcgcgaaaga
+>NW_001121239|IGHV6-1*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+caggtgcagctgcaggagtcaggtcca...ggactggtgaagccctcacagaccctgtca
+ctcacctgtgccatctccggggacagtgtctct......agcaacagtgctacttggaac
+tggatcaggcagtcgccatcgagaggccttgagtggctgggaaggacatactacaggtcc
+...aagtggtataatgattatgcacaatctgtgcaa...aatcgaataagcatcaaccca
+gacacatccaagaaccagttctccctgcagctgaactctgtgacccccgaggacatggcc
+gtgtattactgtgcaagaga
+>NW_001121240|IGHV7-1*01|Macaca mulatta|F|V-REGION| | | | | | | | | | |
+caggtgcagctggtgcagtctgggcct...gaggtgaagcagcctggggcctcagtgaag
+gtctcctgcaaggcttctggttacagcttc............accacctatggtatgaat
+tgggtgcgacaggcccctggacagggccttgagtggatgggatggatgaacacctac...
+...actgggaacccaacgtatgcccagggcttcaca...gaacggtttgtcttctccatg
+gacacctctgtcagcacagtgtacctgcagatcagcagcctaaagggtgaggacacggcc
+gtgtattactgtgcgagata

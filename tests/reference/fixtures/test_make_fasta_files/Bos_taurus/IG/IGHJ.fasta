@@ -1,0 +1,38 @@
+>KT723008|IGHJ1-1*01|Bos taurus_Holstein|ORF|J-REGION|320134..320187|54 nt|3| | | | |54+0=54| | |
+actatgcagacttccatctctggagccaggctgccctgggcaccgtctcctcag
+>AY149283|IGHJ1-1*02|Bos taurus|ORF|J-REGION|602..655|54 nt|3| | | | |54+0=54| | |
+actatgcagacttccatctctggagccaggctgccctgggctgccctgcctcag
+>NW_001494075|IGHJ1-1*03|Bos taurus_Hereford|ORF|J-REGION|39812..39874|63 nt|3| | | | |63+0=63| |rev-compl|
+actatgctgacttccatctctgtggccaggctgccctgggcaccgtctcctcagctgaat
+ctg
+>KT723008|IGHJ1-2*01|Bos taurus_Holstein|ORF|J-REGION|320315..320370|56 nt|2| | | | |56+0=56| | |
+ctgctgggacttggatctctggggccagcgcaccccggtcaccatgtccttgggga
+>AY149283|IGHJ1-2*02|Bos taurus|ORF|J-REGION|783..838|56 nt|2| | | | |56+0=56| | |
+ctgctgggacttggatctctggggccagcgcaccccggtcaccgtgtccttgggga
+>NW_001494075|IGHJ1-2*03|Bos taurus_Hereford|ORF|J-REGION|39638..39693|56 nt|2| | | | |56+0=56| |rev-compl|
+ctgctgggacatggatctctggggccagcgcaccccggtcaccgtgtccttgggga
+>KT723008|IGHJ1-3*01|Bos taurus_Holstein|ORF|J-REGION|320664..320713|50 nt|2| | | | |50+0=50| | |
+caatgcttttgactcctggggccagcgcacccccatctccatctcctcag
+>AY149283|IGHJ1-3*02|Bos taurus|ORF|J-REGION|1132..1181|50 nt|2| | | | |50+0=50| | |
+caatgcttttgactcctggggccagcgcacccccatctccgcctcctcag
+>KT723008|IGHJ1-4*01|Bos taurus_Holstein|F|J-REGION|320977..321023|47 nt|2| | | | |47+0=47| | |
+actattcgacaactggggcccaggaatccaaaacaccgtctcctcag
+>NW_001494075|IGHJ1-4*02|Bos taurus_Hereford|F|J-REGION|38985..39031|47 nt|2| | | | |47+0=47| |rev-compl|
+actattcgacaactggggctcaggaatccaaaacaccgtctcctcag
+>KT723008|IGHJ1-5*01|Bos taurus_Holstein|P|J-REGION|321342..321391|50 nt|2| | | | |50+0=50| | |
+taacaactggctcaagcactggggtcaggaagcctgggcactgtctgctc
+>KT723008|IGHJ1-6*01|Bos taurus_Holstein|F|J-REGION|321889..321942|54 nt|3| | | | |54+0=54| | |
+tttactatggtatagacgcctggggccgagggctcagggtcaccgtctcctcag
+>KT723008|IGHJ2-1*01|Bos taurus_Holstein|ORF|J-REGION|508948..509010|63 nt|3| | | | |63+0=63| | |
+actatgctgacttccatctctgtggccaggctgccctgggcaccgtctcctcagctgaat
+ctg
+>KT723008|IGHJ2-2*01|Bos taurus_Holstein|ORF|J-REGION|509129..509184|56 nt|2| | | | |56+0=56| | |
+ctgctgggacatggatctctggggccagcgcaccccggtcaccgtgtccttgggga
+>KT723008|IGHJ2-3*01|Bos taurus_Holstein|ORF|J-REGION|509476..509525|50 nt|2| | | | |50+0=50| | |
+caatgcttttgactcctggggccagcgcgccccggtctccatctcctcag
+>KT723008|IGHJ2-4*01|Bos taurus_Holstein|F|J-REGION|509756..509803|48 nt|3| | | | |48+0=48| | |
+actacgtcgatgcctggggccaaggactcctggtcaccgtctcctcag
+>KT723008|IGHJ2-5*01|Bos taurus_Holstein|P|J-REGION|510144..510193|50 nt|2| | | | |50+0=50| | |
+taacaactggctcaagcactggggtcgggaagcctgggcactgtctgctc
+>KT723008|IGHJ2-6*01|Bos taurus_Holstein|ORF|J-REGION|510669..510722|54 nt|3| | | | |54+0=54| | |
+attactatagtatatatgtttgcggccgagggatcgaggtcaccgtctcctcag

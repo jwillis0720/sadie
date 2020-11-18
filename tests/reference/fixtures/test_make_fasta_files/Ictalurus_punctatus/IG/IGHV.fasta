@@ -1,0 +1,294 @@
+>AY238379|IGHV10S1*01|Ictalurus punctatus|P|V-REGION| | | | | | | | | | |
+......ggtgtggatctcactcagtca...gcctctgtgctcgtgaaacctggagactcg
+ttctccatctcttgtaagatctcagtgtcg...............agctattgtattcac
+tggatacgacaacctgctgggaaagcactggaatggctcggatatctgtgtagcagt...
+......ggtagcactaatctcaaagacacaatgaag...agcaagatcagtttcagccag
+gacacatccatcagcacagtttatttaagaggacaaaactttcagactgaggacacggct
+gtgtattactgcgcaagaga
+>AY238374|IGHV13S2*01|Ictalurus punctatus|P|V-REGION| | | | | | | | | | |
+agtctggagtctattccctctggtgca...gtggtgaaataacctggagaaactctgagt
+ctttcctgtaaaggatctgggtttaacttt............ggtagttatggcatgcac
+tggatcagacaagaagctggaaaagcactggaatggattggggttatctggaatgat...
+...gccagtaaaacaatatattccaagcacatcgag...ggacgtttggaaattaacaga
+gacaactccaaaaacctggtgtatctgcagctgactggtttgagtgcacaggactccgct
+gtgtattactgtgcacg
+>U09719|IGHV1S1*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+ggacagtccctgacctcctctgcttct...gtggtgaagagacctggagagtcagtcact
+ctgtcctgtactgtctccggattctcagtg............ggcagctactacatgcac
+tggatccgtcagaaacctggaaaaggattggagtggatcgggcgcattgacagtggc...
+......actggcacaacattcgatcaatctctgcag...ggccagttctccatcactaaa
+gacaccaataaaaacatgctgtacctagaagtgaagagtctgaaagctgaagacacggct
+gtttattactgtgcacgacact
+>AF161278|IGHV1S10*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+............................................................
+......tgtactgtctccggattctcaatg............ggcagctactggatgagc
+tggatccgtcagaaaccaggaagaggactggagtggattggatacattgacactggc...
+......actcatactggctttgcccagtctctgcag...ggccagttttccatcactaaa
+gacaccaataaaaacatactgtaccttgaagtgaagagtctgaaagctgaagacacggct
+gtttattactgtgcacgaaaa
+>AF161283|IGHV1S11*01|Ictalurus punctatus|P|V-REGION| | | | | | | | | | |
+............................................................
+..................tgcaacgtgtccgga......ctctcgcttagctggctccac
+tggatccgtcagaaaccaggaaaaggactggagtggatcgggcgaattgacagtggc...
+......accggcactatattcgctcagtctctgcag...ggccagttctccatcactaaa
+gataccaataaaaacatggtgtacctagaagtgaagagtctgaaagctgaagacacggct
+gtttattactgtgcatgagga
+>AF068137|IGHV1S2*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+ggacagtccctgacctcctcggcttct...gtggtgaagagacctggtgagtcagtcact
+ctgtcctgtactgtctccggattctcagtg............ggcagcaactggatgagc
+tggatccgtcagaaaccaggaagaggactggagtggattggatacattgacactggc...
+......actggcactggctttgcccagtctctgcag...ggccagttttccatcactaaa
+gacaccaataaaaacatgctgtacctagaagtgaaaagtctgaaagctgaagacacggct
+gtttattactgtgcacgagact
+>AF068137|IGHV1S3*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+ggacagtccctgacctcctctgcttct...gtggtgaagaggcctggagagtcagtcact
+ctgtcctgtactgtctccggattctcaatg...............agcagctacatccac
+tggatccgtcagaaaccaggaaaaggattggagtggatcggatacattgacactgcc...
+......actggcacaacattcgctcagtctctgcag...ggccagttctccatcactaaa
+gacaccaataaaaacatgctgtacttagaagtgaagagtctgaaagctgaagacacgact
+gtttattactgtgcaggagac
+>M27230|IGHV1S4*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+ggacagtccctgacctcctcggcttct...gtggtgaagagacctggtgagtcagtcact
+ctgtcctgtactgtttccggattctcagtg............ggcagcaactggatgagc
+tggatccgtcagaaatcaggaagaggactggactggattggatacattgacactggc...
+......actggcactggctttgcccagtctctgcag...ggccagtttttcatcactaaa
+gacaccaataaaaacatgctgtacctagaagtgaaaagtctgaaagctgaagacacggct
+gtttattactgtgcacgggtc
+>M58673|IGHV1S5*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+ggacagtccctgacctctcttggttct...gtggtgaagagacctggagagtcagtcact
+ctctcctgtactctctccggattctcattg............gacagctactggatgagt
+tggatccgtcagaaaccaggcaagggattggagtggatcgggcgcattgacagtggc...
+......actggcacaacattcactcagtctctgcag...ggccaattctccatcactaaa
+gacaccaataaaaacatgctgtaccttgaagtgaagagtctgaaaactgaagacatggct
+gtttattactgtgcacggtta
+>U67437|IGHV1S6*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+ggacagtccctgacctcctctgcttct...gtggtgaagagacctggagagtcagtcact
+ctgtcctgtactgtctctggattctcaatg............ggcagcaactacatgcac
+tggatccgtcagaaacctggaaaaggattggagtggatcgggcgcattgaccgtggc...
+......actggcacaacattcgctcagtctctgcag...ggccagttctccatcactaaa
+gacacaaataaaaacatgctgtacctagaagtgaagagtctgaaagctcaagaaacggct
+gtttattactgtgcaggagaa
+>U67439|IGHV1S7*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+.....gtccctgacctcctctgcttct...gtggtgaagagacctggagagtcagtcact
+ctgtcctgtactgtctccggattctcaatg............agcagctactggatgagc
+tggatccgtcagaaaccacgaagaggactggaatggattggatacattaattatggc...
+......actggcactggcttcactcagtctcttcag...ggccagttctccatcactaaa
+gacaccaataaaaacatgctgtacctagaagtgaagagtctgaaagctgaagacacggct
+gtttattactgtgcacgacac
+>AF161275|IGHV1S8*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+............................................................
+......tgtactgtctccggattctcaatg............ggcagctactacatgagc
+tggatccgtcagaaaccaggaaggggactggagtggatcggatacgttgacactggc...
+......actagcacaacattcgctcagtctctgcag...ggccagttctccatcgctaaa
+gacacaaataaaaacatgctgtacctagaagtgaagagtctgaaagctgaagacacggct
+gtttattactgtgcacggttc
+>AF161276|IGHV1S9*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+............................................................
+......tgtactgtctccggattctcaatg............gccggcaacttcatgcac
+tggatccgtcagaaacctggaaaaggattggagtggatcgggcgtattgacagtggc...
+......actgtcacaacattcgctcaatctctgcag...agccagttctccatcattaaa
+gacaccgataaaaacgtcctctacctagaattgaagagtctgaaagctgaagacacggct
+gtttattactgtggacggcca
+>M58671|IGHV2S2*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+ggtgaggaactgactcagcctgcttcc...atgacagtccagccaagccagagtctctcc
+atcaactgcaaggtttcgtattcagttacc...............agctattatacagct
+tggatccgacaacctgcaggaaaagctctggagtggattggatacatcagtaacaat...
+......gggggtacagtttacagtgacaaactgaaa...aataagttcagcatttccaga
+gacactgctactaacacaataacaattcgaggacagaatctgcaaactgaagacacagct
+gtgtattactgtgcaagggctg
+>M58670|IGHV2S3*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+ggagaggaactgactcagcctgcttcc...atgacagtccagccaggccagagtctctcc
+atcaactgcaaggtttcatattcagttaca...............agctattatacaact
+tggatccgacaacctgcaggaaaaactctggagtggattggatacatcagtggtggt...
+......ggtaatacatattacagtgacaaactgaaa...aataagttcagcatctccaga
+gacactgctactaacacaataacaattcgaggacagaatctgcaaactgaagacatagct
+gtgtattactgcgcaagagcgt
+>M58675|IGHV2S4*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+ggtattgaactgactcagcctacttcc...atgacagtccagccaggccagagtctctcc
+atcaagtgcaaggtttcatattcagttacc...............agcgaccatacagct
+tggatccgacaacctgcaggaaaacctctggagtggattggaaacatctataccagt...
+......gggggtacagcttacattgacaaactgaaa...aataagttcagcatatccaga
+gacactgctactaacacaataacaattggaggacagaatctgcaaactgaagacacagct
+gtgtattactgtgcaagactg
+>U67441|IGHV2S5*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+ggtgttgaactgactcagcctgcttcc...atgacagtccagccaggccagagtctctcc
+atgaactgcaaggtttcatattcaattgcc...............atctatgatacagct
+tggatccgacaacctgcaggaaaagctctggagtggattgcatacattcatggcagt...
+......gggagtatatcgtacagtgacacactgaaa...aataaattcaccatctccaga
+gacactactactaacacaataacaattgggggacagaatctgcaaactgaagacacggct
+gtgtattactgcgcaagatat
+>AF161279|IGHV2S6*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+............................................................
+......tgcaaggtttcatattcagttacc...............agctgttgtacagct
+tggatccgacaacctgcaggaaaagctctggagtggattggaaacatctatagcggt...
+......ggaagtacagtttacagtgacaaactgaaa...aataagttcagcatctccaga
+gacgctgctactaacacaataacaattggaggacagaatctgcaaactgaagacacagct
+gtgtattactgcgcaagaggg
+>U09721|IGHV3S1*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+agtcagactcttatcgagtctgattca...gtgatcatcaaacctgatcagtctcataaa
+ctgacctgcacagcttctggattggacatt............agtagctattacatggct
+tggatcagacaggcgcctggaaaagggctggaatttgttgcaactaaccacggc......
+......agtaacaagtattactccagtgcagttaat...ggccgcttcaccatctccaga
+gatgacagtaagaagcaggtatatctgcacatgaccagcgtgaggacagaagacactgca
+gtgtattactgcgcccgtgacc
+>AF068137|IGHV3S2*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+agtcagacactgattgagtccgattca...gtgatcatcaaacctgatcagtctcacaaa
+ctgacctgcacagcttcagaatttaaattt............ggtggctctaggatggct
+tggatcagacgggcacctggaaaagggctggaatttgtttgcactatttcagacacc...
+...agtaatagcatacattactccagtgcagttaat...ggccacttcaccatctccaaa
+gacaacagtaagatgcaggtgcatctgcacatgaacggcatgaggacagaagacactgca
+gtgtattactgcactagagaag
+>M58672|IGHV3S3*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+agtcagacactgatcgagtccgattca...gtgatcatcaaacctgatcagtctcataaa
+ctgacctgcacagcgtctggatttaacttt............ggtggctcttggatggct
+tggatcagacagtcacctggaaaagggctggaatgggttgcaactatctcagacacc...
+...agtggtagcaagtattactccagtgcagttaat...ggccgcttcaccatctccaga
+gacaacagtaagatggaggtgtatctgcacatggccagtgtgaggacagaagacactgca
+gtgtattactgcactaaagac
+>M58699|IGHV3S4*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+agtcagactcttatcgagtctgattca...gtgatcatcaaacctgatcagtctcataaa
+ctgacctgcacagcttctggattggacatt............agtagctcgtggatggct
+tggatcagacaggcgcctggaaaagggctggaatttgttgcaattattgagaatgat...
+...agtgataggaagttttactccaatgcagttaat...ggccgcttcaccatgtccaga
+gacaacagtaagaagcaggtgtatctgcagatgaacaacgtgaggacagaagacactgca
+gtgtattactgcgcccgtgac
+>U67442|IGHV3S5*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+...................................tcataaacctgaacagtctcataaa
+ctgacctgcacagcttctggattggacagt............agtagctactggatggct
+tggagccgacaggcgcctggaaaaggactggaatttgttgcaactatcgagtatgat...
+...agtgatagcacgtatgactccagtgcagttaat...ggccgcttcaccatctccaga
+gacgacagtaagaagcaggtgtttctgcacatgaacagcgtgaggacagaggacactgca
+gtgtattactgcgcccggggc
+>AF161272|IGHV3S6*01|Ictalurus punctatus|ORF|V-REGION| | | | | | | | | | |
+............................................................
+..................ggtggc........................tactggatggct
+tggatcagacaggctcctggaaaagggctggaatttgttgcagcaacctacgatacc...
+......agtaacatacgctactctagtgcagttaat...ggccgcttcaccatctccaga
+gacaacagtaagaagcaggtgtatctgcagatgaacagtgtgaggacagaagacactgca
+gtgtattatcgcgcccgtgac
+>AF161273|IGHV3S7*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+............................................................
+......tgcacagcttctggattcgacttt............agtagctactggatggct
+tggatcagacaggcgcctggaaaaggactggaatttgttgcaactgtctacagc......
+......agtagcaagtattactccagtgcagttaat...ggccgcttcaccaactccaga
+gacgacagtaagaagcaggtatatccgcacatgaccagcgtgaggacagaagacactgca
+gtgtattactgcgcccgtggg
+>AF161274|IGHV3S8*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+............................................................
+......tgcacagcctctggattggacatt............agtagttactggatggct
+tggatccgacaggcgcctggaaaagggctggagtttgttgcaactatcgagtatgat...
+...agtgatagcaagtattactccagtgcagttaat...ggccgcttcaccatctccaga
+ggcggtagtaagaagcaggtgtatctgcagatgaacagtgtgaggacggaagacactgca
+gtgtattactgcgcccggcgt
+>AF161277|IGHV3S9*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+............................................................
+......tgcacagcgtctggatttaacttt............ggtggctcttggatggct
+tggatcagacaggcgcctggaaaagggctggaatgggttgcaactatctcagacacc...
+...agtggtagcaagtattactccagtgcagttaat...ggccgcttcaccatctccaga
+gacaacagtaagatgcaggtgtatctgcacatggccagtgtgaggacagaagacactgca
+gtgtattactgcactagagcc
+>U09722|IGHV4S1*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+gcagtagaactcactcaggtcacctca...gtgatgttaaagccaggagattctttaacc
+ctcagctgtaaagtatccggctactctgttact......gataacagctacgccacagct
+tggattcgacaacctgcaggaaaaactctggaatggataaactacatttggggtggt...
+......ggaagtagttatcataaagattctctaaaa...agcaagttcagtatttctaaa
+gatggctccagcagcacggtgactctgagaggacagaatctgcagacagaagacacagct
+gtgtattactgcacccgccaca
+>M58668|IGHV4S2*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+gcagtagaactcactcaggtcacctca...gtgatgttaaagtcaggagattctttaacc
+ctcaactgtaaagtatccggctactctgttact......gataacaactacgccacaggt
+tggattcgacaacctgcaggaaaaactctggaatggataaactacatttggggtggt...
+......ggaagtacttatcataaagattctctaaaa...agcaagttcagtatttctaaa
+gatggctccagcagtacggtgactctgagaggacagaatctgcagacagaagacacagct
+gtgtattactgcacccgccatc
+>U67443|IGHV4S3*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+.................................atgttaaagtcaggagattctttaacc
+ctcaactgtaaagtatccggcttctctgttact......gataacagctacgccacagct
+tggattcgacaacctgcaggaaagcctctggaatggataaatcacatttggggtggt...
+......ggaattacttatcataaagattctctaaaa...agcaagttcagtatttctaaa
+gacgggtccagcagcacggtgactctgagaggacagaatctgcagacagaagacacagct
+gtgtattgctgcaccggaggg
+>AF161282|IGHV4S4*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+............................................................
+......tgtaaagtatccggctactctgttact......gataacacgtacgccacagct
+tggattcgacaacctgcaggaaaaactctggaatggataaatcacatttggggtggt...
+......ggaagtacttatcataaagattctctaaaa...agcaagttcagtatttctaaa
+gacggctccagcagcacggtgactctgagaggacagaatctgcagacagaagacacagct
+gtgtattactgcacccgctacg
+>M58674|IGHV5S2*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+gctactgagctcatccagccagactca...gtggttataaagccaggagagactttaacc
+atcacctgtagagtgtctggagcttctatcactgatagcagcagccactatggaacagct
+tggattcgacaacctgcaggaaaatctctggaatggttcaacagcatttattatgat...
+......gggggtattaataagaaagattcacttaaa...gacaagtttgtcatctctcga
+gacacgtccagcagcacagtaatattaacagggcaggacatgcagactgaagacacagct
+gtgtattactgcgctcgtgaa
+>U67444|IGHV5S3*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+.......................................aagccaggagagactttaacc
+atcacctgtagagtgtctggagcttctatcactgatagcagcagccactatagaacagct
+tggattcgacaacctgcaggaaaagctttagaatggatcaacagcattgattatgat...
+......gggggtatttataagaaagattcactcaaa...gacaagtttgttgtctctcga
+gacacttccagtaacactctgaccttacggggacagaacatgcagactgaagacacagct
+gtgtattactgtcgtcgtgcg
+>AF161281|IGHV5S4*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+............................................................
+......tgtagagtgtctggagcttctatcactgatagcagcagccactatggaacagct
+tggattcgacaacctgcaggaaaatctctgggatggatcaacagcatttattatgat...
+......ggggggattaataagaaagattcacttaaa...gacaagtttgtcatctctcga
+gacacatccagcagcacagtaatattaacagggcagaacatgcagactgaagacacagct
+gtgtattactgcgctcgtaga
+>U09724|IGHV6S1*01|Ictalurus punctatus|F|V-REGION| | | | | | | | | | |
+tgtgttgagctgatccagcccggatcc...acactcataacccctgttcagtcaatgact
+ctgacctgcaaagtgtctggatattcagtaact......gatagcagctactgtacagac
+tggataagacaacctgcaggaaaagctctggagtgggtcgcaggagcatgtggtgat...
+......ggtaaaacctaccacagtgagaaactgaaa...agcaggtttcaggtttccaga
+gacacgtccaacggcacagtaacactaacagggcagaacatgcagactgaagactcagct
+gtgtattactgcgctcgtgaac
+>M64400|IGHV6S2*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+tgtgttgagttgattcaacctggagca...atgattttatccccggggcagtcaatgact
+ctgacctgtaaaatgtctggatattcaggaagt......gatggcaactactggacacac
+tggatacgacaacctgcaggaaaagctctggagtatatcggacaaatatctggtagt...
+......ggtagtacttactacagtgagaaacggaaa...accaggtttcaggtttccaga
+gacacgtccagcaccacagtaacattaacagggcagaacattcagactgaagacacagct
+gtgtattactgcgctcgtgaac
+>U67445|IGHV6S3*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+.................................attttatccccggggcagtcaatgact
+ctgacctgtaaagtgtctggatattcattaact......gatagcaactactgtacaaac
+tggatacgacaacctgcaggaaaagctctggagtgggtcggacggatatgtagtagc...
+......ggtaacacttactacagcgagaaactgaaa...accaggtttcaggtttccaga
+gacacgtccagcagcacagtaacattaacagggcagaacatgcagactgaagacacagct
+gtgtattactgcgctcggggt
+>AF161271|IGHV6S4*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+............................................................
+......tgtaaagtgtctggatattcagtaagt......gatggcagctactggacacac
+tggatacgacaacctgcaggaaaagctctggagtgggtcgcacaaatatctggtagt...
+......ggtaggacttactacagtgagaaactgaaa...agcaggtttcaggtttccaga
+gacacgtccagcaccacagtaacattaacagggcagaacatgcagactgaagacacagct
+gtgtattactgcgctcgtgaa
+>AF161280|IGHV6S5*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+............................................................
+......tgtaaagtgtctggatattcattaact......gatagcgactgctgtacacac
+cggatacgacaacctcctggaaaagctctggagtgggtcggacagatatgtggtagc...
+......ggttacacttactacagtgagagactaaaa...agcagatttcaggtttccaga
+cacacgtccagcagcacagtaacattaacagggcagaacatgcagactgaagatacagct
+gtgtattactgctcgcgctct
+>U34411|IGHV7S2*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+gagatcagactggaccagtctcctgct...gtggtaaagagacctggagaaactgtgaag
+atctcgtgtaaaataagtggatattcaatg............acaagctacaacatacac
+tggatccaacagaaaccagggaaagttctggaatggagtggctggatgaatacaggc...
+...aataataaaggaacatatgcagagtctgtgaaa...aaccggctttttttttcagag
+gacgtctcagcaagtacacagtacttagaggccaagagtctgaggacagaggacacttcg
+gtttattactgtgcccgaacg
+>U34410|IGHV7S3*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+gagatcagactggaccagtcttctgct...gtggtaaagagacctggagaatctgtgaag
+atctcgtgtaaaataaatggccttgatatg............acagcccactacatgcac
+tggatccgacagaaaccagggaaagctctggaatgggttggtaggatggatgctggc...
+...aaaaatcaagcaatatatgcagagtctgtaaag...aaccaattcacactaacagaa
+gacgtcccggcaagcacacagtgcttagaggtcaagagtctgaggacagaggacactgcg
+gtttattactgtgctcgaacg
+>U67446|IGHV7S4*01|Ictalurus punctatus|(F)|V-REGION| | | | | | | | | | |
+gagatcagactggaccagtcttctgct...gtggtaaagagacctggagaatctgtgaag
+atctcgtgtaaaataaatcgctttgatatg............acaacctactacatgcac
+tggatccgacagaaaccagggaaagctctggaatggcttggtaggatggatgctggc...
+...aaaaatcaagcaatatatgcagagtctgtaaag...aaccgattcacactaacagaa
+gacgtcccggcaagtatacagtactttgaggtcaagagtctgaggacagacgacattgcg
+gtttattactgtgcccgagaa
