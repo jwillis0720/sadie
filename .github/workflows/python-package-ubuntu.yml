@@ -9,7 +9,7 @@ on:
     branches: [ master ]
 
 jobs:
-  checkout:
+  build-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -21,13 +21,6 @@ jobs:
             python-version: ${{ matrix.python-version }}
       - name: Checkout Code
         uses: actions/checkout@v2
-  build: 
-    needs: checkout
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.6, 3.7, 3.8]
-    steps:
       - name: Install w/dependencies
         run: |
           python -m pip install --upgrade pip
