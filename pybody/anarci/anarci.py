@@ -410,7 +410,7 @@ class Anarci:
     def _run_mp(self, table: Path) -> "AnarciResults":
         results = []
         if isinstance(table, (str, Path)):
-            with tempfile.TemporaryDirectory(dir=".") as d:
+            with tempfile.TemporaryDirectory(dir=".", suffix="anarci_mp") as d:
                 split_fasta(table, 1000, d)
                 files = list(glob.glob(d + "/*.fasta*"))
                 p = multiprocessing.Pool()
