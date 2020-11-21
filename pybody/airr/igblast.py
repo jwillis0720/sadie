@@ -12,6 +12,8 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 from typing import List, Union
+import platform
+import shutil
 
 import pandas as pd
 
@@ -72,12 +74,14 @@ class BadIgBLASTExe(Error):
     Attributes:
     """
 
-    def __init__(self, passed_executable):
+    def __init__(self, passed_executable, msg):
         super().__init__()
         self.passed_arguments = passed_executable
+        self.msg = msg
 
     def __str__(self):
-        return "Cant find IgBLAST {}. Check {}".format(self.passed_arguments, os.environ["PATH"])
+        _env = os.environ["PATH"]
+        return f"Cant find IgBLAST {self.passed_arguments}. Check {_env}\n {self.msg}"
 
 
 class EmtpyFileError(Error):
@@ -307,7 +311,7 @@ class IgBLASTN:
         """IgBLASTN with a query. Set everything up with a setter"""
 
         ###setup all the default values
-        self.executable = "igblastn"
+        self.executable = ""
         self.min_d_match = 5
         self.num_v = 3
         self.num_d = 3
@@ -347,10 +351,41 @@ class IgBLASTN:
         return self._executable
 
     @executable.setter
-    def executable(self, x: Path):
-        if not is_tool(x):
-            raise BadIgBLASTExe(x)
-        self._executable = x
+    def executable(self, path: Path):
+        _executable = "igblastn"
+        if not path:  # try and use package hmmscan
+            system = platform.system().lower()
+            igblastn_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/{_executable}")
+            # check if its
+            if os.path.exists(igblastn_path):
+                # check if it's executable
+                if shutil.which(igblastn_path):
+                    self._executable = shutil.which(igblastn_path)
+                else:
+                    # If it's not check the access
+                    _access = os.access(igblastn_path, os.X_OK)
+                    raise BadIgBLASTExe(igblastn_path, f"is, this executable? Executable-{_access}")
+            else:  # The package igblastn is not working
+                logger.warning(
+                    f"Can't find igblast executable in {igblastn_path}, with system {system} within package {__package__}. Trying to find system installed hmmer"
+                )
+                igblastn_path = shutil.which(_executable)
+                if igblastn_path:
+                    self._executable = igblastn_path
+                else:
+                    raise BadIgBLASTExe(
+                        igblastn_path, f"Can't find igblastn in package {__package__} or in path {os.env['PATH']}"
+                    )
+        else:  # User specifed custome path
+            logger.debug(f"User passed custom igblastn {path}")
+            igblastn_path = shutil.which(path)
+            if igblastn_path:
+                self._executable = igblastn_path
+            else:
+                _access = os.access(igblastn_path, os.X_OK)
+                raise BadIgBLASTExe(
+                    igblastn_path, f"Custom igblastn path is not executable {igblastn_path}, {_access} "
+                )
 
     @property
     def temp_dir(self) -> Path:
@@ -884,16 +919,3 @@ class IgBLASTN:
 
 if __name__ == "__main__":
     ig_blast = IgBLASTN()
-
-    ##these are required to be set by higher levels
-    ig_blast.igdata = Path("airr/data/germlines/")
-    ig_blast.germline_db_v = Path("airr/data/germlines/blastdb/Ig/human/human_V")
-    ig_blast.germline_db_d = Path("airr/data/germlines/blastdb/Ig/human/human_D")
-    ig_blast.germline_db_j = Path("airr/data/germlines/blastdb/Ig/human/human_J")
-    ig_blast.aux_path = Path("airr/data/germlines/aux_data/human_gl.aux")
-    ig_blast.organism = "human"
-
-    # Sequence
-    sequence = ">hello\nGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATTGTGAGCGGATAACAATTTGAATTCAAGGAGACAGTCATAATGAAATACCTATTGCCTACGGCGGCCGCTGGATTGTTATTACTCGCGGCCCAGCCGGCCATGGCATCAA"
-    dataframe = ig_blast.run_single(sequence)
-    print(dataframe)

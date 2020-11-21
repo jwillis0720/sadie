@@ -259,7 +259,7 @@ class Airr:
     1  GU272045.1  CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGT...   IGH       False         True        True  ...       375  GGCTGGTGGGCCCGACTACCGTAATGGGTACAAC         34  NaN          0   human
     """
 
-    def __init__(self, species: str, igblast_exe="igblastn", temp_directory=".airr_tmp"):
+    def __init__(self, species: str, igblast_exe="", temp_directory=".airr_tmp"):
         """Airr constructor
 
         Parameters
