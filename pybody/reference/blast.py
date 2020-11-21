@@ -19,7 +19,7 @@ def write_blast_db(filename, output_db):
     system = platform.system().lower()
     make_blast_db_exe = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/makeblastdb")
     if not shutil.which(make_blast_db_exe):
-        raise Exception(f"Make Blast DB {make_blast_db_ext} cant be found or is not executable")
+        raise Exception(f"Make Blast DB {make_blast_db_exe} cant be found or is not executable")
     make_blast_db = subprocess.run(
         [
             make_blast_db_exe,
