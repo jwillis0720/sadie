@@ -15,29 +15,29 @@ jobs:
         os: [ubuntu-latest]
         python-version: [3.8]
     steps: 
-      - name: Install HMMER
-        run: |
-            wget http://eddylab.org/software/hmmer/hmmer-3.3.1.tar.gz 
-            tar -xzf hmmer-3.3.1.tar.gz
-            cd hmmer-3.3.1
-            ./configure
-            make -j 2
-            sudo make install
+      # - name: Install HMMER
+      #   run: |
+      #       wget http://eddylab.org/software/hmmer/hmmer-3.3.1.tar.gz 
+      #       tar -xzf hmmer-3.3.1.tar.gz
+      #       cd hmmer-3.3.1
+      #       ./configure
+      #       make -j 2
+      #       sudo make install
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
             python-version: ${{ matrix.python-version }}
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Install IgBlast Mac
-        if: ${{runner.os == 'macOS'}}
-        run: |
-            curl -sS -o igblast.tar.gz  ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.16.0/ncbi-igblast-1.16.0-x64-macosx.tar.gz
-      - name: Install IgBlast Linux
-        if: ${{runner.os == 'Linux'}}
-        run: |
-          sudo apt-get install libuv1-dev  -y
-          curl -sS -o igblast.tar.gz  ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.16.0/ncbi-igblast-1.16.0-x64-linux.tar.gz
+      # - name: Install IgBlast Mac
+      #   if: ${{runner.os == 'macOS'}}
+      #   run: |
+      #       curl -sS -o igblast.tar.gz  ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.16.0/ncbi-igblast-1.16.0-x64-macosx.tar.gz
+      # - name: Install IgBlast Linux
+      #   if: ${{runner.os == 'Linux'}}
+      #   run: |
+      #     sudo apt-get install libuv1-dev  -y
+      #     curl -sS -o igblast.tar.gz  ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.16.0/ncbi-igblast-1.16.0-x64-linux.tar.gz
       - name: Install w/dependencies
         run: |
           tar -xvf igblast.tar.gz
