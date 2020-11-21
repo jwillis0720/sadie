@@ -708,14 +708,10 @@ def run_hmmer(
     output_filehandle, output_filename = tempfile.mkstemp(".txt", text=True, dir=tempdir)
 
     # Run hmmer as a subprocess
-    if hmmerpath:
-        hmmscan = os.path.join(hmmerpath, "hmmscan")
-    else:
-        hmmscan = "hmmscan"
     if ncpu is None:
-        command = [hmmscan, "-o", output_filename, HMM, fasta_filename]
+        command = [hmmerpath, "-o", output_filename, HMM, fasta_filename]
     else:
-        command = [hmmscan, "-o", output_filename, "--cpu", str(ncpu), HMM, fasta_filename]
+        command = [hmmerpath, "-o", output_filename, "--cpu", str(ncpu), HMM, fasta_filename]
     process = Popen(command, stdout=PIPE, stderr=PIPE)
     pr_stdout, pr_stderr = process.communicate()
 

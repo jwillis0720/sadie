@@ -10,6 +10,7 @@ import os
 import pickle
 import shutil
 import tempfile
+import platform
 
 # Std library
 import warnings
@@ -26,7 +27,7 @@ from Bio.SeqRecord import SeqRecord
 
 from .aa._anarci import check_for_j, dataframe_output, number_sequences_from_alignment, run_hmmer
 from .numbering import scheme_numbering
-from .exception import AnarciDuplicateIdError, BadAnarciArgument, BadRequstedFileType
+from .exception import AnarciDuplicateIdError, BadAnarciArgument, BadRequstedFileType, HmmerExecutionError
 from .result import AnarciResult, AnarciResults
 from ..utility import split_fasta
 
@@ -45,6 +46,7 @@ class Anarci:
         assign_germline=True,
         allowed_species=["human", "mouse", "rat", "rabbit", "rhesus", "pig", "alpaca", "dog", "cat"],
         tempdir="",
+        hmmerpath="",
     ):
         """Anarci constructor"""
         self.scheme = scheme
@@ -53,7 +55,54 @@ class Anarci:
         self.assign_germline = assign_germline
         self.allowed_species = allowed_species
         self.tempdir = tempdir
+        self.hmmerpath = hmmerpath
         self.num_cpus = cpu_count()
+
+    @property
+    def hmmerpath(self) -> Path:
+        """Path to the hmmrscan executable
+
+        Returns
+        -------
+        Path
+            The path of the hmmrscan
+        """
+        return self._hmmerpath
+
+    @hmmerpath.setter
+    def hmmerpath(self, path: Path):
+        _executable = "hmmscan"
+        if not path:  # try and use package hmmscan
+            system = platform.system().lower()
+            hmmer_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/{_executable}")
+            # check if its
+            if os.path.exists(hmmer_path):
+                # check if it's executable
+                if shutil.which(hmmer_path):
+                    self._hmmerpath = hmmer_path
+                else:
+                    # If it's not check the access
+                    _access = os.access(hmmer_path, os.X_OK)
+                    raise HmmerExecutionError(hmmer_path, f"is, this executable? Executable-{_access}")
+            else:  # The package hmmscan is not working
+                logger.warning(
+                    f"Can't find hmmscan executable in {hmmer_path}, with system {system} within package {__package__}. Trying to find system installed hmmer"
+                )
+                hmmer_path = shutil.which(_executable)
+                if hmmer_path:
+                    self._hmmerpath = hmmer_path
+                else:
+                    raise HmmerExecutionError(
+                        hmmer_path, f"Can't find hmmrscan in package {__package__} or in path {os.env['PATH']}"
+                    )
+        else:  # User specifed custome path
+            logger.debug(f"User passed custom hmmer path {path}")
+            hmmer_path = shutil.which(path)
+            if hmmer_path:
+                self._hmmerpath = hmmer_path
+            else:
+                _access = os.access(hmmer_path, os.X_OK)
+                raise HmmerExecutionError(hmmer_path, f"Custom hmmer path is not executable {hmmer_path}, {_access} ")
 
     @property
     def region_definition(self) -> str:
@@ -213,7 +262,7 @@ class Anarci:
         _alignments = run_hmmer(
             sequences,
             hmm_database="ALL",
-            hmmerpath="",
+            hmmerpath=self.hmmerpath,
             ncpu=self.num_cpus,
             bit_score_threshold=80,
             tempdir=self.tempdir,
