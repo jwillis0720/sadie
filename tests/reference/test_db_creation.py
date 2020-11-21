@@ -115,7 +115,7 @@ def test_local_imgt_database():
         )
 
 
-@pytest.mark.skip(reason="takes forever")
+# @pytest.mark.skip(reason="takes forever")
 def test_make_imgt_database():
     """Confirm the CLI to confirm we can create the imgt database"""
     runner = CliRunner()
