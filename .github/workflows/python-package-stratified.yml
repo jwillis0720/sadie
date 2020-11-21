@@ -40,8 +40,8 @@ jobs:
       #     curl -sS -o igblast.tar.gz  ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.16.0/ncbi-igblast-1.16.0-x64-linux.tar.gz
       - name: Install w/dependencies
         run: |
-          tar -xvf igblast.tar.gz
-          sudo cp ncbi-igblast*/bin/* /usr/local/bin
+          # tar -xvf igblast.tar.gz
+          # sudo cp ncbi-igblast*/bin/* /usr/local/bin
           python -m pip install --upgrade pip
           pip install pytest
           pip install pytest-cov
