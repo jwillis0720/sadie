@@ -937,7 +937,7 @@ def run_germline_assignment(state_vector, sequence, chain_type, allowed_species=
     return genes
 
 
-def check_for_j(sequences, alignments, scheme):
+def check_for_j(sequences, alignments, scheme, hmmerpath):
     """
     As the length of CDR3 gets long (over 30ish) an alignment that does not include the J region becomes more favourable.
     This leads to really long CDR3s not being numberable.
@@ -968,7 +968,9 @@ def check_for_j(sequences, alignments, scheme):
 
                         # Try to identify a J region in the remaining sequence after the 104. A low bit score threshold is used.
                         _, re_states, re_details = run_hmmer(
-                            [(sequences[i][0], sequences[i][1][cys_si + 1 :])], bit_score_threshold=10
+                            [(sequences[i][0], sequences[i][1][cys_si + 1 :])],
+                            hmmerpath=hmmerpath,
+                            bit_score_threshold=10,
                         )[0]
 
                         # Check if a J region was detected in the remaining sequence.
@@ -1255,43 +1257,4 @@ def number(sequence, scheme="imgt", database="ALL", allow=set(["H", "K", "L", "A
 
 
 if __name__ == "__main__":
-    sequences = [
-        (
-            "somecrap",
-            "SSADAAQVQLKESGPGLVQPSQTLSLTCTVSGLSLTSNSVSWIRQPPGKGLEWMGVIWSNGGTDYNSAIESRLSINRDTSKSQVFLKMNSLQPEDTAMYFCASIYYYDADYLHWYFDFWGPGTMVTVSS",
-        ),
-        (
-            "someother_crap",
-            "QVQLKESGPGLVQPSQTLSLTCTVSGLSLTSNSVSWIRQPPGKGLEWMGVIWSNGGTDYNSAIESRLSINRDTSKSQVFLKMNSLQPEDTAMYFCASIYYYDADYLHWYFDFWGPGTMVTVSS",
-        ),
-    ]
-
-    scheme = "imgt"
-    allow = set(["H", "K", "L", "A", "B", "G", "D"])
-    assign_germline = True
-    allowed_species = ["rat", "human"]
-    # Perform the alignments of the sequences to the hmm database
-    alignments = run_hmmer(
-        sequences,
-        hmm_database="ALL",
-        hmmerpath="",
-        ncpu=None,
-        bit_score_threshold=80,
-        hmmer_species="rat",
-    )
-
-    # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
-    # Modify alignments in-place
-    check_for_j(sequences, alignments, scheme)
-
-    # # Apply the desired numbering scheme to all sequences
-    numbered, alignment_details, hit_tables = number_sequences_from_alignment(
-        sequences,
-        alignments,
-        scheme=scheme,
-        allow=allow,
-        assign_germline=assign_germline,
-        allowed_species=allowed_species,
-    )
-
-    df = dataframe_output(sequences, numbered, alignment_details)
+    Anarci()

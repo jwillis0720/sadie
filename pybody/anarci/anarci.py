@@ -270,7 +270,7 @@ class Anarci:
 
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Modify alignments in-place
-        check_for_j(sequences, _alignments, self.scheme)
+        check_for_j(sequences, _alignments, self.scheme, self.hmmerpath)
 
         # # Apply the desired numbering scheme to all sequences
         _numbered, _alignment_details, _hit_tables = number_sequences_from_alignment(

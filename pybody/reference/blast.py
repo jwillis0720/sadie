@@ -1,21 +1,28 @@
 import logging
+import os
+import platform
 import subprocess
+import shutil
 
 
 def write_blast_db(filename, output_db):
     """Take Input Fasta File
 
     Arguments:
-        filename {str} -- the input fasta file 
-        output_db {str} -- the output path 
+        filename {str} -- the input fasta file
+        output_db {str} -- the output path
 
     Raises:
         Exception: If makeblastdb fails for any reason
     """
     logger = logging.getLogger(__name__)
+    system = platform.system().lower()
+    make_blast_db_exe = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/makeblastdb")
+    if not shutil.which(make_blast_db_exe):
+        raise Exception(f"Make Blast DB {make_blast_db_ext} cant be found or is not executable")
     make_blast_db = subprocess.run(
         [
-            "makeblastdb",
+            make_blast_db_exe,
             "-dbtype",
             "nucl",
             "-hash_index",
