@@ -2,5 +2,6 @@ recursive-include pybody/antibody/data *
 recursive-include pybody/reference/data *
 recursive-include pybody/anarci/bin *
 recursive-include pybody/airr/bin *
+recursive-include pybody/reference/bin *
 recursive-include pybody/anarci/data *
 recursive-include pybody/airr/data *
