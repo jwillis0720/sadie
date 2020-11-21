@@ -56,3 +56,15 @@ class AnarciDuplicateIdError(Error):
 
     def __str__(self):
         return f"Duplicate Ids are found {self.ids} {self.found} times"
+
+
+class HmmerExecutionError(Error):
+    """Exception raised for hmmscan not executin"""
+
+    def __init__(self, path, msg):
+        super().__init__()
+        self.path = path
+        self.msg = msg
+
+    def __str__(self):
+        return f"Problem with {self.path} \n{self.msg} "
