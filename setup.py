@@ -11,6 +11,21 @@ with open("README.md") as readme_file:
 requirements = open("requirements.txt").readlines()
 
 
+# From https://stackoverflow.com/questions/45150304/how-to-force-a-python-wheel-to-be-platform-specific-when-building-it
+# Tell bdsit wheel to be platform specific even though we arent compiling
+try:
+    from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+
+    class bdist_wheel(_bdist_wheel):
+        def finalize_options(self):
+            _bdist_wheel.finalize_options(self)
+            self.root_is_pure = False
+
+
+except ImportError:
+    bdist_wheel = None
+
+
 class PyTest(test):
     """Define what happens when we run python setup.py test"""
 
@@ -44,5 +59,5 @@ setup(
         "console_scripts": ["airr=sadie.airr.app:run_airr"],
     },
     test_suite="tests",
-    cmdclass={"tests": PyTest},
+    cmdclass={"tests": PyTest, "bdist_wheel": bdist_wheel},
 )
