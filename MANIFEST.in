@@ -1,7 +1,7 @@
-recursive-include pybody/antibody/data *
-recursive-include pybody/reference/data *
-recursive-include pybody/anarci/bin *
-recursive-include pybody/airr/bin *
-recursive-include pybody/reference/bin *
-recursive-include pybody/anarci/data *
-recursive-include pybody/airr/data *
+recursive-include sadie/antibody/data *
+recursive-include sadie/reference/data *
+recursive-include sadie/anarci/bin *
+recursive-include sadie/airr/bin *
+recursive-include sadie/reference/bin *
+recursive-include sadie/anarci/data *
+recursive-include sadie/airr/data *

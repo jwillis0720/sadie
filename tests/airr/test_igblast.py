@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 
 # package level
-from pybody import airr
+from sadie import airr
 
 loger = logging.getLogger()
 

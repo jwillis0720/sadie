@@ -6,7 +6,7 @@ import tempfile
 import pandas as pd
 import pytest
 from click.testing import CliRunner
-from pybody.reference import app
+from sadie.reference import app
 
 
 def test_make_igblast_reference():

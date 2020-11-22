@@ -1,8 +1,8 @@
 import glob
 import tempfile
 import pytest
-from pybody.anarci import Anarci, AnarciResult, AnarciResults
-from pybody.antibody import exception
+from sadie.anarci import Anarci, AnarciResult, AnarciResults
+from sadie.antibody import exception
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pandas.testing import assert_frame_equal, assert_series_equal
