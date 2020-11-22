@@ -32,7 +32,7 @@ jobs:
       - name: Test
         run: |
           env
-          coverage run --source=./sadie --concurrency=multiprocessing --branch -m pytest 
+          coverage run --source=./sadie --branch -m pytest 
           coverage xml 
           coverage report
           # I can't get pytest plugin to work on github acitons
