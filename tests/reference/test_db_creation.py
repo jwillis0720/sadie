@@ -7,7 +7,7 @@ import tempfile
 
 import pandas as pd
 import pytest
-from pybody.reference import app
+from sadie.reference import app
 from Bio import SeqIO
 from click.testing import CliRunner
 from pandas.testing import assert_frame_equal

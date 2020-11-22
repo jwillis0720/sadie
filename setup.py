@@ -28,20 +28,20 @@ class PyTest(test):
 
 
 setup(
-    name="pybody",
+    name="sadie",
     version="0.0.1",
     python_requires=">=3.6",
-    description="Pybody: The Complete Antibody Library",
+    description="sadie: The Complete Antibody Library",
     author="Jordan R Willis",
     author_email="jwillis0720@gmail.com",
     url="https://github.com/jwillis0720/",
-    packages=find_packages(include=["pybody*"], exclude=["tests*", "docs"]),
+    packages=find_packages(include=["sadie*"], exclude=["tests*", "docs"]),
     include_package_data=True,
     install_requires=requirements,
     zip_safe=False,
     keywords=["airr", "annotating", "antibodies"],
     entry_points={
-        "console_scripts": ["airr=pybody.airr.app:run_airr"],
+        "console_scripts": ["airr=sadie.airr.app:run_airr"],
     },
     test_suite="tests",
     cmdclass={"tests": PyTest},

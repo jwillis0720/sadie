@@ -8,7 +8,7 @@ import pandas as pd
 from Bio.Seq import Seq
 from pkg_resources import resource_filename
 
-from pybody.antibody import segment, exception, genetable
+from sadie.antibody import segment, exception, genetable
 
 logger = logging.getLogger()
 

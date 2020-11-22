@@ -7,7 +7,7 @@ import tempfile
 from pprint import pformat
 
 import pandas as pd
-from pybody.anarci import Anarci
+from sadie.anarci import Anarci
 from Bio import Seq, SeqIO
 from numpy import nan
 

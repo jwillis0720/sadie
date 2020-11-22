@@ -1,4 +1,4 @@
-from pybody import antibody
+from sadie import antibody
 import tempfile
 
 
