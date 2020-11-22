@@ -12,10 +12,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
         # os: [ubuntu-latest, macos-latest]
-        # python-version: [3.6,3.7,3.8]
-        python-version: [3.8]
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.6,3.7,3.8]
+        # python-version: [3.8]
     steps: 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -32,7 +32,7 @@ jobs:
       - name: Test
         run: |
           env
-          coverage run --source=./pybody --branch -m pytest tests/airr
+          coverage run --source=./pybody --branch -m pytest 
           coverage xml 
           coverage report
           # I can't get pytest plugin to work on github acitons
