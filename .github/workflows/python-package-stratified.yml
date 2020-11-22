@@ -13,7 +13,9 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.6,3.7,3.8]
+        # os: [ubuntu-latest, macos-latest]
+        # python-version: [3.6,3.7,3.8]
+        python-version: [3.8]
     steps: 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -30,7 +32,7 @@ jobs:
       - name: Test
         run: |
           env
-          pytest --cov=./ --cov-report=xml 
+          pytest --cov=/home/runner/work/pybody/pybody --cov-report=xml --cov-report=term --cov-config=/home/runner/work/pybody/.coveragerc tests/airr
           cat ./coverage.xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.15
