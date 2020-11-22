@@ -32,7 +32,7 @@ jobs:
       - name: Test
         run: |
           env
-          pytest --cov=/home/runner/work/pybody/pybody --cov-report=xml --cov-report=term --cov-config=/home/runner/work/pybody/pybody/.coveragerc tests/airr
+          pytest --cov=/home/runner/work/pybody/pybody --cov-report=xml --cov-report=term tests/airr
           cat ./coverage.xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.15
