@@ -28,11 +28,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
           pip install pytest-cov
-          pip install .
+          pip install -e .
       - name: Test
         run: |
           env
-          pytest --cov=/home/runner/work/pybody/pybody --cov-report=xml --cov-report=term tests/airr
+          coverage run --source=./pybody --branch -m pytest tests/airr 
+          coverage report 
+          # pytest --cov=/home/runner/work/pybody/pybody --cov-report=xml --cov-report=term tests/airr
           cat ./coverage.xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.15
