@@ -33,7 +33,7 @@ jobs:
         run: |
           env
           coverage run --source=./pybody --branch -m pytest tests/airr 
-          coverage report 
+          coverage xml 
           # pytest --cov=/home/runner/work/pybody/pybody --cov-report=xml --cov-report=term tests/airr
           cat ./coverage.xml
       - name: Upload coverage to Codecov
