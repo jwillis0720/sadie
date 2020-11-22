@@ -325,7 +325,8 @@ class Airr:
             with tempfile.NamedTemporaryFile(dir=self.temp_directory) as tmpfile:
                 record = SeqRecord(Seq(seq), id=str(seq_id))
                 SeqIO.write(record, tmpfile.name, "fasta")
-                return self.run_file(tmpfile.name, scfv=True)
+                _results = self.run_file(tmpfile.name, scfv=True)
+            return _results
         return AirrTable(result)
 
     def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> Union[AirrTable, ScfvAirrTable]:
@@ -414,8 +415,6 @@ class Airr:
             result = AirrTable(result)
             if _filetype:
                 os.remove(file)
-            if self._create_temp:
-                shutil.rmtree(self.temp_directory)
         return result
 
     def _run_multi_file(self, file):
@@ -521,6 +520,12 @@ class Airr:
 
     def __str__(self):
         return self.__repr__()
+
+    def __del__(self):
+        """Destructor"""
+        if self._create_temp:
+            # If we created a temp directory, let's blow it aways
+            shutil.rmtree(self.temp_directory)
 
 
 if __name__ == "__main__":
