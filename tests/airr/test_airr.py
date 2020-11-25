@@ -6,7 +6,8 @@ import logging
 import glob
 import pytest
 import tempfile
-from sadie.airr import Airr, BadSpecies
+import pandas as pd
+from sadie.airr import Airr, BadSpecies, AirrTable
 from sadie.airr import app
 
 logger = logging.getLogger()
@@ -62,6 +63,16 @@ def test_airr_single_sequence():
     assert cdr1_ == "GFDFSRQG"
     assert cdr2_ == "IKYDGSEK"
     assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
+
+
+def test_airr_from_dataframe():
+    """Test we can pass a dataframe to runtime"""
+    dog_df = pd.read_csv(fixture_file("airr_tables/dog_igh.csv.gz"), index_col=1)
+    airr_api = Airr("dog")
+    unjoined_df = airr_api.run_dataframe(dog_df, "sequence", "sequence_id")
+    assert isinstance(unjoined_df, AirrTable)
+    joined_df = airr_api.run_dataframe(dog_df, "sequence", "sequence_id", return_join=True)
+    assert isinstance(joined_df, pd.DataFrame)
 
 
 def test_cli():

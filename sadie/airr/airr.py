@@ -10,7 +10,7 @@ import tempfile
 # Std library
 import warnings
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Generator
 
 import filetype
 import pandas as pd
@@ -107,13 +107,7 @@ class GermlineData:
         self._d_gene_dir = blast_dir + "D"
         self._j_gene_dir = blast_dir + "J"
         self._aux_path = os.path.join(self.base_dir, f"aux_data/{species}_gl.aux")
-        self._available_species = glob.glob(
-            os.path.join(
-                self.base_dir,
-                "aux_data",
-            )
-            + "/*"
-        )
+        self._available_species = glob.glob(os.path.join(self.base_dir, "aux_data",) + "/*")
 
     @property
     def base_dir(self) -> Path:
@@ -329,6 +323,47 @@ class Airr:
             return _results
         return AirrTable(result)
 
+    def run_dataframe(
+        self,
+        dataframe: pd.DataFrame,
+        seq_field: Union[str, int],
+        seq_id_field: Union[str, int],
+        scfv=False,
+        return_join=False,
+    ) -> pd.DataFrame:
+        """Pass dataframe and field and run airr.
+
+        Parameters
+        ----------
+        dataframe : pd.DataFrame
+            The input dataframe to run airr on
+
+        seq_field: Union[str,int]
+           The field in the dataframe to run airr on 
+
+        seq_id_field: Optional:
+            The field that you want the "Sequence ID" in the airr table to correspond to. It will default to using the dataframe row index
+
+        scfv : bool, optional
+            if the fasta contains an H+L pair, by default False
+
+        Returns
+        -------
+        pd.DataFrame
+            [description]
+        """
+
+        def _get_seq_generator():
+            for seq_id, seq in zip(dataframe.reset_index()[seq_id_field], dataframe.reset_index()[seq_field]):
+                yield SeqRecord(id=str(seq_id), name=str(seq_id), seq=Seq(seq))
+
+        if return_join:
+            return dataframe.merge(
+                self.run_multiple(_get_seq_generator(), scfv=scfv).table, left_on=seq_id_field, right_on="sequence_id"
+            )
+        else:
+            return self.run_multiple(_get_seq_generator(), scfv=scfv)
+
     def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> Union[AirrTable, ScfvAirrTable]:
         """Run multiple seq records
 
@@ -347,7 +382,7 @@ class Airr:
         TypeError
             if you don't pass a list of sequences
         """
-        if not isinstance(seqrecords, (list, SeqIO.FastaIO.FastaIterator)):
+        if not isinstance(seqrecords, (list, SeqIO.FastaIO.FastaIterator, Generator)):
             raise TypeError("seqrecords must be of type {} pased {}".format(list, type(seqrecords)))
 
         # write to tempfile
