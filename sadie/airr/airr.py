@@ -285,6 +285,7 @@ class Airr:
         self.igblast.germline_db_j = self.germline_data.j_gene_dir
         self.igblast.aux_path = self.germline_data.aux_path
         self.igblast.organism = species
+        self.igblast.temp_dir = temp_directory
         self.temp_directory = temp_directory
         self._create_temp = False
         if self.temp_directory:
@@ -355,7 +356,7 @@ class Airr:
 
         def _get_seq_generator():
             for seq_id, seq in zip(dataframe.reset_index()[seq_id_field], dataframe.reset_index()[seq_field]):
-                yield SeqRecord(id=str(seq_id), name=str(seq_id), seq=Seq(seq))
+                yield SeqRecord(id=str(seq_id), name=str(seq_id), description="", seq=Seq(seq))
 
         if return_join:
             return dataframe.merge(
@@ -386,7 +387,7 @@ class Airr:
             raise TypeError("seqrecords must be of type {} pased {}".format(list, type(seqrecords)))
 
         # write to tempfile
-        with tempfile.NamedTemporaryFile(suffix="fasta", dir=".") as temp_fasta:
+        with tempfile.NamedTemporaryFile(suffix=".fasta", dir=self.temp_directory) as temp_fasta:
             SeqIO.write(seqrecords, temp_fasta.name, "fasta")
             logger.info(f"Running tempfile {temp_fasta.name}")
             return self.run_file(temp_fasta.name, scfv=scfv)
