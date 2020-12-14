@@ -26,3 +26,4 @@ pibody.code-workspace
 coverage.xml
 .coverage.*
 upload_cov.sh
+sadie.code-workspace
