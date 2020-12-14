@@ -252,8 +252,7 @@ def assign_index_position(df, molecule="nt"):
     ]
     if len(df_clean) < len(df):
         print(
-            "incorrect trans",
-            list(df[~df.index.isin(df_clean.index)][["gene", "common"]].to_numpy()[:, 0:2]),
+            "incorrect trans", list(df[~df.index.isin(df_clean.index)][["gene", "common"]].to_numpy()[:, 0:2]),
         )
     segment_indexes = df_clean.apply(lambda x: apply_index_per_row(x, molecule), axis=1)
     return df.join(segment_indexes, how="left")
@@ -538,5 +537,86 @@ def make_imgt_db(imgt_fasta, gb_path, engine):
     )
 
     logger.info(f"Unique={len(unique_combined_df)} Total={len(combined_df)}")
+
+    # No parse the othe rpath
+
     unique_combined_df.to_sql("imgt_unique", con=engine, if_exists="replace")
     combined_df.to_sql("imgt_all", con=engine, if_exists="replace")
+
+
+def add_custom_sequences(custom_sequence_path, engine):
+    custom_sequence_df = []
+    for common_name_path in glob.glob(custom_sequence_path + "/*"):
+        genes_files = glob.glob(common_name_path + "/*/*.fasta")
+        common_name = os.path.basename(common_name_path)
+        for fasta_file in genes_files:
+            for sequence in SeqIO.parse(fasta_file, "fasta"):
+                gene = sequence.description
+                imgt_designation = "custom"
+                gene_segment = gene[3]
+                latin = ""
+                functional = ""
+                partial = ""
+                raw_string = str(sequence.seq)
+
+                # IGHV or TRDV etc
+                if gene_segment == "V":
+                    for feature in IMGT_DEF_nt:
+                        # Go through IMGT numbering
+                        imgt_nt_start = IMGT_DEF_nt[feature]["start"]
+                        imgt_nt_end = IMGT_DEF_nt[feature]["end"]
+                        if not imgt_nt_end:
+                            # from the raw string, grab just the feature part
+                            imgt_feature_string = raw_string[imgt_nt_start:]
+                        else:
+                            imgt_feature_string = raw_string[imgt_nt_start - 1 : imgt_nt_end]
+
+                        custom_sequence_df.append(
+                            {
+                                "imgt_designation": imgt_designation,
+                                "gene": gene,
+                                "gene_segment": gene_segment,
+                                "latin": latin,
+                                "common": common_name,
+                                "functional": functional,
+                                "label": RENAME_DICT[feature],
+                                "nt_sequence_no_gaps": imgt_feature_string.replace(".", "").upper(),
+                                "nt_sequence_gaps": imgt_feature_string.upper(),
+                                "partial": partial,
+                                "file": os.path.relpath(fasta_file),
+                                "fasta_header": sequence.description,
+                            }
+                        )
+            else:
+                if gene_segment.upper() == "J":
+                    feature = "J-REGION"
+                elif gene_segment == "D":
+                    feature = "D-REGION"
+                else:
+                    raise Exception(f"Can't detct {sequence.description}")
+                custom_sequence_df.append(
+                    {
+                        "imgt_designation": imgt_designation,
+                        "gene": gene,
+                        "gene_segment": gene_segment,
+                        "latin": latin,
+                        "common": common_name,
+                        "functional": functional,
+                        "label": feature,
+                        "nt_sequence_no_gaps": raw_string.replace(".", "").upper(),
+                        "nt_sequence_gaps": raw_string.upper(),
+                        "partial": partial,
+                        "file": os.path.relpath(fasta_file),
+                        "fasta_header": sequence.description,
+                    }
+                )
+
+    # Turn this into a dataframe
+    custom_sequence_df = (
+        pd.DataFrame(custom_sequence_df)
+        .set_index(["imgt_designation", "gene", "latin", "common", "functional"])
+        .reset_index()
+    )
+    custom_sequence_df.loc[:, "source"] = "custom"
+    custom_sequence_df.to_sql("custom", con=engine, if_exists="replace")
+
