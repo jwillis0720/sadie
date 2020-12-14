@@ -400,6 +400,20 @@ class VGene:
             segment.start_index = _start
             _start = _start + len(segment)
 
+        self._v_gene_nt = "".join(
+            map(
+                lambda x: str(x),
+                [self._fwr1_nt, self._cdr1_nt, self._fwr2_nt, self._cdr2_nt, self._fwr3_nt, self._cdr3_nt],
+            )
+        )
+
+        self._v_gene_aa = "".join(
+            map(
+                lambda x: str(x),
+                [self._fwr1_aa, self._cdr1_aa, self._fwr2_aa, self._cdr2_aa, self._fwr3_aa, self._cdr3_aa],
+            )
+        )
+
     @property
     def name(self):
         return self._name
@@ -411,6 +425,14 @@ class VGene:
     @property
     def row_lookup(self):
         return self._row_lookup
+
+    @property
+    def v_gene_nt(self):
+        return self._v_gene_nt
+
+    @property
+    def v_gene_aa(self):
+        return self._v_gene_aa
 
     @property
     def fwr1_nt(self):
@@ -592,13 +614,7 @@ class JGene:
         fwr4_nt-{}
         fwr4_aa-{}
         """.format(
-            self.__class__.__name__,
-            self.species,
-            self.name,
-            self.cdr3_nt,
-            self.cdr3_aa,
-            self.fwr4_nt,
-            self.fwr4_aa,
+            self.__class__.__name__, self.species, self.name, self.cdr3_nt, self.cdr3_aa, self.fwr4_nt, self.fwr4_aa,
         )
         return _rep
 

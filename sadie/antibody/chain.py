@@ -761,14 +761,37 @@ class AntibodyChainNT(AntibodyChainAA):
         self._cdr1_nt.germline = self._v_gene.cdr1_nt
         self._cdr2_nt.germline = self._v_gene.cdr2_nt
         self._cdr3_nt.germline = (self._v_gene.cdr3_nt, self._j_gene.cdr3_nt)
+
+        # V portion must come after germline assignemtn
+        self._v_nt = [
+            self._fwr1_nt,
+            self._cdr1_nt,
+            self._fwr2_nt,
+            self._cdr2_nt,
+            self._fwr3_nt,
+            self._cdr3_nt.v_portion,
+        ]
         ##vdj nt
         self._vdj_nt = "".join([str(i) for i in self._chain_nt])
+        self._v_segment = "".join([str(i) for i in self._v_nt])
 
         # Set the ranges according to the length of each segment:
         _start = len(self._leader)
         for segment in self._chain_nt:
             segment.start_index = _start
             _start = _start + len(segment)
+
+    @property
+    def vdj_nt(self) -> str:
+        return self._vdj_nt
+
+    @property
+    def v_region(self) -> str:
+        return self._v_segment
+
+    @v_region.setter
+    def v_region(self, v_region: str):
+        self._v_segment = v_region
 
     @property
     def leader(self) -> str:
@@ -1017,8 +1040,8 @@ class AntibodyChainNT(AntibodyChainAA):
 
         alignment_object = MultipleSeqAlignment(
             [
-                SeqRecord(Seq(" ".join(_top_alignment)), id=top_title),
-                SeqRecord(Seq(" ".join(_bottom_alignment)), id=bottom_title),
+                SeqRecord(Seq(" ".join(_top_alignment)), id=str(top_title)),
+                SeqRecord(Seq(" ".join(_bottom_alignment)), id=str(bottom_title)),
             ]
         )
 

@@ -233,10 +233,7 @@ class AntibodySegment:
 
         # Change to alignment object since its so much easier to deal
         alignment_object = MultipleSeqAlignment(
-            [
-                SeqRecord(Seq(formatted_germ), id=source_name),
-                SeqRecord(Seq(formatted_target), id=target_name),
-            ]
+            [SeqRecord(Seq(formatted_germ), id=source_name), SeqRecord(Seq(formatted_target), id=target_name),]
         )
 
         return format_alignment(alignment_object, line_length, ljust, maxid)
@@ -321,8 +318,7 @@ class AntibodySegmentNT(AntibodySegment):
                     raise BadNTSequenceError(self.__class__.__name__, position, nt, "".join(accepted_nt))
                 if nt.upper() in EXTRA_NT:
                     warnings.warn(
-                        f"positon {position} in {self.__class__.__name__} is {nt}",
-                        BadNTSequenceWarning,
+                        f"positon {position} in {self.__class__.__name__} is {nt}", BadNTSequenceWarning,
                     )
         return nt_seq
 
@@ -392,8 +388,7 @@ class AntibodySegmentAA(AntibodySegment):
                     raise BadAASequenceError(self.__class__.__name__, position, amino, "".join(accepted_aa))
                 if amino.upper() in EXTRA_AMINO_ACIDS:
                     warnings.warn(
-                        f"positon {position} in {self.__class__.__name__} is {amino}",
-                        BadAASequenceWarning,
+                        f"positon {position} in {self.__class__.__name__} is {amino}", BadAASequenceWarning,
                     )
         return amino_acid
 
@@ -614,9 +609,19 @@ class CDR3NT(AntibodySegmentNT):
             _v, _j = germ
             _dashes = len(self.sequence) - len(_v) - len(_j)
             self._germline = str(_v) + "-" * _dashes + str(_j)
+            self._v_portion = self.sequence[0 : len(_v)]
         if self._germline:
             _alignments = align.globalxs(self._germline, self._sequence, -10, -1)
             self._alignment = _alignments[0]
+
+    @property
+    def v_portion(self) -> str:
+        """The V region of the nucleotide"""
+        return self._v_portion
+
+    @v_portion.setter
+    def v_portion(self, v_portion: str):
+        self._v_portion = v_portion
 
 
 class FrameWork1AA(AntibodySegmentAA):
