@@ -27,3 +27,6 @@ coverage.xml
 .coverage.*
 upload_cov.sh
 sadie.code-workspace
+*._.DS_Store
+*.DS_Store
+

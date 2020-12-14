@@ -81,32 +81,44 @@ def generate_v_segment_data(imgt_db_engine):
         [type]: [description]
     """
     imgt_db_unique = pd.read_sql("imgt_unique", con=imgt_db_engine, index_col="index")
-    v_segment_only_clean = imgt_db_unique.loc[
+    custom = pd.read_sql("custom", con=imgt_db_engine, index_col="index")
+    v_segment_only_clean_imgt = imgt_db_unique.loc[
         (imgt_db_unique["gene_segment"] == "V")
         & (imgt_db_unique["functional"] == "F")
         & (imgt_db_unique["label"] != "v_gene_nt"),
-        # & (imgt_db_unique["partial"] == ""),
         :,
     ]
 
-    v_fit_index = (v_segment_only_clean["nt_sequence_no_gaps"].str.len() % 3 == 0) | (
-        v_segment_only_clean["label"] == "cdr3_nt"
+    v_fit_index = (v_segment_only_clean_imgt["nt_sequence_no_gaps"].str.len() % 3 == 0) | (
+        v_segment_only_clean_imgt["label"] == "cdr3_nt"
     )
-    v_segment_only_clean.loc[v_fit_index, "aa_sequence_no_gaps"] = v_segment_only_clean.loc[
+    v_segment_only_clean_imgt.loc[v_fit_index, "aa_sequence_no_gaps"] = v_segment_only_clean_imgt.loc[
         v_fit_index, "nt_sequence_no_gaps"
     ].apply(lambda x: Seq.Seq(x).translate().__str__())
-    v_segment_only_clean_pivot_nt = multiindex_pivot(
-        v_segment_only_clean.set_index(["gene", "latin", "common", "functional", "gene_segment"]),
+
+    # Now do the same for custom
+    v_segment_only_clean_custom = custom.loc[
+        (custom["gene_segment"] == "V") & (custom["label"] != "v_gene_nt"), :,
+    ]
+    v_fit_index = (v_segment_only_clean_custom["nt_sequence_no_gaps"].str.len() % 3 == 0) | (
+        v_segment_only_clean_custom["label"] == "cdr3_nt"
+    )
+    v_segment_only_clean_custom.loc[v_fit_index, "aa_sequence_no_gaps"] = v_segment_only_clean_custom.loc[
+        v_fit_index, "nt_sequence_no_gaps"
+    ].apply(lambda x: Seq.Seq(x).translate().__str__())
+
+    v_segment_combined = pd.concat([v_segment_only_clean_custom, v_segment_only_clean_imgt]).reset_index(drop=True)
+    v_segment_combined_pivot_nt = multiindex_pivot(
+        v_segment_combined.set_index(["gene", "latin", "common", "functional", "gene_segment", "source"]),
         columns="label",
         values="nt_sequence_no_gaps",
     )
     v_segment_only_clean_pivot_aa = multiindex_pivot(
-        v_segment_only_clean.set_index(["gene", "latin", "common", "functional", "gene_segment"]),
+        v_segment_combined.set_index(["gene", "latin", "common", "functional", "gene_segment", "source"]),
         columns="label",
         values="aa_sequence_no_gaps",
     ).rename(RENAME_DICT_TRANSLATE, axis=1)
-    v_segment_joined = v_segment_only_clean_pivot_nt.join(v_segment_only_clean_pivot_aa).fillna("")
-    # v_segment_joined_complete = v_segment_joined.loc[v_segment_joined['fwr1_nt']]
+    v_segment_joined = v_segment_combined_pivot_nt.join(v_segment_only_clean_pivot_aa).fillna("")
     dropped_v_genes = []
 
     for key in [
@@ -132,6 +144,7 @@ def generate_v_segment_data(imgt_db_engine):
         "gene",
         "functional",
         "gene_segment",
+        "source",
         "fwr1_nt",
         "cdr1_nt",
         "fwr2_nt",
@@ -146,23 +159,29 @@ def generate_v_segment_data(imgt_db_engine):
         "cdr3_aa",
     ]
     v_segment_joined = (
-        v_segment_joined.reset_index()[preferred_order].sort_values(["common", "latin", "gene"]).reset_index(drop=True)
+        v_segment_joined.reset_index()[preferred_order]
+        .sort_values(["common", "latin", "gene", "source"])
+        .reset_index(drop=True)
     )
     dropped_v_genes = (
-        dropped_v_genes.reset_index()[preferred_order].sort_values(["common", "latin", "gene"]).reset_index(drop=True)
+        dropped_v_genes.reset_index()[preferred_order]
+        .sort_values(["common", "latin", "gene", "source"])
+        .reset_index(drop=True)
     )
+
+    concat = pd.concat([imgt_db_unique, custom]).reset_index()
     # Add all v gene nt as defined by imgt
     v_segment_joined = v_segment_joined.merge(
-        imgt_db_unique[imgt_db_unique["label"] == "v_gene_nt"][
-            ["common", "latin", "gene", "nt_sequence_no_gaps", "nt_sequence_gaps"]
+        concat[concat["label"] == "v_gene_nt"][
+            ["common", "latin", "gene", "source", "nt_sequence_no_gaps", "nt_sequence_gaps"]
         ].rename({"nt_sequence_no_gaps": "v_gene_nt_imgt", "nt_sequence_gaps": "v_gene_nt_imgt_gaps"}, axis=1),
         how="left",
     )
 
     # but lets keep track of the dropped genes
     dropped_v_genes = dropped_v_genes.merge(
-        imgt_db_unique[imgt_db_unique["label"] == "v_gene_nt"][
-            ["common", "latin", "gene", "nt_sequence_no_gaps", "nt_sequence_gaps"]
+        concat[concat["label"] == "v_gene_nt"][
+            ["common", "latin", "gene", "source", "nt_sequence_no_gaps", "nt_sequence_gaps"]
         ].rename({"nt_sequence_no_gaps": "v_gene_nt_imgt", "nt_sequence_gaps": "v_gene_nt_imgt_gaps"}, axis=1),
         how="left",
     )
@@ -199,11 +218,11 @@ def generate_v_segment_data(imgt_db_engine):
     v_segment_joined.to_sql("v_segment_imgt", con=imgt_db_engine, if_exists="replace")
     dropped_v_genes.to_sql("v_segment_imgt_dropped", con=imgt_db_engine, if_exists="replace")
     with tempfile.NamedTemporaryFile("w", dir=".", suffix=".fasta") as tempfile_fasta:
-        for group, group_df in v_segment_joined.groupby(["latin", "common"]):
+        for group, group_df in v_segment_joined.groupby(["latin", "common", "source"]):
             _group_df = group_df
             # for each sequence lets add some x's and add it to a temperofy file
             for sequence_name, sequence in zip(_group_df["gene"], _group_df["v_gene_aa"] + "X" * 14):
-                tempfile_fasta.write(f">{group[0]}|{group[1]}|{sequence_name}\n{sequence}\n")
+                tempfile_fasta.write(f">{group[0]}|{group[1]}|{group[2]}|{sequence_name}\n{sequence}\n")
 
         for definition in ["scdr", "kabat", "chothia", "abm", "contact"]:
             logger.info(f"Resegmenting database with {definition} boundaries")
@@ -213,7 +232,7 @@ def generate_v_segment_data(imgt_db_engine):
             assignments = (
                 assignments["Id"]
                 .str.split("|")
-                .apply(lambda x: pd.Series({"latin": x[0], "common": x[1], "gene": x[-1]}))
+                .apply(lambda x: pd.Series({"latin": x[0], "common": x[1], "gene": x[-1], "source": x[2]}))
                 .join(assignments)
             )
             assignments_clean = assignments[assignments["leader"] == ""]
@@ -226,24 +245,16 @@ def generate_v_segment_data(imgt_db_engine):
             assignments_clean.loc[:, "fwr3_aa"] = assignments_clean["fwr3_aa"].str.rstrip("X")
             assignments_clean.loc[:, "vdj"] = assignments_clean["vdj"].str.rstrip("X")
             assignments_clean = assignments_clean[
-                [
-                    "common",
-                    "latin",
-                    "gene",
-                    "fwr1_aa",
-                    "cdr1_aa",
-                    "fwr2_aa",
-                    "cdr2_aa",
-                    "fwr3_aa",
-                    "cdr3_aa",
-                ]
+                ["common", "latin", "gene", "source", "fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa",]
             ]
             assignments_clean.loc[:, "v_gene_aa"] = assignments_clean[
                 ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa"]
             ].apply(lambda x: "".join(x), axis=1)
             assignments_clean = assignments_clean.merge(
-                v_segment_joined[["common", "latin", "gene", "functional", "v_gene_nt_imgt", "v_gene_nt", "v_gene_aa"]],
-                on=["common", "latin", "gene", "v_gene_aa"],
+                v_segment_joined[
+                    ["common", "latin", "gene", "source", "functional", "v_gene_nt_imgt", "v_gene_nt", "v_gene_aa"]
+                ],
+                on=["common", "latin", "gene", "source", "v_gene_aa"],
                 how="inner",
             )
             translations = assignments_clean.apply(make_segments, axis=1)
@@ -289,15 +300,7 @@ def split_fw4(X):
     nt = X[4]
     short_name = gene.split("*")[0]
     gene_type = gene[:4]
-    return_series = pd.Series(
-        {
-            "cdr3_nt": "",
-            "frw4_nt": "",
-            "cdr3_aa": "",
-            "frw4_aa": "",
-            "end_cdr3_nt_index": "",
-        }
-    )
+    return_series = pd.Series({"cdr3_nt": "", "frw4_nt": "", "cdr3_aa": "", "frw4_aa": "", "end_cdr3_nt_index": "",})
 
     if common in MOTIF_LOOKUP.keys():
         if gene_type in MOTIF_LOOKUP[common].keys():
@@ -314,15 +317,7 @@ def split_fw4(X):
     if not expression:
         if short_name in ignore or aa_seq in ignore:
             logger.info(f"Settign file says to skip {common}-{short_name}-{aa_seq}")
-            return pd.Series(
-                {
-                    "cdr3_nt": "",
-                    "frw4_nt": "",
-                    "cdr3_aa": "",
-                    "frw4_aa": "",
-                    "end_cdr3_nt_index": "",
-                }
-            )
+            return pd.Series({"cdr3_nt": "", "frw4_nt": "", "cdr3_aa": "", "frw4_aa": "", "end_cdr3_nt_index": "",})
         else:
             # if common == "sharks":
             #     print(f"{aa_seq}")
