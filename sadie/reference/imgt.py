@@ -9,8 +9,8 @@ import pandas as pd
 import requests
 from Bio import SeqIO, pairwise2
 from Bio.Seq import Seq
+from Bio.Data import CodonTable
 from bs4 import BeautifulSoup
-from numpy import nan
 
 # from gspread_pandas import Spread, Client
 
@@ -25,6 +25,10 @@ from .settings import (
 
 base = "http://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory/"
 logger = logging.getLogger(__name__)
+codon_table = CodonTable.standard_dna_table.forward_table
+codon_table["TAG"] = "*"
+codon_table["TAA"] = "*"
+codon_table["TGA"] = "*"
 
 
 def flatten(l):
@@ -252,7 +256,8 @@ def assign_index_position(df, molecule="nt"):
     ]
     if len(df_clean) < len(df):
         print(
-            "incorrect trans", list(df[~df.index.isin(df_clean.index)][["gene", "common"]].to_numpy()[:, 0:2]),
+            "incorrect trans",
+            list(df[~df.index.isin(df_clean.index)][["gene", "common"]].to_numpy()[:, 0:2]),
         )
     segment_indexes = df_clean.apply(lambda x: apply_index_per_row(x, molecule), axis=1)
     return df.join(segment_indexes, how="left")
@@ -341,6 +346,24 @@ def parse_imgt_gb(gb_path):
     return gb_dataframe
 
 
+def get_imgt_aa_gap(imgt_gapped_nt):
+    raw_string = imgt_gapped_nt
+    add_to_string = ""
+    take_off_cdr3_overhange = raw_string[0 : len(raw_string) // 3 * 3]
+    # add_to_nt = raw_string[len(raw_string)//3 * 3:]
+    for codon_num in range(0, len(take_off_cdr3_overhange), 3):
+        codon = raw_string[codon_num : codon_num + 3].upper()
+        if codon == "...":
+            add_to_string += "."
+            continue
+
+        try:
+            add_to_string += codon_table[codon]
+        except KeyError:
+            raise CodonTable.TranslationError(f"{codon}, can't be translated")
+    return add_to_string
+
+
 def parse_imgt_v_quest_fasta(imgt_fasta):
     # Since IMGT v quest fastas is structured into latin named director
     imgt_v_quest_df = []
@@ -391,6 +414,12 @@ def parse_imgt_v_quest_fasta(imgt_fasta):
                         else:
                             imgt_feature_string = raw_string[imgt_nt_start - 1 : imgt_nt_end]
 
+                        try:
+                            imgt_feature_string_aa = get_imgt_aa_gap(imgt_feature_string)
+                        except CodonTable.TranslationError as e:
+                            logger.debug(f"{e}")
+                            imgt_feature_string_aa = ""
+
                         imgt_v_quest_df.append(
                             {
                                 "imgt_designation": imgt_designation,
@@ -402,6 +431,8 @@ def parse_imgt_v_quest_fasta(imgt_fasta):
                                 "label": RENAME_DICT[feature],
                                 "nt_sequence_no_gaps": imgt_feature_string.replace(".", "").upper(),
                                 "nt_sequence_gaps": imgt_feature_string.upper(),
+                                "aa_sequence_no_gaps": imgt_feature_string_aa.replace(".", "").upper(),
+                                "aa_sequence_gaps": imgt_feature_string_aa.upper(),
                                 "partial": partial,
                                 "file": os.path.relpath(file),
                                 "fasta_header": sequence.description,
@@ -420,6 +451,8 @@ def parse_imgt_v_quest_fasta(imgt_fasta):
                             "label": feature,
                             "nt_sequence_no_gaps": raw_string.replace(".", "").upper(),
                             "nt_sequence_gaps": raw_string.upper(),
+                            "aa_sequence_no_gaps": "",
+                            "aa_sequence_gaps": "",
                             "partial": partial,
                             "file": os.path.relpath(file),
                             "fasta_header": sequence.description,
@@ -619,4 +652,3 @@ def add_custom_sequences(custom_sequence_path, engine):
     )
     custom_sequence_df.loc[:, "source"] = "custom"
     custom_sequence_df.to_sql("custom", con=engine, if_exists="replace")
-
