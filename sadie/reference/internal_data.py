@@ -41,7 +41,7 @@ def get_filtered_data(database_json, source, common, segment):
     )
 
 
-def generate_internal_annotaion_file_from_db(database, INTERNAL_DATA_PATH, only_functional):
+def generate_internal_annotaion_file_from_db(database, outpath, only_functional):
     logger.debug("Generating from IMGT Internal Database File")
     ig_database = json.load(gzip.open(database, "rt"))
 
@@ -52,7 +52,7 @@ def generate_internal_annotaion_file_from_db(database, INTERNAL_DATA_PATH, only_
     # Interate through species and make
     for db_type in get_databases_types(ig_database):
         for common in available_species:
-            species_internal_db_path = os.path.join(INTERNAL_DATA_PATH, db_type, common)
+            species_internal_db_path = os.path.join(outpath, db_type, "Ig", "internal_data", common)
             logger.debug("Found species %s, using imgt database file", common)
             if not os.path.exists(species_internal_db_path):
                 logger.info("Creating {}".format(species_internal_db_path))

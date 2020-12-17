@@ -4,7 +4,6 @@
 import logging
 import os
 import click
-from sqlalchemy import create_engine
 
 # Module imports
 from .internal_data import generate_internal_annotaion_file_from_db
@@ -60,30 +59,30 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
         outpath = os.path.abspath(os.path.dirname(__file__) + "/data/germlines")
         click.echo(f"No outpath specified, using {outpath}")
 
-    # where to output internal data path
-    internal_data_path = os.path.join(outpath, "internal_data")
-    if not os.path.exists(internal_data_path):
-        click.echo(f"Generating Internal data path {internal_data_path}")
+    # # where to output internal data path
+    # internal_data_path = os.path.join(outpath, "internal_data")
+    # if not os.path.exists(internal_data_path):
+    #     click.echo(f"Generating Internal data path {internal_data_path}")
 
-    generate_internal_annotaion_file_from_db(db_path, internal_data_path, only_functional=only_functional)
+    generate_internal_annotaion_file_from_db(db_path, outpath, only_functional=only_functional)
     click.echo(f"Generated Internal Data {outpath}/internal_data")
 
-    blast_dir = os.path.join(outpath, "blastdb")
-    if not os.path.exists(blast_dir):
-        click.echo(f"Generating blast data path {blast_dir}")
+    # blast_dir = os.path.join(outpath, "blastdb")
+    # if not os.path.exists(blast_dir):
+    #     click.echo(f"Generating blast data path {blast_dir}")
     # # Send it to specialized function
-    click.echo(f"Making blast data at {blast_dir}")
+    # click.echo(f"Making blast data at {blast_dir}")
     # if only_functional:
-    make_igblast_ref_database(db_path, blast_dir, only_functional=only_functional)
+    make_igblast_ref_database(db_path, outpath, only_functional=only_functional)
     click.echo("Successfully made blast data")
 
     # # Auxiliary data
-    aux_path = os.path.join(outpath, "aux_data")
-    if not os.path.exists(aux_path):
-        click.echo(f"Creating {aux_path}")
-        os.makedirs(aux_path)
+    # aux_path = os.path.join(outpath, "aux_data")
+    # if not os.path.exists(aux_path):
+    #     click.echo(f"Creating {aux_path}")
+    #     os.makedirs(aux_path)
     # Send it to specialized function
-    make_auxillary_file(engine, aux_path)
+    make_auxillary_file(db_path, outpath)
     click.echo("Successfully made auxillary data")
     click.echo("Done!")
 
