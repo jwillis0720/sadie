@@ -7,147 +7,20 @@ import click
 from sqlalchemy import create_engine
 
 # Module imports
-from .imgt import write_imgt_local, get_imgt_file_structure, make_imgt_db, add_custom_sequences
 from .internal_data import generate_internal_annotaion_file_from_db
 from .igblast_ref import make_igblast_ref_database
 from .aux_file import make_auxillary_file
 from .genbank import generate_genbank
-from .genesegment import generate_v_segment_data, generate_j_gene_data
 from ..utility.util import get_verbosity_level
 
 
 @click.command()
 @click.option(
-    "--outdir",
-    required=True,
-    type=click.Path(resolve_path=True, dir_okay=True, writable=True),
-    help="Output to generate IMGT local copy",
-)
-def make_imgt_fasta_files(outdir):
-    """Pull all the IMGT fasta files down from IMGT v quest http database
-
-    Arguments:
-        outdir {file} -- path to output
-    """
-    imgt_local_dir = os.path.abspath(outdir)
-    click.echo(f"Writing to {imgt_local_dir}")
-    write_imgt_local(outdir)
-    click.echo(f"Wrote to {imgt_local_dir}")
-
-
-@click.command()
-@click.option(
-    "-v", "--verbose", count=True, default=4, help="Vebosity level, ex. -vvvvv for debug level logging",
-)
-@click.option(
-    "--imgt-fasta",
-    type=click.Path(exists=True, resolve_path=True, dir_okay=True),
-    default=os.path.join(os.path.dirname(__file__), "data/IMGT_LOCAL/"),
-    help="Where is the local IMGT from Vquest file path is. Can generate with `get-imgt` script",
-)
-@click.option(
-    "--imgt-data",
-    default=os.path.join(os.path.dirname(__file__), "data/IMGT_DB/"),
-    type=click.Path(exists=True, resolve_path=True, dir_okay=True),
-    help="Where is the local IMGT data fastas. Should be in package repo",
-)
-@click.option(
-    "--custom-fasta",
-    default=os.path.join(os.path.dirname(__file__), "data/CUSTOM/"),
-    type=click.Path(exists=True, resolve_path=True, dir_okay=True),
-    help="Custom fastas to add that are in IMGT gapped alignment",
-)
-@click.option(
-    "--outpath",
-    default=os.path.join(os.path.dirname(__file__), "data/IMGT_REFERENCE.db"),
-    type=click.Path(resolve_path=True, file_okay=True, writable=True),
-    help="Where to dump the SQLlite file? Default to reference/data/IMGT_REFERENCE.db",
-)
-@click.option(
-    "--skip-imgt",
-    is_flag=True,
-    default=False,
-    help="skip rebuilding of IMGT reference database and use tables present in sql engine. Will skip right to v and j gene assembly",
-)
-@click.option("--skip-custom", is_flag=True, default=False, help="skip custom")
-@click.option(
-    "--skip-v", default=False, is_flag=True, help="skip v segment assembly and use whats in engine.",
-)
-@click.option(
-    "--skip-j", is_flag=True, default=False, help="skip j segment assembly and use whats in engine.",
-)
-def make_imgt_database(verbose, imgt_fasta, imgt_data, custom_fasta, outpath, skip_imgt, skip_custom, skip_v, skip_j):
-    """[summary]
-
-    Parameters
-    ----------
-    verbose : [type]
-        [description]
-    imgt_fasta : [type]
-        [description]
-    imgt_data : [type]
-        [description]
-    outpath : [type]
-        [description]
-    skip_imgt : [type]
-        [description]
-    skip_v : [type]
-        [description]
-    skip_j : [type]
-        [description]
-
-    Raises
-    ------
-    Exception
-        [description]
-    Exception
-        [description]
-    Exception
-        [description]
-    """
-    numeric_level = get_verbosity_level(verbose)
-    logging.basicConfig(level=numeric_level)
-
-    click.echo(f"Attempting to locat IMGT fasta files {imgt_fasta}")
-    imgt_data = os.path.abspath(imgt_data)
-    click.echo(f"Using IMGT data path {imgt_data}")
-    if not outpath.endswith(".db"):
-        outpath = outpath + ".db"
-    db_outpath = os.path.abspath(outpath)
-    click.echo(f"Writing to {db_outpath}")
-    engine = create_engine(f"sqlite:////{os.path.abspath(db_outpath)}")
-
-    # Step 1  - Make the IMGT cohesive database from Vquest and IMGT-GB
-    if not skip_imgt:
-        make_imgt_db(imgt_fasta, imgt_data, engine)
-        click.echo(f"Wrote IMGT DB segment data to {engine}")
-    else:
-        click.echo(f"skipping IMGT DB rebuild and using imgt_unique and imgt_all tables in {engine}")
-
-    if not skip_custom:
-        add_custom_sequences(custom_fasta, engine)
-    else:
-        click.echo(f"skipping IMGT DB rebuild and using imgt_unique and imgt_all tables in {engine}")
-
-    # Step 2 - Make V gene segments from data
-    if not skip_v:
-        generate_v_segment_data(engine)
-        click.echo(f"Wrote VSegment segment data to {engine}")
-    else:
-        click.echo(f"skipping v segmentand using v_segment in {engine}")
-
-    # Step 3 - Make J gene segments from data
-    if not skip_j:
-        generate_j_gene_data(engine)
-        click.echo(f"Wrote JSegment segment data to {engine}")
-    else:
-        click.echo(f"skipping j segmentand using j_segment in {engine}")
-    click.echo("Succeded")
-
-
-@click.command()
-@click.option(
-    "-v", "--verbose", count=True, default=4, help="Vebosity level, ex. -vvvvv for debug level logging",
+    "-v",
+    "--verbose",
+    count=True,
+    default=4,
+    help="Vebosity level, ex. -vvvvv for debug level logging",
 )
 @click.option(
     "--outpath",
@@ -176,13 +49,12 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
     # Get back a numeric level associated with number of clicks
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
-    db_outpath = os.path.abspath(os.path.dirname(__file__) + "/data/IMGT_REFERENCE.db")
-    click.echo(f"Default outpath {db_outpath}")
+    db_path = os.path.abspath(os.path.dirname(__file__) + "/data/ig_database.json.gz")
+    click.echo(f"Default outpath {db_path}")
 
-    if not os.path.exists(db_outpath):
+    if not os.path.exists(db_path):
         click.echo("Can't find imgt database")
-        raise Exception(f"Can't find  IMGT database {db_outpath}")
-    engine = create_engine(f"sqlite:////{os.path.abspath(db_outpath)}")
+        raise Exception(f"Can't find  IMGT database {db_path}")
 
     if not outpath:
         outpath = os.path.abspath(os.path.dirname(__file__) + "/data/germlines")
@@ -193,7 +65,7 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
     if not os.path.exists(internal_data_path):
         click.echo(f"Generating Internal data path {internal_data_path}")
 
-    generate_internal_annotaion_file_from_db(engine, internal_data_path, only_functional=only_functional)
+    generate_internal_annotaion_file_from_db(db_path, internal_data_path, only_functional=only_functional)
     click.echo(f"Generated Internal Data {outpath}/internal_data")
 
     blast_dir = os.path.join(outpath, "blastdb")
@@ -202,7 +74,7 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
     # # Send it to specialized function
     click.echo(f"Making blast data at {blast_dir}")
     # if only_functional:
-    make_igblast_ref_database(engine, blast_dir, only_functional=only_functional)
+    make_igblast_ref_database(db_path, blast_dir, only_functional=only_functional)
     click.echo("Successfully made blast data")
 
     # # Auxiliary data
@@ -218,7 +90,11 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
 
 @click.command()
 @click.option(
-    "-v", "--verbose", count=True, default=4, help="Vebosity level, ex. -vvvvv for debug level logging",
+    "-v",
+    "--verbose",
+    count=True,
+    default=4,
+    help="Vebosity level, ex. -vvvvv for debug level logging",
 )
 @click.option(
     "--imgt-fasta",
@@ -236,7 +112,10 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
     help="Where is the auxillary data? this can be generated with igblast-setup, get-auxillary-db, or downloaded straight from igblast",
 )
 @click.option(
-    "--outpath", type=str, help="where to dump the output genbank files?", default="./local_gene_reference",
+    "--outpath",
+    type=str,
+    help="where to dump the output genbank files?",
+    default="./local_gene_reference",
 )
 def make_genebank_files(verbose, imgt_fasta, imgt_db, aux_path, outpath):
     """Make genebank files from IMGT Fasta files (vquest),IMGT DB files, and auxilary files
@@ -302,7 +181,11 @@ def make_genebank_files(verbose, imgt_fasta, imgt_db, aux_path, outpath):
 
 @click.command()
 @click.option(
-    "-v", "--verbose", count=True, default=4, help="Vebosity level, ex. -vvvvv for debug level logging",
+    "-v",
+    "--verbose",
+    count=True,
+    default=4,
+    help="Vebosity level, ex. -vvvvv for debug level logging",
 )
 @click.option(
     "--out-path",
@@ -388,5 +271,5 @@ def make_germline_segments(verbose, out_path, imgt_db, blast_db, aux_path):
 
 
 if __name__ == "__main__":
-    make_imgt_database()
-    # make_igblast_reference()
+    # make_imgt_database()
+    make_igblast_reference()
