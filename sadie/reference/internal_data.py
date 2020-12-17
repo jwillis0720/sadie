@@ -62,6 +62,8 @@ def generate_internal_annotaion_file_from_db(database, INTERNAL_DATA_PATH, only_
             if not filtered_json:
                 logger.info(f"No entries for {db_type}-{common}-V")
                 continue
+
+            # normalize will flatten nested json
             filt_df = pd.json_normalize(filtered_json)
 
             index_df = filt_df[
