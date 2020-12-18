@@ -1,19 +1,12 @@
 import datetime
-import glob
 import itertools
 import gzip
 import json
 import logging
 import os
-from collections import defaultdict
 
-import numpy as np
-import pandas as pd
 from Bio import Seq, SeqIO, SeqRecord
 from Bio.SeqFeature import FeatureLocation, SeqFeature
-
-# Module level
-from .settings import IMGT_LOOKUP, REVERSE_IMGT_LOOKUP
 
 # Module level logger
 logger = logging.getLogger(__name__)
@@ -315,13 +308,8 @@ def generate_genbank(database, outdir):
             if segment == "J":
                 records = generate_j(filtered_df)
                 SeqIO.write(records, open(out_file, "w"), "gb")
-
             if segment == "D":
                 records = generate_d(filtered_df)
                 SeqIO.write(records, open(out_file, "w"), "gb")
             logger.info(f"Wrote files {out_file}")
     return outdir
-    # generate_v(imgt_db, outpath)
-    # generate_j(aux_path, imgt_fasta, outpath)
-    # generate_d(imgt_fasta, aux_path, outpath)
-    # do d Genes
