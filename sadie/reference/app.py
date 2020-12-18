@@ -59,28 +59,11 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
         outpath = os.path.abspath(os.path.dirname(__file__) + "/data/germlines")
         click.echo(f"No outpath specified, using {outpath}")
 
-    # # where to output internal data path
-    # internal_data_path = os.path.join(outpath, "internal_data")
-    # if not os.path.exists(internal_data_path):
-    #     click.echo(f"Generating Internal data path {internal_data_path}")
-
     generate_internal_annotaion_file_from_db(db_path, outpath, only_functional=only_functional)
     click.echo(f"Generated Internal Data {outpath}/internal_data")
-
-    # blast_dir = os.path.join(outpath, "blastdb")
-    # if not os.path.exists(blast_dir):
-    #     click.echo(f"Generating blast data path {blast_dir}")
-    # # Send it to specialized function
-    # click.echo(f"Making blast data at {blast_dir}")
-    # if only_functional:
     make_igblast_ref_database(db_path, outpath, only_functional=only_functional)
     click.echo("Successfully made blast data")
 
-    # # Auxiliary data
-    # aux_path = os.path.join(outpath, "aux_data")
-    # if not os.path.exists(aux_path):
-    #     click.echo(f"Creating {aux_path}")
-    #     os.makedirs(aux_path)
     # Send it to specialized function
     make_auxillary_file(db_path, outpath)
     click.echo("Successfully made auxillary data")
@@ -96,19 +79,10 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
     help="Vebosity level, ex. -vvvvv for debug level logging",
 )
 @click.option(
-    "--imgt-fasta",
+    "--database",
     type=click.Path(exists=True, dir_okay=True, readable=True, resolve_path=True),
-    help="Where is the local IMGT file path is. Can generate with `get-imgt` script",
-)
-@click.option(
-    "--imgt-db",
-    type=click.Path(exists=True, dir_okay=True, readable=True, resolve_path=True),
-    help="Where is the IMGT database file. This comes with the module by default, or you can run with parse-imgt-db",
-)
-@click.option(
-    "--aux-path",
-    type=str,
-    help="Where is the auxillary data? this can be generated with igblast-setup, get-auxillary-db, or downloaded straight from igblast",
+    help="Where is the germline database",
+    default=os.path.join(os.path.dirname(__file__), "data", "ig_database.json.gz"),
 )
 @click.option(
     "--outpath",
@@ -116,19 +90,15 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
     help="where to dump the output genbank files?",
     default="./local_gene_reference",
 )
-def make_genebank_files(verbose, imgt_fasta, imgt_db, aux_path, outpath):
+def make_genebank_files_from_db(verbose, database, outpath):
     """Make genebank files from IMGT Fasta files (vquest),IMGT DB files, and auxilary files
 
     Parameters
     ----------
     verbose : str
         the verbosity level, e.g vvv
-    imgt_fasta : path
-        path to imgt fasta files
-    imgt_db : path
-        path to imgt db
-    aux_path : path
-        path to IGBLAST generated auxilary files
+    database: path
+        the database path
     outpath : path
         Output path
 
@@ -141,40 +111,17 @@ def make_genebank_files(verbose, imgt_fasta, imgt_db, aux_path, outpath):
     """
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
-    root_logger = logging.getLogger()
-    logger = logging.getLogger(__name__)
 
-    if not imgt_fasta:
-        imgt_fasta = os.path.join(os.path.dirname(__file__), "data/IMGT_LOCAL/")
-        click.echo(f"Attempting to file {imgt_fasta}")
-
-    if not os.path.exists(imgt_fasta):
-        # parse v quest fasta file
-        click.echo("No IMGT VQuest files exists, use `get-imgt` to download them or specify correct path")
-        raise Exception("IMGT Missing")
-
-    if not imgt_db:
-        # grab the imgt databases
-        imgt_db = os.path.join(os.path.dirname(__file__), "data/IMGT_REFERENCE.csv.gz")
-    if not os.path.exists(imgt_db):
-        click.echo("No IMGT DB exists, use `parse-imgt-db` to generate")
-        raise Exception("IMGT DB missingsMissing")
-
-    if not aux_path:
-        aux_path = os.path.join(os.path.dirname(__file__), "data/germlines/aux_data")
-        click.echo("No aux path specied using package data")
-
-    if not os.path.exists(aux_path):
-        click.echo("No  aux path path `igblast-seutp` to generate or specify the correct path")
-        raise Exception("Aux Data Missing")
+    if not os.path.exists(database):
+        click.echo("No  dtabase path present")
+        raise Exception(f"No DB {database}")
 
     if not os.path.exists(outpath):
-        logger.info("Creating %s", outpath)
+        click.echo(f"Creating {outpath}")
+        os.makedirs(outpath)
 
     # No reason to use click echo over print except to show e can
-    click.echo("Logging with level =>{}".format(logging.getLevelName(root_logger.getEffectiveLevel())))
-
-    generate_genbank(imgt_fasta, imgt_db, aux_path, outpath)
+    generate_genbank(database, outpath)
     click.echo("Done generating files")
 
 
@@ -271,4 +218,5 @@ def make_germline_segments(verbose, out_path, imgt_db, blast_db, aux_path):
 
 if __name__ == "__main__":
     # make_imgt_database()
-    make_igblast_reference()
+    # make_igblast_reference()
+    make_genebank_files_from_db()
