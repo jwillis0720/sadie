@@ -31,12 +31,11 @@ jobs:
           pip install .
       - name: Test
         run: |
-          env
-          coverage run --source=./sadie --branch -m pytest 
-          coverage xml 
-          coverage report
+          pytest .
+          # env
+          # coverage run --source=./sadie --branch -m pytest 
+          # coverage xml 
+          # coverage report
           # I can't get pytest plugin to work on github acitons
           # pytest --cov=/home/runner/work/sadie/sadie --cov-report=xml --cov-report=term tests/airr
           # cat ./coverage.xml
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.15
