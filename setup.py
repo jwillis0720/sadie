@@ -44,7 +44,7 @@ class PyTest(test):
 
 setup(
     name="sadie",
-    version="0.0.1",
+    version="0.1.0",
     python_requires=">=3.6",
     description="sadie: The Complete Antibody Library",
     author="Jordan R Willis",
