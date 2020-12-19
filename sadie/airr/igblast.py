@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import List, Union
 import platform
 import shutil
-
+import warnings
 import pandas as pd
 
 from .util import is_tool
@@ -612,8 +612,11 @@ class IgBLASTN:
     def germline_db_d(self, path: str):
         abs_path = ensure_prefix_to(path)
         if not abs_path:
-            raise BadIgBLASTArgument(path, "Valid path to D Database")
-        self._germline_db_d = IgBLASTArgument("germline_db_d", "germline_db_D", path, True)
+            warnings.warn(f"{path} is not found, No D gene segment", UserWarning)
+            # raise BadIgBLASTArgument(path, "Valid path to D Database")
+            self._germline_db_d = IgBLASTArgument("germline_db_d", "germline_db_D", "", False)
+        else:
+            self._germline_db_d = IgBLASTArgument("germline_db_d", "germline_db_D", path, True)
 
     @property
     def germline_db_j(self: str) -> IgBLASTArgument:
@@ -816,7 +819,7 @@ class IgBLASTN:
 
             # # Check the executable
             if not is_tool(self.executable):
-                raise BadIgBLASTExe(self.executable)
+                raise BadIgBLASTExe(self.executable, "Is not an executable tool")
 
             if not self.igdata:
                 raise BadIgDATA("No IGDATA set, set with IgBLASTN.igdata")

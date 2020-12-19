@@ -1,11 +1,16 @@
 import bz2
 import gzip
 import os
-import shutil
 from functools import partial
 from mimetypes import guess_type
 
 from Bio import SeqIO as so
+
+from pathlib import Path
+
+
+def get_project_root() -> Path:
+    return Path(__file__).parent.parent
 
 
 def determine_encoding(parent_file):
