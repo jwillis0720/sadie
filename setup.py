@@ -56,7 +56,11 @@ setup(
     zip_safe=False,
     keywords=["airr", "annotating", "antibodies"],
     entry_points={
-        "console_scripts": ["airr=sadie.airr.app:run_airr"],
+        "console_scripts": [
+            "airr=sadie.airr.app:run_airr",
+            "make-reference=sadie.reference.app:make_igblast_reference",
+            "make-genebank=sadie.reference.app:make_genebank_files_from_dbma",
+        ],
     },
     test_suite="tests",
     cmdclass={"tests": PyTest, "bdist_wheel": bdist_wheel},

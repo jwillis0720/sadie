@@ -37,22 +37,24 @@ def test_antibody_igblast_setup():
 
     # Set data
     ig_blast.igdata = germline_ref
-    for species in ["human", "mouse", "rat", "dog", "cat"]:
+    for species in ["human", "mouse", "rat", "dog"]:
 
-        db_ref = os.path.join(germline_ref, "blastdb/Ig/{}/".format(species))
+        db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
+        aux_ref = os.path.join(germline_ref, "imgt/Ig/aux_db/")
         assert os.path.exists(db_ref)
         ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(species))
         ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(species))
         ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(species))
 
-        aux_ref = os.path.join(germline_ref, "aux_data/{}_gl.aux".format(species))
+        aux_ref = os.path.join(aux_ref, f"{species}_gl.aux")
         ig_blast.aux_path = aux_ref
         ig_blast.organism = species
 
         ig_blast = airr.igblast.IgBLASTN()
     assert os.path.exists(germline_ref)
 
-    germline_ref = "reference/germLunes/"
+    germline_ref = "reference/germlines/"
+
     # Set data
     with pytest.raises(airr.igblast.BadIgDATA):
         ig_blast.igdata = germline_ref
@@ -77,18 +79,18 @@ def test_antibody_igblast_file_run():
     """
     ig_blast = airr.igblast.IgBLASTN()
     germline_ref = os.path.join(os.path.dirname(os.path.abspath(airr.__file__)), "data/germlines")
-    db_ref = os.path.join(germline_ref, "blastdb/Ig")
-    aux_path = os.path.join(germline_ref, "aux_data")
+    db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
+    aux_path = os.path.join(germline_ref, "imgt/Ig/aux_db/")
 
     # Set data
-    ig_blast.igdata = germline_ref
+    ig_blast.igdata = os.path.join(germline_ref, "imgt/Ig/")
 
     # Grab from fixtures
     query = fixture_file("fasta_inputs/heavy/PG9_H.fasta")
     expected_output = fixture_file("expected_outputs/PG9_H.csv")
-    ig_blast.germline_db_v = os.path.join(db_ref, "human/human_V")
-    ig_blast.germline_db_d = os.path.join(db_ref, "human/human_D")
-    ig_blast.germline_db_j = os.path.join(db_ref, "human/human_J")
+    ig_blast.germline_db_v = os.path.join(db_ref, "human_V")
+    ig_blast.germline_db_d = os.path.join(db_ref, "human_D")
+    ig_blast.germline_db_j = os.path.join(db_ref, "human_J")
     ig_blast.aux_path = os.path.join(aux_path, "human_gl.aux")
     ig_blast.organism = "human"
     ig_blast._pre_check()
@@ -96,8 +98,9 @@ def test_antibody_igblast_file_run():
     ig_blast.j_penalty = -2
     csv_dataframe = ig_blast.run_file(query).fillna("")
     expected_output_df = pd.read_csv(expected_output, index_col=0).fillna("")
+    csv_dataframe.to_csv("test.csv")
 
-    pd._testing.assert_frame_equal(csv_dataframe, expected_output_df, check_like=True)
+    pd._testing.assert_frame_equal(csv_dataframe, expected_output_df, check_like=True, check_exact=False, atol=0.001)
 
     query = fixture_file("fasta_inputs/light/PG9_L.fasta")
     expected_output = fixture_file("expected_outputs/PG9_L.csv.gz")

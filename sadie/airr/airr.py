@@ -88,7 +88,7 @@ class GermlineData:
     /Users/jwillis/repos/sadie/airr/data/germlines/aux_data/human_gl.aux
     """
 
-    def __init__(self, species: str, receptor="Ig"):
+    def __init__(self, species: str, receptor="Ig", database="imgt"):
         """
 
         Parameters
@@ -100,14 +100,19 @@ class GermlineData:
         """
         self._base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "data/germlines"))
 
-        blast_dir = os.path.join(
-            self._base_dir, "blastdb/{receptor}/{species}/{species}_".format(receptor=receptor, species=species)
-        )
+        blast_dir = os.path.join(self._base_dir, f"{database}/{receptor}/blastdb/{species}_")
         self._v_gene_dir = blast_dir + "V"
         self._d_gene_dir = blast_dir + "D"
         self._j_gene_dir = blast_dir + "J"
-        self._aux_path = os.path.join(self.base_dir, f"aux_data/{species}_gl.aux")
-        self._available_species = glob.glob(os.path.join(self.base_dir, "aux_data",) + "/*")
+        self._aux_path = os.path.join(self.base_dir, f"{database}/{receptor}/aux_db/{species}_gl.aux")
+        self._igdata = os.path.join(self.base_dir, f"{database}/{receptor}/")
+
+        self._available_species = list(
+            map(
+                lambda x: os.path.basename(x).split("-")[0],
+                glob.glob(os.path.join(self.base_dir, f"{database}/**/*.aux"), recursive=True),
+            )
+        )
 
     @property
     def base_dir(self) -> Path:
@@ -190,6 +195,17 @@ class GermlineData:
         self._aux_path = directory
 
     @property
+    def igdata(self) -> Path:
+        return self._igdata
+
+    @igdata.setter
+    def igdata(self, directory: Path):
+        if not os.path.found(directory):
+            raise FileNotFoundError(directory)
+        else:
+            self._igdata = directory
+
+    @property
     def available_species(self) -> list:
         """list of available species
 
@@ -209,9 +225,18 @@ class GermlineData:
         list
            available species
         """
-        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "data/germlines/aux_data/"))
-        globs = [os.path.basename(i).split("_")[0] for i in glob.glob(base_path + "/*")]
-        return globs
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "data/germlines/"))
+        available_species = list(
+            set(
+                list(
+                    map(
+                        lambda x: os.path.basename(x).split("_")[0],
+                        glob.glob(os.path.join(base_dir, f"**/*.aux"), recursive=True),
+                    )
+                )
+            )
+        )
+        return available_species
 
 
 class Airr:
@@ -271,6 +296,7 @@ class Airr:
         if species.lower() not in GermlineData.get_available_species():
             raise BadSpecies(species, GermlineData.get_available_species())
         # Init igblast api module
+        self._create_temp = False
         self.igblast = IgBLASTN()
         self.species = species
 
@@ -279,7 +305,7 @@ class Airr:
 
         # Set germline data and setup igblast
         self.germline_data = GermlineData(species)
-        self.igblast.igdata = self.germline_data.base_dir
+        self.igblast.igdata = self.germline_data.igdata
         self.igblast.germline_db_v = self.germline_data.v_gene_dir
         self.igblast.germline_db_d = self.germline_data.d_gene_dir
         self.igblast.germline_db_j = self.germline_data.j_gene_dir
@@ -287,7 +313,6 @@ class Airr:
         self.igblast.organism = species
         self.igblast.temp_dir = temp_directory
         self.temp_directory = temp_directory
-        self._create_temp = False
         if self.temp_directory:
             if not os.path.exists(temp_directory):
                 self._create_temp = True
@@ -340,7 +365,7 @@ class Airr:
             The input dataframe to run airr on
 
         seq_field: Union[str,int]
-           The field in the dataframe to run airr on 
+           The field in the dataframe to run airr on
 
         seq_id_field: Optional:
             The field that you want the "Sequence ID" in the airr table to correspond to. It will default to using the dataframe row index
