@@ -11,7 +11,7 @@ from .internal_data import generate_internal_annotaion_file_from_db
 from .igblast_ref import make_igblast_ref_database
 from .aux_file import make_auxillary_file
 from .genbank import generate_genbank
-from ..utility.util import get_verbosity_level
+from ..utility.util import get_verbosity_level, get_project_root
 
 
 @click.command()
@@ -26,8 +26,10 @@ from ..utility.util import get_verbosity_level
     "--outpath",
     help="Output path to generate blast_db, internal_data and auxillary files",
     type=click.Path(resolve_path=True, dir_okay=True, writable=True),
+    default=os.path.join(get_project_root(), "airr/data/germlines"),
 )
 def make_igblast_reference(verbose, outpath, only_functional=True):
+    print(outpath)
     """make the igblast reference files
 
     This script will make the imgt reference files used by igblast or airr, including internal data, the blast
