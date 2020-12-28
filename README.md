@@ -11,4 +11,4 @@
 [![codecov](https://codecov.io/gh/jwillis0720/sadie/branch/master/graph/badge.svg?token=EH9QEX4ZMP)](https://codecov.io/gh/jwillis0720/sadie)
 
 
-# SADIE is currently in Beta and will be released for testing in January 2021
+## SADIE is currently in active development and will be released for testing in January 2021
