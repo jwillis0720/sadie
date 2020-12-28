@@ -98,7 +98,8 @@ def generate_v_segment_data(imgt_db_engine):
 
     # Now do the same for custom
     v_segment_only_clean_custom = custom.loc[
-        (custom["gene_segment"] == "V") & (custom["label"] != "v_gene_nt"), :,
+        (custom["gene_segment"] == "V") & (custom["label"] != "v_gene_nt"),
+        :,
     ]
     v_fit_index = (v_segment_only_clean_custom["nt_sequence_no_gaps"].str.len() % 3 == 0) | (
         v_segment_only_clean_custom["label"] == "cdr3_nt"
@@ -245,7 +246,18 @@ def generate_v_segment_data(imgt_db_engine):
             assignments_clean.loc[:, "fwr3_aa"] = assignments_clean["fwr3_aa"].str.rstrip("X")
             assignments_clean.loc[:, "vdj"] = assignments_clean["vdj"].str.rstrip("X")
             assignments_clean = assignments_clean[
-                ["common", "latin", "gene", "source", "fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa",]
+                [
+                    "common",
+                    "latin",
+                    "gene",
+                    "source",
+                    "fwr1_aa",
+                    "cdr1_aa",
+                    "fwr2_aa",
+                    "cdr2_aa",
+                    "fwr3_aa",
+                    "cdr3_aa",
+                ]
             ]
             assignments_clean.loc[:, "v_gene_aa"] = assignments_clean[
                 ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa"]
@@ -300,7 +312,15 @@ def split_fw4(X):
     nt = X[4]
     short_name = gene.split("*")[0]
     gene_type = gene[:4]
-    return_series = pd.Series({"cdr3_nt": "", "frw4_nt": "", "cdr3_aa": "", "frw4_aa": "", "end_cdr3_nt_index": "",})
+    return_series = pd.Series(
+        {
+            "cdr3_nt": "",
+            "frw4_nt": "",
+            "cdr3_aa": "",
+            "frw4_aa": "",
+            "end_cdr3_nt_index": "",
+        }
+    )
 
     if common in MOTIF_LOOKUP.keys():
         if gene_type in MOTIF_LOOKUP[common].keys():
@@ -317,7 +337,15 @@ def split_fw4(X):
     if not expression:
         if short_name in ignore or aa_seq in ignore:
             logger.info(f"Settign file says to skip {common}-{short_name}-{aa_seq}")
-            return pd.Series({"cdr3_nt": "", "frw4_nt": "", "cdr3_aa": "", "frw4_aa": "", "end_cdr3_nt_index": "",})
+            return pd.Series(
+                {
+                    "cdr3_nt": "",
+                    "frw4_nt": "",
+                    "cdr3_aa": "",
+                    "frw4_aa": "",
+                    "end_cdr3_nt_index": "",
+                }
+            )
         else:
             # if common == "sharks":
             #     print(f"{aa_seq}")
@@ -360,7 +388,7 @@ def generate_j_gene_data(engine):
     # show(j_region, settings={"block": True})
     chain_dfs_append = []
     for _, species_df in j_region.groupby(["common"]):
-        species_df = species_df.drop("reading_frame", axis=1).join(
+        species_df = species_df.drop(["reading_frame", "aa_sequence_no_gaps", "aa_sequence_gaps"], axis=1).join(
             species_df[["nt_sequence_no_gaps", "reading_frame"]].apply(translate_j_segment, axis=1)
         )
         for _, chain_df in species_df.groupby(species_df["gene"].str[0:4]):
