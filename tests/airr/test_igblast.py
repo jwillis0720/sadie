@@ -98,7 +98,6 @@ def test_antibody_igblast_file_run():
     ig_blast.j_penalty = -2
     csv_dataframe = ig_blast.run_file(query).fillna("")
     expected_output_df = pd.read_csv(expected_output, index_col=0).fillna("")
-    csv_dataframe.to_csv("test.csv")
 
     pd._testing.assert_frame_equal(csv_dataframe, expected_output_df, check_like=True, check_exact=False, atol=0.001)
 
