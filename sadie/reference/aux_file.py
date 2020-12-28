@@ -32,6 +32,12 @@ def get_filtered_data(database_json, source, common, receptor, segment):
     )
 
 
+def _determine_left_over(X):
+    nt = X[0]
+    reading_frame = X[1]
+    return len(nt[reading_frame:]) % 3
+
+
 def make_auxillary_file(database, outdir):
     """
     Given the imgt file structure object and aux path, make the aux data
@@ -53,9 +59,12 @@ def make_auxillary_file(database, outdir):
         common_df = pd.json_normalize(filtered_data)
         common_df = common_df[common_df["imgt.end_cdr3_nt"] != ""]
         common_df.loc[:, "reading_frame"] = common_df["imgt.reading_frame"].astype(int) - 1
+        common_df.loc[:, "left_over"] = common_df[["imgt.j_gene_nt", "reading_frame"]].apply(
+            _determine_left_over, axis=1
+        )
         common_df["marker"] = common_df["gene"].str.split("-").str.get(0).str[0:4].str[::-1].str[:2]
         common_df["end"] = common_df["imgt.end_cdr3_nt"].astype(int) - 1
-        common_df[["gene", "reading_frame", "marker", "end"]].to_csv(
+        common_df[["gene", "reading_frame", "marker", "end", "left_over"]].to_csv(
             aux_file_species, sep="\t", header=None, index=False
         )
         logger.info(f"Wrote aux to {aux_file_species}")
