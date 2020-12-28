@@ -30,10 +30,4 @@ sadie.code-workspace
 *._.DS_Store
 *.DS_Store
 
-<<<<<<< HEAD
 notebooks/.ipynb_checkpoints/*
-=======
-notebooks/.ipynb_checkpoints/Untitled-checkpoint.ipynb
-local_gene_reference/*
-notebooks/Untitled.ipynb
->>>>>>> 990281581213e14b54a2cce69289e803b3296c16
