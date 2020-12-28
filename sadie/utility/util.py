@@ -1,9 +1,15 @@
 import bz2
 import gzip
 import os
-from mimetypes import guess_type
 from functools import partial
+from mimetypes import guess_type
+from pathlib import Path
+
 from Bio import SeqIO as so
+
+
+def get_project_root() -> Path:
+    return Path(__file__).parent.parent
 
 
 def get_verbosity_level(verbosity_count):
