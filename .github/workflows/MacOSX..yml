@@ -29,6 +29,8 @@ jobs:
           pip install pytest
           pip install pytest-cov
           pip install .
+      - name: PreCommit
+        uses: pre-commit/action@v2.0.0
       - name: Test
         run: |
           pytest .
