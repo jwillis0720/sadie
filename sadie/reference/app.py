@@ -129,4 +129,3 @@ def make_genebank_files_from_db(verbose, database, outpath):
 
 if __name__ == "__main__":
     make_igblast_reference()
-    # make_genebank_files_from_db()
