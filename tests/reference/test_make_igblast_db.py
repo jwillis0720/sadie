@@ -187,7 +187,7 @@ def _test_auxilary_file_structure(tmpdir):
 
 def _test_internal_data_file_structure(tmpdir):
     # what we have made
-    internal_path = glob.glob("tmpdir/**/*.imgt", recursive=True)
+    internal_path = glob.glob(f"{tmpdir}/**/*.imgt", recursive=True)
     reference_internal_path = glob.glob(fixture_dir("igblast_internal") + "/**.imgt")
     my_internal_path_df = []
     for file in internal_path:
@@ -332,7 +332,11 @@ def test_make_igblast_reference():
         nhd = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/*/**/*.nhd", recursive=True)]
         assert sorted(nhd) == sorted(split_nhd)
 
+        # test auxillary file building
         assert _test_auxilary_file_structure(tmpdir)
+
+        # test internal dat file
+        assert _test_internal_data_file_structure(tmpdir)
 
     if os.path.exists(tmpdir):
         shutil.rmtree(tmpdir)
