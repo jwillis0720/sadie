@@ -1,7 +1,3 @@
-"""Modules for parsinng Gene Tables
-
-    Gene tables are made by the referecne module, they are parsed here and changed to pythonic objects
-"""
 import logging
 import os
 
@@ -9,9 +5,6 @@ import pandas as pd
 from numpy import ndarray
 
 from .exception import AmbiguousGene, BadGene, NoSpecies
-
-logger = logging.getLogger(__name__)
-
 from .segment import (
     CDR1AA,
     CDR1NT,
@@ -28,6 +21,8 @@ from .segment import (
     FrameWork4AA,
     FrameWork4NT,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class GeneTable:
@@ -162,7 +157,7 @@ class GeneTable:
         if species not in self.available_species:
             raise NoSpecies(species, self.available_species)
 
-        ##trim down to just the species of interest
+        # trim down to just the species of interest
         species_gene_table = self.gene_table.set_index("species").loc[species]
         # Check for valid clone name nome
         if "*" in gene:
@@ -175,13 +170,13 @@ class GeneTable:
                     gene = gene.split("*")[0]
                     species_gene_table = species_gene_table.reset_index().set_index("gene")
                 else:
-                    ##if can't find gene
+                    # if can't find gene
                     raise BadGene(species, gene, species_gene_table.index)
         else:
-            ##if the user didn't specify an allele, set lookup by gene
+            # if the user didn't specify an allele, set lookup by gene
             species_gene_table = species_gene_table.set_index("gene")
             if gene not in species_gene_table.index:
-                ###if we cant find
+                # if we cant find
                 raise BadGene(species, gene, species_gene_table.index)
 
         # Just get row of interest
@@ -224,7 +219,7 @@ class GeneTable:
         if (locus not in list(self.available_loci)) and locus != "all":
             raise ValueError(f"locus not in {self.available_loci} or all")
 
-        ##Lookup by species
+        # Lookup by species
         _species_lookup = self._gene_table.set_index("species").loc[species]
 
         # If they specify a locus, just get those
@@ -272,7 +267,7 @@ class VGeneTable(GeneTable):
     """
 
     def __init__(self):
-        ##use the file name of this file to find path
+        # use the file name of this file to find path
         _path = os.path.abspath(__file__)
         _basename = os.path.dirname(_path)
         super().__init__(os.path.join(_basename, "data/VSEGMENT.csv.gz"))
@@ -302,7 +297,7 @@ class JGeneTable(GeneTable):
     """
 
     def __init__(self):
-        ##use the file name of this file to find path
+        # use the file name of this file to find path
         _path = os.path.abspath(__file__)
         _basename = os.path.dirname(_path)
         super().__init__(os.path.join(_basename, "data/JSEGMENT.csv.gz"))
@@ -339,7 +334,7 @@ class VGene:
         self._species = species
         self._row_lookup = VTABLE.get_gene(name, species)
 
-        ###nt
+        # nt
         self._fwr1_nt = FrameWork1NT(self.row_lookup["fwr1_nt"].upper())
         self._fwr2_nt = FrameWork2NT(self.row_lookup["fwr2_nt"].upper())
         self._fwr3_nt = FrameWork3NT(self.row_lookup["fwr3_nt"].upper())
@@ -347,7 +342,7 @@ class VGene:
         self._cdr2_nt = CDR2NT(self.row_lookup["cdr2_nt"].upper())
         self._cdr3_nt = CDR3NT(self.row_lookup["cdr3_nt"].upper())
 
-        ###AA
+        # AA
         self._fwr1_aa = FrameWork1AA(self.row_lookup["fwr1_aa"].upper())
         self._fwr2_aa = FrameWork2AA(self.row_lookup["fwr2_aa"].upper())
         self._fwr3_aa = FrameWork3AA(self.row_lookup["fwr3_aa"].upper())
@@ -403,14 +398,28 @@ class VGene:
         self._v_gene_nt = "".join(
             map(
                 lambda x: str(x),
-                [self._fwr1_nt, self._cdr1_nt, self._fwr2_nt, self._cdr2_nt, self._fwr3_nt, self._cdr3_nt],
+                [
+                    self._fwr1_nt,
+                    self._cdr1_nt,
+                    self._fwr2_nt,
+                    self._cdr2_nt,
+                    self._fwr3_nt,
+                    self._cdr3_nt,
+                ],
             )
         )
 
         self._v_gene_aa = "".join(
             map(
                 lambda x: str(x),
-                [self._fwr1_aa, self._cdr1_aa, self._fwr2_aa, self._cdr2_aa, self._fwr3_aa, self._cdr3_aa],
+                [
+                    self._fwr1_aa,
+                    self._cdr1_aa,
+                    self._fwr2_aa,
+                    self._cdr2_aa,
+                    self._fwr3_aa,
+                    self._cdr3_aa,
+                ],
             )
         )
 
@@ -614,7 +623,13 @@ class JGene:
         fwr4_nt-{}
         fwr4_aa-{}
         """.format(
-            self.__class__.__name__, self.species, self.name, self.cdr3_nt, self.cdr3_aa, self.fwr4_nt, self.fwr4_aa,
+            self.__class__.__name__,
+            self.species,
+            self.name,
+            self.cdr3_nt,
+            self.cdr3_aa,
+            self.fwr4_nt,
+            self.fwr4_aa,
         )
         return _rep
 

@@ -1,11 +1,10 @@
-import glob
 import tempfile
 import pytest
 from sadie.anarci import Anarci, AnarciResult, AnarciResults
 from sadie.antibody import exception
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from pandas.testing import assert_frame_equal, assert_series_equal
+from pandas.testing import assert_frame_equal
 from pkg_resources import resource_filename
 
 
@@ -50,7 +49,7 @@ def test_single_seq():
 
 def test_alternate_numbering():
     anarci_api = Anarci(scheme="chothia", region_assign="chothia")
-    result_chothia = anarci_api.run_single(
+    anarci_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
@@ -58,11 +57,11 @@ def test_alternate_numbering():
     # align = "IGHV3-23*04|IGHJ6*01  EVQLVESGGGLVQPGGSLRLSCAAS GFTFSSY AMSWVRQAPGKGLEWVSAI SGSGGS TYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYC\nMySweetAntibody       ...........E...........G. ....RD. ..T..............S. .....N .......................................\n\nIGHV3-23*04|IGHJ6*01  A- K------YYYYYGMDV WGQGTTVTVSS\nMySweetAntibody       .K DRLSITIRPR...L.. ...........\n\n"
     # assert chothia_result.get_segmented_alignment_aa() == align
     anarci_api = Anarci(scheme="chothia", region_assign="abm")
-    result_abm = anarci_api.run_single(
+    anarci_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
-    align = "IGHV3-23*04|IGHJ6*01  EVQLVESGGGLVQPGGSLRLSCAAS GFTFSSYAMS WVRQAPGKGLEWVS AISGSGGSTY YADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYC\nMySweetAntibody       ...........E...........G. ....RD...T .............. S......N.. .....................................\n\nIGHV3-23*04|IGHJ6*01  A- K------YYYYYGMDV WGQGTTVTVSS\nMySweetAntibody       .K DRLSITIRPR...L.. ...........\n\n"
+    # align = "IGHV3-23*04|IGHJ6*01  EVQLVESGGGLVQPGGSLRLSCAAS GFTFSSYAMS WVRQAPGKGLEWVS AISGSGGSTY YADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYC\nMySweetAntibody       ...........E...........G. ....RD...T .............. S......N.. .....................................\n\nIGHV3-23*04|IGHJ6*01  A- K------YYYYYGMDV WGQGTTVTVSS\nMySweetAntibody       .K DRLSITIRPR...L.. ...........\n\n"
     # abm_result = result_abm.to_antibody()
     # assert abm_result.get_segmented_alignment_aa() == align
 
@@ -125,7 +124,9 @@ def test_anarci_multi_input():
     _summary_table = results.summary_table
     _alignment_table = results.alignment_table
     reconstructed_results = AnarciResults(
-        summary_table=_summary_table, alignment_table=_alignment_table, segment_table=_segment_df
+        summary_table=_summary_table,
+        alignment_table=_alignment_table,
+        segment_table=_segment_df,
     )
     assert reconstructed_results == results
 
@@ -221,8 +222,5 @@ def test_cat():
 def test_bad_sequences():
     bad_sequence = "SEQLTQPESLTLRPGQPLTIRCQVSYSVSSTGYATHWIRQPDGRGLEWIGGIRIGWKGAKDSLSSQFSLAVDGSSKTITLQGQNMQPGDSAVYYCAR"
     anarci_api = Anarci()
-    result = anarci_api.run_single(
-        "bad_sequence",
-        bad_sequence,
-    )
+    result = anarci_api.run_single("bad_sequence", bad_sequence)
     assert result is None

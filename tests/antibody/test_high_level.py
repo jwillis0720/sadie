@@ -70,7 +70,7 @@ def test_construction():
 
 
 def test_antibody_io():
-    ##Antibody AA
+    # Antibody AA
     antibody_object_aa = antibody.AntibodyAA(heavy_chain_aa, lambda_chain_aa)
     reconstructed = antibody.AntibodyAA.from_json(antibody_object_aa.get_json())
     assert antibody_object_aa == reconstructed

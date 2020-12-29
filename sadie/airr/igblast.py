@@ -310,7 +310,7 @@ class IgBLASTN:
     def __init__(self):
         """IgBLASTN with a query. Set everything up with a setter"""
 
-        ###setup all the default values
+        # setup all the default values
         self.executable = ""
         self.min_d_match = 5
         self.num_v = 3
@@ -328,14 +328,14 @@ class IgBLASTN:
         self.extend_3 = True
         self.j_penalty = -1
 
-        ##Make these blank, if they are not set by the caller, then we will complain during runtime.
+        # Make these blank, if they are not set by the caller, then we will complain during runtime.
         self._organism = IgBLASTArgument("organism", "organism", "", True)
         self._germline_db_v = IgBLASTArgument("germline_db_v", "germline_db_V", "", True)
         self._germline_db_d = IgBLASTArgument("germline_db_d", "germline_db_D", "", True)
         self._germline_db_j = IgBLASTArgument("germline_db_j", "germline_db_J", "", True)
         self._aux_path = IgBLASTArgument("aux_path", "auxiliary_data", "", True)
 
-        ##Igdata is not an official blast argument, it is an enviroment
+        # Igdata is not an official blast argument, it is an enviroment
         self._igdata = ""
         self.temp_dir = "."
 
@@ -355,7 +355,10 @@ class IgBLASTN:
         _executable = "igblastn"
         if not path:  # try and use package hmmscan
             system = platform.system().lower()
-            igblastn_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/{_executable}")
+            igblastn_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                f"bin/{system}/{_executable}",
+            )
             # check if its
             if os.path.exists(igblastn_path):
                 # check if it's executable
@@ -374,7 +377,8 @@ class IgBLASTN:
                     self._executable = igblastn_path
                 else:
                     raise BadIgBLASTExe(
-                        igblastn_path, f"Can't find igblastn in package {__package__} or in path {os.env['PATH']}"
+                        igblastn_path,
+                        f"Can't find igblastn in package {__package__} or in path {os.env['PATH']}",
                     )
         else:  # User specifed custome path
             logger.debug(f"User passed custom igblastn {path}")
@@ -384,7 +388,8 @@ class IgBLASTN:
             else:
                 _access = os.access(igblastn_path, os.X_OK)
                 raise BadIgBLASTExe(
-                    igblastn_path, f"Custom igblastn path is not executable {igblastn_path}, {_access} "
+                    igblastn_path,
+                    f"Custom igblastn path is not executable {igblastn_path}, {_access} ",
                 )
 
     @property
@@ -525,7 +530,7 @@ class IgBLASTN:
 
     @outfmt.setter
     def outfmt(self, fmt: int):
-        ##only accept 19 for now
+        # only accept 19 for now
         if fmt != 19:
             raise BadIgBLASTArgument(fmt, 19)
         self._outfmt = IgBLASTArgument("outfmt", "outfmt", fmt, True)
@@ -901,7 +906,11 @@ class IgBLASTN:
         # run process
         if sys.version_info.minor == 6:
             process = subprocess.run(
-                self.cmd, env=local_env, input=q.encode("utf-8"), stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                self.cmd,
+                env=local_env,
+                input=q.encode("utf-8"),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
         else:
             process = subprocess.run(self.cmd, env=local_env, input=q.encode("utf-8"), capture_output=True)

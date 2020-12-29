@@ -1,5 +1,12 @@
 import json
-from .chain import HeavyChainAA, KappaChainAA, LambdaChainAA, HeavyChainNT, KappaChainNT, LambdaChainNT
+from .chain import (
+    HeavyChainAA,
+    KappaChainAA,
+    LambdaChainAA,
+    HeavyChainNT,
+    KappaChainNT,
+    LambdaChainNT,
+)
 from .exception import HeavyChainException, LightChainException
 from typing import Union
 
@@ -145,7 +152,10 @@ class AntibodyAA:
 
         QAVLTQPPSVSGAPGQRVTISCTGS SSNIGAGYG VHWYQQLPGTAPKLLIY GDS NRPSGVPDRFSGSKSGTSASLAITGLQAEDEADYYC QSYDNSLSGYV FGGGTQLTVL
         """
-        return "{}\n\n{}".format(self.heavy_chain.get_segmented_vdj_aa(), self.light_chain.get_segmented_vdj_aa())
+        return "{}\n\n{}".format(
+            self.heavy_chain.get_segmented_vdj_aa(),
+            self.light_chain.get_segmented_vdj_aa(),
+        )
 
     def get_segmented_alignment_aa(self, line_length=80) -> str:
         """Get segmented alignment of HL pair
@@ -293,7 +303,12 @@ class AntibodyAA:
         return f"Heavy\n{self.heavy_chain.__repr__()}\n\nLight\n{self.light_chain.__repr__()}"
 
     def __eq__(self, other):
-        return all([self.heavy_chain == other.heavy_chain, self.light_chain == other.light_chain])
+        return all(
+            [
+                self.heavy_chain == other.heavy_chain,
+                self.light_chain == other.light_chain,
+            ]
+        )
 
 
 class AntibodyNT:
@@ -438,7 +453,10 @@ class AntibodyNT:
 
         QAVLTQPPSVSGAPGQRVTISCTGS SSNIGAGYG VHWYQQLPGTAPKLLIY GDS NRPSGVPDRFSGSKSGTSASLAITGLQAEDEADYYC QSYDNSLSGYV FGGGTQLTVL
         """
-        return "{}\n\n{}".format(self.heavy_chain.get_segmented_vdj_nt(), self.light_chain.get_segmented_vdj_nt())
+        return "{}\n\n{}".format(
+            self.heavy_chain.get_segmented_vdj_nt(),
+            self.light_chain.get_segmented_vdj_nt(),
+        )
 
     def get_segmented_vdj_aa(self):
         """Get segmented VDJ nucleotide object
@@ -456,7 +474,10 @@ class AntibodyNT:
 
         CAGGCGGTGCTCACCCAGCCACCTAGTGTGAGCGGTGCACCTGGGCAGCGTGTGACCATCTCTTGCACTGGGTCC TCTTCCAACATCGGCGCCGGTTACGGC GTGCACTGGTACCAACAGCTTCCGGGCACCGCCCCCAAGCTGCTCATCTAC GGCGACAGC AATCGTCCATCAGGGGTTCCGGATCGCTTTAGCGGGTCTAAGTCAGGGACCTCAGCCTCCCTGGCGATCACTGGGCTGCAGGCGGAGGACGAGGCAGACTATTACTGC CAGTCTTATGACAATTCCTTGAGTGGC TTCGGGGGAGGGACCCAGTTGACTGTTCTT
         """
-        return "{}\n\n{}".format(self.heavy_chain.get_segmented_vdj_aa(), self.light_chain.get_segmented_vdj_aa())
+        return "{}\n\n{}".format(
+            self.heavy_chain.get_segmented_vdj_aa(),
+            self.light_chain.get_segmented_vdj_aa(),
+        )
 
     def get_segmented_alignment_nt(self, line_length=80) -> str:
         """Get segmented alignment of HL pair
@@ -658,4 +679,9 @@ class AntibodyNT:
         return f"Heavy\n{self.heavy_chain.__repr__()}\n\nLight\n{self.light_chain.__repr__()}"
 
     def __eq__(self, other):
-        return all([self.heavy_chain == other.heavy_chain, self.light_chain == other.light_chain])
+        return all(
+            [
+                self.heavy_chain == other.heavy_chain,
+                self.light_chain == other.light_chain,
+            ]
+        )

@@ -158,8 +158,8 @@ def _test_auxilary_file_structure(tmpdir):
         igblast_aux.append(df)
     igblast_aux = pd.concat(igblast_aux).reset_index(drop=True).set_index(["common", "db_type", "gene"])
     common_index = my_aux.index.intersection(igblast_aux.index)
-    sadie_missing_aux = igblast_aux.index.difference(my_aux.index)
-    igblast_missing_sadie = my_aux.index.difference(igblast_aux.index)
+    # sadie_missing_aux = igblast_aux.index.difference(my_aux.index)
+    # igblast_missing_sadie = my_aux.index.difference(igblast_aux.index)
 
     my_aux_common_index = my_aux.loc[common_index]
     igblast_common_index = igblast_aux.loc[common_index]
@@ -168,12 +168,19 @@ def _test_auxilary_file_structure(tmpdir):
             pd._testing.assert_series_equal(igblast_common_index.loc[index], my_aux_common_index.loc[index])
         except AssertionError:
             if index in known_aux_exceptions.keys():
-                print(index, "is known exception exception", known_aux_exceptions[index], "skipping")
+                print(
+                    index,
+                    "is known exception exception",
+                    known_aux_exceptions[index],
+                    "skipping",
+                )
                 continue
             else:
                 # raise again since pandas gives way better info
                 pd._testing.assert_series_equal(
-                    igblast_common_index.loc[index], my_aux_common_index.loc[index], obj=index
+                    igblast_common_index.loc[index],
+                    my_aux_common_index.loc[index],
+                    obj=index,
                 )
     return True
 
@@ -189,12 +196,7 @@ def test_make_igblast_reference():
         assert os.path.exists(tmpdir)
 
         directories_created = glob.glob(tmpdir + "/*")
-        assert sorted(directories_created) == sorted(
-            [
-                f"{tmpdir}/imgt",
-                f"{tmpdir}/custom",
-            ]
-        )
+        assert sorted(directories_created) == sorted([f"{tmpdir}/imgt", f"{tmpdir}/custom"])
         imgt_blast_dir = [
             i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/*/**/*.fasta", recursive=True)
         ]

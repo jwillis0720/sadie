@@ -1,33 +1,38 @@
 """The ANARCI Abstraction to make it usuable"""
 
+# Std library
 import bz2
 import glob
 import gzip
-import json
 import logging
 import multiprocessing
+import filetype
 import os
-import pickle
 import shutil
 import tempfile
 import platform
 
-# Std library
 import warnings
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import List, Tuple, Union
-
-import filetype
-import pandas as pd
+from typing import List, Tuple
 
 # third party
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
-from .aa._anarci import check_for_j, dataframe_output, number_sequences_from_alignment, run_hmmer
-from .numbering import scheme_numbering
-from .exception import AnarciDuplicateIdError, BadAnarciArgument, BadRequstedFileType, HmmerExecutionError
+from .aa._anarci import (
+    check_for_j,
+    dataframe_output,
+    number_sequences_from_alignment,
+    run_hmmer,
+)
+from .exception import (
+    AnarciDuplicateIdError,
+    BadAnarciArgument,
+    BadRequstedFileType,
+    HmmerExecutionError,
+)
 from .result import AnarciResult, AnarciResults
 from ..utility import split_fasta
 
@@ -44,7 +49,17 @@ class Anarci:
         region_assign="imgt",
         allowed_chain=["H", "K", "L"],
         assign_germline=True,
-        allowed_species=["human", "mouse", "rat", "rabbit", "rhesus", "pig", "alpaca", "dog", "cat"],
+        allowed_species=[
+            "human",
+            "mouse",
+            "rat",
+            "rabbit",
+            "rhesus",
+            "pig",
+            "alpaca",
+            "dog",
+            "cat",
+        ],
         tempdir="",
         hmmerpath="",
     ):
@@ -74,7 +89,10 @@ class Anarci:
         _executable = "hmmscan"
         if not path:  # try and use package hmmscan
             system = platform.system().lower()
-            hmmer_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/{_executable}")
+            hmmer_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                f"bin/{system}/{_executable}",
+            )
             # check if its
             if os.path.exists(hmmer_path):
                 # check if it's executable
@@ -93,7 +111,8 @@ class Anarci:
                     self._hmmerpath = hmmer_path
                 else:
                     raise HmmerExecutionError(
-                        hmmer_path, f"Can't find hmmrscan in package {__package__} or in path {os.env['PATH']}"
+                        hmmer_path,
+                        f"Can't find hmmrscan in package {__package__} or in path {os.env['PATH']}",
                     )
         else:  # User specifed custome path
             logger.debug(f"User passed custom hmmer path {path}")
@@ -102,7 +121,10 @@ class Anarci:
                 self._hmmerpath = hmmer_path
             else:
                 _access = os.access(hmmer_path, os.X_OK)
-                raise HmmerExecutionError(hmmer_path, f"Custom hmmer path is not executable {hmmer_path}, {_access} ")
+                raise HmmerExecutionError(
+                    hmmer_path,
+                    f"Custom hmmer path is not executable {hmmer_path}, {_access} ",
+                )
 
     @property
     def region_definition(self) -> str:
@@ -213,7 +235,17 @@ class Anarci:
         allowed_species: list,
             ["human", "mouse", "rat", "rabbit", "rhesus ", "pig", "alpaca"],
         """
-        _allowed_species = ["human", "mouse", "rat", "rabbit", "rhesus", "pig", "alpaca", "dog", "cat"]
+        _allowed_species = [
+            "human",
+            "mouse",
+            "rat",
+            "rabbit",
+            "rhesus",
+            "pig",
+            "alpaca",
+            "dog",
+            "cat",
+        ]
         _diff = list(set(map(lambda x: x.lower(), allowed_species)).difference(_allowed_species))
         if _diff:
             raise BadAnarciArgument(_diff, _allowed_species)

@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module containing functions to convert hmm alignment to a numbering scheme. 
+Module containing functions to convert hmm alignment to a numbering scheme.
 
 Currently implemented
 
@@ -24,7 +24,7 @@ IMGT
 Chothia
 Kabat
 Martin (Extended Chothia)
-Aho 
+Aho
 Wolfguy
 
 For TR's
@@ -35,21 +35,21 @@ IMGT
 Functions are written to a template:
 
 There are 128 match states in the HMMs (these are the IMGT states). The alignment to these states must be converted to
-correspond to the scheme of choice. 
+correspond to the scheme of choice.
 
 We define:
   - a state string consisting of 'X' and 'I' where:
     X  means that for the state there is an equivalent position in the numbering scheme.
-    I  means that for the state there is not an equivalent position in the numbering scheme. It should therefore be 
+    I  means that for the state there is not an equivalent position in the numbering scheme. It should therefore be
        considered as an insertion in the scheme.
-       
-  - a region string consisting of characters (integers in the currently implemented schemes). Each character 
-corresponds to a contiguous region. Therefore each state can be assigned a region according to the scheme. 
+
+  - a region string consisting of characters (integers in the currently implemented schemes). Each character
+corresponds to a contiguous region. Therefore each state can be assigned a region according to the scheme.
 
   - a mapping between region characters and region indices as a dictionary. e.g. the first region character maps
 to 0, second to 1 ...
 
-  - a dictionary containing the difference between state number (imgt) and scheme number at the *beginning* of 
+  - a dictionary containing the difference between state number (imgt) and scheme number at the *beginning* of
 each region using the region indices as keys and the difference as values.
 
   - the number of regions defined
@@ -58,22 +58,22 @@ each region using the region indices as keys and the difference as values.
 will allow the length of the region to be the number of residues found instead of the number of possible states plus
 insertions.
 
- 
+
 This all goes into the _number_regions function along with the sequence and the state_vector (the alignment from the
 HMM).
 
-_number regions will then divide the aligned part of the sequence into as many regions as defined above. Within each 
-region it will give a numbering according to the input parameters. A list of lists will be returned containing the 
+_number regions will then divide the aligned part of the sequence into as many regions as defined above. Within each
+region it will give a numbering according to the input parameters. A list of lists will be returned containing the
 numbered sequence for each region.
 
 Some of the regions will not be numbered correctly according to the scheme. For example the insertions for the CDRs
 will not necessarily be on the correct residue. For each different scheme these regions are then modified (see code
-for implementation) 
+for implementation)
 
 Finally the full numbered sequence is compiled and returned to the calling function.
 ---------------------------------------------------------------------------------------------------------------------
 
-Other schemes can be implemented following the template above. 
+Other schemes can be implemented following the template above.
 
 
 """
@@ -487,7 +487,7 @@ def smooth_insertions(state_vector):
                 if reg == -1:  # FW1, only adjust if there are the same or more N terminal deletions than insertions
                     nt_dels = state_buffer[0][0][0] - 1  # Missing states
                     for (_id, _type), _si in state_buffer:  # Explicit deletion states.
-                        if _type == "d" or _si == None:
+                        if _type == "d" or _si is None:
                             nt_dels += 1
                         else:  # First residue found
                             break
@@ -549,7 +549,14 @@ def smooth_insertions(state_vector):
 
 # General function to give annotations for regions that have direct mappings onto the hmm alignment (imgt states)
 def _number_regions(
-    sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+    sequence,
+    state_vector,
+    state_string,
+    region_string,
+    region_index_dict,
+    rels,
+    n_regions,
+    exclude_deletions,
 ):
     """
     General function to number a sequence and divide it into different regions
@@ -649,9 +656,7 @@ def _number_regions(
 # They have two stages: Perform the mapping between imgt and the scheme; Renumber those regions that do not map nicely onto imgt (e.g. CDR insertions)
 
 
-########
 # IMGT #
-########
 # - Renumbering of the CDR 1 and 2 regions in IMGT has now been implemented to ensure consistency with the gapping rules of the
 # scheme. Previously gaps were defined using the HMM alignment as the underlying model was already based on the IMGT scheme. This
 # worked well in original test cases but appears to give inaccurate annotations in a significant number of cases in NGS size
@@ -698,12 +703,17 @@ def number_imgt(state_vector, sequence):
     exclude_deletions = [1, 3, 5]
 
     _regions, startindex, endindex = _number_regions(
-        sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+        sequence,
+        state_vector,
+        state_string,
+        region_string,
+        region_index_dict,
+        rels,
+        n_regions,
+        exclude_deletions,
     )
 
-    ###############
     # Renumbering #
-    ###############
 
     _numbering = [
         _regions[0],  # Fw1
@@ -804,7 +814,7 @@ def get_imgt_cdr(length, maxlength, start, end):
             front += 1
 
     # Add insertions around the centre point
-    centrepoint = [i for i, v in enumerate(annotations) if v == None]
+    centrepoint = [i for i, v in enumerate(annotations) if v is None]
     if not centrepoint:
         return annotations
 
@@ -829,9 +839,7 @@ def get_imgt_cdr(length, maxlength, start, end):
     return annotations
 
 
-#######
 # Aho #
-#######
 # Heuristic regapping based on the AHo specification as detailed on AAAAA website. Gap order depends on the chain type
 def number_aho(state_vector, sequence, chain_type):
     """
@@ -880,12 +888,17 @@ def number_aho(state_vector, sequence, chain_type):
     exclude_deletions = [1, 3, 4, 5, 7, 9]
 
     _regions, startindex, endindex = _number_regions(
-        sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+        sequence,
+        state_vector,
+        state_string,
+        region_string,
+        region_index_dict,
+        rels,
+        n_regions,
+        exclude_deletions,
     )
 
-    ###############
     # Renumbering #
-    ###############
 
     _numbering = [
         _regions[0],
@@ -901,9 +914,7 @@ def number_aho(state_vector, sequence, chain_type):
         _regions[10],
     ]
 
-    ##################################
     # Move the indel in fw 1 onto 8  #
-    ##################################
 
     # Place indels on 8
     # Find the first recognised residue and change the expected length of the stretch given the starting point.
@@ -923,9 +934,8 @@ def number_aho(state_vector, sequence, chain_type):
             annotations = sorted(ordered_deletions[max(stretch_len - length, 0) :])
         _numbering[1] = [(annotations[i], _regions[1][i][1]) for i in range(length)]
 
-    #########
     # CDR 1 # - divided in two parts in the Aho scheme.
-    ######### - gaps at 28 depending on the chain type.
+    # - gaps at 28 depending on the chain type.
 
     # "VH domains, as well as the majority of the VA domains, have a one-residue gap in position 28, VK and VB domains a two-residue
     # gap in position 27 and 28."
@@ -993,9 +1003,7 @@ def number_aho(state_vector, sequence, chain_type):
 
     _numbering[3] = [(annotations[i], _regions[3][i][1]) for i in range(length)]
 
-    #########
     # CDR 2 #
-    #########
     # Gaps are placed symetically at 63.
     # For VA a second gap is placed at 74 and 75 according to the text in the paper. However, all the reference sequences show a
     # gap at 73 and 74 see:
@@ -1009,9 +1017,51 @@ def number_aho(state_vector, sequence, chain_type):
     # This region describes 58 to 77 inclusive
 
     if chain_type == "A":
-        ordered_deletions = [74, 73, 63, 62, 64, 61, 65, 60, 66, 59, 67, 58, 68, 69, 70, 71, 72, 75, 76, 77]
+        ordered_deletions = [
+            74,
+            73,
+            63,
+            62,
+            64,
+            61,
+            65,
+            60,
+            66,
+            59,
+            67,
+            58,
+            68,
+            69,
+            70,
+            71,
+            72,
+            75,
+            76,
+            77,
+        ]
     else:
-        ordered_deletions = [63, 62, 64, 61, 65, 60, 66, 59, 67, 58, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77]
+        ordered_deletions = [
+            63,
+            62,
+            64,
+            61,
+            65,
+            60,
+            66,
+            59,
+            67,
+            58,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+        ]
 
     length = len(_regions[5])
 
@@ -1029,10 +1079,8 @@ def number_aho(state_vector, sequence, chain_type):
 
     _numbering[5] = [(annotations[i], _regions[5][i][1]) for i in range(length)]
 
-    #########
-    # FW3   ############################################
+    # FW3
     # Move deletions onto 86 then 85. Insertions on 85 #
-    ####################################################
     ordered_deletions = [86, 85, 87, 84, 88, 83, 89, 82, 90, 81, 91, 80, 92, 79, 93, 78]
     length = len(_regions[7])
 
@@ -1050,9 +1098,7 @@ def number_aho(state_vector, sequence, chain_type):
 
     _numbering[7] = [(annotations[i], _regions[7][i][1]) for i in range(length)]
 
-    #########
     # CDR 3 #
-    #########
     # Deletions on 123.
     # Point of the Aho scheme is that they have accounted for all possible positions.
     # Assumption is that no more insertions will occur....
@@ -1120,9 +1166,7 @@ def number_aho(state_vector, sequence, chain_type):
     return numbering, startindex, endindex
 
 
-###########
 # Chothia #
-###########
 
 # Heavy chains
 def number_chothia_heavy(state_vector, sequence):
@@ -1168,12 +1212,17 @@ def number_chothia_heavy(state_vector, sequence):
     exclude_deletions = [0, 2, 4, 6]  # Don't put deletions in these regions
 
     _regions, startindex, endindex = _number_regions(
-        sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+        sequence,
+        state_vector,
+        state_string,
+        region_string,
+        region_index_dict,
+        rels,
+        n_regions,
+        exclude_deletions,
     )
 
-    ###############
     # Renumbering #
-    ###############
 
     _numbering = [[], _regions[1], [], _regions[3], [], _regions[5], [], _regions[7]]
 
@@ -1208,7 +1257,10 @@ def number_chothia_heavy(state_vector, sequence):
             [(_, " ") for _ in range(23, 32)] + [(31, alphabet[i]) for i in range(insertions)] + [(32, " "), (33, " ")]
         )
     else:
-        annotations = [(_, " ") for _ in range(23, 32)][: length - 2] + [(32, " "), (33, " ")][:length]
+        annotations = [(_, " ") for _ in range(23, 32)][: length - 2] + [
+            (32, " "),
+            (33, " "),
+        ][:length]
 
     _numbering[2] = [(annotations[i], _regions[2][i][1]) for i in range(length)]
 
@@ -1237,7 +1289,6 @@ def number_chothia_heavy(state_vector, sequence):
     length = len(_regions[6])
     if length > 36:
         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[6]))), "chothia")
-        return [], startindex, endindex  # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="heavy")
     _numbering[6] = [(annotations[i], _regions[6][i][1]) for i in range(length)]
 
@@ -1297,14 +1348,19 @@ def number_chothia_light(state_vector, sequence):
     exclude_deletions = [1, 3, 4, 5]
 
     _regions, startindex, endindex = _number_regions(
-        sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+        sequence,
+        state_vector,
+        state_string,
+        region_string,
+        region_index_dict,
+        rels,
+        n_regions,
+        exclude_deletions,
     )
 
     _numbering = [_regions[0], [], _regions[2], [], _regions[4], [], _regions[6]]
 
-    ###############
     # Renumbering #
-    ###############
 
     # CDR1
     # Chothia L region 2 (index 1)
@@ -1312,7 +1368,15 @@ def number_chothia_light(state_vector, sequence):
     length = len(_regions[1])
     insertions = max(length - 11, 0)  # Eleven positions can be accounted for, the remainder are insertions
     # Delete forward from 31
-    annotations = [(24, " "), (25, " "), (26, " "), (27, " "), (28, " "), (29, " "), (30, " ")][: max(0, length)]
+    annotations = [
+        (24, " "),
+        (25, " "),
+        (26, " "),
+        (27, " "),
+        (28, " "),
+        (29, " "),
+        (30, " "),
+    ][: max(0, length)]
     annotations += [(30, alphabet[i]) for i in range(insertions)]
     annotations += [(31, " "), (32, " "), (33, " "), (34, " ")][abs(min(0, length - 11)) :]
     _numbering[1] = [(annotations[i], _regions[1][i][1]) for i in range(length)]
@@ -1360,9 +1424,7 @@ def number_chothia_light(state_vector, sequence):
     return gap_missing(_numbering), startindex, endindex
 
 
-#########
 # Kabat #
-#########
 
 # Heavy chains
 def number_kabat_heavy(state_vector, sequence):
@@ -1407,12 +1469,17 @@ def number_kabat_heavy(state_vector, sequence):
     exclude_deletions = [2, 4, 6]
 
     _regions, startindex, endindex = _number_regions(
-        sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+        sequence,
+        state_vector,
+        state_string,
+        region_string,
+        region_index_dict,
+        rels,
+        n_regions,
+        exclude_deletions,
     )
 
-    ###############
     # Renumbering #
-    ###############
 
     # Renumbering required for 0, 2, 4, 6 regions in Chothia heavy
 
@@ -1472,8 +1539,8 @@ def number_kabat_heavy(state_vector, sequence):
     length = len(_regions[6])
     if length > 36:
         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[6]))), "kabat")
-        return [], startindex, endindex  # Too many insertions. Do not apply numbering.
-    annotations = get_cdr3_annotations(length, scheme="kabat", chain_type="heavy")  #  Chothia and Kabat the same here
+    #  Chothia and Kabat the same hereP
+    annotations = get_cdr3_annotations(length, scheme="kabat", chain_type="heavy")
     _numbering[6] = [(annotations[i], _regions[6][i][1]) for i in range(length)]
 
     # Return the full vector and the start and end indices of the numbered region of the sequence
@@ -1530,14 +1597,19 @@ def number_kabat_light(state_vector, sequence):
     exclude_deletions = [1, 3, 5]
 
     _regions, startindex, endindex = _number_regions(
-        sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+        sequence,
+        state_vector,
+        state_string,
+        region_string,
+        region_index_dict,
+        rels,
+        n_regions,
+        exclude_deletions,
     )
 
     _numbering = [_regions[0], [], _regions[2], [], _regions[4], [], _regions[6]]
 
-    ###############
     # Renumbering #
-    ###############
 
     # CDR1
     # Kabat L region 2 (index 1)
@@ -1547,9 +1619,15 @@ def number_kabat_light(state_vector, sequence):
     # Delete forward from 28
     annotations = [(24, " "), (25, " "), (26, " "), (27, " ")][: max(0, length)]
     annotations += [(27, alphabet[i]) for i in range(insertions)]
-    annotations += [(28, " "), (29, " "), (30, " "), (31, " "), (32, " "), (33, " "), (34, " ")][
-        abs(min(0, length - 11)) :
-    ]
+    annotations += [
+        (28, " "),
+        (29, " "),
+        (30, " "),
+        (31, " "),
+        (32, " "),
+        (33, " "),
+        (34, " "),
+    ][abs(min(0, length - 11)) :]
     _numbering[1] = [(annotations[i], _regions[1][i][1]) for i in range(length)]
 
     # CDR2
@@ -1581,9 +1659,7 @@ def number_kabat_light(state_vector, sequence):
     return gap_missing(_numbering), startindex, endindex
 
 
-#############################
 # Martin (extended Chothia) #
-#############################
 
 # Heavy chains
 def number_martin_heavy(state_vector, sequence):
@@ -1631,12 +1707,17 @@ def number_martin_heavy(state_vector, sequence):
     exclude_deletions = [2, 4, 5, 6]
 
     _regions, startindex, endindex = _number_regions(
-        sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+        sequence,
+        state_vector,
+        state_string,
+        region_string,
+        region_index_dict,
+        rels,
+        n_regions,
+        exclude_deletions,
     )
 
-    ###############
     # Renumbering #
-    ###############
 
     # Renumbering required for 0, 2, 4, 6 regions in Chothia heavy
 
@@ -1668,7 +1749,10 @@ def number_martin_heavy(state_vector, sequence):
             [(_, " ") for _ in range(23, 32)] + [(31, alphabet[i]) for i in range(insertions)] + [(32, " "), (33, " ")]
         )
     else:
-        annotations = [(_, " ") for _ in range(23, 32)][: length - 2] + [(32, " "), (33, " ")][:length]
+        annotations = [(_, " ") for _ in range(23, 32)][: length - 2] + [
+            (32, " "),
+            (33, " "),
+        ][:length]
     _numbering[2] = [(annotations[i], _regions[2][i][1]) for i in range(length)]
 
     # CDR2
@@ -1706,7 +1790,6 @@ def number_martin_heavy(state_vector, sequence):
     length = len(_regions[6])
     if length > 36:
         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[5]))), "martin")
-        return [], startindex, endindex  # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="heavy")
     _numbering[6] = [(annotations[i], _regions[6][i][1]) for i in range(length)]
 
@@ -1745,9 +1828,7 @@ def number_martin_light(state_vector, sequence):
     return number_chothia_light(state_vector, sequence)
 
 
-###########
 # Wolfguy #
-###########
 # The Wolfguy numbering scheme is an in-house scheme used at Roche. It has been described publicly in the paper:
 # Prediction of VH-VL domain orientation for antibody variable domain modeling. Bujotzek A. et al. Protein 2015 83(4) 681-95
 #
@@ -1802,12 +1883,17 @@ def number_wolfguy_heavy(state_vector, sequence):
     exclude_deletions = [1, 3, 5]
 
     _regions, startindex, endindex = _number_regions(
-        sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+        sequence,
+        state_vector,
+        state_string,
+        region_string,
+        region_index_dict,
+        rels,
+        n_regions,
+        exclude_deletions,
     )
 
-    ###############
     # Renumbering #
-    ###############
 
     # Renumbering required for 1, 3, 5 regions in wolfguy heavy
     _numbering = [_regions[0], [], _regions[2], [], _regions[4], [], _regions[6]]
@@ -1847,7 +1933,6 @@ def number_wolfguy_heavy(state_vector, sequence):
 
     if length > len(ordered_deletions):
         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[5]))), "wolfguy")
-        return [], startindex, endindex  # Too many insertions. Do not apply numbering.
     annotations = sorted(ordered_deletions[:length])
     _numbering[5] = [((annotations[i], " "), _regions[5][i][1]) for i in range(length)]
 
@@ -1887,26 +1972,67 @@ def number_wolfguy_light(state_vector, sequence):
     # Region string - regions that should be treated separately in putting the numbering together
     region_string = "1111111AAABBBBBBBBBBBBB222222222222222223333333333333334444444444444455555555555666677777777777777777777888888888888899999999999"
 
-    region_index_dict = {"1": 0, "A": 1, "B": 2, "2": 3, "3": 4, "4": 5, "5": 6, "6": 7, "7": 8, "8": 9, "9": 10}
+    region_index_dict = {
+        "1": 0,
+        "A": 1,
+        "B": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": 7,
+        "7": 8,
+        "8": 9,
+        "9": 10,
+    }
 
     # Define how the scheme's numbering differs from IMGT at the start of each region.
     # This is updated in the loop below
-    rels = {0: 500, 1: 500, 2: 500, 3: 527, 4: 560, 5: 595, 6: 631, 7: 630, 8: 630, 9: 646, 10: 683}
+    rels = {
+        0: 500,
+        1: 500,
+        2: 500,
+        3: 527,
+        4: 560,
+        5: 595,
+        6: 631,
+        7: 630,
+        8: 630,
+        9: 646,
+        10: 683,
+    }
 
     n_regions = 11
 
     exclude_deletions = [1, 3, 5, 7, 9]
 
     _regions, startindex, endindex = _number_regions(
-        sequence, state_vector, state_string, region_string, region_index_dict, rels, n_regions, exclude_deletions
+        sequence,
+        state_vector,
+        state_string,
+        region_string,
+        region_index_dict,
+        rels,
+        n_regions,
+        exclude_deletions,
     )
 
-    ###############
     # Renumbering #
-    ###############
 
     # Renumbering required for 1, 3, 5 regions in wolfguy heavy
-    _numbering = [_regions[0], [], _regions[2], [], _regions[4], [], _regions[6], [], _regions[8], [], _regions[10]]
+    _numbering = [
+        _regions[0],
+        [],
+        _regions[2],
+        [],
+        _regions[4],
+        [],
+        _regions[6],
+        [],
+        _regions[8],
+        [],
+        _regions[10],
+    ]
 
     # Gaps in the first section go 508 instead of the imgt 510 equivalent
     length = len(_regions[1])
@@ -1967,33 +2093,138 @@ def _get_wolfguy_L1(seq, length):
         9: [["9", "XXXXXXXXX", [551, 552, 554, 556, 563, 572, 597, 598, 599]]],
         10: [["10", "XXXXXXXXXX", [551, 552, 553, 556, 561, 562, 571, 597, 598, 599]]],
         11: [
-            ["11a", "RASQDISSYLA", [551, 552, 553, 556, 561, 562, 571, 596, 597, 598, 599]],
-            ["11b", "GGNNIGSKSVH", [551, 552, 554, 556, 561, 562, 571, 572, 597, 598, 599]],
-            ["11b.2", "SGDQLPKKYAY", [551, 552, 554, 556, 561, 562, 571, 572, 597, 598, 599]],
+            [
+                "11a",
+                "RASQDISSYLA",
+                [551, 552, 553, 556, 561, 562, 571, 596, 597, 598, 599],
+            ],
+            [
+                "11b",
+                "GGNNIGSKSVH",
+                [551, 552, 554, 556, 561, 562, 571, 572, 597, 598, 599],
+            ],
+            [
+                "11b.2",
+                "SGDQLPKKYAY",
+                [551, 552, 554, 556, 561, 562, 571, 572, 597, 598, 599],
+            ],
         ],
         12: [
-            ["12a", "TLSSQHSTYTIE", [551, 552, 553, 554, 555, 556, 561, 563, 572, 597, 598, 599]],
-            ["12b", "TASSSVSSSYLH", [551, 552, 553, 556, 561, 562, 571, 595, 596, 597, 598, 599]],
-            ["12c", "RASQSVxNNYLA", [551, 552, 553, 556, 561, 562, 571, 581, 596, 597, 598, 599]],
-            ["12d", "rSShSIrSrrVh", [551, 552, 553, 556, 561, 562, 571, 581, 596, 597, 598, 599]],
+            [
+                "12a",
+                "TLSSQHSTYTIE",
+                [551, 552, 553, 554, 555, 556, 561, 563, 572, 597, 598, 599],
+            ],
+            [
+                "12b",
+                "TASSSVSSSYLH",
+                [551, 552, 553, 556, 561, 562, 571, 595, 596, 597, 598, 599],
+            ],
+            [
+                "12c",
+                "RASQSVxNNYLA",
+                [551, 552, 553, 556, 561, 562, 571, 581, 596, 597, 598, 599],
+            ],
+            [
+                "12d",
+                "rSShSIrSrrVh",
+                [551, 552, 553, 556, 561, 562, 571, 581, 596, 597, 598, 599],
+            ],
         ],
         13: [
-            ["13a", "SGSSSNIGNNYVS", [551, 552, 554, 555, 556, 557, 561, 562, 571, 572, 597, 598, 599]],
-            ["13b", "TRSSGSLANYYVQ", [551, 552, 553, 554, 556, 561, 562, 563, 571, 572, 597, 598, 599]],
+            [
+                "13a",
+                "SGSSSNIGNNYVS",
+                [551, 552, 554, 555, 556, 557, 561, 562, 571, 572, 597, 598, 599],
+            ],
+            [
+                "13b",
+                "TRSSGSLANYYVQ",
+                [551, 552, 553, 554, 556, 561, 562, 563, 571, 572, 597, 598, 599],
+            ],
         ],
         14: [
-            ["14a", "RSSTGAVTTSNYAN", [551, 552, 553, 554, 555, 561, 562, 563, 564, 571, 572, 597, 598, 599]],
-            ["14b", "TGTSSDVGGYNYVS", [551, 552, 554, 555, 556, 557, 561, 562, 571, 572, 596, 597, 598, 599]],
+            [
+                "14a",
+                "RSSTGAVTTSNYAN",
+                [551, 552, 553, 554, 555, 561, 562, 563, 564, 571, 572, 597, 598, 599],
+            ],
+            [
+                "14b",
+                "TGTSSDVGGYNYVS",
+                [551, 552, 554, 555, 556, 557, 561, 562, 571, 572, 596, 597, 598, 599],
+            ],
         ],
-        15: [["15", "XXXXXXXXXXXXXXX", [551, 552, 553, 556, 561, 562, 563, 581, 582, 594, 595, 596, 597, 598, 599]]],
+        15: [
+            [
+                "15",
+                "XXXXXXXXXXXXXXX",
+                [
+                    551,
+                    552,
+                    553,
+                    556,
+                    561,
+                    562,
+                    563,
+                    581,
+                    582,
+                    594,
+                    595,
+                    596,
+                    597,
+                    598,
+                    599,
+                ],
+            ]
+        ],
         16: [
-            ["16", "XXXXXXXXXXXXXXXX", [551, 552, 553, 556, 561, 562, 563, 581, 582, 583, 594, 595, 596, 597, 598, 599]]
+            [
+                "16",
+                "XXXXXXXXXXXXXXXX",
+                [
+                    551,
+                    552,
+                    553,
+                    556,
+                    561,
+                    562,
+                    563,
+                    581,
+                    582,
+                    583,
+                    594,
+                    595,
+                    596,
+                    597,
+                    598,
+                    599,
+                ],
+            ]
         ],
         17: [
             [
                 "17",
                 "XXXXXXXXXXXXXXXXX",
-                [551, 552, 553, 556, 561, 562, 563, 581, 582, 583, 584, 594, 595, 596, 597, 598, 599],
+                [
+                    551,
+                    552,
+                    553,
+                    556,
+                    561,
+                    562,
+                    563,
+                    581,
+                    582,
+                    583,
+                    584,
+                    594,
+                    595,
+                    596,
+                    597,
+                    598,
+                    599,
+                ],
             ]
         ],
     }
@@ -2035,9 +2266,7 @@ def gap_missing(numbering):
     return num[1:]
 
 
-######################
 # Annotation of CDR3 #
-######################
 
 
 def get_cdr3_annotations(length, scheme="imgt", chain_type=""):

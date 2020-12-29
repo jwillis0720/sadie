@@ -1,6 +1,5 @@
 """The setup script."""
 import sys
-import subprocess
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test
@@ -60,7 +59,7 @@ setup(
             "airr=sadie.airr.app:run_airr",
             "make-reference=sadie.reference.app:make_igblast_reference",
             "make-genebank=sadie.reference.app:make_genebank_files_from_dbma",
-        ],
+        ]
     },
     test_suite="tests",
     cmdclass={"tests": PyTest, "bdist_wheel": bdist_wheel},

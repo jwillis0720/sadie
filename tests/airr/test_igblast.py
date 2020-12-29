@@ -94,12 +94,18 @@ def test_antibody_igblast_file_run():
     ig_blast.aux_path = os.path.join(aux_path, "human_gl.aux")
     ig_blast.organism = "human"
     ig_blast._pre_check()
-    ##have to make this -2 to get a more specifc j gene match
+    # have to make this -2 to get a more specifc j gene match
     ig_blast.j_penalty = -2
     csv_dataframe = ig_blast.run_file(query).fillna("")
     expected_output_df = pd.read_csv(expected_output, index_col=0).fillna("")
 
-    pd._testing.assert_frame_equal(csv_dataframe, expected_output_df, check_like=True, check_exact=False, atol=0.001)
+    pd._testing.assert_frame_equal(
+        csv_dataframe,
+        expected_output_df,
+        check_like=True,
+        check_exact=False,
+        atol=0.001,
+    )
 
     query = fixture_file("fasta_inputs/light/PG9_L.fasta")
     expected_output = fixture_file("expected_outputs/PG9_L.csv.gz")

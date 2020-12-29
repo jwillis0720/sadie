@@ -1,15 +1,11 @@
 """[summary]"""
-import glob
 import logging
-import os
 import re
 import tempfile
-from pprint import pformat
 
 import pandas as pd
 from sadie.anarci import Anarci
-from Bio import Seq, SeqIO
-from numpy import nan
+from Bio import Seq
 
 from .imgt import assign_index_position, multiindex_pivot
 from .settings import MOTIF_LOOKUP, RENAME_DICT_TRANSLATE
@@ -97,10 +93,7 @@ def generate_v_segment_data(imgt_db_engine):
     ].apply(lambda x: Seq.Seq(x).translate().__str__())
 
     # Now do the same for custom
-    v_segment_only_clean_custom = custom.loc[
-        (custom["gene_segment"] == "V") & (custom["label"] != "v_gene_nt"),
-        :,
-    ]
+    v_segment_only_clean_custom = custom.loc[(custom["gene_segment"] == "V") & (custom["label"] != "v_gene_nt"), :]
     v_fit_index = (v_segment_only_clean_custom["nt_sequence_no_gaps"].str.len() % 3 == 0) | (
         v_segment_only_clean_custom["label"] == "cdr3_nt"
     )
@@ -174,16 +167,42 @@ def generate_v_segment_data(imgt_db_engine):
     # Add all v gene nt as defined by imgt
     v_segment_joined = v_segment_joined.merge(
         concat[concat["label"] == "v_gene_nt"][
-            ["common", "latin", "gene", "source", "nt_sequence_no_gaps", "nt_sequence_gaps"]
-        ].rename({"nt_sequence_no_gaps": "v_gene_nt_imgt", "nt_sequence_gaps": "v_gene_nt_imgt_gaps"}, axis=1),
+            [
+                "common",
+                "latin",
+                "gene",
+                "source",
+                "nt_sequence_no_gaps",
+                "nt_sequence_gaps",
+            ]
+        ].rename(
+            {
+                "nt_sequence_no_gaps": "v_gene_nt_imgt",
+                "nt_sequence_gaps": "v_gene_nt_imgt_gaps",
+            },
+            axis=1,
+        ),
         how="left",
     )
 
     # but lets keep track of the dropped genes
     dropped_v_genes = dropped_v_genes.merge(
         concat[concat["label"] == "v_gene_nt"][
-            ["common", "latin", "gene", "source", "nt_sequence_no_gaps", "nt_sequence_gaps"]
-        ].rename({"nt_sequence_no_gaps": "v_gene_nt_imgt", "nt_sequence_gaps": "v_gene_nt_imgt_gaps"}, axis=1),
+            [
+                "common",
+                "latin",
+                "gene",
+                "source",
+                "nt_sequence_no_gaps",
+                "nt_sequence_gaps",
+            ]
+        ].rename(
+            {
+                "nt_sequence_no_gaps": "v_gene_nt_imgt",
+                "nt_sequence_gaps": "v_gene_nt_imgt_gaps",
+            },
+            axis=1,
+        ),
         how="left",
     )
     # take our segmented definition and add it backtogether
@@ -264,7 +283,16 @@ def generate_v_segment_data(imgt_db_engine):
             ].apply(lambda x: "".join(x), axis=1)
             assignments_clean = assignments_clean.merge(
                 v_segment_joined[
-                    ["common", "latin", "gene", "source", "functional", "v_gene_nt_imgt", "v_gene_nt", "v_gene_aa"]
+                    [
+                        "common",
+                        "latin",
+                        "gene",
+                        "source",
+                        "functional",
+                        "v_gene_nt_imgt",
+                        "v_gene_nt",
+                        "v_gene_aa",
+                    ]
                 ],
                 on=["common", "latin", "gene", "source", "v_gene_aa"],
                 how="inner",
@@ -393,7 +421,14 @@ def generate_j_gene_data(engine):
         )
         for _, chain_df in species_df.groupby(species_df["gene"].str[0:4]):
             split_fw4_segments = chain_df.loc[
-                chain_df.index, ["common", "aa_sequence_no_gaps", "gene", "reading_frame", "nt_sequence_no_gaps"]
+                chain_df.index,
+                [
+                    "common",
+                    "aa_sequence_no_gaps",
+                    "gene",
+                    "reading_frame",
+                    "nt_sequence_no_gaps",
+                ],
             ].apply(split_fw4, axis=1)
             chain_dfs_append.append(chain_df.join(split_fw4_segments, how="outer"))
             # show(j_region, settings={"block": True})

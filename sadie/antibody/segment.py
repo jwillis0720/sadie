@@ -100,7 +100,7 @@ class AntibodySegment:
         start : int
             the start of the antibody segment
         """
-        ##setting the start index will call start_index setter and set everything else
+        # setting the start index will call start_index setter and set everything else
         self._start_index = start - 1
 
     @property
@@ -187,7 +187,12 @@ class AntibodySegment:
         return self._alignment
 
     def get_formatted_alignment(
-        self, source_name="germline", target_name="target", line_length=80, ljust=12, maxid=30
+        self,
+        source_name="germline",
+        target_name="target",
+        line_length=80,
+        ljust=12,
+        maxid=30,
     ) -> str:
         """Return a formatted alignment string using dots for matches
 
@@ -218,7 +223,7 @@ class AntibodySegment:
 
         """
         if not self._alignment:
-            warnings.warn(f"No germline set")
+            warnings.warn("No germline set")
             return self._alignment
         # grab germ and target
         _germ, _target = (self.alignment[0], self.alignment[1])
@@ -233,7 +238,10 @@ class AntibodySegment:
 
         # Change to alignment object since its so much easier to deal
         alignment_object = MultipleSeqAlignment(
-            [SeqRecord(Seq(formatted_germ), id=source_name), SeqRecord(Seq(formatted_target), id=target_name),]
+            [
+                SeqRecord(Seq(formatted_germ), id=source_name),
+                SeqRecord(Seq(formatted_target), id=target_name),
+            ]
         )
 
         return format_alignment(alignment_object, line_length, ljust, maxid)
@@ -318,7 +326,8 @@ class AntibodySegmentNT(AntibodySegment):
                     raise BadNTSequenceError(self.__class__.__name__, position, nt, "".join(accepted_nt))
                 if nt.upper() in EXTRA_NT:
                     warnings.warn(
-                        f"positon {position} in {self.__class__.__name__} is {nt}", BadNTSequenceWarning,
+                        f"positon {position} in {self.__class__.__name__} is {nt}",
+                        BadNTSequenceWarning,
                     )
         return nt_seq
 
@@ -388,7 +397,8 @@ class AntibodySegmentAA(AntibodySegment):
                     raise BadAASequenceError(self.__class__.__name__, position, amino, "".join(accepted_aa))
                 if amino.upper() in EXTRA_AMINO_ACIDS:
                     warnings.warn(
-                        f"positon {position} in {self.__class__.__name__} is {amino}", BadAASequenceWarning,
+                        f"positon {position} in {self.__class__.__name__} is {amino}",
+                        BadAASequenceWarning,
                     )
         return amino_acid
 

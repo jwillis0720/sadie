@@ -13,7 +13,7 @@ example_qualifiers_dict = {
     "scheme": "IMGT",
 }
 
-##Example Annotations
+# Example Annotations
 annotations = {
     "organism": "latin",
     "source": "species",
@@ -44,16 +44,16 @@ class GenBankFeature:
         self.end = end
         self.id = id
 
-        ##what type of feature is this
+        # what type of feature is this
         self.feature_type = feature_type
 
-        ###Can have other info about our feature
+        # Can have other info about our feature
         self.qualifier_dict = qualifier_dict
 
-        ##Feature Location
+        # Feature Location
         self.location = FeatureLocation(self.start, self.end)
 
-        ##our main feature
+        # our main feature
         self._feature = SeqFeature(self.location, type=self.feature_type, qualifiers=self.qualifier_dict)
 
     @property
@@ -82,7 +82,7 @@ class GenBank:
             self.name = id[0:16]
         self.description = description
 
-        ##Our main GB record
+        # Our main GB record
         self._record = SeqRecord(self.sequence, id=self.id, name=self.name, description=self.description)
 
     @property

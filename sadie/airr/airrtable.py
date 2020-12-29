@@ -156,9 +156,17 @@ class AirrTable:
             print(self._table["sequence_id"])
             self._fill_missing_fw4()
         liable_sequences = self._table[
-            self._table[["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]].apply(
-                self._check_j_gene_liability, axis=1
-            )
+            self._table[
+                [
+                    "fwr1_aa",
+                    "cdr1_aa",
+                    "fwr2_aa",
+                    "cdr2_aa",
+                    "fwr3_aa",
+                    "cdr3_aa",
+                    "fwr4_aa",
+                ]
+            ].apply(self._check_j_gene_liability, axis=1)
         ]
 
         # If these aren't productive, who gives a shit
@@ -166,7 +174,7 @@ class AirrTable:
         if not liable_sequences.empty:
             logger.warning(
                 f"""Caution - sequences {list(liable_sequences['sequence_id'])} have FW1-FW3 resolved but do not have the CDR3,
-                that is indicative that the J gene penalty needs to be lowered. Or that 
+                that is indicative that the J gene penalty needs to be lowered. Or that
                 air_api.igblast.j_penalty = -1
              """
             )
@@ -183,27 +191,42 @@ class AirrTable:
         # set those bool values
         self._table["productive"] = (
             self._table["productive"]
-            .map({"T": True, "F": False, True: True, False: False, nan: False}, na_action="ignore")
+            .map(
+                {"T": True, "F": False, True: True, False: False, nan: False},
+                na_action="ignore",
+            )
             .astype(bool)
         )
         self._table["stop_codon"] = (
             self._table["stop_codon"]
-            .map({"T": True, "F": False, True: True, False: False, nan: False}, na_action="ignore")
+            .map(
+                {"T": True, "F": False, True: True, False: False, nan: False},
+                na_action="ignore",
+            )
             .astype(bool)
         )
         self._table["vj_in_frame"] = (
             self._table["vj_in_frame"]
-            .map({"T": True, "F": False, True: True, False: False, nan: False}, na_action="ignore")
+            .map(
+                {"T": True, "F": False, True: True, False: False, nan: False},
+                na_action="ignore",
+            )
             .astype(bool)
         )
         self._table["rev_comp"] = (
             self._table["rev_comp"]
-            .map({"T": True, "F": False, True: True, False: False, nan: False}, na_action="ignore")
+            .map(
+                {"T": True, "F": False, True: True, False: False, nan: False},
+                na_action="ignore",
+            )
             .astype(bool)
         )
         self._table["complete_vdj"] = (
             self._table["complete_vdj"]
-            .map({"T": True, "F": False, True: True, False: False, nan: False}, na_action="ignore")
+            .map(
+                {"T": True, "F": False, True: True, False: False, nan: False},
+                na_action="ignore",
+            )
             .astype(bool)
         )
         self._table["locus"] = self._table["locus"].astype(
@@ -214,7 +237,15 @@ class AirrTable:
             lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1
         )
         self._table["vdj_aa"] = self._table[
-            ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]
+            [
+                "fwr1_aa",
+                "cdr1_aa",
+                "fwr2_aa",
+                "cdr2_aa",
+                "fwr3_aa",
+                "cdr3_aa",
+                "fwr4_aa",
+            ]
         ].apply(lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1)
 
     @property
@@ -472,7 +503,12 @@ class AirrTable:
                 # _locus = "_".join([_locus, _p])
             if not _complete_vdj:
                 _vdj = "Non-Complete"
-            qd_locus = {"locus": _locus, "species": species, "productive": _p, "VDJ": _vdj}
+            qd_locus = {
+                "locus": _locus,
+                "species": species,
+                "productive": _p,
+                "VDJ": _vdj,
+            }
             feature = GenBankFeature(_v_segment_start, _fw4_end, _locus, qualifier_dict=qd_locus)
             gb.add_feature(feature)
         return gb.record
@@ -570,7 +606,8 @@ class AirrTable:
                 logger.debug("no cdr3 ends are present")
                 return
             candidate_rows["fwr4"] = candidate_rows.apply(
-                lambda x: str(x["sequence"])[int(x["cdr3_end"]) : int(x["j_sequence_end"]) + 1], axis=1,
+                lambda x: str(x["sequence"])[int(x["cdr3_end"]) : int(x["j_sequence_end"]) + 1],
+                axis=1,
             )
             candidate_rows["fwr4_aa"] = candidate_rows["fwr4"].apply(lambda x: str(Seq(x).translate()))
             candidate_rows["fwr4_start"] = candidate_rows["cdr3_end"] + 1
@@ -638,7 +675,12 @@ class AirrTable:
 class ScfvAirrTable:
     """Class for joined airr tables that correspond to heavy and light entries"""
 
-    def __init__(self, heavy_airr_table: AirrTable, light_airr_table: AirrTable, join_on=["sequence_id", "sequence"]):
+    def __init__(
+        self,
+        heavy_airr_table: AirrTable,
+        light_airr_table: AirrTable,
+        join_on=("sequence_id", "sequence"),
+    ):
         """constructor for heavy light chain airr table
 
         Args:
@@ -648,12 +690,17 @@ class ScfvAirrTable:
         Raises:
             TypeError: If heavy and light are not instances of airr table
         """
-        if not all([isinstance(heavy_airr_table, AirrTable), isinstance(light_airr_table, AirrTable)]):
+        if not all(
+            [
+                isinstance(heavy_airr_table, AirrTable),
+                isinstance(light_airr_table, AirrTable),
+            ]
+        ):
             raise TypeError(
                 f"heavy_airr_table {heavy_airr_table} and light_airr_table {light_airr_table} must be instance of {AirrTable}"
             )
 
-        self.join_on = join_on
+        self.join_on = list(join_on)
         self._heavy = heavy_airr_table.set_index(join_on)
         self._light = light_airr_table.set_index(join_on)
         if sorted(self._heavy.index) != sorted(self._light.index):

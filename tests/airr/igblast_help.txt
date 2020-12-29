@@ -52,7 +52,7 @@ OPTIONAL ARGUMENTS
    Output file name
    Default = `-'
  -evalue <Real>
-   Expectation value (E) threshold for saving hits 
+   Expectation value (E) threshold for saving hits
    Default = `20'
  -word_size <Integer, >=4>
    Word size for wordfinder algorithm (length of best perfect match)
@@ -68,7 +68,7 @@ OPTIONAL ARGUMENTS
      4 = Flat query-anchored, no identities,
      7 = Tabular with comment lines
      19 = Rearrangement summary report (AIRR format)
-   
+
    Options 7 can be additionally configured to produce
    a custom format specified by space delimited format specifiers.
    The supported format specifiers are:
@@ -118,7 +118,7 @@ OPTIONAL ARGUMENTS
    	sblastnames means unique Subject Blast Name(s), separated by a ';'
    			 (in alphabetical order)
    	sskingdoms means unique Subject Super Kingdom(s), separated by a ';'
-   			 (in alphabetical order) 
+   			 (in alphabetical order)
    	    stitle means Subject Title
    	salltitles means All Subject Title(s), separated by a '<>'
    	   sstrand means Subject Strand
@@ -154,7 +154,7 @@ OPTIONAL ARGUMENTS
 
  *** Statistical options
  -dbsize <Int8>
-   Effective length of the database 
+   Effective length of the database
  -searchsp <Int8, >=0>
    Effective length of the search space
  -sum_stats <Boolean>
@@ -190,7 +190,7 @@ OPTIONAL ARGUMENTS
    File containing the coding frame start positions for sequences in germline
    J database
  -min_D_match <Integer, >=5>
-   Required minimal consecutive nucleotide base matches for D genes 
+   Required minimal consecutive nucleotide base matches for D genes
  -V_penalty <Integer, (>-4 and <0)>
    Penalty for a nucleotide mismatch in V gene
    Default = `-1'
@@ -201,7 +201,7 @@ OPTIONAL ARGUMENTS
    Penalty for a nucleotide mismatch in J gene
    Default = `-2'
  -num_clonotype <Integer, >=0>
-   Number of top clonotypes to show 
+   Number of top clonotypes to show
    Default = `100'
  -clonotype_out <File_Out>
    Output file name for clonotype info
@@ -246,4 +246,3 @@ OPTIONAL ARGUMENTS
  -remote
    Execute search remotely?
     * Incompatible with:  num_threads
-

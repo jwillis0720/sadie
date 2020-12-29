@@ -5,7 +5,6 @@ import pytest
 from pkg_resources import resource_filename
 
 
-from Bio.Seq import Seq
 import pandas as pd
 
 from sadie.airr import AirrTable
@@ -33,7 +32,14 @@ def test_airr_init():
     # test we can read in json too
     test_json = fixture_file("airr_tables/heavy_sample.json.gz")
     airr_table = AirrTable.read_json(test_json)
-    assert airr_table.non_airr_columns == ["cdr3_aa_length", "chain", "d_family", "j_family", "species", "v_family"]
+    assert airr_table.non_airr_columns == [
+        "cdr3_aa_length",
+        "chain",
+        "d_family",
+        "j_family",
+        "species",
+        "v_family",
+    ]
     assert not airr_table.empty
 
     # I will not accept a busted table sam I am

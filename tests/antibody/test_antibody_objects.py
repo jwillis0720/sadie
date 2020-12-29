@@ -3,12 +3,9 @@
 import logging
 import tempfile
 
-import pytest
-import pandas as pd
-from Bio.Seq import Seq
 from pkg_resources import resource_filename
 
-from sadie.antibody import exception, segment
+from sadie.antibody import segment
 from sadie import antibody
 
 logger = logging.getLogger()
@@ -97,7 +94,7 @@ def test_antibody_chain_nt():
         ]
     )
 
-    ##Get nucletodies
+    # Get nucletodies
     assert chain_nt.fwr1_nt == "CAGGTGCAGCTGAAGGAGAGCGGCCCTGGTTTGGTGCAGCCATCACAAACTCTTTCTCTGACATGCACCGTGTCA"
     assert chain_nt.cdr1_nt == "GGCCTATCGCTCACCAGCAACTCC"
     assert chain_nt.fwr2_nt == "GTCAGCTGGATACGTCAGCCGCCAGGCAAAGGTCTGGAGTGGATGGGTGTG"
@@ -109,7 +106,7 @@ def test_antibody_chain_nt():
     assert chain_nt.cdr3_nt == "GCCTCCATTTATTACTATGACGCTGACTACCTCCACTGGTACTTCGATTTC"
     assert chain_nt.fwr4_nt == "TGGGGCCCCGGCACTATGGTGACCGTGAGCTCC"
 
-    ##Get nucletodie germline
+    # Get nucletodie germline
     assert chain_nt.fwr1_nt_germline == "CAAGTGCAACTAAAGGAGTCAGGACCTGGTCTGGTACAGCCATCACAGACCCTGTCTCTCACCTGCACTGTCTCT"
     assert chain_nt.cdr1_nt_germline == "GGGTTATCATTAACCAGCAATAGT"
 
@@ -121,7 +118,7 @@ def test_antibody_chain_nt():
     )
     assert chain_nt.fwr4_nt_germline == "TGGGGCCAAGGCACTCTGGTCACTGTCTCTTCAG"
 
-    ##Get amino acid sequences
+    # Get amino acid sequences
     assert chain_nt.fwr1_aa == "QVQLKESGPGLVQPSQTLSLTCTVS"
     assert chain_nt.cdr1_aa == "GLSLTSNS"
     assert chain_nt.fwr2_aa == "VSWIRQPPGKGLEWMGV"
@@ -150,7 +147,7 @@ def test_antibody_chain_nt():
     )
 
 
-##Test heavy chain, kappa and lambda chain AA
+# Test heavy chain, kappa and lambda chain AA
 def test_antibody_chain_heavy():
     heavy_chain_aa = antibody.HeavyChainAA(
         fwr1_aa="QVQLKESGPGLVQPSQTLSLTCTVS",
@@ -302,7 +299,7 @@ def test_antibody_chain_lambda():
     assert lambda_chain_aa.get_segmented_alignment_aa() == segmented_aling
 
 
-##Test nt objects
+# Test nt objects
 def test_antibody_chain_heavy_nt():
     heavy_chain_nt = antibody.HeavyChainNT(
         fwr1_nt="CAGGTGCAGCTGAAGGAGAGCGGCCCTGGTTTGGTGCAGCCATCACAAACTCTTTCTCTGACATGCACCGTGTCA",

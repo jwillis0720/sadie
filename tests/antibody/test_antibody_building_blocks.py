@@ -1,14 +1,11 @@
 """Unit tests for antibody objects lower level objects"""
 
 import logging
-import tempfile
 
 import pytest
-import pandas as pd
-from Bio.Seq import Seq
 from pkg_resources import resource_filename
 
-from sadie.antibody import segment, exception, genetable
+from sadie.antibody import segment, exception
 
 logger = logging.getLogger()
 
@@ -30,7 +27,7 @@ def test_antibody_segment():
     assert len(segment_aa) == len("DIQMTQSPASLSASLGETVSIECLAS")
     assert segment_aa.sequence == "DIQMTQSPASLSASLGETVSIECLAS"
 
-    ##segmetn_nt
+    # segmetn_nt
     segment_nt = segment.AntibodySegment("CAGGTTCAGCTGGTGCAGTCTGGAGCTGAGGTGAAGAAGCCTGGGGCCTCAGTGAAGGTCTCCTGCAAGGCTTCT")
     assert segment_nt.start == 1
     assert segment_nt.end == 75
@@ -47,7 +44,7 @@ def test_antibody_segment():
         == "germline    CAGGCGCAGCACG-------------------------------------------------------------C\ntarget      ....TT....TG.TGCAGTCTGGAGCTGAGGTGAAGAAGCCTGGGGCCTCAGTGAAGGTCTCCTGCAAGGCTTCT\n\n"
     )
 
-    ##Explicit def
+    # Explicit def
     segment_nt = segment.AntibodySegmentNT(
         "CAGGTTCAGCTGGTGCAGTCTGGAGCTGAGGTGAAGAAGCCTGGGGCCTCAGTGAAGGTCTCCTGCAAGGCTTCT"
     )
@@ -175,7 +172,7 @@ def test_cdr_segment_nt():
         ]
     )
 
-    ###assign germlines
+    # assign germlines
     cdr1.germline = "GGCCTGTCCCTGACTTCTGGGTCT"
     cdr2.germline = "GGCCTGTCCCTGACTTCTACT"
     cdr3.germline = ("CCGA", "GGCCTGTCC")
@@ -234,10 +231,10 @@ def test_cdr_segment_aa():
     assert cdr3.germline == "AT-------------YV"
     assert cdr3.get_formatted_alignment() == "germline    AT-------------YV\ntarget      .SIYYYDADYLHWYFDF\n\n"
     with pytest.raises(exception.BadAASequenceError):
-        ##Z should cause error
+        # Z should cause error
         cdr1 = segment.CDR1AA("DIQMTQSPASLSASLGEZ")
 
     with pytest.warns(exception.BadAASequenceWarning):
-        ##Z should cause error
+        # Z should cause error
         cdr1 = segment.CDR1AA("DIQMTQSPASLSASLGE*")
         cdr2 = segment.CDR2AA("DIQMTQSPASLSASLGEX")

@@ -8,7 +8,7 @@ class LongHCDR3Error(Error):
     Attributes:
     """
 
-    def __init__(self, sequence_name, hcdr3, chosen_scheme, acceptable_scheme=["imgt", "aho"]):
+    def __init__(self, sequence_name, hcdr3, chosen_scheme, acceptable_scheme=("imgt", "aho")):
         super().__init__()
         self.sequence_name = sequence_name
         self.hcdr3 = hcdr3

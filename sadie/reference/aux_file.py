@@ -44,7 +44,9 @@ def make_auxillary_file(database, outdir):
     """
     ig_database = json.load(gzip.open(database, "rt"))
     for receptor, common, source in itertools.product(
-        ["Ig", "TCR"], get_species_from_database(ig_database), get_databases_types(ig_database)
+        ["Ig", "TCR"],
+        get_species_from_database(ig_database),
+        get_databases_types(ig_database),
     ):
         filtered_data = get_filtered_data(ig_database, source, common, receptor, "J")
         if not filtered_data:
