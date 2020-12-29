@@ -153,6 +153,7 @@ class AirrTable:
         self._table.drop([i for i in self._table.columns if "Unnamed" in i], axis=1, inplace=True)
 
         if all(self._table["fwr4"].isna()):
+            print(self._table["sequence_id"])
             self._fill_missing_fw4()
         liable_sequences = self._table[
             self._table[["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]].apply(
@@ -163,9 +164,9 @@ class AirrTable:
         # If these aren't productive, who gives a shit
         liable_sequences = liable_sequences[liable_sequences["productive"] == "T"]
         if not liable_sequences.empty:
-            logger.debug(
+            logger.warning(
                 f"""Caution - sequences {list(liable_sequences['sequence_id'])} have FW1-FW3 resolved but do not have the CDR3,
-                that is indicative that the J gene penalty needs to be lowered.
+                that is indicative that the J gene penalty needs to be lowered. Or that 
                 air_api.igblast.j_penalty = -1
              """
             )
@@ -569,8 +570,7 @@ class AirrTable:
                 logger.debug("no cdr3 ends are present")
                 return
             candidate_rows["fwr4"] = candidate_rows.apply(
-                lambda x: str(x["sequence"])[int(x["cdr3_end"]) : int(x["j_sequence_end"]) + 1],
-                axis=1,
+                lambda x: str(x["sequence"])[int(x["cdr3_end"]) : int(x["j_sequence_end"]) + 1], axis=1,
             )
             candidate_rows["fwr4_aa"] = candidate_rows["fwr4"].apply(lambda x: str(Seq(x).translate()))
             candidate_rows["fwr4_start"] = candidate_rows["cdr3_end"] + 1
