@@ -185,6 +185,130 @@ def _test_auxilary_file_structure(tmpdir):
     return True
 
 
+def _test_internal_data_file_structure(tmpdir):
+    # what we have made
+    internal_path = glob.glob("tmpdir/**/*.imgt", recursive=True)
+    reference_internal_path = glob.glob(fixture_dir("igblast_internal") + "/**.imgt")
+    my_internal_path_df = []
+    for file in internal_path:
+        df = pd.read_csv(
+            file,
+            skip_blank_lines=True,
+            delimiter="\t",
+            header=None,
+            names=[
+                "gene",
+                "fwr1_start",
+                "fwr1_end",
+                "cdr1_start",
+                "cdr1_end",
+                "fwr2_start",
+                "fwr2_end",
+                "cdr2_start",
+                "cdr2_end",
+                "fwr3_start",
+                "fwr3_end",
+                "segment",
+                "weird",
+            ],
+        )
+        df.insert(0, "common", os.path.basename(file).split(".ndm")[0])
+        df.insert(1, "db_type", file.split("/")[-5])
+        my_internal_path_df.append(df)
+
+    my_internal_path_df = pd.concat(my_internal_path_df).reset_index(drop=True).set_index(["common", "db_type", "gene"])
+    ref_internal_path_df = []
+    for file in reference_internal_path:
+        df = pd.read_csv(
+            file,
+            skip_blank_lines=True,
+            delimiter="\t",
+            skiprows=2,
+            header=None,
+            names=[
+                "gene",
+                "fwr1_start",
+                "fwr1_end",
+                "cdr1_start",
+                "cdr1_end",
+                "fwr2_start",
+                "fwr2_end",
+                "cdr2_start",
+                "cdr2_end",
+                "fwr3_start",
+                "fwr3_end",
+                "segment",
+                "weird",
+            ],
+        )
+        common_name = os.path.basename(file).split(".ndm")[0]
+        if common_name == "rhesus_monkey":
+            print("here")
+            common_name = "macaque"
+
+        df.insert(0, "common", common_name)
+        df.insert(1, "db_type", "imgt")
+        ref_internal_path_df.append(df)
+
+    ref_internal_path_df = (
+        pd.concat(ref_internal_path_df).reset_index(drop=True).set_index(["common", "db_type", "gene"])
+    )
+    common_index = my_internal_path_df.index.intersection(ref_internal_path_df.index)
+    my_internal_path_df_common = my_internal_path_df.loc[common_index]
+    ref_internal_path_df_common = ref_internal_path_df.loc[common_index]
+
+    known_internal_db_exceptions = [
+        ["rat", "imgt", "IGHV1S62*01"],
+        ["rat", "imgt", "IGHV2S1*01"],
+        ["rat", "imgt", "IGHV2S12*01"],
+        ["rat", "imgt", "IGHV2S13*01"],
+        ["rat", "imgt", "IGHV2S18*01"],
+        ["rat", "imgt", "IGHV2S30*01"],
+        ["rat", "imgt", "IGHV2S35*01"],
+        ["rat", "imgt", "IGHV2S54*01"],
+        ["rat", "imgt", "IGHV2S61*01"],
+        ["rat", "imgt", "IGHV2S63*01"],
+        ["rat", "imgt", "IGHV2S75*01"],
+        ["rat", "imgt", "IGHV2S78*01"],
+        ["rat", "imgt", "IGHV2S8*01"],
+        ["rat", "imgt", "IGHV5S10*01"],
+        ["rat", "imgt", "IGHV5S11*01"],
+        ["rat", "imgt", "IGHV5S13*01"],
+        ["rat", "imgt", "IGHV5S14*01"],
+        ["rat", "imgt", "IGHV5S23*01"],
+        ["rat", "imgt", "IGHV5S47*01"],
+        ["rat", "imgt", "IGHV5S54*01"],
+        ["rat", "imgt", "IGHV5S8*01"],
+        ["rat", "imgt", "IGHV8S18*01"],
+        ["rat", "imgt", "IGHV9S3*01"],
+        ["human", "imgt", "IGHV2-70*02"],
+        ["human", "imgt", "IGHV2-70*03"],
+        ["human", "imgt", "IGHV2-70*06"],
+        ["human", "imgt", "IGHV2-70*07"],
+        ["human", "imgt", "IGHV2-70*08"],
+    ]
+    known_internal_db_exceptions = set(map(lambda x: tuple(x), known_internal_db_exceptions))
+    for index in my_internal_path_df_common.index:
+        try:
+            pd._testing.assert_series_equal(
+                my_internal_path_df_common.loc[index],
+                ref_internal_path_df_common.loc[index],
+                obj=index,
+            )
+        except AssertionError:
+
+            if index in known_internal_db_exceptions:
+                print(index, "is known exception")
+                continue
+            else:
+                pd._testing.assert_series_equal(
+                    my_internal_path_df_common.loc[index],
+                    ref_internal_path_df_common.loc[index],
+                    obj=index,
+                )
+    return True
+
+
 def test_make_igblast_reference():
     """Confirm the CLI works as expecte"""
     runner = CliRunner(echo_stdin=True)
