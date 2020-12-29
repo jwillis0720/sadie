@@ -2,7 +2,7 @@ import gzip
 import bz2
 import json
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Union
 import pickle
 import filetype
 import logging
@@ -179,7 +179,16 @@ class AnarciResult:
         updated = {}
         for key in self.segment_table:
             value = self.segment_table[key]
-            if key in ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa", "vdj"]:
+            if key in [
+                "fwr1_aa",
+                "cdr1_aa",
+                "fwr2_aa",
+                "cdr2_aa",
+                "fwr3_aa",
+                "cdr3_aa",
+                "fwr4_aa",
+                "vdj",
+            ]:
                 updated[key] = value.replace("-", "")
             else:
                 updated[key] = value
@@ -400,7 +409,16 @@ class AnarciResults:
 
     @property
     def segment_table_no_gaps(self) -> pd.DataFrame:
-        update_cols = ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa", "vdj"]
+        update_cols = [
+            "fwr1_aa",
+            "cdr1_aa",
+            "fwr2_aa",
+            "cdr2_aa",
+            "fwr3_aa",
+            "cdr3_aa",
+            "fwr4_aa",
+            "vdj",
+        ]
         column_order = self.segment_table.columns
         return pd.concat(
             [

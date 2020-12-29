@@ -1,27 +1,14 @@
 """higher level antibody objects"""
-import re
 import json
-import warnings
 
 # Third Party
 from Bio.Seq import Seq
-from Bio.pairwise2 import align
 from Bio.SeqRecord import SeqRecord
 from Bio.Align import MultipleSeqAlignment
 
 
 # Lib level
-from .exception import (
-    BadAASequenceError,
-    BadAASequenceWarning,
-    HeavyChainException,
-    LightChainException,
-    BadNTSequenceError,
-    BadNTSequenceWarning,
-)
 from .segment import (
-    AntibodySegmentNT,
-    AntibodySegmentAA,
     FrameWork1NT,
     FrameWork2NT,
     FrameWork3NT,
@@ -128,7 +115,7 @@ class AntibodyChainAA:
         region_def: how to define the region
         """
 
-        ##name and amino acid assignments
+        # name and amino acid assignments
         self._name = name
         self._fwr1_aa = FrameWork1AA(fwr1_aa)
         self._cdr1_aa = CDR1AA(cdr1_aa)
@@ -142,7 +129,7 @@ class AntibodyChainAA:
         self._leader = leader
         self._tail = tail
         self._species = species
-        ##chain AA list in right order
+        # chain AA list in right order
         self._chain_aa = [
             self._fwr1_aa,
             self._cdr1_aa,
@@ -153,7 +140,7 @@ class AntibodyChainAA:
             self._fwr4_aa,
         ]
 
-        ##also make a dictionary for __item__
+        # also make a dictionary for __item__
         self._chain_dict_aa = {
             "fwr1_aa": self._fwr1_aa,
             "cdr1_aa": self._cdr1_aa,
@@ -164,7 +151,7 @@ class AntibodyChainAA:
             "fwr4_aa": self._fwr4_aa,
         }
 
-        ##Set germline
+        # Set germline
         self._fwr1_aa.germline = self._v_gene.fwr1_aa
         self._fwr2_aa.germline = self._v_gene.fwr2_aa
         self._fwr3_aa.germline = self._v_gene.fwr3_aa
@@ -173,7 +160,7 @@ class AntibodyChainAA:
         self._cdr1_aa.germline = self._v_gene.cdr1_aa
         self._cdr2_aa.germline = self._v_gene.cdr2_aa
         self._cdr3_aa.germline = (self._v_gene.cdr3_aa, self._j_gene.cdr3_aa)
-        ##vdj aa
+        # vdj aa
         self._vdj_aa = "".join([str(i) for i in self._chain_aa])
 
         # Set the ranges according to the length of each segment:
@@ -460,11 +447,11 @@ class AntibodyChainAA:
         # Which title is logner
         ljust = max(len(top_title), len(bottom_title)) + ljust
 
-        ##get the title of the J segment
+        # get the title of the J segment
         _top_alignment = []
         _bottom_alignment = []
 
-        ##Go through the segments and align then
+        # Go through the segments and align then
         for seg in self._chain_aa:
 
             template = seg.alignment[0]
@@ -752,7 +739,7 @@ class AntibodyChainNT(AntibodyChainAA):
             "cdr3_nt": self._cdr3_nt,
             "fwr4_nt": self._fwr4_nt,
         }
-        ##Set germline
+        # Set germline
         self._fwr1_nt.germline = self._v_gene.fwr1_nt
         self._fwr2_nt.germline = self._v_gene.fwr2_nt
         self._fwr3_nt.germline = self._v_gene.fwr3_nt
@@ -771,7 +758,7 @@ class AntibodyChainNT(AntibodyChainAA):
             self._fwr3_nt,
             self._cdr3_nt.v_portion,
         ]
-        ##vdj nt
+        # vdj nt
         self._vdj_nt = "".join([str(i) for i in self._chain_nt])
         self._v_segment = "".join([str(i) for i in self._v_nt])
 
@@ -1017,11 +1004,11 @@ class AntibodyChainNT(AntibodyChainAA):
         # Which title is logner
         ljust = max(len(top_title), len(bottom_title)) + ljust
 
-        ##get the title of the J segment
+        # get the title of the J segment
         _top_alignment = []
         _bottom_alignment = []
 
-        ##Go through the segments and align then
+        # Go through the segments and align then
         for seg in self._chain_nt:
 
             template = seg.alignment[0]
@@ -1825,7 +1812,19 @@ class HeavyChainNT(AntibodyChainNT):
             tail nt sequence before antibody
         """
         super().__init__(
-            name, fwr1_nt, cdr1_nt, fwr2_nt, cdr2_nt, fwr3_nt, cdr3_nt, fwr4_nt, v_gene, j_gene, species, leader, tail
+            name,
+            fwr1_nt,
+            cdr1_nt,
+            fwr2_nt,
+            cdr2_nt,
+            fwr3_nt,
+            cdr3_nt,
+            fwr4_nt,
+            v_gene,
+            j_gene,
+            species,
+            leader,
+            tail,
         )
         self.locus = locus
 
@@ -2007,7 +2006,19 @@ class KappaChainNT(AntibodyChainNT):
 
 
         """
-        super().__init__(name, fwr1_nt, cdr1_nt, fwr2_nt, cdr2_nt, fwr3_nt, cdr3_nt, fwr4_nt, v_gene, j_gene, species)
+        super().__init__(
+            name,
+            fwr1_nt,
+            cdr1_nt,
+            fwr2_nt,
+            cdr2_nt,
+            fwr3_nt,
+            cdr3_nt,
+            fwr4_nt,
+            v_gene,
+            j_gene,
+            species,
+        )
         self.locus = locus
 
     def get_json(self, indent=4) -> json:
@@ -2190,7 +2201,19 @@ class LambdaChainNT(AntibodyChainNT):
             trailing nt sequeence before lambda,
         """
         super().__init__(
-            name, fwr1_nt, cdr1_nt, fwr2_nt, cdr2_nt, fwr3_nt, cdr3_nt, fwr4_nt, v_gene, j_gene, species, leader, tail
+            name,
+            fwr1_nt,
+            cdr1_nt,
+            fwr2_nt,
+            cdr2_nt,
+            fwr3_nt,
+            cdr3_nt,
+            fwr4_nt,
+            v_gene,
+            j_gene,
+            species,
+            leader,
+            tail,
         )
         self.locus = locus
 

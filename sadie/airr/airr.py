@@ -231,7 +231,7 @@ class GermlineData:
                 list(
                     map(
                         lambda x: os.path.basename(x).split("_")[0],
-                        glob.glob(os.path.join(base_dir, f"**/*.aux"), recursive=True),
+                        glob.glob(os.path.join(base_dir, "**/*.aux"), recursive=True),
                     )
                 )
             )
@@ -380,12 +380,17 @@ class Airr:
         """
 
         def _get_seq_generator():
-            for seq_id, seq in zip(dataframe.reset_index()[seq_id_field], dataframe.reset_index()[seq_field]):
+            for seq_id, seq in zip(
+                dataframe.reset_index()[seq_id_field],
+                dataframe.reset_index()[seq_field],
+            ):
                 yield SeqRecord(id=str(seq_id), name=str(seq_id), description="", seq=Seq(seq))
 
         if return_join:
             return dataframe.merge(
-                self.run_multiple(_get_seq_generator(), scfv=scfv).table, left_on=seq_id_field, right_on="sequence_id"
+                self.run_multiple(_get_seq_generator(), scfv=scfv).table,
+                left_on=seq_id_field,
+                right_on="sequence_id",
             )
         else:
             return self.run_multiple(_get_seq_generator(), scfv=scfv)
@@ -478,10 +483,6 @@ class Airr:
                 os.remove(file)
         return result
 
-    def _run_multi_file(self, file):
-        def run_single_instance(x):
-            result = self.igblast.run_file(x)
-
     def _run_scfv(self, file: Path) -> ScfvAirrTable:
         """An internal method to run a special scfv execution on paired scfv or other linked chains
 
@@ -546,7 +547,10 @@ class Airr:
 
         # Grab the Light Chains out of the set
         light_chain_table = pd.concat(
-            [result_a[result_a["locus"].isin(["IGK", "IGL"])], result_b[result_b["locus"].isin(["IGK", "IGL"])]]
+            [
+                result_a[result_a["locus"].isin(["IGK", "IGL"])],
+                result_b[result_b["locus"].isin(["IGK", "IGL"])],
+            ]
         )
 
         # this ia a bit of an edge case but if eithere of the two chains are empty, we can fill it with

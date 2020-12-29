@@ -31,9 +31,9 @@ codon_table["TAA"] = "*"
 codon_table["TGA"] = "*"
 
 
-def flatten(l):
+def flatten(to_flatten):
     """Flatten list of list"""
-    return [item for sublist in l for item in sublist]
+    return [item for sublist in to_flatten for item in sublist]
 
 
 def get_imgt_file_structure(path):

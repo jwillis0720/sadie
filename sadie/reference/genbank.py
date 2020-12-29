@@ -39,17 +39,12 @@ def generate_gb_record(sequence, name, description):
     sequence_object = Seq.Seq(str(sequence))
 
     # Create a record
-    record = SeqRecord.SeqRecord(
-        sequence_object,
-        id=name,
-        name=name,
-        description=description,
-    )
+    record = SeqRecord.SeqRecord(sequence_object, id=name, name=name, description=description)
     return record
 
 
 def generate_v(filtered_df):
-    ## all SeqRecords
+    # all SeqRecords
     records = []
     for entry in filtered_df:
         # A signle json entry
@@ -69,7 +64,7 @@ def generate_v(filtered_df):
                 logger.debug(f"{common}-{gene}-{segment} nt is empty")
                 continue
             if segment == "cdr3":
-                segment_start = segment_dictionary[f"fwr3_nt_index_end"] + 1
+                segment_start = segment_dictionary["fwr3_nt_index_end"] + 1
                 segment_end = len(sequence)
 
             else:
@@ -129,14 +124,14 @@ def generate_v(filtered_df):
                 qualifiers={"standard_name": imgt_numbering[index]},
             )
             v_gene_record.features.append(imgt_feature)
-        ##annotate the vgene itself
+        # annotate the vgene itself
         v_gene_record.features.append(v_gene_seq_feature)
         records.append(v_gene_record)
     return records
 
 
 def generate_j(filtered_df):
-    ## all SeqRecords
+    # all SeqRecords
     records = []
     for entry in filtered_df:
         # A signle json entry
@@ -150,9 +145,9 @@ def generate_j(filtered_df):
         # Segment dictionary
         segment_dictionary = entry["imgt"]
         j_gene_nt = segment_dictionary["j_gene_nt"]
-        take_a_look = j_gene_nt
+        # take_a_look = j_gene_nt
         j_gene_aa = segment_dictionary["j_gene_aa"]
-        cdr3_nt = segment_dictionary["cdr3_nt"]
+        # cdr3_nt = segment_dictionary["cdr3_nt"]
         cdr3_aa = segment_dictionary["cdr3_aa"]
         fwr4_nt = segment_dictionary["fwr4_nt"]
         fwr4_aa = segment_dictionary["fwr4_aa"]
@@ -241,7 +236,7 @@ def generate_j(filtered_df):
 
 
 def generate_d(filtered_df):
-    ## all SeqRecords
+    # all SeqRecords
     records = []
     for entry in filtered_df:
         # A signle json entry
@@ -289,7 +284,9 @@ def generate_genbank(database, outdir):
     ig_database = json.load(gzip.open(database, "rt"))
     logger = logging.getLogger("Genebank")
     for receptor, common, source in itertools.product(
-        ["Ig", "TCR"], get_species_from_database(ig_database), get_databases_types(ig_database)
+        ["Ig", "TCR"],
+        get_species_from_database(ig_database),
+        get_databases_types(ig_database),
     ):
         receptor_gb_dir = os.path.join(outdir, f"{source}/{receptor}")
         if not os.path.exists(receptor_gb_dir):

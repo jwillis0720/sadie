@@ -2,20 +2,22 @@ import logging
 import os
 
 import click
-import filetype
-from Bio import SeqIO
 
 from .util import get_verbosity_level
 from .airr import Airr
-from .airrtable import AirrTable
-from .igblast import IgBLASTN
 
 
 """This is our main command line tag"""
 
 
 @click.command()
-@click.option("-v", "--verbose", count=True, default=5, help="Vebosity level, ex. -vvvvv for debug level logging")
+@click.option(
+    "-v",
+    "--verbose",
+    count=True,
+    default=5,
+    help="Vebosity level, ex. -vvvvv for debug level logging",
+)
 @click.option(
     "--query",
     "-q",
@@ -24,9 +26,18 @@ from .igblast import IgBLASTN
     help="""The input file can be compressed or uncompressed file of fasta""",
 )
 @click.option(
-    "--species", "-s", type=click.Choice(Airr.get_available_species()), help="Species to annotate", default="human"
+    "--species",
+    "-s",
+    type=click.Choice(Airr.get_available_species()),
+    help="Species to annotate",
+    default="human",
 )
-@click.option("--scfv", "-p", is_flag=True, help="Does the input sequence contain phagemid sequences?")
+@click.option(
+    "--scfv",
+    "-p",
+    is_flag=True,
+    help="Does the input sequence contain phagemid sequences?",
+)
 @click.option(
     "--out",
     "-o",
@@ -34,10 +45,18 @@ from .igblast import IgBLASTN
     help="""The output file, type is inferred from extensions""",
 )
 @click.option(
-    "--compress", "-z", type=click.Choice(["gzip", "bz2", "none"]), help="file compression on output", default="none"
+    "--compress",
+    "-z",
+    type=click.Choice(["gzip", "bz2", "none"]),
+    help="file compression on output",
+    default="none",
 )
 @click.option(
-    "--file_format", "-f", type=click.Choice(["json", "csv", "gb"]), help="output file type format", default="csv"
+    "--file_format",
+    "-f",
+    type=click.Choice(["json", "csv", "gb"]),
+    help="output file type format",
+    default="csv",
 )
 def run_airr(verbose, query, species, scfv, out, compress, file_format):
     numeric_level = get_verbosity_level(verbose)
@@ -48,10 +67,10 @@ def run_airr(verbose, query, species, scfv, out, compress, file_format):
     click.echo("Logging with level=>{}".format(logging.getLevelName(logger.getEffectiveLevel())))
     logger.info("Running Airr on %s using %s", query, species)
 
-    ##setup object
+    # setup object
     airr = Airr(species)
 
-    ##Run annotations on a file
+    # Run annotations on a file
     if scfv:
         scfv_airr = airr.run_file(query, scfv=True)
     else:
@@ -60,7 +79,7 @@ def run_airr(verbose, query, species, scfv, out, compress, file_format):
     if compress == "none":
         compress = None
 
-    ##Setup output if not specified
+    # Setup output if not specified
     if not out:
 
         def lookup(x):
@@ -106,4 +125,4 @@ def run_airr(verbose, query, species, scfv, out, compress, file_format):
 
 
 if __name__ == "__main__":
-    run()
+    run_airr()

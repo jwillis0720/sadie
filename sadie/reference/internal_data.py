@@ -8,7 +8,6 @@ import json
 import pandas as pd
 
 # This module
-from .settings import IMGT_LOOKUP
 from .blast import write_blast_db
 
 logger = logging.getLogger(__name__)
@@ -36,7 +35,8 @@ def get_species_from_database(database_json):
 def get_filtered_data(database_json, source, common, segment):
     return list(
         filter(
-            lambda x: x["source"] == source and x["common"] == common and x["gene_segment"] == segment, database_json
+            lambda x: x["source"] == source and x["common"] == common and x["gene_segment"] == segment,
+            database_json,
         )
     )
 

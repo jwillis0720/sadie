@@ -153,7 +153,13 @@ MOTIF_LOOKUP = {
         "TRGJ": r"F[GA].[G]T",
         "ignore": ["TRAJ34", "TRBJ1-1", "TRBJ1-4", "TRBJ1-5", "TRBJ2-5", "TRDJ2"],
     },
-    "boar": {"ignore": "", "IGHJ": r"WG.G", "IGKJ": r"FG.GT", "IGLJ": r"FG.GT", "TRBJ": r"FG.G"},
+    "boar": {
+        "ignore": "",
+        "IGHJ": r"WG.G",
+        "IGKJ": r"FG.GT",
+        "IGLJ": r"FG.GT",
+        "TRBJ": r"FG.G",
+    },
     "cow": {
         "ignore": "",
         "IGHJ": r"[WC][SG][QPSR].",
@@ -170,11 +176,7 @@ MOTIF_LOOKUP = {
         "TRGJ": r"[FCLWSY]G.[GRL]",
         "TRDJ": r"[FCLWSY][RG].[GRL]",
     },
-    "ferret": {
-        "ignore": "",
-        "TRBJ": r"[F][GA].G",
-        "TRAJ": r"[F][GA].G",
-    },
+    "ferret": {"ignore": "", "TRBJ": r"[F][GA].G", "TRAJ": r"[F][GA].G"},
     "camel": {
         "ignore": ["TRBJ3-4"],
         "IGHJ": r"WG.G",
@@ -183,16 +185,8 @@ MOTIF_LOOKUP = {
         "TRBJ": r"FG.G",
         "TRGJ": r"FG.G",
     },
-    "goat": {
-        "ignore": [""],
-        "IGKJ": r"[FL]G.GT",
-        "IGLJ": r"[FL]G.GT",
-    },
-    "horse": {
-        "ignore": [""],
-        "IGKJ": r"[F]G.GT",
-        "IGHJ": r"[W][GD].G",
-    },
+    "goat": {"ignore": [""], "IGKJ": r"[FL]G.GT", "IGLJ": r"[FL]G.GT"},
+    "horse": {"ignore": [""], "IGKJ": r"[F]G.GT", "IGHJ": r"[W][GD].G"},
     "dog": {
         "IGHJ": r"WG.G",
         "IGKJ": r"F[GS].G",
@@ -263,7 +257,11 @@ MOTIF_LOOKUP = {
         "TRDJ": r"FG.[EG]T",
         "ignore": ["FGDFYFLRGEGRRLAVV", "RPGAALTYGAGSGLAAG"],
     },
-    "trout": {"ignore": ["SGAYAAYFGEXTKLTVL", "SYSEAYXXAGXKLTVL"], "IGHJ": r"WG.G", "TRBJ": r"FG.G[ATS]"},
+    "trout": {
+        "ignore": ["SGAYAAYFGEXTKLTVL", "SYSEAYXXAGXKLTVL"],
+        "IGHJ": r"WG.G",
+        "TRBJ": r"FG.G[ATS]",
+    },
     "zebrafish": {
         "ignore": ["IGIJ1", "IGIJ2", "IGIJ3", "IGIJ5", "IGIJ6S1", "IGIJ7S1", "IGIJ8S1"],
         "IGHJ": r"WG.GT",

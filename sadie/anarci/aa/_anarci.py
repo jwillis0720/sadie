@@ -21,14 +21,14 @@ Oxford Protein Informatics Group (OPIG). 2015-17
 
 ANARCI performs alignments of sequences to databases of Hidden Markov Models (HMMs).
 Those that align with a significant score are classified by species and chain type.
-They are then numbered with a scheme of the user's choosing. 
+They are then numbered with a scheme of the user's choosing.
 
-Currently implemented schemes: 
+Currently implemented schemes:
     IMGT
     Chothia (IGs only)
     Kabat (IGs only)
     Martin / Enhanced Chothia (IGs only)
-    AHo 
+    AHo
     Wolfguy (IGs only)
 
 Currently recognisable species (chains):
@@ -38,15 +38,15 @@ Currently recognisable species (chains):
     Rabbit (heavy, kappa, lambda)
     Pig (heavy, kappa, lambda)
     Rhesus Monkey (heavy, kappa)
-    
+
 Notes:
  o Use assign_germline to get a better species assignment
  o Each scheme has been implemented to follow the published specification as closely as possible. However, in places some schemes
    do not specifiy where insertions should be placed (e.g. imgt FW3). In these cases the HMM alignment is used. This can give rise
-   to inserted positions that were not described by the respective paper. 
- o AHo is implemented heuristically based on chain type. If one grafted a foreign CDR1 loop onto, say, a VH domain, it will be 
-   numbered as if it is a CDRH1 loop. 
-    
+   to inserted positions that were not described by the respective paper.
+ o AHo is implemented heuristically based on chain type. If one grafted a foreign CDR1 loop onto, say, a VH domain, it will be
+   numbered as if it is a CDRH1 loop.
+
 
 """
 
@@ -92,7 +92,15 @@ scheme_short_to_long = {
 }
 
 scheme_names = list(scheme_short_to_long.keys())
-chain_type_to_class = {"H": "H", "K": "L", "L": "L", "A": "A", "B": "B", "G": "G", "D": "D"}
+chain_type_to_class = {
+    "H": "H",
+    "K": "L",
+    "L": "L",
+    "A": "A",
+    "B": "B",
+    "G": "G",
+    "D": "D",
+}
 HMM_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "anarci", "HMMs"))
 
 # HMM_path = os.path.join(anarci_path, "dat", "HMMs")
@@ -106,7 +114,7 @@ class HMMscanError(Exception):
         super(HMMscanError, self).__init__(message)
 
 
-## Utility functions ##
+# Utility functions #
 def read_fasta(filename):
     """
     Read a sequence file and parse as description, string
@@ -141,7 +149,10 @@ def write_fasta(sequences, f):
     """
     for name, sequence in sequences:
         print(">%s" % name, file=f)
-        print("\n".join(["\n".join(wrap(block, width=80)) for block in sequence.splitlines()]), file=f)
+        print(
+            "\n".join(["\n".join(wrap(block, width=80)) for block in sequence.splitlines()]),
+            file=f,
+        )
 
 
 def validate_sequence(sequence):
@@ -220,7 +231,10 @@ def anarci_output(numbered, sequences, alignment_details, outfile, sequence_id=N
                         continue
                 print("# Domain %d of %d" % (j + 1, len(numbered[i])), file=outfile)
                 print("# Most significant HMM hit", file=outfile)
-                print("#|species|chain_type|e-value|score|seqstart_index|seqend_index|", file=outfile)
+                print(
+                    "#|species|chain_type|e-value|score|seqstart_index|seqend_index|",
+                    file=outfile,
+                )
                 alignment_details[i][j]["evalue"] = str(alignment_details[i][j]["evalue"])
                 print(
                     "#|%s|%s|%s|%.1f|%d|%d|"
@@ -240,7 +254,10 @@ def anarci_output(numbered, sequences, alignment_details, outfile, sequence_id=N
                     (_, jgene), jid = alignment_details[i][j]["germlines"].get("j_gene", [["", "unknown"], 0])
                     if jgene is None:
                         jgene, jid = "unknown", 0
-                    print("#|%s|%s|%.2f|%s|%.2f|" % (species, vgene, vid, jgene, jid), file=outfile)
+                    print(
+                        "#|%s|%s|%.2f|%s|%.2f|" % (species, vgene, vid, jgene, jid),
+                        file=outfile,
+                    )
                 chain_type = chain_type_to_class[alignment_details[i][j]["chain_type"]]
                 print("# Scheme = %s" % alignment_details[i][j]["scheme"], file=outfile)
                 if len(numbered[i][j][0]) == 0:
@@ -352,7 +369,13 @@ def dataframe_output(sequences, numbered, details):
                 seq_ = [d.get(p, "-") for p in positions]
                 numbering_ = [[int(p[0]), p[1]] for p in positions]
                 align_df = pd.DataFrame(
-                    {"Id": line[0], "Chain": cts, "Numbering": "", "Insertion": "", "Sequence": seq_}
+                    {
+                        "Id": line[0],
+                        "Chain": cts,
+                        "Numbering": "",
+                        "Insertion": "",
+                        "Sequence": seq_,
+                    }
                 )
                 align_df[["Numbering", "Insertion"]] = numbering_
                 align_df["Numbering"] = align_df["Numbering"].astype(int)
@@ -363,7 +386,10 @@ def dataframe_output(sequences, numbered, details):
                 summary_dataframes.append(_df)
                 # ",".join(line), file=out)
     if summary_dataframes and alignment_dataframes:
-        return pd.concat(summary_dataframes, axis=1).transpose(), pd.concat(alignment_dataframes)
+        return (
+            pd.concat(summary_dataframes, axis=1).transpose(),
+            pd.concat(alignment_dataframes),
+        )
     else:
         print(f"Did not detect anything in summary dataframe,{summary_dataframes},{alignment_dataframes}")
         return pd.DataFrame(), pd.DataFrame()
@@ -468,7 +494,7 @@ def csv_output(sequences, numbered, details, outfileroot):
                     print(",".join(line), file=out)
 
 
-## Parsing and recognising domain hits from hmmscan ##
+# Parsing and recognising domain hits from hmmscan #
 def _domains_are_same(dom1, dom2):
     """
     Check to see if the domains are overlapping.
@@ -665,7 +691,11 @@ def parse_hmmer_output(filedescriptor="", bit_score_threshold=80, hmmer_species=
         p = HMMERParser(inputfile)
         for query in p:
             results.append(
-                _parse_hmmer_query(query, bit_score_threshold=bit_score_threshold, hmmer_species=hmmer_species)
+                _parse_hmmer_query(
+                    query,
+                    bit_score_threshold=bit_score_threshold,
+                    hmmer_species=hmmer_species,
+                )
             )
 
     return results
@@ -711,7 +741,15 @@ def run_hmmer(
     if ncpu is None:
         command = [hmmerpath, "-o", output_filename, HMM, fasta_filename]
     else:
-        command = [hmmerpath, "-o", output_filename, "--cpu", str(ncpu), HMM, fasta_filename]
+        command = [
+            hmmerpath,
+            "-o",
+            output_filename,
+            "--cpu",
+            str(ncpu),
+            HMM,
+            fasta_filename,
+        ]
     process = Popen(command, stdout=PIPE, stderr=PIPE)
     pr_stdout, pr_stderr = process.communicate()
 
@@ -723,7 +761,9 @@ def run_hmmer(
         print(pr_stdout)
         raise HMMscanError(pr_stderr.decode("utf-8"))
     results = parse_hmmer_output(
-        output_filehandle, bit_score_threshold=bit_score_threshold, hmmer_species=hmmer_species
+        output_filehandle,
+        bit_score_threshold=bit_score_threshold,
+        hmmer_species=hmmer_species,
     )
 
     # clear up
@@ -833,7 +873,10 @@ def number_sequences_from_alignment(
                         hit_numbered.append(
                             validate_numbering(
                                 number_sequence_from_alignment(
-                                    state_vector, sequences[i][1], scheme=scheme, chain_type=details["chain_type"]
+                                    state_vector,
+                                    sequences[i][1],
+                                    scheme=scheme,
+                                    chain_type=details["chain_type"],
                                 ),
                                 sequences[i],
                             )
@@ -843,14 +886,20 @@ def number_sequences_from_alignment(
                         raise e
                     if assign_germline:
                         details["germlines"] = run_germline_assignment(
-                            state_vector, sequences[i][1], details["chain_type"], allowed_species=allowed_species
+                            state_vector,
+                            sequences[i][1],
+                            details["chain_type"],
+                            allowed_species=allowed_species,
                         )
                     hit_details.append(details)
                 except AssertionError as e:  # Handle errors. Those I have implemented should be assertion.
                     print(str(e), file=sys.stderr)
                     raise e  # Validation went wrong. Error message will go to stderr. Want this to be fatal during development.
                 except Exception as e:
-                    print("Error: Something really went wrong that has not been handled", file=sys.stderr)
+                    print(
+                        "Error: Something really went wrong that has not been handled",
+                        file=sys.stderr,
+                    )
                     print(str(e), file=sys.stderr)
                     raise e
 
@@ -889,10 +938,7 @@ def run_germline_assignment(state_vector, sequence, chain_type, allowed_species=
     """
     Find the closest sequence identity match.
     """
-    genes = {
-        "v_gene": [None, None],
-        "j_gene": [None, None],
-    }
+    genes = {"v_gene": [None, None], "j_gene": [None, None]}
 
     # Extract the positions that correspond to match (germline) states.
     state_dict = dict(((i, "m"), None) for i in range(1, 129))
@@ -994,9 +1040,7 @@ def check_for_j(sequences, alignments, scheme, hmmerpath):
                             alignments[i][2][0]["query_end"] = jRegion[-1][1] + 1
 
 
-##################################
 # High level numbering functions #
-##################################
 
 # Main function for ANARCI
 # Name conflict with function, module and package is kept for legacy unless issues are reported in future.
@@ -1215,7 +1259,12 @@ def run_anarci(seq, ncpu=1, **kwargs):
 
 
 # Wrapper function for simple sequence in numbering and chain type out behaviour.
-def number(sequence, scheme="imgt", database="ALL", allow=set(["H", "K", "L", "A", "B", "G", "D"])):
+def number(
+    sequence,
+    scheme="imgt",
+    database="ALL",
+    allow=set(["H", "K", "L", "A", "B", "G", "D"]),
+):
     """
     Given a sequence string, use anarci to number it using the scheme of choice.
     Only the first domain will be recognised and numbered
@@ -1244,14 +1293,21 @@ def number(sequence, scheme="imgt", database="ALL", allow=set(["H", "K", "L", "A
 
     try:
         numbered, alignment_details, _ = anarci(
-            [("sequence_0", sequence)], scheme=scheme, database=database, output=False, allow=allow
+            [("sequence_0", sequence)],
+            scheme=scheme,
+            database=database,
+            output=False,
+            allow=allow,
         )
     except AssertionError:  # Catch where the user has tried to number a TCR with an antibody scheme
         return False, False
 
     # We return the numbering list and the chain type where kappa and lambda chains are both "L" for light
     if numbered[0]:
-        return numbered[0][0][0], chain_type_to_class[alignment_details[0][0]["chain_type"]]
+        return (
+            numbered[0][0][0],
+            chain_type_to_class[alignment_details[0][0]["chain_type"]],
+        )
     else:
         return False, False
 

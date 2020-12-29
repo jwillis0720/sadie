@@ -5,13 +5,10 @@ import itertools
 import gzip
 
 # third party
-import pandas as pd
-from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 # module
-from .settings import BLAST_CONVENTION
 from .blast import write_blast_db
 
 logger = logging.getLogger(__file__)
@@ -82,7 +79,9 @@ def make_igblast_ref_database(database, outdir, only_functional):
     ig_database = json.load(gzip.open(database, "rt"))
 
     for receptor, common, source in itertools.product(
-        ["Ig", "TCR"], get_species_from_database(ig_database), get_databases_types(ig_database)
+        ["Ig", "TCR"],
+        get_species_from_database(ig_database),
+        get_databases_types(ig_database),
     ):
         receptor_blast_dir = os.path.join(outdir, f"{source}/{receptor}/blastdb/")
         if not os.path.exists(receptor_blast_dir):

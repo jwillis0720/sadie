@@ -1,15 +1,11 @@
 """Unit tests for antibody."""
 
 import logging
-import tempfile
-
 import pytest
 import pandas as pd
-from Bio.Seq import Seq
 from pkg_resources import resource_filename
-
-from sadie.antibody import exception, genetable, segment
 from sadie import antibody
+from sadie.antibody import exception, genetable, segment
 
 logger = logging.getLogger()
 
@@ -164,7 +160,7 @@ def test_gene_table():
     )
     j_gene_table = genetable.JGeneTable()
 
-    ##Assert everything is equal between our fixture and test frame
+    # Assert everything is equal between our fixture and test frame
     pd._testing.assert_frame_equal(fixture_j_gene, j_gene_table.gene_table)
 
     j6_human = j_gene_table.get_gene("IGHJ6*01", "human")
@@ -180,21 +176,21 @@ def test_gene_table():
 
 
 def test_v_gene():
-    ###test we can create v gene objects
+    # test we can create v gene objects
     v_segments_table_manual = pd.read_csv(fixture_file("VSEGMENT.csv.gz"), index_col=0).fillna("")
     for gb_index, v_gene_df in v_segments_table_manual.groupby(["species", "gene"]):
         species = gb_index[0]
         v_gene = gb_index[1]
         if len(v_gene_df) == 1:
             lookup = v_gene_df.iloc[0]
-            ##we have a single allelic match
+            # we have a single allelic match
             cdr1_aa = lookup["cdr1_aa"]
             cdr2_aa = lookup["cdr2_aa"]
             cdr3_aa = lookup["cdr3_aa"]
             fwr1_aa = lookup["fwr1_aa"]
             fwr2_aa = lookup["fwr2_aa"]
             fwr3_aa = lookup["fwr3_aa"]
-            ##cdr nt
+            #  cdr nt
             cdr1_nt = lookup["cdr1_nt"]
             cdr2_nt = lookup["cdr2_nt"]
             cdr3_nt = lookup["cdr3_nt"]
@@ -203,7 +199,7 @@ def test_v_gene():
             fwr3_nt = lookup["fwr3_nt"]
             v_gene_object = antibody.VGene(v_gene, species)
 
-            ##Make sure we are getting the right subclass
+            # Make sure we are getting the right subclass
             assert isinstance(v_gene_object, antibody.VGene)
             assert isinstance(v_gene_object.cdr1_aa, segment.CDR1AA)
             assert isinstance(v_gene_object.cdr2_aa, segment.CDR2AA)
@@ -218,7 +214,7 @@ def test_v_gene():
             assert isinstance(v_gene_object.fwr2_nt, segment.FrameWork2NT)
             assert isinstance(v_gene_object.fwr3_nt, segment.FrameWork3NT)
 
-            ##assert we have the same objects strings
+            # assert we have the same objects strings
             assert v_gene_object.cdr1_aa == cdr1_aa
             assert v_gene_object.cdr2_aa == cdr2_aa
             assert v_gene_object.cdr3_aa == cdr3_aa
@@ -232,21 +228,21 @@ def test_v_gene():
             assert v_gene_object.fwr2_nt == fwr2_nt
             assert v_gene_object.fwr3_nt == fwr3_nt
         else:
-            ##else test that we can raise an ambigous gene for those that have more than one allele
+            # else test that we can raise an ambigous gene for those that have more than one allele
             with pytest.raises(exception.AmbiguousGene):
                 v_gene_object = antibody.VGene(v_gene, species)
             for index in range(0, len(v_gene_df)):
                 lookup = v_gene_df.iloc[index]
-                ##we have to use the full allel
+                # we have to use the full allel
                 v_gene = lookup["full"]
-                ##we have a single allelic match
+                # we have a single allelic match
                 cdr1_aa = lookup["cdr1_aa"]
                 cdr2_aa = lookup["cdr2_aa"]
                 cdr3_aa = lookup["cdr3_aa"]
                 fwr1_aa = lookup["fwr1_aa"]
                 fwr2_aa = lookup["fwr2_aa"]
                 fwr3_aa = lookup["fwr3_aa"]
-                ##cdr nt
+                # cdr nt
                 cdr1_nt = lookup["cdr1_nt"]
                 cdr2_nt = lookup["cdr2_nt"]
                 cdr3_nt = lookup["cdr3_nt"]
@@ -254,7 +250,7 @@ def test_v_gene():
                 fwr2_nt = lookup["fwr2_nt"]
                 fwr3_nt = lookup["fwr3_nt"]
                 v_gene_object = antibody.VGene(v_gene, species)
-                ##Make sure we are getting the right subclass
+                # Make sure we are getting the right subclass
                 assert isinstance(v_gene_object, antibody.VGene)
                 assert isinstance(v_gene_object.cdr1_aa, segment.CDR1AA)
                 assert isinstance(v_gene_object.cdr2_aa, segment.CDR2AA)
@@ -269,7 +265,7 @@ def test_v_gene():
                 assert isinstance(v_gene_object.fwr2_nt, segment.FrameWork2NT)
                 assert isinstance(v_gene_object.fwr3_nt, segment.FrameWork3NT)
 
-                ##assert we have the same objects strings
+                # assert we have the same objects strings
                 assert v_gene_object.cdr1_aa == cdr1_aa
                 assert v_gene_object.cdr2_aa == cdr2_aa
                 assert v_gene_object.cdr3_aa == cdr3_aa
@@ -349,32 +345,32 @@ def test_v_gene_numbering():
 
 
 def test_j_gene():
-    ###test we can create j gene objects
+    # test we can create j gene objects
     j_segments_table_manual = pd.read_csv(fixture_file("JSEGMENT.csv.gz"), index_col=0).fillna("")
     for gb_index, j_gene_df in j_segments_table_manual.groupby(["species", "gene"]):
         species = gb_index[0]
         j_gene = gb_index[1]
         if len(j_gene_df) == 1:
             lookup = j_gene_df.iloc[0]
-            ##we have a single allelic match
+            # we have a single allelic match
             cdr3_nt = lookup["cdr3_nt"]
             cdr3_aa = lookup["cdr3_aa"]
 
-            ###FW4
+            # FW4
             fwr4_nt = lookup["fwr4_nt"]
             fwr4_aa = lookup["fwr4_aa"]
 
-            ##J Gene Object
+            # J Gene Object
             j_gene_object = antibody.JGene(j_gene, species)
 
-            ##Make sure we are getting the right subclass
+            # Make sure we are getting the right subclass
             assert isinstance(j_gene_object, antibody.JGene)
             assert isinstance(j_gene_object.cdr3_nt, segment.CDR3NT)
             assert isinstance(j_gene_object.cdr3_aa, segment.CDR3AA)
             assert isinstance(j_gene_object.fwr4_nt, segment.FrameWork4NT)
             assert isinstance(j_gene_object.fwr4_aa, segment.FrameWork4AA)
 
-            # ##assert we have the same objects strings
+            # assert we have the same objects strings
             assert j_gene_object.cdr3_nt == cdr3_nt
             assert j_gene_object.cdr3_aa == cdr3_aa
             assert j_gene_object.fwr4_nt == fwr4_nt

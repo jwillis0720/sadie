@@ -1,4 +1,4 @@
-##define numbering scheme, then chain, then region def
+# define numbering scheme, then chain, then region def
 scheme_numbering = {
     "imgt": {
         "heavy": {
