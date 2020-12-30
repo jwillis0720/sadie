@@ -25,15 +25,13 @@ def get_fasta_inputs(wildcard):
 
 def test_airr_init():
     # show each of these can run
-    for species in ["human", "mouse", "rat", "cat", "dog"]:
+    for species in ["human", "mouse", "rat", "dog"]:
         air_api = Airr(species)
-        # logger.debug(air_api.__repr__())
         assert isinstance(air_api, Airr)
     # show we can catch bad species inputs
     with pytest.raises(BadSpecies):
         for species in ["robot", "scarecrow"]:
             air_api = Airr(species)
-            # logger.debug(air_api.__repr__())
 
 
 def test_airr_single_sequence():
