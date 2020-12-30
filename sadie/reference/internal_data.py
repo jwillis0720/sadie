@@ -93,16 +93,16 @@ def generate_internal_annotaion_file_from_db(database, outpath, only_functional)
                 ]
                 genes_df = filt_df[["gene", "imgt.v_gene_nt"]].rename({"imgt.v_gene_nt": "sequence"}, axis=1)
                 scheme = "imgt"
-            internal_annotations_file_path = os.path.join(species_internal_db_path, f"{common}.ndm.{scheme}")
-            segment = [i.split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
-            index_df["segment"] = segment
-            index_df["weird_buffer"] = 0
-            logger.info("Writing to annotation file {}".format(internal_annotations_file_path))
-            index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
-            logger.info("Wrote to annotation file {}".format(internal_annotations_file_path))
-            # blast reads these suffixes depending on receptor
-            suffix = "V"
-            # suffix = "TV_V"
-            DB_OUTPATH = os.path.join(species_internal_db_path, f"{common}_{suffix}")
-            # Pass the dataframe and write out the blast database
-            make_blast_db_for_internal(genes_df, DB_OUTPATH)
+                internal_annotations_file_path = os.path.join(species_internal_db_path, f"{common}.ndm.{scheme}")
+                segment = [i.split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
+                index_df["segment"] = segment
+                index_df["weird_buffer"] = 0
+                logger.info("Writing to annotation file {}".format(internal_annotations_file_path))
+                index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
+                logger.info("Wrote to annotation file {}".format(internal_annotations_file_path))
+                # blast reads these suffixes depending on receptor
+                suffix = "V"
+                # suffix = "TV_V"
+                DB_OUTPATH = os.path.join(species_internal_db_path, f"{common}_{suffix}")
+                # Pass the dataframe and write out the blast database
+                make_blast_db_for_internal(genes_df, DB_OUTPATH)

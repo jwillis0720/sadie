@@ -21,6 +21,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from .airrtable import AirrTable, ScfvAirrTable
+from .igblast import ensure_prefix_to
 
 # Module level
 from .igblast import IgBLASTN
@@ -88,7 +89,13 @@ class GermlineData:
     /Users/jwillis/repos/sadie/airr/data/germlines/aux_data/human_gl.aux
     """
 
-    def __init__(self, species: str, receptor="Ig", database="imgt"):
+    def __init__(
+        self,
+        species: str,
+        database="imgt",
+        functional="all",
+        receptor="Ig",
+    ):
         """
 
         Parameters
@@ -98,21 +105,13 @@ class GermlineData:
         receptor : str, optional
             the receptor type, by default "Ig"
         """
-        self._base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "data/germlines"))
-
-        blast_dir = os.path.join(self._base_dir, f"{database}/{receptor}/blastdb/{species}_")
-        self._v_gene_dir = blast_dir + "V"
-        self._d_gene_dir = blast_dir + "D"
-        self._j_gene_dir = blast_dir + "J"
-        self._aux_path = os.path.join(self.base_dir, f"{database}/{receptor}/aux_db/{species}_gl.aux")
-        self._igdata = os.path.join(self.base_dir, f"{database}/{receptor}/")
-
-        self._available_species = list(
-            map(
-                lambda x: os.path.basename(x).split("-")[0],
-                glob.glob(os.path.join(self.base_dir, f"{database}/**/*.aux"), recursive=True),
-            )
-        )
+        self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "data/germlines"))
+        self.blast_dir = os.path.join(self.base_dir, f"{database}/{functional}/{receptor}/blastdb/{species}_")
+        self.v_gene_dir = self.blast_dir + "V"
+        self.d_gene_dir = self.blast_dir + "D"
+        self.j_gene_dir = self.blast_dir + "J"
+        self.aux_path = os.path.join(self.base_dir, f"{database}/aux_db/{species}_gl.aux")
+        self.igdata = os.path.join(self.base_dir, f"{database}/{functional}/{receptor}/")
 
     @property
     def base_dir(self) -> Path:
@@ -125,56 +124,81 @@ class GermlineData:
         """
         return self._base_dir
 
+    @base_dir.setter
+    def base_dir(self, directory: str):
+        _path = Path(directory)
+        if not _path.exists():
+            raise FileNotFoundError(f"Base directory, {directory} not found")
+        self._base_dir = directory
+
     @property
-    def v_gene_dir(self) -> str:
+    def blast_dir(self) -> Path:
+        return self._blast_dir
+
+    @blast_dir.setter
+    def blast_dir(self, directory: str):
+        # Must be a parent since this is not a valid path yet
+        _path = Path(directory).parent
+        if not _path.exists():
+            raise FileNotFoundError(f"Blast directory, {directory} not found")
+        self._blast_dir = directory
+
+    @property
+    def v_gene_dir(self) -> Path:
         """The V gene directory prefix for the species of interest
 
         Returns
         -------
         str
            this is not a qualified path but a glob path.
-           ex. /Users/jwillis/repos/sadie/airr/data/germlines/blastdb/Ig/human/human_V
            human_V does not exists but it's the prefix to human_V.nod and other files used by blast
         """
         return self._v_gene_dir
 
     @v_gene_dir.setter
-    def v_gene_dir(self, directory):
-        self._v_gene_dir = directory
+    def v_gene_dir(self, directory: str):
+        _path = Path(directory)
+        if not ensure_prefix_to(_path):
+            raise FileNotFoundError(f"V gene directory glob, {directory} not found")
+        self._v_gene_dir = _path
 
     @property
-    def d_gene_dir(self):
+    def d_gene_dir(self) -> Path:
         """The D gene directory prefix for the species of interest
 
         Returns
         -------
         str
            this is not a qualified path but a glob path.
-           ex. /Users/jwillis/repos/sadie/airr/data/germlines/blastdb/Ig/human/human_D
-           human_D does not exists but it's the prefix to human_V.nod and other files used by blast
+           ex: human_D does not exists but it's the prefix to human_D.nod and other files used by blast
         """
         return self._d_gene_dir
 
     @d_gene_dir.setter
-    def d_gene_dir(self, directory):
-        self._d_gene_dir = directory
+    def d_gene_dir(self, directory: str):
+        _path = Path(directory)
+        if not ensure_prefix_to(_path):
+            raise FileNotFoundError(f"D gene directory glob, {directory} not found")
+        self._d_gene_dir = _path
 
     @property
-    def j_gene_dir(self):
-        return self._j_gene_dir
-
-    @j_gene_dir.setter
-    def j_gene_dir(self, directory):
+    def j_gene_dir(self) -> Path:
         """The J gene directory prefix for the species of interest
 
         Returns
         -------
         str
            this is not a qualified path but a glob path.
-           ex. /Users/jwillis/repos/sadie/airr/data/germlines/blastdb/Ig/human/human_J
-           human_D does not exists but it's the prefix to human_V.nod and other files used by blast
+           ex: human_J does not exists but it's the prefix to human_j.nod and other files used by blast
         """
-        self._j_gene_dir = directory
+        return self._j_gene_dir
+
+    @j_gene_dir.setter
+    def j_gene_dir(self, directory: str):
+        _path = Path(directory)
+        if not ensure_prefix_to(_path):
+            raise FileNotFoundError(f"J gene directory glob, {directory} not found")
+        self._j_gene_dir = _path
 
     @property
     def aux_path(self) -> Path:
@@ -189,10 +213,11 @@ class GermlineData:
         return self._aux_path
 
     @aux_path.setter
-    def aux_path(self, directory):
-        if not os.path.exists(directory):
-            raise FileNotFoundError(directory)
-        self._aux_path = directory
+    def aux_path(self, directory: str):
+        _path = Path(directory)
+        if not _path.exists():
+            raise FileNotFoundError(f"J gene directory glob, {directory} not found")
+        self._aux_path = _path
 
     @property
     def igdata(self) -> Path:
@@ -200,21 +225,10 @@ class GermlineData:
 
     @igdata.setter
     def igdata(self, directory: Path):
-        if not os.path.found(directory):
-            raise FileNotFoundError(directory)
-        else:
-            self._igdata = directory
-
-    @property
-    def available_species(self) -> list:
-        """list of available species
-
-        Returns
-        -------
-        list
-            avail species
-        """
-        return self._available_species
+        _path = Path(directory)
+        if not _path.exists():
+            raise FileNotFoundError(f"IGDATA, {directory} not found")
+        self._igdata = _path
 
     @staticmethod
     def get_available_species() -> list:
