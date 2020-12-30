@@ -1,6 +1,5 @@
 """Main Objects for Interacting with Airr"""
 import bz2
-import glob
 import gzip
 import logging
 import os
@@ -10,7 +9,7 @@ import tempfile
 # Std library
 import warnings
 from pathlib import Path
-from typing import List, Tuple, Union, Generator
+from typing import Generator, List, Tuple, Union
 
 import filetype
 import pandas as pd
@@ -20,11 +19,11 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
+from ..reference import loaded_database
 from .airrtable import AirrTable, ScfvAirrTable
-from .igblast import ensure_prefix_to
 
 # Module level
-from .igblast import IgBLASTN
+from .igblast import IgBLASTN, ensure_prefix_to
 
 logger = logging.getLogger("AIRR")
 
@@ -36,7 +35,7 @@ class Error(Exception):
     """Base class for exceptions in this module."""
 
 
-class BadSpecies(Error):
+class BadDataset(Error):
     """Exception raised for annotating a bad species
 
     Attributes:
@@ -48,7 +47,7 @@ class BadSpecies(Error):
         self.accepted_types = accepted_types
 
     def __str__(self):
-        return "{} species, avail speciesl{}".format(self.requested_type, self.accepted_types)
+        return "{} dataset, avail datasets{}".format(self.requested_type, sorted(self.accepted_types))
 
 
 class BadRequstedFileType(Error):
@@ -231,26 +230,19 @@ class GermlineData:
         self._igdata = _path
 
     @staticmethod
-    def get_available_species() -> list:
+    def get_available_datasets() -> list:
         """A static non-instantiated method to get a list of avaialble species with the builtin data
 
         Returns
         -------
         list
-           available species
+           available datasets (common_name, custom|imgt, functional|all)
         """
-        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "data/germlines/"))
-        available_species = list(
-            set(
-                list(
-                    map(
-                        lambda x: os.path.basename(x).split("_")[0],
-                        glob.glob(os.path.join(base_dir, "**/*.aux"), recursive=True),
-                    )
-                )
-            )
-        )
-        return available_species
+
+        functional = list(filter(lambda x: x["functional"] == "F", loaded_database))
+        database_types_all_data = set(map(lambda x: (x["common"], x["source"], "all"), loaded_database))
+        database_types_functional_data = set(map(lambda x: (x["common"], x["source"], "functional"), functional))
+        return list(database_types_all_data) + list(database_types_functional_data)
 
 
 class Airr:
@@ -292,7 +284,9 @@ class Airr:
     1  GU272045.1  CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGT...   IGH       False         True        True  ...       375  GGCTGGTGGGCCCGACTACCGTAATGGGTACAAC         34  NaN          0   human
     """
 
-    def __init__(self, species: str, igblast_exe="", temp_directory=".airr_tmp"):
+    def __init__(
+        self, species: str, igblast_exe="", functional="functional", database="imgt", temp_directory=".airr_tmp"
+    ):
         """Airr constructor
 
         Parameters
@@ -301,16 +295,26 @@ class Airr:
             the species to annotate against, ex. 'human
         igblast_exe : str, optional
             the executable. Can be a full path but has to be in $PATH, by default "igblastn"
+        functional : str,
+            run on only functional genes
+        database : str,
+           custom or imgt database
 
         Raises
         ------
         BadSpecies
             If you ask for a species that does not have a reference dataset, ex. robot
         """
-        if species.lower() not in GermlineData.get_available_species():
-            raise BadSpecies(species, GermlineData.get_available_species())
         # Init igblast api module
         self._create_temp = False
+
+        # quickly check if we have chosen bad species
+        _available_datasets = GermlineData.get_available_datasets()
+        _chosen_datasets = (species.lower(), database.lower(), functional.lower())
+        if _chosen_datasets not in _available_datasets:
+            raise BadDataset(_chosen_datasets, _available_datasets)
+
+        # if not, proceed
         self.igblast = IgBLASTN()
         self.species = species
 
@@ -318,7 +322,7 @@ class Airr:
         self.igblast.executable = igblast_exe
 
         # Set germline data and setup igblast
-        self.germline_data = GermlineData(species)
+        self.germline_data = GermlineData(species, functional=functional, database=database)
         self.igblast.igdata = self.germline_data.igdata
         self.igblast.germline_db_v = self.germline_data.v_gene_dir
         self.igblast.germline_db_d = self.germline_data.d_gene_dir
@@ -584,6 +588,10 @@ class Airr:
         return ScfvAirrTable(_heavy_airr, _light_airr)
 
     @staticmethod
+    def get_available_datasets() -> list:
+        return GermlineData.get_available_datasets()
+
+    @staticmethod
     def get_available_species() -> list:
         """get all species available
 
@@ -592,7 +600,7 @@ class Airr:
         list
             Available species
         """
-        return GermlineData.get_available_species()
+        return list(set(map(lambda x: x[0], GermlineData.get_available_datasets())))
 
     def __repr__(self):
         return self.igblast.__repr__()
