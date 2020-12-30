@@ -7,7 +7,7 @@ import glob
 import pytest
 import tempfile
 import pandas as pd
-from sadie.airr import Airr, BadSpecies, AirrTable
+from sadie.airr import Airr, BadDataset, AirrTable
 from sadie.airr import app
 
 logger = logging.getLogger()
@@ -27,9 +27,10 @@ def test_airr_init():
     # show each of these can run
     for species in ["human", "mouse", "rat", "dog"]:
         air_api = Airr(species)
+        air_api.get_available_datasets()
         assert isinstance(air_api, Airr)
     # show we can catch bad species inputs
-    with pytest.raises(BadSpecies):
+    with pytest.raises(BadDataset):
         for species in ["robot", "scarecrow"]:
             air_api = Airr(species)
 
