@@ -29,7 +29,6 @@ from ..utility.util import get_verbosity_level, get_project_root
     default=os.path.join(get_project_root(), "airr/data/germlines"),
 )
 def make_igblast_reference(verbose, outpath, only_functional=True):
-    print(outpath)
     """make the igblast reference files
 
     This script will make the imgt reference files used by igblast or airr, including internal data, the blast

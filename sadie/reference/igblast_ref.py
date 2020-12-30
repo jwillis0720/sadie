@@ -51,13 +51,20 @@ def get_species_from_database(database_json):
     return list(set(map(lambda x: x["common"], database_json)))
 
 
-def get_filtered_data(database_json, source, common, receptor, segment):
+def get_filtered_data(database_json, source, common, receptor, segment, subset):
+    if subset == "all":
+        function = ["ORF", "F", "P", "I"]
+    elif subset == "functional":
+        function = ["F"]
+    else:
+        raise Exception(f"{subset} not a valide option, ['all', 'funtional']")
     return list(
         filter(
             lambda x: x["source"] == source
             and x["common"] == common
             and x["gene_segment"] == segment
-            and x["receptor"] == receptor,
+            and x["receptor"] == receptor
+            and x["functional"] in function,
             database_json,
         )
     )
@@ -78,21 +85,21 @@ def make_igblast_ref_database(database, outdir, only_functional):
     # The blast DB groups by V,D and J
     ig_database = json.load(gzip.open(database, "rt"))
 
-    for receptor, common, source in itertools.product(
+    for receptor, subset, common, source in itertools.product(
         ["Ig", "TCR"],
+        ["all", "functional"],
         get_species_from_database(ig_database),
         get_databases_types(ig_database),
     ):
-        receptor_blast_dir = os.path.join(outdir, f"{source}/{receptor}/blastdb/")
+        receptor_blast_dir = os.path.join(outdir, f"{source}/{subset}/{receptor}/blastdb/")
         if not os.path.exists(receptor_blast_dir):
             logger.info("Creating %s", receptor_blast_dir)
             os.makedirs(receptor_blast_dir)
         for segment in list("VDJ"):
-            filtered_df = get_filtered_data(ig_database, source, common, receptor, segment)
+            filtered_df = get_filtered_data(ig_database, source, common, receptor, segment, subset)
             if not filtered_df:
-                logger.info(f"No entries for {common}-{source}-{receptor}")
+                logger.info(f"No entries for {source}-{subset}-{receptor}-{common}-{segment}")
                 continue
-            # recptor_translate_name = BLAST_CONVENTION[receptor]
             out_segment = os.path.join(receptor_blast_dir, f"{common}_{segment}")
             genes = list(map(lambda x: x["gene"], filtered_df))
             seqs = list(map(lambda x: x["imgt"][f"{segment.lower()}_gene_nt"], filtered_df))
