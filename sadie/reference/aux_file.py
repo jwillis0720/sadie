@@ -20,13 +20,10 @@ def get_species_from_database(database_json):
     return list(set(map(lambda x: x["common"], database_json)))
 
 
-def get_filtered_data(database_json, source, common, receptor, segment):
+def get_filtered_data(database_json, common, source, segment):
     return list(
         filter(
-            lambda x: x["source"] == source
-            and x["common"] == common
-            and x["gene_segment"] == segment
-            and x["receptor"] == receptor,
+            lambda x: x["source"] == source and x["common"] == common and x["gene_segment"] == segment,
             database_json,
         )
     )
@@ -43,16 +40,15 @@ def make_auxillary_file(database, outdir):
     Given the imgt file structure object and aux path, make the aux data
     """
     ig_database = json.load(gzip.open(database, "rt"))
-    for receptor, common, source in itertools.product(
-        ["Ig", "TCR"],
+    for common, source in itertools.product(
         get_species_from_database(ig_database),
         get_databases_types(ig_database),
     ):
-        filtered_data = get_filtered_data(ig_database, source, common, receptor, "J")
+        filtered_data = get_filtered_data(ig_database, common, source, "J")
         if not filtered_data:
             logger.debug(f"No info for {common}-{source} j chain")
             continue
-        receptor_aux_dir = os.path.join(outdir, f"{source}/{receptor}/aux_db/")
+        receptor_aux_dir = os.path.join(outdir, f"{source}/aux_db")
         if not os.path.exists(receptor_aux_dir):
             logger.info("Creating %s", receptor_aux_dir)
             os.makedirs(receptor_aux_dir)
