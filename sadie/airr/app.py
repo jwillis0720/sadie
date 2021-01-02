@@ -26,6 +26,11 @@ from .airr import Airr
     help="""The input file can be compressed or uncompressed file of fasta""",
 )
 @click.option(
+    "--functional/--all",
+    help="Only annotate on functional gene segments",
+    default=True,
+)
+@click.option(
     "--species",
     "-s",
     type=click.Choice(Airr.get_available_species()),
@@ -33,10 +38,17 @@ from .airr import Airr
     default="human",
 )
 @click.option(
+    "--database",
+    "-d",
+    type=click.Choice(["imgt", "custom"]),
+    default="imgt",
+    help="Does the input an scfv sequence contain phagemid sequences?",
+)
+@click.option(
     "--scfv",
     "-p",
     is_flag=True,
-    help="Does the input sequence contain phagemid sequences?",
+    help="Does the input an have sequence contain scfv sequences?",
 )
 @click.option(
     "--out",
@@ -58,7 +70,7 @@ from .airr import Airr
     help="output file type format",
     default="csv",
 )
-def run_airr(verbose, query, species, scfv, out, compress, file_format):
+def run_airr(verbose, query, functional, database, species, scfv, out, compress, file_format):
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
     logger = logging.getLogger("Airr")
@@ -68,7 +80,11 @@ def run_airr(verbose, query, species, scfv, out, compress, file_format):
     logger.info("Running Airr on %s using %s", query, species)
 
     # setup object
-    airr = Airr(species)
+    if functional:
+        _func = "functional"
+    else:
+        _func = "all"
+    airr = Airr(species=species, functional=_func, database=database)
 
     # Run annotations on a file
     if scfv:
