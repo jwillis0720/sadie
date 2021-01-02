@@ -49,7 +49,7 @@ setup(
     author="Jordan R Willis",
     author_email="jwillis0720@gmail.com",
     url="https://github.com/jwillis0720/",
-    packages=find_packages(include=["sadie*"], exclude=["tests*", "docs"]),
+    packages=find_packages(include=["src/sadie*"], exclude=["tests*", "docs"]),
     include_package_data=True,
     install_requires=requirements,
     zip_safe=False,
