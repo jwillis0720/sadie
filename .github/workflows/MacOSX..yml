@@ -33,9 +33,9 @@ jobs:
         uses: pre-commit/action@v2.0.0
       - name: Test
         run: |
-          pytest .
+          pytest -v tests/unit
           # env
-          # coverage run --source=./sadie --branch -m pytest
+          # coverage run --source=./sadie --branch -m pytest -v tests
           # coverage xml
           # coverage report
           # I can't get pytest plugin to work on github acitons
