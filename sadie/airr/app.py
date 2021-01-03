@@ -7,9 +7,6 @@ from .util import get_verbosity_level
 from .airr import Airr
 
 
-"""This is our main command line tag"""
-
-
 @click.command()
 @click.option(
     "-v",
