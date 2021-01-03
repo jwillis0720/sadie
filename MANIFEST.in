@@ -1,7 +1,7 @@
-recursive-include sadie/antibody/data *
-recursive-include sadie/reference/data *
-recursive-include sadie/anarci/bin *
-recursive-include sadie/airr/bin *
-recursive-include sadie/reference/bin *
-recursive-include sadie/anarci/data *
-recursive-include sadie/airr/data *
+recursive-include src/sadie/antibody/data *
+recursive-include src/sadie/reference/data *
+recursive-include src/sadie/anarci/bin *
+recursive-include src/sadie/airr/bin *
+recursive-include src/sadie/reference/bin *
+recursive-include src/sadie/anarci/data *
+recursive-include src/sadie/airr/data *

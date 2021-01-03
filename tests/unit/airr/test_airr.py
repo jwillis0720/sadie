@@ -1,26 +1,24 @@
 """Unit tests for analysis interface."""
 import os
-from pkg_resources import resource_filename
 from click.testing import CliRunner
 import logging
 import glob
 import pytest
+from itertools import product
 import tempfile
 import pandas as pd
-from sadie.airr import Airr, BadDataset, AirrTable
+from sadie.airr import Airr, BadDataSet, AirrTable
 from sadie.airr import app
 
 logger = logging.getLogger()
 
 
-def fixture_file(file):
+def get_file(file):
     """Helper method for test execution."""
-    return resource_filename(__name__, "fixtures/{}".format(file))
-
-
-def get_fasta_inputs(wildcard):
-    fasta_input_dir = fixture_file("fasta_inputs")
-    return glob.glob(fasta_input_dir + "/*/{wildcard}".format(wildcard=wildcard))
+    _file = os.path.join(os.path.abspath(os.path.dirname(__file__)), f"fixtures/{file}")
+    if not os.path.exists(_file):
+        raise FileNotFoundError(_file)
+    return _file
 
 
 def test_airr_init():
@@ -30,7 +28,7 @@ def test_airr_init():
         air_api.get_available_datasets()
         assert isinstance(air_api, Airr)
     # show we can catch bad species inputs
-    with pytest.raises(BadDataset):
+    with pytest.raises(BadDataSet):
         for species in ["robot", "scarecrow"]:
             air_api = Airr(species)
 
@@ -66,7 +64,7 @@ def test_airr_single_sequence():
 
 def test_airr_from_dataframe():
     """Test we can pass a dataframe to runtime"""
-    dog_df = pd.read_csv(fixture_file("airr_tables/dog_igh.csv.gz"), index_col=1)
+    dog_df = pd.read_csv(get_file("airr_tables/dog_igh.csv.gz"), index_col=1)
     airr_api = Airr("dog")
     unjoined_df = airr_api.run_dataframe(dog_df, "sequence", "sequence_id")
     assert isinstance(unjoined_df, AirrTable)
@@ -74,21 +72,82 @@ def test_airr_from_dataframe():
     assert isinstance(joined_df, pd.DataFrame)
 
 
+def _run_cli(args, tmpfile):
+    runner = CliRunner()
+    result = runner.invoke(app.run_airr, args)
+    assert result.exit_code == 0
+    assert os.path.exists(tmpfile.name)
+    return True
+
+
 def test_cli():
     """Confirm the CLI works as expecte"""
-    runner = CliRunner()
-    fastas = get_fasta_inputs("*")
-    for query_file in fastas:
-        with tempfile.NamedTemporaryFile() as tmpfile:
-            logger.debug(tmpfile.name)
-            result = runner.invoke(app.run_airr, ["--query", query_file, "-o", tmpfile.name])
-            assert result.exit_code == 0
-            assert os.path.exists(tmpfile.name)
+    quereies = glob.glob(get_file("fasta_inputs/") + "*")
+    species = ["dog", "rat", "human", "mouse", "macaque"]
+    ft = ["csv", "json"]
+    functions = ["--all", "--functional"]
+    products = product(quereies, species, ["imgt"], ft, functions)
+
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        for p_tuple in products:
+            cli_input = [
+                "--query",
+                p_tuple[0],
+                "-o",
+                tmpfile.name,
+                "-s",
+                p_tuple[1],
+                "--database",
+                p_tuple[2],
+                "-f",
+                p_tuple[3],
+                p_tuple[4],
+            ]
+            logger.debug(f"CLI input {' '.join(cli_input)}")
+            assert _run_cli(cli_input, tmpfile)
+    quereies = glob.glob(get_file("fasta_inputs/") + "*")
+    species = ["cat", "macaque"]
+    ft = ["csv", "json"]
+    functions = ["--all", "--functional"]
+    products = product(quereies, species, ["custom"], ft, functions)
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        for p_tuple in products:
+            cli_input = [
+                "--query",
+                p_tuple[0],
+                "-o",
+                tmpfile.name,
+                "-s",
+                p_tuple[1],
+                "--database",
+                p_tuple[2],
+                "-f",
+                p_tuple[3],
+                p_tuple[4],
+            ]
+            logger.debug(f"CLI input {' '.join(cli_input)}")
+            assert _run_cli(cli_input, tmpfile)
+    quereies = get_file("fasta_inputs/scfv.fasta")
+    species = ["human"]
+    ft = ["csv", "json"]
+    functions = ["--all", "--functional"]
+    products = product(quereies, species, ["imgt"], ft, functions)
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        for p_tuple in products:
+            cli_input = [
+                "--query",
+                p_tuple[0],
+                "-o",
+                tmpfile.name,
+                "-s",
+                p_tuple[1],
+                "--database",
+                p_tuple[2],
+                "-f",
+                p_tuple[3],
+                p_tuple[4],
+                "--scfv",
+            ]
+            logger.debug(f"CLI input {' '.join(cli_input)}")
+            assert _run_cli(cli_input, tmpfile)
     assert not os.path.exists(tmpfile.name)
-    for query_file in fastas:
-        with tempfile.NamedTemporaryFile() as tmpfile:
-            logger.debug(tmpfile.name)
-            result = runner.invoke(app.run_airr, ["--query", query_file, "-s", "dog", "-o", tmpfile.name])
-            assert result.exit_code == 0
-            assert os.path.exists(tmpfile.name)
-        assert not os.path.exists(tmpfile.name)

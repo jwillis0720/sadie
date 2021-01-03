@@ -1,6 +1,7 @@
 """The setup script."""
 import sys
-
+from glob import glob
+from os.path import splitext, basename
 from setuptools import setup, find_packages
 from setuptools.command.test import test
 
@@ -41,6 +42,9 @@ class PyTest(test):
         sys.exit(err_number)
 
 
+# great info
+# https://stackoverflow.com/questions/50155464/using-pytest-with-a-src-layer
+
 setup(
     name="sadie",
     version="0.1.0",
@@ -49,7 +53,9 @@ setup(
     author="Jordan R Willis",
     author_email="jwillis0720@gmail.com",
     url="https://github.com/jwillis0720/",
-    packages=find_packages(include=["src/sadie*"], exclude=["tests*", "docs"]),
+    package_dir={"": "src"},
+    packages=find_packages(where="src"),
+    py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
     include_package_data=True,
     install_requires=requirements,
     zip_safe=False,
@@ -62,5 +68,5 @@ setup(
         ]
     },
     test_suite="tests",
-    cmdclass={"tests": PyTest, "bdist_wheel": bdist_wheel},
+    cmdclass={"test": PyTest, "bdist_wheel": bdist_wheel},
 )
