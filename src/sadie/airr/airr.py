@@ -371,8 +371,8 @@ class Airr:
     def run_dataframe(
         self,
         dataframe: pd.DataFrame,
-        seq_field: Union[str, int],
         seq_id_field: Union[str, int],
+        seq_field: Union[str, int],
         scfv=False,
         return_join=False,
     ) -> pd.DataFrame:
@@ -386,8 +386,8 @@ class Airr:
         seq_field: Union[str,int]
            The field in the dataframe to run airr on
 
-        seq_id_field: Optional:
-            The field that you want the "Sequence ID" in the airr table to correspond to. It will default to using the dataframe row index
+        seq_id_field: Union[str,int]:
+            The field that you want the "Sequence ID" in the airr table to correspond to.
 
         scfv : bool, optional
             if the fasta contains an H+L pair, by default False
@@ -396,6 +396,10 @@ class Airr:
         -------
         pd.DataFrame
             [description]
+
+        ToDo
+        -------
+        Default seq_id to be index. But have to account for it being a multi index
         """
 
         def _get_seq_generator():
