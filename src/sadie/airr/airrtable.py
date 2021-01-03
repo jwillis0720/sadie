@@ -701,8 +701,8 @@ class ScfvAirrTable:
             )
 
         self.join_on = list(join_on)
-        self._heavy = heavy_airr_table.set_index(join_on)
-        self._light = light_airr_table.set_index(join_on)
+        self._heavy = heavy_airr_table.set_index(self.join_on)
+        self._light = light_airr_table.set_index(self.join_on)
         if sorted(self._heavy.index) != sorted(self._light.index):
             logger.warning("heavy airr and light airr don't share the same indexes, there maybe unpaired chains")
             # raise JoinAirrError(

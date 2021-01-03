@@ -105,20 +105,16 @@ def run_airr(verbose, query, functional, database, species, scfv, out, compress,
         prefix = out.split(".")[0]
         if not compress:
             out = f"{prefix}.{file_format}"
-            out_heavy = f"{prefix}_heavy.{file_format}"
-            out_light = f"{prefix}_light.{file_format}"
             out_scfv = f"{prefix}_scfv.{file_format}"
         else:
             out = f"{prefix}.{file_format}.{lookup(compress)}"
-            out_heavy = f"{prefix}_heavy.{file_format}.{lookup(compress)}"
-            out_light = f"{prefix}_light.{file_format}.{lookup(compress)}"
             out_scfv = f"{prefix}_scfv.{file_format}.{lookup(compress)}"
 
         if scfv:
             out = out_scfv
 
+    logger.info("Writing %s", out)
     if file_format == "json":
-        logger.info("Writing %s", out)
         if scfv:
             scfv_airr.to_json(out, compression=compress)
         else:
@@ -126,17 +122,13 @@ def run_airr(verbose, query, functional, database, species, scfv, out, compress,
 
     elif file_format == "csv":
         if scfv:
-            logger.info("Writing %s and %s", out_heavy, out_light)
             scfv_airr.to_csv(out, compression=compress)
         else:
-            logger.info("Writing %s", out)
             airr_table.to_csv(out, compression=compress)
     elif file_format == "gb":
         if scfv:
-            # scfv_airr.to_genbank(out_scfv, compression=compress)
             scfv_airr.to_genbank(out)
         else:
-            logger.info("Writing %s", out)
             airr_table.to_genbank(out, compression=compress)
 
 

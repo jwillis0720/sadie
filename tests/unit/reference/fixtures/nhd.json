@@ -1,4 +1,5 @@
 [
+    "/custom/all/Ig/blastdb/cat_D.nhd",
     "/custom/all/Ig/blastdb/cat_J.nhd",
     "/custom/all/Ig/blastdb/cat_V.nhd",
     "/custom/all/Ig/blastdb/macaque_D.nhd",
@@ -6,6 +7,7 @@
     "/custom/all/Ig/blastdb/macaque_V.nhd",
     "/custom/all/Ig/internal_data/cat/cat_V.nhd",
     "/custom/all/Ig/internal_data/macaque/macaque_V.nhd",
+    "/custom/functional/Ig/blastdb/cat_D.nhd",
     "/custom/functional/Ig/blastdb/cat_J.nhd",
     "/custom/functional/Ig/blastdb/cat_V.nhd",
     "/custom/functional/Ig/blastdb/macaque_D.nhd",

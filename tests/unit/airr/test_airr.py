@@ -127,7 +127,7 @@ def test_cli():
             ]
             logger.debug(f"CLI input {' '.join(cli_input)}")
             assert _run_cli(cli_input, tmpfile)
-    quereies = get_file("fasta_inputs/scfv.fasta")
+    quereies = [get_file("fasta_inputs/scfv.fasta")]
     species = ["human"]
     ft = ["csv", "json"]
     functions = ["--all", "--functional"]
