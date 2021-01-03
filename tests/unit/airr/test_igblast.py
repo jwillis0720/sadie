@@ -1,7 +1,6 @@
 """Unit tests for antibody."""
 import logging
 import os
-from pkg_resources import resource_filename
 
 # third party
 import pandas as pd
@@ -13,9 +12,12 @@ from sadie import airr
 loger = logging.getLogger()
 
 
-def fixture_file(file):
+def get_file(file):
     """Helper method for test execution."""
-    return resource_filename(__name__, "fixtures/{}".format(file))
+    _file = os.path.join(os.path.abspath(os.path.dirname(__file__)), f"fixtures/{file}")
+    if not os.path.exists(_file):
+        raise FileNotFoundError(_file)
+    return _file
 
 
 def assert_df(expected, actual):
@@ -88,8 +90,8 @@ def test_antibody_igblast_file_run():
     ig_blast.igdata = os.path.join(germline_ref, "imgt/all/Ig")
 
     # Grab from fixtures
-    query = fixture_file("fasta_inputs/heavy/PG9_H.fasta")
-    expected_output = fixture_file("expected_outputs/PG9_H.csv")
+    query = get_file("fasta_inputs/PG9_H.fasta")
+    expected_output = get_file("expected_outputs/PG9_H.csv")
     ig_blast.germline_db_v = os.path.join(db_ref, "human_V")
     ig_blast.germline_db_d = os.path.join(db_ref, "human_D")
     ig_blast.germline_db_j = os.path.join(db_ref, "human_J")
@@ -109,8 +111,8 @@ def test_antibody_igblast_file_run():
         atol=0.001,
     )
 
-    query = fixture_file("fasta_inputs/light/PG9_L.fasta")
-    expected_output = fixture_file("expected_outputs/PG9_L.csv.gz")
+    query = get_file("fasta_inputs/PG9_L.fasta")
+    expected_output = get_file("expected_outputs/PG9_L.csv")
     expected_output_df = pd.read_csv(expected_output, index_col=0).fillna("")
     csv_dataframe = ig_blast.run_file(query).fillna("")
     pd._testing.assert_frame_equal(csv_dataframe, expected_output_df, check_like=True)
