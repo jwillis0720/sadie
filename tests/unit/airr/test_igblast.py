@@ -84,7 +84,7 @@ def test_antibody_igblast_file_run():
     ig_blast = airr.igblast.IgBLASTN()
     germline_ref = os.path.join(os.path.dirname(os.path.abspath(airr.__file__)), "data/germlines")
     db_ref = os.path.join(germline_ref, "imgt/all/Ig/blastdb/")
-    aux_path = os.path.join(germline_ref, "imgt/Ig/aux_db/")
+    aux_path = os.path.join(germline_ref, "imgt/aux_db/")
 
     # Set data
     ig_blast.igdata = os.path.join(germline_ref, "imgt/all/Ig")

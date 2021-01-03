@@ -34,7 +34,7 @@ jobs:
       - name: Test
         run: |
           env
-          coverage run --source=./sadie --branch -m pytest
+          coverage run --source=./sadie --branch -m pytest -v tests/unit
           coverage xml
           coverage report
           # I can't get pytest plugin to work on github acitons
