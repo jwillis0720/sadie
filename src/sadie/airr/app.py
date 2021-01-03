@@ -66,7 +66,7 @@ from .airr import Airr
 @click.option(
     "--file_format",
     "-f",
-    type=click.Choice(["json", "csv", "gb"]),
+    type=click.Choice(["json", "csv"]),
     help="output file type format",
     default="csv",
 )

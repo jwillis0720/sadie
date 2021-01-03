@@ -35,7 +35,7 @@ class Error(Exception):
     """Base class for exceptions in this module."""
 
 
-class BadDataset(Error):
+class BadDataSet(Error):
     """Exception raised for annotating a bad species
 
     Attributes:
@@ -104,6 +104,7 @@ class GermlineData:
         receptor : str, optional
             the receptor type, by default "Ig"
         """
+        self.species = species
         self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "data/germlines"))
         self.blast_dir = os.path.join(self.base_dir, f"{database}/{functional}/{receptor}/blastdb/{species}_")
         self.v_gene_dir = self.blast_dir + "V"
@@ -177,7 +178,7 @@ class GermlineData:
     def d_gene_dir(self, directory: str):
         _path = Path(directory)
         if not ensure_prefix_to(_path):
-            raise FileNotFoundError(f"D gene directory glob, {directory} not found")
+            warnings.warn(f"D gene directory not found for {self.species}", UserWarning)
         self._d_gene_dir = _path
 
     @property
@@ -312,7 +313,7 @@ class Airr:
         _available_datasets = GermlineData.get_available_datasets()
         _chosen_datasets = (species.lower(), database.lower(), functional.lower())
         if _chosen_datasets not in _available_datasets:
-            raise BadDataset(_chosen_datasets, _available_datasets)
+            raise BadDataSet(_chosen_datasets, _available_datasets)
 
         # if not, proceed
         self.igblast = IgBLASTN()

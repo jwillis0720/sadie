@@ -1,6 +1,6 @@
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
-from .airr import BadDataset, Airr
+from .airr import BadDataSet, Airr
 from .airrtable import AirrTable
 
-__all__ = ["BadDataset", "Airr", "AirrTable"]
+__all__ = ["BadDataSet", "Airr", "AirrTable"]
