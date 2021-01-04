@@ -64,11 +64,11 @@ def test_airr_single_sequence():
 
 def test_airr_from_dataframe():
     """Test we can pass a dataframe to runtime"""
-    dog_df = pd.read_csv(get_file("airr_tables/dog_igh.csv.gz"), index_col=1)
+    dog_df = pd.read_csv(get_file("airr_tables/dog_igh.csv.gz"), index_col=0)
     airr_api = Airr("dog")
-    unjoined_df = airr_api.run_dataframe(dog_df, "sequence", "sequence_id")
+    unjoined_df = airr_api.run_dataframe(dog_df, "sequence_id", "sequence")
     assert isinstance(unjoined_df, AirrTable)
-    joined_df = airr_api.run_dataframe(dog_df, "sequence", "sequence_id", return_join=True)
+    joined_df = airr_api.run_dataframe(dog_df, "sequence_id", "sequence", return_join=True)
     assert isinstance(joined_df, pd.DataFrame)
 
 

@@ -18,6 +18,7 @@ import warnings
 import pandas as pd
 
 from .util import is_tool
+from .constants import IGBLAST_AIRR
 
 logger = logging.getLogger("IgBLAST")
 
@@ -298,6 +299,7 @@ class IgBLASTN:
         "_extend_5",
         "_extend_3",
         "_j_penalty",
+        "_v_penalty",
         "_organism",
         "_germline_db_v",
         "_germline_db_d",
@@ -327,6 +329,7 @@ class IgBLASTN:
         self.extend_5 = True
         self.extend_3 = True
         self.j_penalty = -1
+        self.v_penalty = -2
 
         # Make these blank, if they are not set by the caller, then we will complain during runtime.
         self._organism = IgBLASTArgument("organism", "organism", "", True)
@@ -765,6 +768,22 @@ class IgBLASTN:
         self._j_penalty = IgBLASTArgument("j_penalty", "J_penalty", penalty, True)
 
     @property
+    def v_penalty(self) -> IgBLASTArgument:
+        """What is the  v gene panalty
+
+        Returns
+        -------
+        IgBLASTArgument
+        """
+        return self._v_penalty
+
+    @v_penalty.setter
+    def v_penalty(self, penalty: int):
+        if not -5 < penalty < 1:
+            raise BadIgBLASTArgument(penalty, "must be less than 0 and greater than -5")
+        self._v_penalty = IgBLASTArgument("v_penalty", "V_penalty", penalty, True)
+
+    @property
     def arguments(self) -> List[IgBLASTArgument]:
         """return a list of IgBLASTArugments
 
@@ -789,6 +808,7 @@ class IgBLASTN:
             self.gap_open,
             self.gap_extend,
             self.j_penalty,
+            self.v_penalty,
             self.num_threads,
             self.show_translation,
             self.extend_5,
@@ -872,7 +892,7 @@ class IgBLASTN:
                 process = subprocess.run(cmd, env=local_env, capture_output=True)
                 if process.stderr:
                     raise IgBLASTRunTimeError(process.stderr)
-            return pd.read_csv(tmpfile.name, sep="\t")
+            return pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)
 
     def run_single(self, q: str) -> pd.DataFrame:
         """Run Igblast on a single fasta string

@@ -63,51 +63,51 @@ class JoinAirrError(Error):
 
 class AirrTable:
     """
-    Object oriented Airr table
-    compliance with - https://docs.airr-community.org/_/downloads/en/v1.2.1/pdf/
+        Object oriented Airr table
+        compliance with - https://docs.airr-community.org/_/downloads/en/v1.2.1/pdf/
 
-    Raises
-    ------
+        Raises
+        ------
     MissingAirrColumns
-        If there is any missing columns from the airr standards
+            If there is any missing columns from the airr standards
 
 
-    Examples
-    --------
+        Examples
+        --------
 
-    Pass in pandas dataframe
-    >>> df = pd.read_csv("tests/fixtures/heavy_lev_sample.csv.gz")
-    >>> at = AirrTable(df)
+        Pass in pandas dataframe
+        >>> df = pd.read_csv("tests/fixtures/heavy_lev_sample.csv.gz")
+        >>> at = AirrTable(df)
 
-    The pandas table is held in the the table attribute
-    >>> at.table.columns
-    >>> ['sequence_id', 'cdr1', 'cdr1_aa', 'cdr1_end', 'cdr1_start', 'cdr2',
-        'cdr2_aa', 'cdr2_end', 'cdr2_start', 'cdr3', 'cdr3_aa',
-        'cdr3_aa_length', 'cdr3_end', 'cdr3_start', 'complete_vdj',
-        'd_alignment_end', 'd_alignment_start', 'd_call', 'd_cigar', 'd_family',
-        'd_germline_alignment', 'd_germline_alignment_aa', 'd_germline_end',
-        'd_germline_start', 'd_identity', 'd_score', 'd_sequence_alignment',
-        'd_sequence_alignment_aa', 'd_sequence_end', 'd_sequence_start',
-        'd_support', 'fwr1', 'fwr1_aa', 'fwr1_end', 'fwr1_start', 'fwr2',
-        'fwr2_aa', 'fwr2_end', 'fwr2_start', 'fwr3', 'fwr3_aa', 'fwr3_end',
-        'fwr3_start', 'fwr4', 'fwr4_aa', 'fwr4_end', 'fwr4_start',
-        'germline_alignment', 'germline_alignment_aa', 'j_alignment_end',
-        'j_alignment_start', 'j_call', 'j_cigar', 'j_family',
-        'j_germline_alignment', 'j_germline_alignment_aa', 'j_germline_end',
-        'j_germline_start', 'j_identity', 'j_score', 'j_sequence_alignment',
-        'j_sequence_alignment_aa', 'j_sequence_end', 'j_sequence_start',
-        'j_support', 'junction', 'junction_aa', 'junction_aa_length',
-        'junction_length', 'locus', 'np1', 'np1_length', 'np2', 'np2_length',
-        'productive', 'rev_comp', 'sequence', 'sequence_alignment',
-        'sequence_alignment_aa', 'stop_codon', 'v_alignment_end',
-        'v_alignment_start', 'v_call', 'v_cigar', 'v_family',
-        'v_germline_alignment', 'v_germline_alignment_aa', 'v_germline_end',
-        'v_germline_start', 'v_identity', 'v_score', 'v_sequence_alignment',
-        'v_sequence_alignment_aa', 'v_sequence_end', 'v_sequence_start',
-        'v_support', 'vj_in_frame', 'chain', 'species'],
+        The pandas table is held in the the table attribute
+        >>> at.table.columns
+        >>> ['sequence_id', 'cdr1', 'cdr1_aa', 'cdr1_end', 'cdr1_start', 'cdr2',
+            'cdr2_aa', 'cdr2_end', 'cdr2_start', 'cdr3', 'cdr3_aa',
+            'cdr3_aa_length', 'cdr3_end', 'cdr3_start', 'complete_vdj',
+            'd_alignment_end', 'd_alignment_start', 'd_call', 'd_cigar', 'd_family',
+            'd_germline_alignment', 'd_germline_alignment_aa', 'd_germline_end',
+            'd_germline_start', 'd_identity', 'd_score', 'd_sequence_alignment',
+            'd_sequence_alignment_aa', 'd_sequence_end', 'd_sequence_start',
+            'd_support', 'fwr1', 'fwr1_aa', 'fwr1_end', 'fwr1_start', 'fwr2',
+            'fwr2_aa', 'fwr2_end', 'fwr2_start', 'fwr3', 'fwr3_aa', 'fwr3_end',
+            'fwr3_start', 'fwr4', 'fwr4_aa', 'fwr4_end', 'fwr4_start',
+            'germline_alignment', 'germline_alignment_aa', 'j_alignment_end',
+            'j_alignment_start', 'j_call', 'j_cigar', 'j_family',
+            'j_germline_alignment', 'j_germline_alignment_aa', 'j_germline_end',
+            'j_germline_start', 'j_identity', 'j_score', 'j_sequence_alignment',
+            'j_sequence_alignment_aa', 'j_sequence_end', 'j_sequence_start',
+            'j_support', 'junction', 'junction_aa', 'junction_aa_length',
+            'junction_length', 'locus', 'np1', 'np1_length', 'np2', 'np2_length',
+            'productive', 'rev_comp', 'sequence', 'sequence_alignment',
+            'sequence_alignment_aa', 'stop_codon', 'v_alignment_end',
+            'v_alignment_start', 'v_call', 'v_cigar', 'v_family',
+            'v_germline_alignment', 'v_germline_alignment_aa', 'v_germline_end',
+            'v_germline_start', 'v_identity', 'v_score', 'v_sequence_alignment',
+            'v_sequence_alignment_aa', 'v_sequence_end', 'v_sequence_start',
+            'v_support', 'vj_in_frame', 'chain', 'species'],
 
-    Can also use static methods
-    >>> at = AirrTable.read_csv("tests/fixtures/kappa_lev_sample.csv.gz")
+        Can also use static methods
+        >>> at = AirrTable.read_csv("tests/fixtures/kappa_lev_sample.csv.gz")
     """
 
     def __init__(self, dataframe: pd.DataFrame, cast=True):
@@ -152,9 +152,7 @@ class AirrTable:
         self._table = dataframe
         self._table.drop([i for i in self._table.columns if "Unnamed" in i], axis=1, inplace=True)
 
-        if all(self._table["fwr4"].isna()):
-            print(self._table["sequence_id"])
-            self._fill_missing_fw4()
+        # a check that allows us to see if the junction presentation is wrong
         liable_sequences = self._table[
             self._table[
                 [
@@ -169,16 +167,11 @@ class AirrTable:
             ].apply(self._check_j_gene_liability, axis=1)
         ]
 
-        # If these aren't productive, who gives a shit
+        # If these aren't productive, who gives a cares
         liable_sequences = liable_sequences[liable_sequences["productive"] == "T"]
         if not liable_sequences.empty:
-            logger.warning(
-                f"""Caution - sequences {list(liable_sequences['sequence_id'])} have FW1-FW3 resolved but do not have the CDR3,
-                that is indicative that the J gene penalty needs to be lowered. Or that
-                air_api.igblast.j_penalty = -1
-             """
-            )
-            self._table.loc[liable_sequences.index, "note"] = "J gene not resolved but maybe should be"
+            logger.warning(f"Caution - sequences {list(liable_sequences['sequence_id'])} may need manual inspections")
+            self._table.loc[liable_sequences.index, "note"] = "potential broken"
         self._non_airr_columns = list(set(self._table.columns) - set(IGBLAST_AIRR.keys()))
         self._airr_columns = list(set(self._table.columns).intersection(IGBLAST_AIRR.keys()))
 
@@ -255,6 +248,14 @@ class AirrTable:
                 "fwr4_aa",
             ]
         ].apply(lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1)
+
+        # Insert the top call for each one
+        for call in ["v_call", "d_call", "j_call"]:
+            if call in self._table.columns:
+                continue
+            self._table.insert(
+                self._table.columns.get_loc(call), f"{call}_top", self._table[call].str.split(",").str.get(0)
+            )
 
     @property
     def non_airr_columns(self) -> list:
@@ -637,20 +638,22 @@ class AirrTable:
         # If all fw and cdrs are reolsved
         if all([isinstance(i, str) for i in [fw1, cdr1, fw2, cdr2, fw3, cdr3, fw4]]):
             return False
-        # IF FW1-FW3 any as a nan, then CDR3 is fine
-        if any([i is nan for i in [fw1, cdr1, fw2, cdr2, fw3]]):
-            return False
-
-        # But if all of those are fine and CDR3 is still nan, we probably have a problem
-        elif all([isinstance(i, str) for i in [fw1, cdr1, fw2, cdr2, fw3]]) and (cdr3 is nan):
+        # if we have cdr2 and fwr3 and dont have cdr3, we probably have a problem
+        if all([isinstance(i, str) for i in [cdr2, fw3]]) and (isinstance(cdr3, float) or cdr3 == ""):
             return True
 
-        # fw1-fw3 might be nan but we still get a cdr3
-        elif not any([i is nan for i in [fw1, cdr1, fw2, cdr2, fw3]]) and (isinstance(cdr3, str)):
+        # fw1-cdr2 might be nan but we still get a fwr3-cdr3
+        if any([isinstance(i, float) for i in [fw1, cdr1, fw2, cdr2]]) and (
+            all([isinstance(cdr3, str), isinstance(fw3, str)])
+        ):
             return False
-        else:
-            logger.debug(f" You shouldn't have gotten here {[fw1,cdr1, fw2, cdr2, fw3,cdr3,fw4]}")
-            return False
+
+        # we didn't get the fw4
+        if all([isinstance(fw3, str), isinstance(cdr3, str)]) and (isinstance(fw4, float) or fw4 == ""):
+            return True
+
+        logger.debug(f" You shouldn't have gotten here {[fw1,cdr1, fw2, cdr2, fw3, cdr3, fw4]}")
+        return False
 
     def get_sanitized_antibodies(self):
         """
