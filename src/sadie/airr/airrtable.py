@@ -118,7 +118,7 @@ class AirrTable:
         dataframe : pd.DataFrame
            pandas dataframe. Must have all Airr complient columns
 
-        cast: boo
+        cast: bool
             cast dtypes to save memory
         """
         self.cast = cast
@@ -215,6 +215,14 @@ class AirrTable:
         )
         self._table["rev_comp"] = (
             self._table["rev_comp"]
+            .map(
+                {"T": True, "F": False, True: True, False: False, nan: False},
+                na_action="ignore",
+            )
+            .astype(bool)
+        )
+        self._table["v_frameshift"] = (
+            self._table["v_frameshift"]
             .map(
                 {"T": True, "F": False, True: True, False: False, nan: False},
                 na_action="ignore",
@@ -326,7 +334,7 @@ class AirrTable:
             & (_sanitized["productive"])
             & (_sanitized["vj_in_frame"])
             & (_sanitized["complete_vdj"])
-            & (_sanitized["fwr4_aa"].str.len() > 8)
+            & (_sanitized["fwr4_aa"].str.len() >= 8)
         ]
 
     @property
@@ -599,6 +607,7 @@ class AirrTable:
     def _fill_missing_fw4(self):
         """Fills in missing FW4 region that are sometimes missing in Airrtable."""
         try:
+            # Get only the rows which have no cdr3 or j_gene end
             candidate_rows = self._table[~(self._table["cdr3_end"].isna()) & ~(self._table["j_sequence_end"].isna())][
                 ["sequence", "cdr3_end", "j_sequence_end"]
             ]
