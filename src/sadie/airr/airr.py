@@ -359,7 +359,7 @@ class Airr:
         if not scfv:
             query = ">{}\n{}".format(seq_id, seq)
             result = self.igblast.run_single(query)
-            result.loc[:, "species"] = self.species
+            result.insert(2, "species", self.species)
         else:
             with tempfile.NamedTemporaryFile(dir=self.temp_directory) as tmpfile:
                 record = SeqRecord(Seq(seq), id=str(seq_id))
@@ -489,7 +489,7 @@ class Airr:
             logger.info("scfv file was passed")
             scfv_airr = self._run_scfv(file)
             if not scfv_airr.table.empty:
-                scfv_airr.loc[:, "species"] = self.species
+                scfv_airr.table.insert(2, "species", self.species)
             if _filetype:
                 os.remove(file)
             if self._create_temp:
@@ -500,7 +500,7 @@ class Airr:
             logger.info(f"Running blast on {file}")
             result = self.igblast.run_file(file)
             logger.info(f"Ran blast on  {file}")
-            result.loc[:, "species"] = self.species
+            result.insert(2, "species", self.species)
             result = AirrTable(result)
             if _filetype:
                 os.remove(file)
@@ -622,30 +622,8 @@ class Airr:
 
 if __name__ == "__main__":
     api_air = Airr("human")
-    at = api_air.run_single(
-        "2545",
-        """CCGCCCGGCCGCTGCTATGCGGCATCAAGTAGATTGATAAGCCCTTTCTTTGATCCAGTTTGGAAAGTGGGGTCCCATCA
-           CGCTTCAGTGGCAGTGGATCTGGGACAGATTTCACTCTCACCATCAGCAGTCTGCAACCTGAAGATTTTGCAACTTACTA
-           CTGTCAACAGAGTTACACATTCCCCCGTTCATTTGGCGGAGGTACCAAGGTGGAGATCAAACGTACGGTTGCCGCTCCTT
-           CTGTATTCATATTTCCGCCCTCCGATGAACAGCTTAAATCGGGCACTGCTTCGGTAGTCTGCCTTCTGAATAATTTCTAT
-           CCCCGCGAGGCCAAGGTGCAATGGAAAGTCGACAATGCACTGCAAAGTGGAAACTCGCAAGAAAGCGTCACCGAACAGGA
-           CAGTAAGATTCCACCTATAGCCTGTCATCGACACTTACCCTGAGTAAGGCTGATTACGAAAAGCACAAGGTTTACGCTTG
-           CGAAGTAACTCACCAGGGCCTCTCAAGCCCTGTTACAAAGTCATTTAACAGAGGGGAATGCTAATTCTAGATAATTATCA
-           AGGAGACAGTCATAATGAAATACCTATTGCCTACGGCAGCCGCTGGATTGTTATTACTCGCTGCCCAACCAGCCATGGCC
-           GAGGTGCAGCTGCTCGAGGTGCAGCTGTTGGAGTCTGGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTG
-           TGCAGCCTCTGGATTTACATTTCGTCGTTATGCTATGAGTTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTCA
-           GCGCCATAAGCGGCTCAGGTGGGTCAACAAAATACGCTGACTCCGTGAAGGGCCGGTTCACCATCTCCAGAGACAATTCC
-           AAGAACACGCTGTATCTGCAAATGAACAGCCTGAGAGCCGAGGACACGGCCGTGTATTACTGTGCACGTCGTGCCGGTCG
-           TTGGCTGCAGTCTCCTTATTATTATTATGGGATGGATGTATGGGGCCAGGGCACCCTGGTCACCGTCTCCTCAGCAAGTA
-           CCAAGGGGCCTTCAGTTTTTCCGCTCGCTCCAAGTTCTAAATCTACTTCCGGTGGAACTGCTGCTCTGGGGTGCCTGGTT
-           AAAGACTATTTCCCAGAACCCGTGACTGTAAGTTGGAACAGCGGAGCATTAACCTCAGGAGTGCACACATTCCCGGCCGT
-           ATTGCAAAGTTCTGGCCTGTACTCACTCTCTTCTGTTGTAACGGTTCCATCCAGCTCTTTGGGCACCCAAACCTATATAT
-           GCAACGTGAATCACAAACCGTCAAACACGAAAGTCGACAAAAAGGTGGAGCCGAAAACTAGTCACCATCACCACCATCAT
-           GGCGCATATCCGTATGATGTGCCGGACTATGCTTCTTAGGGCCAGGCCGGCCAGGAGGCTCG""".replace(
-            "\n", ""
-        ).replace(
-            " ", ""
-        ),
-        scfv=True,
-    )
-    print(at.to_genbank("test.gb"))
+    sub_sample_file = "/Users/jordanwillis/repos/personal/sadie/tests/integration/airr/fixtures/OAS_subsample.fasta"
+    airr_api = Airr(species="human", database="imgt", functional="all")
+    with tempfile.NamedTemporaryFile(mode="w") as f:
+        f.writelines(open(sub_sample_file).readlines())
+        sadie_airr = airr_api.run_file(f.name)
