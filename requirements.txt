@@ -2,8 +2,5 @@ pre-commit
 biopython
 click
 filetype
-sqlalchemy
 pandas
 wheel
-requests
-bs4
