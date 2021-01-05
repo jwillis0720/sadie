@@ -167,7 +167,7 @@ class AirrTable:
             ].apply(self._check_j_gene_liability, axis=1)
         ]
 
-        # If these aren't productive, who gives a cares
+        # If these aren't productive, who cares
         liable_sequences = liable_sequences[liable_sequences["productive"] == "T"]
         if not liable_sequences.empty:
             logger.warning(f"Caution - sequences {list(liable_sequences['sequence_id'])} may need manual inspections")
