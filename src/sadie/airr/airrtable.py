@@ -251,7 +251,7 @@ class AirrTable:
 
         # Insert the top call for each one
         for call in ["v_call", "d_call", "j_call"]:
-            if call in self._table.columns:
+            if call not in self._table.columns:
                 continue
             self._table.insert(
                 self._table.columns.get_loc(call), f"{call}_top", self._table[call].str.split(",").str.get(0)
