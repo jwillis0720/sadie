@@ -72,6 +72,35 @@ def test_airr_from_dataframe():
     assert isinstance(joined_df, pd.DataFrame)
 
 
+def test_adaptable_penalty():
+    test_sequence = """
+    GACATCCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACAGAGTCACC
+    ATCACTTGCCAGGCGAGTCAGGACATTAGCAACTATTTAAATTGGTATCAGCAGAAACCA
+    GGGAAAGCCCCTAAGCTCCTGATCTACGATGCATCCAATTTGGAAACAGGGGTCCCATCA
+    AGGTTCAGTGGAAGTGGATCTGGGACAGATTTTACTTTCACCATCAGCAGCCTGCAGCCT
+    GAAGATATTGCAACATATTACTGTCAACAGTATGATAATTTCGGCGGAGGGACCAAGGTG
+    GACATCAAAC""".replace(
+        "\n", ""
+    )
+    air_api = Airr("human")
+    airr_table = air_api.run_single("adaptable_seq", test_sequence)
+    airr_entry = airr_table.iloc[0]
+    cdr3_ = airr_entry["cdr3_aa"]
+    cdr2_ = airr_entry["cdr2_aa"]
+    cdr1_ = airr_entry["cdr1_aa"]
+    fw1_ = airr_entry["fwr1_aa"]
+    fw2_ = airr_entry["fwr2_aa"]
+    fw3_ = airr_entry["fwr3_aa"]
+    fw4_ = airr_entry["fwr4_aa"]
+    assert fw1_ == "QRLVESGGGVVQPGSSLRLSCAAS"
+    assert fw2_ == "MHWVRQAPGQGLEWVAF"
+    assert fw3_ == "YHADSVWGRLSISRDNSKDTLYLQMNSLRVEDTATYFC"
+    assert fw4_ == "WGKGTTVTVSS"
+    assert cdr1_ == "GFDFSRQG"
+    assert cdr2_ == "IKYDGSEK"
+    assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
+
+
 def _run_cli(args, tmpfile):
     runner = CliRunner()
     result = runner.invoke(app.run_airr, args)

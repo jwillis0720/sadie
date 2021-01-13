@@ -2,11 +2,13 @@
 import re
 import warnings
 
+
 # Third Party
 from Bio.Seq import Seq
 from Bio.pairwise2 import align
 from Bio.SeqRecord import SeqRecord
 from Bio.Align import MultipleSeqAlignment
+from numpy import isnan
 
 # Lib Level
 from .exception import (
@@ -45,10 +47,29 @@ class AntibodySegment:
         --------
         >>> segment = AntibodySegment("DIQMTQSPASLSASLGETVSIECLAS")
         """
-        self._sequence = str(sequence)
-        self.start_index = 0
-        self.germline = ""
-        self._alignment = ""
+        self.sequence = str(sequence)
+        self._germline = ""
+        self._alignment = ("", "", "", "")
+
+    @property
+    def sequence(self) -> str:
+        return self._sequence
+
+    @sequence.setter
+    def sequence(self, seq: str):
+        if seq:
+            self._start_index = 0
+            self._start = 1
+            self._end_index = len(seq) - 1
+            self._end = len(seq)
+            self._sequence = seq
+        elif isinstance(seq, str):
+            self._sequence = ""
+            self._start, self._end, self._start_index, self._end_index = None, None, None, None
+        elif isnan(seq):
+            self.sequence = ""
+        else:
+            raise TypeError(f"Setting sequence seq {seq} as {type(seq)} is currently not supported")
 
     @property
     def start_index(self) -> int:
@@ -126,17 +147,6 @@ class AntibodySegment:
         return self._end
 
     @property
-    def sequence(self) -> str:
-        """returns the antibody segment sequence
-
-        Returns
-        -------
-        str
-           antibody segment sequence
-        """
-        return self._sequence
-
-    @property
     def germline(self) -> str:
         """get the germline sequence if set
 
@@ -166,6 +176,12 @@ class AntibodySegment:
         if not isinstance(germ, (type(self), str, Seq)):
             raise ValueError(f"{germ} must be instance of str or Bio.Seq")
         self._germline = str(germ)
+
+        # If no seq set sequence as '-'
+        if not self._sequence:
+            self._sequence = "-" * len(str(germ))
+
+        # we can have it where germline segment is also empty
         if self._germline:
             _alignments = align.globalxs(self._germline, self._sequence, -10, -1)
             self._alignment = _alignments[0]
@@ -222,7 +238,7 @@ class AntibodySegment:
         target      ....TT....TG.TGCAGTCTGGAGCTGAGGTGAAGAAGCCTGGGGCCTCAGTGAAGGTCTCCTGCAAGGCTTCT
 
         """
-        if not self._alignment:
+        if self._alignment == ("", "", "", ""):
             warnings.warn("No germline set")
             return self._alignment
         # grab germ and target

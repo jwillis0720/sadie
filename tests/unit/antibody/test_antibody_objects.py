@@ -147,6 +147,23 @@ def test_antibody_chain_nt():
     )
 
 
+def test_alignments():
+    antibody_chain = antibody.AntibodyChainNT(
+        name="short_alignent",
+        fwr1_nt="",
+        cdr1_nt="",
+        fwr2_nt="CTGGGGGGCCCTTAAGACCCCCCTNTCACCCAC",
+        cdr2_nt="CATATCAGGTTTCGGCGCCTTTCC",
+        fwr3_nt="TATGAACTGGACTCCGTGAAGGGCCGATTCACCATCTCCAGAGACAACTCCAAGGACACGGTGTATCTGCAAATGGACAGCCTGAGACCTGAGGACACGGCTGTGTACTACTGT",
+        cdr3_nt="GCGAGGACAGTTGCAGTGGGTTGGTACTGTGACTAC",
+        fwr4_nt="TGGGGCCAGGGAACCCAGGTCACCGTCTCCTCAC",
+        v_gene="IGHV3-64*04",
+        j_gene="IGHJ4*02",
+        species="human",
+    )
+    antibody_chain.get_segmented_alignment_nt()
+
+
 # Test heavy chain, kappa and lambda chain AA
 def test_antibody_chain_heavy():
     heavy_chain_aa = antibody.HeavyChainAA(
