@@ -73,6 +73,14 @@ def test_airr_from_dataframe():
     assert isinstance(joined_df, pd.DataFrame)
 
 
+def test_airr_from_file():
+    """Test we can pass a dataframe to runtime"""
+    f = get_file("fasta_inputs/PG9_H_multiple.fasta.gz")
+    airr_api = Airr("human")
+    result = airr_api.run_file(f)
+    assert isinstance(result, AirrTable)
+
+
 def test_adaptable_penalty():
     test_sequence = """
     GACATCCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACAGAGTCACC

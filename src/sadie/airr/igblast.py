@@ -934,7 +934,8 @@ class IgBLASTN:
                 process = subprocess.run(cmd, env=local_env, capture_output=True)
                 if process.stderr:
                     raise IgBLASTRunTimeError(process.stderr)
-            return pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)
+            df = pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)
+            return df
 
     def run_single(self, q: str) -> pd.DataFrame:
         """Run Igblast on a single fasta string

@@ -47,6 +47,7 @@ def test_airr_init():
         "d_family",
         "j_call_top",
         "j_family",
+        "note",
         "species",
         "v_call_top",
         "v_family",

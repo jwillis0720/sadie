@@ -151,7 +151,7 @@ class AirrTable:
         """
         self._table = dataframe
         self._table.drop([i for i in self._table.columns if "Unnamed" in i], axis=1, inplace=True)
-        self._table.loc[:, "Note"] = ""
+        self._table.loc[:, "note"] = ""
 
         # a check that allows us to see if the junction presentation is wrong
         liable_sequences = self._table[
@@ -171,7 +171,7 @@ class AirrTable:
         # If these aren't productive, who cares
         if not liable_sequences.empty:
             logger.warning(f"Caution - sequences {list(liable_sequences['sequence_id'])} may need manual inspections")
-            self._table.loc[liable_sequences.index, "Note"] = "liable"
+            self._table.loc[liable_sequences.index, "note"] = "liable"
         self._non_airr_columns = list(set(self._table.columns) - set(IGBLAST_AIRR.keys()))
         self._airr_columns = list(set(self._table.columns).intersection(IGBLAST_AIRR.keys()))
 
@@ -253,6 +253,8 @@ class AirrTable:
         for call in ["v_call", "d_call", "j_call"]:
             if call not in self._table.columns:
                 continue
+            if f"{call}_top" in self._table.columns:
+                self._table.drop(f"{call}_top", inplace=True, axis=1)
             self._table.insert(
                 self._table.columns.get_loc(call), f"{call}_top", self._table[call].str.split(",").str.get(0)
             )
@@ -653,7 +655,7 @@ class AirrTable:
             return True
 
         logger.debug(f" You shouldn't have gotten here {[fw1,cdr1, fw2, cdr2, fw3, cdr3, fw4]}")
-        return False
+        return True
 
     def get_sanitized_antibodies(self):
         """
