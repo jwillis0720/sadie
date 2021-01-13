@@ -376,10 +376,10 @@ class Airr:
             result = AirrTable(result)
 
             # There is liable sequences
-            if (result["Note"].str.lower() != "liable").all():
+            if (result["note"].str.lower() != "liable").all():
                 return result
             else:
-                self._liable_seqs = set(result[result["Note"].str.lower() == "liable"].sequence_id)
+                self._liable_seqs = set(result[result["note"].str.lower() == "liable"].sequence_id)
 
                 # If we allow adaption,
                 if self.adapt_penalty:
@@ -394,7 +394,7 @@ class Airr:
                     adaptable_result = AirrTable(adaptable_result)
 
                     # If we shifted from liable, return the adaptable results
-                    if (adaptable_result["Note"].str.lower() != "liable").all():
+                    if (adaptable_result["note"].str.lower() != "liable").all():
                         return adaptable_result
                 return result
         else:
@@ -541,6 +541,33 @@ class Airr:
             logger.info(f"Ran blast on  {file}")
             result.insert(2, "species", self.species)
             result = AirrTable(result)
+            if (result["note"].str.lower() == "liable").any():
+                self._liable_seqs = set(result[result["note"].str.lower() == "liable"].sequence_id)
+                # If we allow adaption,
+                if self.adapt_penalty:
+                    _tmp_v = self.igblast.v_penalty.value
+                    _tmp_j = self.igblast.j_penalty.value
+
+                    # Set these to adaptable
+                    self.igblast.v_penalty = -2
+                    self.igblast.j_penalty = -1
+
+                    # Set to false so we can call recursive
+                    self.adapt_penalty = False
+                    liable_dataframe = result.table[result.table["sequence_id"].isin(self._liable_seqs)]
+
+                    # Will call without adaptive
+                    adaptable_results = self.run_dataframe(liable_dataframe, "sequence_id", "sequence")
+
+                    adaptable_not_liable = adaptable_results[adaptable_results["note"] != "liable"]
+                    airr_table = result.table.set_index("sequence_id")
+                    airr_table.update(adaptable_not_liable.set_index("sequence_id"))
+                    airr_table = airr_table.reset_index()
+                    self.igblast.v_penalty = _tmp_v
+                    self.igblast.j_penalty = _tmp_j
+                    self.adapt_penalty = True
+                    result = AirrTable(airr_table)
+
             if _filetype:
                 os.remove(file)
         return result
