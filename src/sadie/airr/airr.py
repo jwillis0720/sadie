@@ -383,8 +383,8 @@ class Airr:
 
                 # If we allow adaption,
                 if self.adapt_penalty:
-                    _tmp_v = self.igblast.v_penalty
-                    _tmp_j = self.igblast.j_penalty
+                    _tmp_v = self.igblast.v_penalty.value
+                    _tmp_j = self.igblast.j_penalty.value
                     self.igblast.v_penalty = -2
                     self.igblast.j_penalty = -1
                     adaptable_result = self.igblast.run_single(query)

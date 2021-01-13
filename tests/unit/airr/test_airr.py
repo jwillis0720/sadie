@@ -6,6 +6,7 @@ import glob
 import pytest
 from itertools import product
 import tempfile
+from numpy import isnan
 import pandas as pd
 from sadie.airr import Airr, BadDataSet, AirrTable
 from sadie.airr import app
@@ -82,7 +83,9 @@ def test_adaptable_penalty():
     GACATCAAAC""".replace(
         "\n", ""
     )
-    air_api = Airr("human")
+
+    # Check what happens
+    air_api = Airr("human", adaptable=False)
     airr_table = air_api.run_single("adaptable_seq", test_sequence)
     airr_entry = airr_table.iloc[0]
     cdr3_ = airr_entry["cdr3_aa"]
@@ -92,13 +95,31 @@ def test_adaptable_penalty():
     fw2_ = airr_entry["fwr2_aa"]
     fw3_ = airr_entry["fwr3_aa"]
     fw4_ = airr_entry["fwr4_aa"]
-    assert fw1_ == "QRLVESGGGVVQPGSSLRLSCAAS"
-    assert fw2_ == "MHWVRQAPGQGLEWVAF"
-    assert fw3_ == "YHADSVWGRLSISRDNSKDTLYLQMNSLRVEDTATYFC"
-    assert fw4_ == "WGKGTTVTVSS"
-    assert cdr1_ == "GFDFSRQG"
-    assert cdr2_ == "IKYDGSEK"
-    assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
+    assert fw1_ == "DIQMTQSPSSLSASVGDRVTITCQAS"
+    assert fw2_ == "LNWYQQKPGKAPKLLIY"
+    assert fw3_ == "NLETGVPSRFSGSGSGTDFTFTISSLQPEDIATYYC"
+    assert isnan(fw4_)
+    assert cdr1_ == "QDISNY"
+    assert cdr2_ == "DAS"
+    assert isnan(cdr3_)
+
+    air_api = Airr("human", adaptable=True)
+    airr_table = air_api.run_single("adaptable_seq", test_sequence)
+    airr_entry = airr_table.iloc[0]
+    cdr3_ = airr_entry["cdr3_aa"]
+    cdr2_ = airr_entry["cdr2_aa"]
+    cdr1_ = airr_entry["cdr1_aa"]
+    fw1_ = airr_entry["fwr1_aa"]
+    fw2_ = airr_entry["fwr2_aa"]
+    fw3_ = airr_entry["fwr3_aa"]
+    fw4_ = airr_entry["fwr4_aa"]
+    assert fw1_ == "DIQMTQSPSSLSASVGDRVTITCQAS"
+    assert fw2_ == "LNWYQQKPGKAPKLLIY"
+    assert fw3_ == "NLETGVPSRFSGSGSGTDFTFTISSLQPEDIATYYC"
+    assert fw4_ == "FGGGTKVDIK"
+    assert cdr1_ == "QDISNY"
+    assert cdr2_ == "DAS"
+    assert cdr3_ == "QQYDN"
 
 
 def _run_cli(args, tmpfile):
