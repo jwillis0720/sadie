@@ -286,7 +286,13 @@ class Airr:
     """
 
     def __init__(
-        self, species: str, igblast_exe="", functional="functional", database="imgt", temp_directory=".airr_tmp"
+        self,
+        species: str,
+        igblast_exe="",
+        adaptable=True,
+        functional="functional",
+        database="imgt",
+        temp_directory=".airr_tmp",
     ):
         """Airr constructor
 
@@ -337,6 +343,10 @@ class Airr:
                 self._create_temp = True
                 os.makedirs(temp_directory)
 
+        # do we try adaptable penalties
+        self.adapt_penalty = adaptable
+        self._liable_seqs = []
+
         # Init pre run check to make sure everything is good
         # We don't have to do this now as it happens at execution.
         self.igblast._pre_check()
@@ -356,17 +366,43 @@ class Airr:
         Union[AirrTable, ScfvAirrTable]
             Either a single airrtable for a single chain or an ScFV airrtable
         """
+        if not isinstance(seq_id, str):
+            raise TypeError(f"seq_id must be instance of str, passed {type(seq_id)}")
+
         if not scfv:
             query = ">{}\n{}".format(seq_id, seq)
             result = self.igblast.run_single(query)
             result.insert(2, "species", self.species)
+            result = AirrTable(result)
+
+            # There is liable sequences
+            if (result["Note"].str.lower() != "liable").all():
+                return result
+            else:
+                self._liable_seqs = set(result[result["Note"].str.lower() == "liable"].sequence_id)
+
+                # If we allow adaption,
+                if self.adapt_penalty:
+                    _tmp_v = self.igblast.v_penalty
+                    _tmp_j = self.igblast.j_penalty
+                    self.igblast.v_penalty = -2
+                    self.igblast.j_penalty = -1
+                    adaptable_result = self.igblast.run_single(query)
+                    self.igblast.v_penalty = _tmp_v
+                    self.igblast.j_penalty = _tmp_j
+                    adaptable_result.insert(2, "species", self.species)
+                    adaptable_result = AirrTable(adaptable_result)
+
+                    # If we shifted from liable, return the adaptable results
+                    if (adaptable_result["Note"].str.lower() != "liable").all():
+                        return adaptable_result
+                return result
         else:
             with tempfile.NamedTemporaryFile(dir=self.temp_directory) as tmpfile:
                 record = SeqRecord(Seq(seq), id=str(seq_id))
                 SeqIO.write(record, tmpfile.name, "fasta")
                 _results = self.run_file(tmpfile.name, scfv=True)
             return _results
-        return AirrTable(result)
 
     def run_dataframe(
         self,
@@ -468,6 +504,9 @@ class Airr:
         BadRequstedFileType
             not a fasta or compressed file type
         """
+        if isinstance(file, Path):
+            # cast to str
+            file = str(file)
         _filetype = filetype.guess(file)
         if _filetype:
             logger.info("Guess File Type is %s ", _filetype.extension)
