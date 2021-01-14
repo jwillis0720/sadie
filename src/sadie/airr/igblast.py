@@ -768,7 +768,7 @@ class IgBLASTN:
 
     @allow_vdj_overlap.setter
     def allow_vdj_overlap(self, allow: bool):
-        if self.j_penalty != -3 and self.d_penalty != -4:
+        if self.j_penalty != -3 and self.d_penalty != -4 and allow:
             warnings.warn(
                 f"Allows vdj overlap set but j penalty and d penalty need to be -3 and -4, now are {self.j_penalty}, {self.d_penalty}",
                 UserWarning,
