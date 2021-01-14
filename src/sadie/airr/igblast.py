@@ -18,6 +18,7 @@ import warnings
 import pandas as pd
 
 from .util import is_tool
+from .constants import IGBLAST_AIRR
 
 logger = logging.getLogger("IgBLAST")
 
@@ -99,7 +100,7 @@ class EmtpyFileError(Error):
         return "{} is empty".format(self.passed_arguments)
 
 
-class MissingIgBLASTArg(Error):
+class MissingIgBLASTArgument(Error):
     """Missing a required IgBLAST command argument
 
     If a required command is missing
@@ -298,6 +299,8 @@ class IgBLASTN:
         "_extend_5",
         "_extend_3",
         "_j_penalty",
+        "_v_penalty",
+        "_d_penalty",
         "_organism",
         "_germline_db_v",
         "_germline_db_d",
@@ -305,6 +308,7 @@ class IgBLASTN:
         "_aux_path",
         "_igdata",
         "_temp_dir",
+        "_allow_vdj_overlap",
     ]
 
     def __init__(self):
@@ -326,7 +330,10 @@ class IgBLASTN:
         self.show_translation = True
         self.extend_5 = True
         self.extend_3 = True
-        self.j_penalty = -1
+        self.j_penalty = -2
+        self.v_penalty = -1
+        self.d_penalty = -2
+        self.allow_vdj_overlap = False
 
         # Make these blank, if they are not set by the caller, then we will complain during runtime.
         self._organism = IgBLASTArgument("organism", "organism", "", True)
@@ -746,7 +753,43 @@ class IgBLASTN:
 
     @extend_3.setter
     def extend_3(self, extend_3: bool):
-        self._extend_3 = IgBLASTArgument("extend_3", "extend_align3end", True, False)
+        self._extend_3 = IgBLASTArgument("extend_3", "extend_align3end", extend_3, False)
+
+    @property
+    def allow_vdj_overlap(self) -> IgBLASTArgument:
+        """Allow the VDJ overlap
+        This option is active only when D_penalty
+        and J_penalty are set to -4 and -3, respectively
+        Returns
+        -------
+        IgBLASTArgument
+        """
+        return self._allow_vdj_overlap
+
+    @allow_vdj_overlap.setter
+    def allow_vdj_overlap(self, allow: bool):
+        if self.j_penalty != -3 and self.d_penalty != -4 and allow:
+            warnings.warn(
+                f"Allows vdj overlap set but j penalty and d penalty need to be -3 and -4, now are {self.j_penalty}, {self.d_penalty}",
+                UserWarning,
+            )
+        self._allow_vdj_overlap = IgBLASTArgument("allow_vdj_overlap", "allow_vdj_overlap", allow, False)
+
+    @property
+    def d_penalty(self) -> IgBLASTArgument:
+        """What is the  D gene panalty
+
+        Returns
+        -------
+        IgBLASTArgument
+        """
+        return self._d_penalty
+
+    @d_penalty.setter
+    def d_penalty(self, penalty: int):
+        if not -5 < penalty < 1:
+            raise BadIgBLASTArgument(penalty, "must be less than 0 and greater than -5")
+        self._d_penalty = IgBLASTArgument("d_penalty", "D_penalty", penalty, True)
 
     @property
     def j_penalty(self) -> IgBLASTArgument:
@@ -760,9 +803,25 @@ class IgBLASTN:
 
     @j_penalty.setter
     def j_penalty(self, penalty: int):
+        if not -4 < penalty < 1:
+            raise BadIgBLASTArgument(penalty, "must be less than 0 and greater than -4")
+        self._j_penalty = IgBLASTArgument("j_penalty", "J_penalty", penalty, True)
+
+    @property
+    def v_penalty(self) -> IgBLASTArgument:
+        """What is the  v gene panalty
+
+        Returns
+        -------
+        IgBLASTArgument
+        """
+        return self._v_penalty
+
+    @v_penalty.setter
+    def v_penalty(self, penalty: int):
         if not -5 < penalty < 1:
             raise BadIgBLASTArgument(penalty, "must be less than 0 and greater than -5")
-        self._j_penalty = IgBLASTArgument("j_penalty", "J_penalty", penalty, True)
+        self._v_penalty = IgBLASTArgument("v_penalty", "V_penalty", penalty, True)
 
     @property
     def arguments(self) -> List[IgBLASTArgument]:
@@ -789,10 +848,13 @@ class IgBLASTN:
             self.gap_open,
             self.gap_extend,
             self.j_penalty,
+            self.v_penalty,
+            self.d_penalty,
             self.num_threads,
             self.show_translation,
             self.extend_5,
             self.extend_3,
+            self.allow_vdj_overlap,
         ]
 
     @property
@@ -820,7 +882,7 @@ class IgBLASTN:
         # Ensure required arguments werer set
         for blast_arg in self.arguments:
             if blast_arg.required and not (blast_arg.value):
-                raise MissingIgBLASTArg(f"Missing Blast argument. Need to set IgBLASTN.{blast_arg.name}")
+                raise MissingIgBLASTArgument(f"Missing Blast argument. Need to set IgBLASTN.{blast_arg.name}")
 
             # # Check the executable
             if not is_tool(self.executable):
@@ -872,7 +934,8 @@ class IgBLASTN:
                 process = subprocess.run(cmd, env=local_env, capture_output=True)
                 if process.stderr:
                     raise IgBLASTRunTimeError(process.stderr)
-            return pd.read_csv(tmpfile.name, sep="\t")
+            df = pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)
+            return df
 
     def run_single(self, q: str) -> pd.DataFrame:
         """Run Igblast on a single fasta string

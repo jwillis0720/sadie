@@ -12,10 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # os: [ubuntu-latest, macos-latest]
         os: [ubuntu-latest]
         python-version: [3.6,3.7,3.8]
-        # python-version: [3.8]
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -29,6 +27,13 @@ jobs:
           pip install pytest
           pip install pytest-cov
           pip install .
+      - name : Cache PIP
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - name: PreCommit
         uses: pre-commit/action@v2.0.0
       - name: Test
@@ -42,3 +47,6 @@ jobs:
           # cat ./coverage.xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.15
+      - name: Integration Testing
+        run: |
+          pytest -v tests/integration

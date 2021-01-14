@@ -286,7 +286,13 @@ class Airr:
     """
 
     def __init__(
-        self, species: str, igblast_exe="", functional="functional", database="imgt", temp_directory=".airr_tmp"
+        self,
+        species: str,
+        igblast_exe="",
+        adaptable=True,
+        functional="functional",
+        database="imgt",
+        temp_directory=".airr_tmp",
     ):
         """Airr constructor
 
@@ -337,6 +343,10 @@ class Airr:
                 self._create_temp = True
                 os.makedirs(temp_directory)
 
+        # do we try adaptable penalties
+        self.adapt_penalty = adaptable
+        self._liable_seqs = []
+
         # Init pre run check to make sure everything is good
         # We don't have to do this now as it happens at execution.
         self.igblast._pre_check()
@@ -356,23 +366,49 @@ class Airr:
         Union[AirrTable, ScfvAirrTable]
             Either a single airrtable for a single chain or an ScFV airrtable
         """
+        if not isinstance(seq_id, str):
+            raise TypeError(f"seq_id must be instance of str, passed {type(seq_id)}")
+
         if not scfv:
             query = ">{}\n{}".format(seq_id, seq)
             result = self.igblast.run_single(query)
-            result.loc[:, "species"] = self.species
+            result.insert(2, "species", self.species)
+            result = AirrTable(result)
+
+            # There is liable sequences
+            if (result["note"].str.lower() != "liable").all():
+                return result
+            else:
+                self._liable_seqs = set(result[result["note"].str.lower() == "liable"].sequence_id)
+
+                # If we allow adaption,
+                if self.adapt_penalty:
+                    _tmp_v = self.igblast.v_penalty.value
+                    _tmp_j = self.igblast.j_penalty.value
+                    self.igblast.v_penalty = -2
+                    self.igblast.j_penalty = -1
+                    adaptable_result = self.igblast.run_single(query)
+                    self.igblast.v_penalty = _tmp_v
+                    self.igblast.j_penalty = _tmp_j
+                    adaptable_result.insert(2, "species", self.species)
+                    adaptable_result = AirrTable(adaptable_result)
+
+                    # If we shifted from liable, return the adaptable results
+                    if (adaptable_result["note"].str.lower() != "liable").all():
+                        return adaptable_result
+                return result
         else:
             with tempfile.NamedTemporaryFile(dir=self.temp_directory) as tmpfile:
                 record = SeqRecord(Seq(seq), id=str(seq_id))
                 SeqIO.write(record, tmpfile.name, "fasta")
                 _results = self.run_file(tmpfile.name, scfv=True)
             return _results
-        return AirrTable(result)
 
     def run_dataframe(
         self,
         dataframe: pd.DataFrame,
-        seq_field: Union[str, int],
         seq_id_field: Union[str, int],
+        seq_field: Union[str, int],
         scfv=False,
         return_join=False,
     ) -> pd.DataFrame:
@@ -386,8 +422,8 @@ class Airr:
         seq_field: Union[str,int]
            The field in the dataframe to run airr on
 
-        seq_id_field: Optional:
-            The field that you want the "Sequence ID" in the airr table to correspond to. It will default to using the dataframe row index
+        seq_id_field: Union[str,int]:
+            The field that you want the "Sequence ID" in the airr table to correspond to.
 
         scfv : bool, optional
             if the fasta contains an H+L pair, by default False
@@ -396,6 +432,10 @@ class Airr:
         -------
         pd.DataFrame
             [description]
+
+        ToDo
+        -------
+        Default seq_id to be index. But have to account for it being a multi index
         """
 
         def _get_seq_generator():
@@ -464,6 +504,9 @@ class Airr:
         BadRequstedFileType
             not a fasta or compressed file type
         """
+        if isinstance(file, Path):
+            # cast to str
+            file = str(file)
         _filetype = filetype.guess(file)
         if _filetype:
             logger.info("Guess File Type is %s ", _filetype.extension)
@@ -485,7 +528,7 @@ class Airr:
             logger.info("scfv file was passed")
             scfv_airr = self._run_scfv(file)
             if not scfv_airr.table.empty:
-                scfv_airr.loc[:, "species"] = self.species
+                scfv_airr.table.insert(2, "species", self.species)
             if _filetype:
                 os.remove(file)
             if self._create_temp:
@@ -496,8 +539,35 @@ class Airr:
             logger.info(f"Running blast on {file}")
             result = self.igblast.run_file(file)
             logger.info(f"Ran blast on  {file}")
-            result.loc[:, "species"] = self.species
+            result.insert(2, "species", self.species)
             result = AirrTable(result)
+            if (result["note"].str.lower() == "liable").any():
+                self._liable_seqs = set(result[result["note"].str.lower() == "liable"].sequence_id)
+                # If we allow adaption,
+                if self.adapt_penalty:
+                    _tmp_v = self.igblast.v_penalty.value
+                    _tmp_j = self.igblast.j_penalty.value
+
+                    # Set these to adaptable
+                    self.igblast.v_penalty = -2
+                    self.igblast.j_penalty = -1
+
+                    # Set to false so we can call recursive
+                    self.adapt_penalty = False
+                    liable_dataframe = result.table[result.table["sequence_id"].isin(self._liable_seqs)]
+
+                    # Will call without adaptive
+                    adaptable_results = self.run_dataframe(liable_dataframe, "sequence_id", "sequence")
+
+                    adaptable_not_liable = adaptable_results[adaptable_results["note"] != "liable"]
+                    airr_table = result.table.set_index("sequence_id")
+                    airr_table.update(adaptable_not_liable.set_index("sequence_id"))
+                    airr_table = airr_table.reset_index()
+                    self.igblast.v_penalty = _tmp_v
+                    self.igblast.j_penalty = _tmp_j
+                    self.adapt_penalty = True
+                    result = AirrTable(airr_table)
+
             if _filetype:
                 os.remove(file)
         return result
@@ -618,30 +688,8 @@ class Airr:
 
 if __name__ == "__main__":
     api_air = Airr("human")
-    at = api_air.run_single(
-        "2545",
-        """CCGCCCGGCCGCTGCTATGCGGCATCAAGTAGATTGATAAGCCCTTTCTTTGATCCAGTTTGGAAAGTGGGGTCCCATCA
-           CGCTTCAGTGGCAGTGGATCTGGGACAGATTTCACTCTCACCATCAGCAGTCTGCAACCTGAAGATTTTGCAACTTACTA
-           CTGTCAACAGAGTTACACATTCCCCCGTTCATTTGGCGGAGGTACCAAGGTGGAGATCAAACGTACGGTTGCCGCTCCTT
-           CTGTATTCATATTTCCGCCCTCCGATGAACAGCTTAAATCGGGCACTGCTTCGGTAGTCTGCCTTCTGAATAATTTCTAT
-           CCCCGCGAGGCCAAGGTGCAATGGAAAGTCGACAATGCACTGCAAAGTGGAAACTCGCAAGAAAGCGTCACCGAACAGGA
-           CAGTAAGATTCCACCTATAGCCTGTCATCGACACTTACCCTGAGTAAGGCTGATTACGAAAAGCACAAGGTTTACGCTTG
-           CGAAGTAACTCACCAGGGCCTCTCAAGCCCTGTTACAAAGTCATTTAACAGAGGGGAATGCTAATTCTAGATAATTATCA
-           AGGAGACAGTCATAATGAAATACCTATTGCCTACGGCAGCCGCTGGATTGTTATTACTCGCTGCCCAACCAGCCATGGCC
-           GAGGTGCAGCTGCTCGAGGTGCAGCTGTTGGAGTCTGGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTG
-           TGCAGCCTCTGGATTTACATTTCGTCGTTATGCTATGAGTTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTCA
-           GCGCCATAAGCGGCTCAGGTGGGTCAACAAAATACGCTGACTCCGTGAAGGGCCGGTTCACCATCTCCAGAGACAATTCC
-           AAGAACACGCTGTATCTGCAAATGAACAGCCTGAGAGCCGAGGACACGGCCGTGTATTACTGTGCACGTCGTGCCGGTCG
-           TTGGCTGCAGTCTCCTTATTATTATTATGGGATGGATGTATGGGGCCAGGGCACCCTGGTCACCGTCTCCTCAGCAAGTA
-           CCAAGGGGCCTTCAGTTTTTCCGCTCGCTCCAAGTTCTAAATCTACTTCCGGTGGAACTGCTGCTCTGGGGTGCCTGGTT
-           AAAGACTATTTCCCAGAACCCGTGACTGTAAGTTGGAACAGCGGAGCATTAACCTCAGGAGTGCACACATTCCCGGCCGT
-           ATTGCAAAGTTCTGGCCTGTACTCACTCTCTTCTGTTGTAACGGTTCCATCCAGCTCTTTGGGCACCCAAACCTATATAT
-           GCAACGTGAATCACAAACCGTCAAACACGAAAGTCGACAAAAAGGTGGAGCCGAAAACTAGTCACCATCACCACCATCAT
-           GGCGCATATCCGTATGATGTGCCGGACTATGCTTCTTAGGGCCAGGCCGGCCAGGAGGCTCG""".replace(
-            "\n", ""
-        ).replace(
-            " ", ""
-        ),
-        scfv=True,
-    )
-    print(at.to_genbank("test.gb"))
+    sub_sample_file = "/Users/jordanwillis/repos/personal/sadie/tests/integration/airr/fixtures/OAS_subsample.fasta"
+    airr_api = Airr(species="human", database="imgt", functional="all")
+    with tempfile.NamedTemporaryFile(mode="w") as f:
+        f.writelines(open(sub_sample_file).readlines())
+        sadie_airr = airr_api.run_file(f.name)
