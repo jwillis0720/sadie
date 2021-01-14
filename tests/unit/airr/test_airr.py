@@ -6,6 +6,7 @@ import glob
 import pytest
 from itertools import product
 import tempfile
+from numpy import isnan
 import pandas as pd
 from sadie.airr import Airr, BadDataSet, AirrTable
 from sadie.airr import app
@@ -64,12 +65,69 @@ def test_airr_single_sequence():
 
 def test_airr_from_dataframe():
     """Test we can pass a dataframe to runtime"""
-    dog_df = pd.read_csv(get_file("airr_tables/dog_igh.csv.gz"), index_col=1)
+    dog_df = pd.read_csv(get_file("airr_tables/dog_igh.csv.gz"), index_col=0)
     airr_api = Airr("dog")
-    unjoined_df = airr_api.run_dataframe(dog_df, "sequence", "sequence_id")
+    unjoined_df = airr_api.run_dataframe(dog_df, "sequence_id", "sequence")
     assert isinstance(unjoined_df, AirrTable)
-    joined_df = airr_api.run_dataframe(dog_df, "sequence", "sequence_id", return_join=True)
+    joined_df = airr_api.run_dataframe(dog_df, "sequence_id", "sequence", return_join=True)
     assert isinstance(joined_df, pd.DataFrame)
+
+
+def test_airr_from_file():
+    """Test we can pass a dataframe to runtime"""
+    f = get_file("fasta_inputs/PG9_H_multiple.fasta.gz")
+    airr_api = Airr("human")
+    result = airr_api.run_file(f)
+    assert isinstance(result, AirrTable)
+
+
+def test_adaptable_penalty():
+    test_sequence = """
+    GACATCCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACAGAGTCACC
+    ATCACTTGCCAGGCGAGTCAGGACATTAGCAACTATTTAAATTGGTATCAGCAGAAACCA
+    GGGAAAGCCCCTAAGCTCCTGATCTACGATGCATCCAATTTGGAAACAGGGGTCCCATCA
+    AGGTTCAGTGGAAGTGGATCTGGGACAGATTTTACTTTCACCATCAGCAGCCTGCAGCCT
+    GAAGATATTGCAACATATTACTGTCAACAGTATGATAATTTCGGCGGAGGGACCAAGGTG
+    GACATCAAAC""".replace(
+        "\n", ""
+    )
+
+    # Check what happens
+    air_api = Airr("human", adaptable=False)
+    airr_table = air_api.run_single("adaptable_seq", test_sequence)
+    airr_entry = airr_table.iloc[0]
+    cdr3_ = airr_entry["cdr3_aa"]
+    cdr2_ = airr_entry["cdr2_aa"]
+    cdr1_ = airr_entry["cdr1_aa"]
+    fw1_ = airr_entry["fwr1_aa"]
+    fw2_ = airr_entry["fwr2_aa"]
+    fw3_ = airr_entry["fwr3_aa"]
+    fw4_ = airr_entry["fwr4_aa"]
+    assert fw1_ == "DIQMTQSPSSLSASVGDRVTITCQAS"
+    assert fw2_ == "LNWYQQKPGKAPKLLIY"
+    assert fw3_ == "NLETGVPSRFSGSGSGTDFTFTISSLQPEDIATYYC"
+    assert isnan(fw4_)
+    assert cdr1_ == "QDISNY"
+    assert cdr2_ == "DAS"
+    assert isnan(cdr3_)
+
+    air_api = Airr("human", adaptable=True)
+    airr_table = air_api.run_single("adaptable_seq", test_sequence)
+    airr_entry = airr_table.iloc[0]
+    cdr3_ = airr_entry["cdr3_aa"]
+    cdr2_ = airr_entry["cdr2_aa"]
+    cdr1_ = airr_entry["cdr1_aa"]
+    fw1_ = airr_entry["fwr1_aa"]
+    fw2_ = airr_entry["fwr2_aa"]
+    fw3_ = airr_entry["fwr3_aa"]
+    fw4_ = airr_entry["fwr4_aa"]
+    assert fw1_ == "DIQMTQSPSSLSASVGDRVTITCQAS"
+    assert fw2_ == "LNWYQQKPGKAPKLLIY"
+    assert fw3_ == "NLETGVPSRFSGSGSGTDFTFTISSLQPEDIATYYC"
+    assert fw4_ == "FGGGTKVDIK"
+    assert cdr1_ == "QDISNY"
+    assert cdr2_ == "DAS"
+    assert cdr3_ == "QQYDN"
 
 
 def _run_cli(args, tmpfile):

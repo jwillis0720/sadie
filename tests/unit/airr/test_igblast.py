@@ -8,6 +8,7 @@ import pytest
 
 # package level
 from sadie import airr
+from sadie.airr.constants import IGBLAST_AIRR
 
 loger = logging.getLogger()
 
@@ -101,7 +102,7 @@ def test_antibody_igblast_file_run():
     # have to make this -2 to get a more specifc j gene match
     ig_blast.j_penalty = -2
     csv_dataframe = ig_blast.run_file(query).fillna("")
-    expected_output_df = pd.read_csv(expected_output, index_col=0).fillna("")
+    expected_output_df = pd.read_csv(expected_output, index_col=0, dtype=IGBLAST_AIRR).fillna("")
 
     pd._testing.assert_frame_equal(
         csv_dataframe,
@@ -113,6 +114,8 @@ def test_antibody_igblast_file_run():
 
     query = get_file("fasta_inputs/PG9_L.fasta")
     expected_output = get_file("expected_outputs/PG9_L.csv")
-    expected_output_df = pd.read_csv(expected_output, index_col=0).fillna("")
-    csv_dataframe = ig_blast.run_file(query).fillna("")
+    expected_output_df = pd.read_csv(expected_output, index_col=0, dtype=IGBLAST_AIRR)
+    expected_output_df["d_call"] = expected_output_df["d_call"].fillna("")
+    csv_dataframe = ig_blast.run_file(query)
+    csv_dataframe["d_call"] = csv_dataframe["d_call"].fillna("")
     pd._testing.assert_frame_equal(csv_dataframe, expected_output_df, check_like=True)

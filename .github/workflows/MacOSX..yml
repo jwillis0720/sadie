@@ -12,10 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # os: [ubuntu-latest, macos-latest]
         os: [macos-latest]
         python-version: [3.6,3.7,3.8]
-        # python-version: [3.8]
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -29,15 +27,18 @@ jobs:
           pip install pytest
           pip install pytest-cov
           pip install .
+      - name : Cache PIP
+        uses: actions/cache@v2
+        with:
+          path: ~/Library/Caches/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - name: PreCommit
         uses: pre-commit/action@v2.0.0
-      - name: Test
+      - name: Unit Testing
         run: |
           pytest -v tests/unit
-          # env
-          # coverage run --source=./sadie --branch -m pytest -v tests
-          # coverage xml
-          # coverage report
-          # I can't get pytest plugin to work on github acitons
-          # pytest --cov=/home/runner/work/sadie/sadie --cov-report=xml --cov-report=term tests/airr
-          # cat ./coverage.xml
+      - name: Integration Testing
+        run: |
+          pytest -v tests/integration

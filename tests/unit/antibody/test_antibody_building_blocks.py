@@ -35,7 +35,7 @@ def test_antibody_segment():
     assert segment_nt.end_index == 74
     assert len(segment_nt) == len("CAGGTTCAGCTGGTGCAGTCTGGAGCTGAGGTGAAGAAGCCTGGGGCCTCAGTGAAGGTCTCCTGCAAGGCTTCT")
     assert segment_nt.sequence == "CAGGTTCAGCTGGTGCAGTCTGGAGCTGAGGTGAAGAAGCCTGGGGCCTCAGTGAAGGTCTCCTGCAAGGCTTCT"
-    assert not segment_nt.get_formatted_alignment()
+    assert segment_nt.get_formatted_alignment() == ("", "", "", "")
 
     segment_nt.germline = "CAGGCGCAGCACGC"
     assert segment_nt.germline == "CAGGCGCAGCACGC"
@@ -57,6 +57,10 @@ def test_antibody_segment():
 
     with pytest.raises(exception.BadAASequenceError):
         segment.AntibodySegmentAA("AVGQ<")
+
+    null_nt = segment.AntibodySegment("")
+    assert all([i is None for i in [null_nt.start, null_nt.end, null_nt.start_index, null_nt.end_index]])
+    assert null_nt.alignment == ("", "", "", "")
 
 
 def test_framework_segment_nt():
