@@ -4,3 +4,4 @@ click
 filetype
 pandas
 wheel
+requests
