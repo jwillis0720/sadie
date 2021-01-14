@@ -69,6 +69,39 @@ starts_and_ends = [
     "j_sequence_start",
 ]
 
+# check these in integration
+check_these = [
+    "sequence",
+    "locus",
+    "stop_codon",
+    "vj_in_frame",
+    "productive",
+    "rev_comp",
+    "complete_vdj",
+    "v_call",
+    "v_call_top",
+    "v_gene_top",
+    "d_call_top",
+    "d_gene_top",
+    "j_call_top",
+    "j_gene_top",
+    "fwr1",
+    "cdr1",
+    "fwr2",
+    "cdr2",
+    "fwr3",
+    "cdr3",
+    "fwr1_aa",
+    "cdr1_aa",
+    "fwr2_aa",
+    "cdr2_aa",
+    "fwr3_aa",
+    "cdr3_aa",
+    "fwr4_aa",
+    "sequence_alignment",
+    "sequence_alignment_aa",
+]
+
 
 def make_sadie_comparable(df):
     """Takes sadie df and makes it comparable wiht IMGT
@@ -198,57 +231,43 @@ def make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def test_imgt_integration():
+    # sadie annotate
     file = fixture_file("OAS_subsample_good_anarci.fasta.gz")
-    airr_api = Airr(species="human", database="imgt", functional="all")
-    # try 1 with -1, -2
-    # These are the default
-    airr_api.igblast.v_penalty = -1
-    airr_api.igblast.j_penalty = -2
-    print(file)
+    airr_api = Airr(species="human", database="imgt", functional="functional", adaptable=True)
+    airr_api_all = Airr(species="human", database="imgt", functional="all", adaptable=True)
+    sadie_airr_functional = airr_api.run_file(file)
+    sadie_comparable_functional = make_sadie_comparable(sadie_airr_functional)
+    # sadie_comparable_functional.to_feather("sadie_compare_functional.feather")
+
+    # all
+    sadie_airr_all = airr_api_all.run_file(file)
+    sadie_comparable_all = make_sadie_comparable(sadie_airr_all)
+    sadie_comparable_all.to_feather("sadie_compare_all.feather")
+
+    # imgt airr
+    imgt_airr = fixture_file("OAS_airr_from_imgtvquest_fl_anarci_good.tsv.gz")
+    imgt_df = pd.read_csv(imgt_airr, delimiter="\t", low_memory=False)
+    imgt_comparable = make_imgt_comparable(imgt_df)
+    imgt_comparable.to_feather("imgt_compare.feather")
+
+    #  Make the compare dataframe for functional
+    compare = imgt_comparable[check_these] == sadie_comparable_functional[check_these]
+    integration_comparison = pd.read_csv(fixture_file("comparison_df_imgt_sadie_functional.csv.gz"), index_col=0)
+    pd.testing.assert_frame_equal(compare, integration_comparison)
+
+    #  Make the compare dataframe for all
+    compare = imgt_comparable[check_these] == sadie_comparable_all[check_these]
+    integration_comparison = pd.read_csv(fixture_file("comparison_df_imgt_sadie_all.csv.gz"), index_col=0)
+    pd.testing.assert_frame_equal(compare, integration_comparison)
 
 
 def test_catnap_heavy_integration():
-    file = fixture_file("catnap_nt_heavy.fasta.gz")
-    airr_api = Airr(species="human", database="imgt", functional="all")
-    # try 1 with -1, -2
-    # These are the default
-    airr_api.igblast.v_penalty = -1
-    airr_api.igblast.j_penalty = -2
-    result_airr = airr_api.run_file(file)
-    print(result_airr)
-
-
-# def test_vs_oas_sampling():
-#     """
-#     Test airr vs the OAS airr datasets. I have chosen 15K heavy and 10K light to compare against
-#     """
-#     end_point = "https://sadie.s3.us-east-2.amazonaws.com/integration/OAS_sample_subsample.bz2"
-
-#     # uzing bzip for max compression to minimize egress S3 expense
-#     df_bz2 = pd.read_csv(end_point, index_col=0).reset_index()
-
-#     # Airr api
-#     airr_api = Airr(species="human", database="imgt", functional="all")
-#     airr_api.run_dataframe(
-#         df_bz2,
-#     )
-
-
-# def test_cli():
-#     """Confirm the CLI works as expecte"""
-#     runner = CliRunner()
-#     fastas = get_fasta_inputs("*")
-#     for query_file in fastas:
-#         with tempfile.NamedTemporaryFile() as tmpfile:
-#             logger.debug(tmpfile.name)
-#             result = runner.invoke(app.run_airr, ["--query", query_file, "-o", tmpfile.name])
-#             assert result.exit_code == 0
-#             assert os.path.exists(tmpfile.name)
-#     assert not os.path.exists(tmpfile.name)
-#     for query_file in fastas:
-#         with tempfile.NamedTemporaryFile() as tmpfile:
-#             logger.debug(tmpfile.name)
-#             result = runner.invoke(app.run_airr, ["--query", query_file, "-s", "dog", "-o", tmpfile.name])
-#             assert result.exit_code == 0
-#             assert os.path.exists(tmpfile.name)
-#         assert not os.path.exists(tmpfile.name)
+    heavy_file = fixture_file("catnap_nt_heavy.fasta.gz")
+    light_file = fixture_file("catnap_nt_light.fasta.gz")
+    airr_api = Airr(species="human", database="imgt", functional="functional")
+    catnap_heavy = airr_api.run_file(heavy_file)
+    catnap_light = airr_api.run_file(light_file)
+    light_at = AirrTable.read_csv(fixture_file("catnap_light_airrtable.csv.gz"))
+    heavy_at = AirrTable.read_csv(fixture_file("catnap_heavy_airrtable.csv.gz"))
+    pd.testing.assert_frame_equal(light_at.table, catnap_light.table)
+    pd.testing.assert_frame_equal(heavy_at.table, catnap_heavy.table)
