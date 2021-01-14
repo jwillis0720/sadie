@@ -242,13 +242,13 @@ def test_imgt_integration():
     # all
     sadie_airr_all = airr_api_all.run_file(file)
     sadie_comparable_all = make_sadie_comparable(sadie_airr_all)
-    sadie_comparable_all.to_feather("sadie_compare_all.feather")
+    # sadie_comparable_all.to_feather("sadie_compare_all.feather")
 
     # imgt airr
     imgt_airr = fixture_file("OAS_airr_from_imgtvquest_fl_anarci_good.tsv.gz")
     imgt_df = pd.read_csv(imgt_airr, delimiter="\t", low_memory=False)
     imgt_comparable = make_imgt_comparable(imgt_df)
-    imgt_comparable.to_feather("imgt_compare.feather")
+    # imgt_comparable.to_feather("imgt_compare.feather")
 
     #  Make the compare dataframe for functional
     compare = imgt_comparable[check_these] == sadie_comparable_functional[check_these]
