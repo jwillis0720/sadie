@@ -179,11 +179,13 @@ class AntibodySegment:
 
         # If no seq set sequence as '-'
         if not self._sequence:
-            self._sequence = "-" * len(str(germ))
+            _sequence = "-" * len(str(germ))
+        else:
+            _sequence = self._sequence
 
         # we can have it where germline segment is also empty
         if self._germline:
-            _alignments = align.globalxs(self._germline, self._sequence, -10, -1)
+            _alignments = align.globalxs(self._germline, _sequence, -10, -1)
             self._alignment = _alignments[0]
 
     @property
@@ -637,7 +639,12 @@ class CDR3NT(AntibodySegmentNT):
             self._germline = str(_v) + "-" * _dashes + str(_j)
             self._v_portion = self.sequence[0 : len(_v)]
         if self._germline:
-            _alignments = align.globalxs(self._germline, self._sequence, -10, -1)
+            if not self._sequence:
+                _sequence = "-" * len(self._germline)
+            else:
+                _sequence = self._sequence
+
+            _alignments = align.globalxs(self._germline, _sequence, -10, -1)
             self._alignment = _alignments[0]
 
     @property
@@ -861,5 +868,9 @@ class CDR3AA(AntibodySegmentAA):
             self._germline = str(_v) + "-" * _dashes + str(_j)
 
         if self._germline:
-            _alignments = align.globalxs(self._germline, self._sequence, -10, -1)
+            if not self._sequence:
+                _sequence = "-" * len(self._germline)
+            else:
+                _sequence = self._sequence
+            _alignments = align.globalxs(self._germline, _sequence, -10, -1)
             self._alignment = _alignments[0]
