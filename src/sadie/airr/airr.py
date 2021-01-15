@@ -383,6 +383,7 @@ class Airr:
 
                 # If we allow adaption,
                 if self.adapt_penalty:
+                    logger.info("Relaxing penalities to resolve liabilities")
                     _tmp_v = self.igblast.v_penalty.value
                     _tmp_j = self.igblast.j_penalty.value
                     self.igblast.v_penalty = -2
@@ -446,8 +447,11 @@ class Airr:
                 yield SeqRecord(id=str(seq_id), name=str(seq_id), description="", seq=Seq(seq))
 
         if return_join:
+            dataframe[seq_id_field] = dataframe[seq_id_field].astype(str)
+            _df = self.run_multiple(_get_seq_generator(), scfv=scfv).table
+            # convert seq id field to stry stince sequence_id is cast to string
             return dataframe.merge(
-                self.run_multiple(_get_seq_generator(), scfv=scfv).table,
+                _df,
                 left_on=seq_id_field,
                 right_on="sequence_id",
             )
@@ -545,6 +549,7 @@ class Airr:
                 self._liable_seqs = set(result[result["note"].str.lower() == "liable"].sequence_id)
                 # If we allow adaption,
                 if self.adapt_penalty:
+                    logger.info(f"Relaxing penalities to resolve liabilities for {len(self._liable_seqs)}")
                     _tmp_v = self.igblast.v_penalty.value
                     _tmp_j = self.igblast.j_penalty.value
 
@@ -560,6 +565,7 @@ class Airr:
                     adaptable_results = self.run_dataframe(liable_dataframe, "sequence_id", "sequence")
 
                     adaptable_not_liable = adaptable_results[adaptable_results["note"] != "liable"]
+                    logger.info(f"Corrected {len(adaptable_not_liable)} sequences")
                     airr_table = result.table.set_index("sequence_id")
                     airr_table.update(adaptable_not_liable.set_index("sequence_id"))
                     airr_table = airr_table.reset_index()
