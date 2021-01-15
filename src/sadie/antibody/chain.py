@@ -765,6 +765,8 @@ class AntibodyChainNT(AntibodyChainAA):
         # Set the ranges according to the length of each segment:
         _start = len(self._leader)
         for segment in self._chain_nt:
+            if not segment:
+                continue
             segment.start_index = _start
             _start = _start + len(segment)
 

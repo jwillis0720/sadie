@@ -148,6 +148,7 @@ def test_antibody_chain_nt():
 
 
 def test_alignments():
+
     antibody_chain = antibody.AntibodyChainNT(
         name="short_alignent",
         fwr1_nt="",
@@ -162,6 +163,26 @@ def test_alignments():
         species="human",
     )
     antibody_chain.get_segmented_alignment_nt()
+
+
+def test_alignment_with_missing_cdr3():
+    antibody_object = antibody.AntibodyChainNT(
+        name="nocdr3",
+        fwr1_nt="CAGGTGCAGCTGGTACAATCTGGGACTGAGGTGAGGAAGCCTGGGGCCTCGGTGAAGGTCTCCTGCAAGACTTCA",
+        cdr1_nt="GGATACACCTTCAAGAACTTTTAT",
+        fwr2_nt="ATTCATTGGCTGCGGCAGGCCCCTGGACAAGGACTTGAGTGGGTGGGTTGG",
+        cdr2_nt="ATCAACCCTAATAGTGGTGACACA",
+        fwr3_nt="AGACTGACATCTGTCGACACGGCCGTTTATTATTGTGCGCGACTGAAGAGGGGAACCGAATTTTGGAGTAGTTATTCGGACTTCTGGGGACAGGGAACCCTGGTCGCCGTCTCC",
+        cdr3_nt="",
+        fwr4_nt="",
+        v_gene="IGHV1-2*02",
+        j_gene="IGHJ4*01",
+        species="human",
+    )
+    assert (
+        antibody_object.get_segmented_alignment_nt()
+        == "IGHV1-2*02|IGHJ4*01  CAGGTGCAGCTGGTGCAGTCTGGGGCTGAGGTGAAGAAGCCTGGGGCCTCAGTGAAGGTCTCCTGCAAGGCTTCT GGATACACCTTCACCGGCTACTAT\nnocdr3               ..............A..A......A.........G...............G..................A....A .............AGAA..TT...\n\nIGHV1-2*02|IGHJ4*01   ATGCACTGGGTGCGACAGGCCCCTGGACAAGGGCTTGAGTGGATGGGATGG ATCAACCCTAACAGTGGTGGCACA AACTATGCACAGAAGTTTCAGG\nnocdr3                ..T..T...C....G.................A.........G....T... ...........T.......A.... .GACTGA..TCTGTCGACAC..\n\nIGHV1-2*02|IGHJ4*01  GCAGGGTCACCATGACCAGGGACACGTCCATCAGCACAGCCTACATGGAGCTGAGCAGGCTGAGATCTGACGACACGGCCGTGTATTACTGT GCGAGAG\nnocdr3               C.GTTTATTATTGTG.GC.ACTG.A.AGGGGA.C.GA.TTT.GG.GTAGTTATTCGGACT.CT.GGGAC.G.GA..CCTG..CGCCGT..CC -------\n\nIGHV1-2*02|IGHJ4*01  AACTACTTTGACTAC TGGGGCCAAGGAACCCTGGTCACCGTCTCCTCAG\nnocdr3               --------------- ----------------------------------\n\n"
+    )
 
 
 # Test heavy chain, kappa and lambda chain AA
