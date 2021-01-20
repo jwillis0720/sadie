@@ -335,6 +335,9 @@ class AntibodySegmentNT(AntibodySegment):
         return str(Seq(self._nt).translate())
 
     def _validate_nt(self, nt_seq):
+        # If its false, let's set it to empty
+        if not nt_seq:
+            nt_seq = ""
         """Private Nucleotide validation method"""
         check_nt = re.match("^[{}]+$".format(STANDARD_NT.upper()), nt_seq.upper())
         if not bool(check_nt):
