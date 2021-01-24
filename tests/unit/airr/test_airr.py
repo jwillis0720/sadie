@@ -1,15 +1,17 @@
 """Unit tests for analysis interface."""
-import os
-from click.testing import CliRunner
-import logging
 import glob
-import pytest
-from itertools import product
+import logging
+import os
 import tempfile
-from numpy import isnan
+from itertools import product
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+from pathlib import Path
 import pandas as pd
-from sadie.airr import Airr, BadDataSet, AirrTable, BadRequstedFileType, GermlineData, ScfvAirrTable
-from sadie.airr import app
+import pytest
+from click.testing import CliRunner
+from numpy import isnan
+from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, ScfvAirrTable, app
 
 logger = logging.getLogger()
 
@@ -35,6 +37,8 @@ def test_germline_init():
         gd.j_gene_dir = "/non/existant/path"
     with pytest.raises(FileNotFoundError):
         gd.igdata = "/non/existant/path"
+    with pytest.raises(FileNotFoundError):
+        gd.aux_path = "/non/existant/path"
     with pytest.warns(UserWarning):
         gd.d_gene_dir = "/non/existant/path"
 
@@ -49,6 +53,12 @@ def test_airr_init():
     with pytest.raises(BadDataSet) as execinfo:
         air_api = Airr("robot")
     assert execinfo.value.__str__()
+
+    # have an already created directory
+    air_api = Airr("human", temp_directory="a_new_tempfile")
+    os.rmdir("a_new_tempfile")
+
+    assert air_api.__repr__() == air_api.__str__()
 
 
 def test_airr_single_sequence():
@@ -82,6 +92,45 @@ def test_airr_single_sequence():
         # id must be str
         airr_table = air_api.run_single(9, pg9_seq)
 
+    # super edge case, two heavy or two light scfv
+    pg9_seq_heavy = """
+    CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
+    CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
+    GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
+    AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
+    TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
+    TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
+        "\n", ""
+    )
+    pg9_seq_light = """
+    CAGTCTGCCCTGACTCAGCCTGCCTCCGTGTCTGGGTCTCCTGGACAGTCGATCACCATCTCCTGCAATGGAACCAGCAA
+    TGATGTTGGTGGCTATGAATCTGTCTCCTGGTACCAACAACATCCCGGCAAAGCCCCCAAAGTCGTGATTTATGATGTCA
+    GTAAACGGCCCTCAGGGGTTTCTAATCGCTTCTCTGGCTCCAAGTCCGGCAACACGGCCTCCCTGACCATCTCTGGGCTC
+    CAGGCTGAGGACGAGGGTGACTATTACTGCAAGTCTCTGACAAGCACGAGACGTCGGGTTTTCGGCACTGGGACCAAGCT
+    GACCGTTCTA""".replace(
+        "\n", ""
+    )
+    air_api.run_single("two_heavy", pg9_seq_heavy + pg9_seq_heavy, scfv=True)
+    air_api.run_single("two_light", pg9_seq_light + pg9_seq_light, scfv=True)
+
+
+def test_run_multiple():
+    airr = Airr("human")
+    pg9_seq = """
+    CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
+    CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
+    GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
+    AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
+    TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
+    TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
+        "\n", ""
+    )
+    seq = Seq(pg9_seq)
+    seq_record = SeqRecord(seq=seq)
+    airr.run_multiple([seq_record, seq_record])
+    with pytest.raises(TypeError):
+        airr.run_multiple(seq_record)
+
 
 def test_airr_from_dataframe():
     """Test we can pass a dataframe to runtime"""
@@ -99,10 +148,19 @@ def test_airr_from_file():
     airr_api = Airr("human")
     result = airr_api.run_file(f)
     assert isinstance(result, AirrTable)
+
+    # see if we can take in paths
+    result = airr_api.run_file(Path(f))
+    assert isinstance(result, AirrTable)
+
     f = get_file("card.png")
     with pytest.raises(BadRequstedFileType) as execinfo:
         airr_api.run_file(f)
     assert execinfo.value.__str__()
+
+    f = get_file("fasta_inputs/scfv.fasta.gz")
+    airr_api = Airr("human", temp_directory="a_non_existant_directory")
+    airr_api.run_file(f, scfv=True)
 
 
 def test_adaptable_penalty():
