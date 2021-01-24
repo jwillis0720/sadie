@@ -8,7 +8,7 @@ from itertools import product
 import tempfile
 from numpy import isnan
 import pandas as pd
-from sadie.airr import Airr, BadDataSet, AirrTable, BadRequstedFileType
+from sadie.airr import Airr, BadDataSet, AirrTable, BadRequstedFileType, GermlineData, ScfvAirrTable
 from sadie.airr import app
 
 logger = logging.getLogger()
@@ -20,6 +20,23 @@ def get_file(file):
     if not os.path.exists(_file):
         raise FileNotFoundError(_file)
     return _file
+
+
+def test_germline_init():
+    """Germline Data in airr module"""
+    gd = GermlineData("human")
+    with pytest.raises(FileNotFoundError):
+        gd.base_dir = "/non/existant/path"
+    with pytest.raises(FileNotFoundError):
+        gd.blast_dir = "/non/existant/path"
+    with pytest.raises(FileNotFoundError):
+        gd.v_gene_dir = "/non/existant/path"
+    with pytest.raises(FileNotFoundError):
+        gd.j_gene_dir = "/non/existant/path"
+    with pytest.raises(FileNotFoundError):
+        gd.igdata = "/non/existant/path"
+    with pytest.warns(UserWarning):
+        gd.d_gene_dir = "/non/existant/path"
 
 
 def test_airr_init():
@@ -61,6 +78,9 @@ def test_airr_single_sequence():
     assert cdr1_ == "GFDFSRQG"
     assert cdr2_ == "IKYDGSEK"
     assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
+    with pytest.raises(TypeError):
+        # id must be str
+        airr_table = air_api.run_single(9, pg9_seq)
 
 
 def test_airr_from_dataframe():
@@ -132,6 +152,24 @@ def test_adaptable_penalty():
     assert cdr1_ == "QDISNY"
     assert cdr2_ == "DAS"
     assert cdr3_ == "QQYDN"
+
+    scfv = """GGCGGCCGAGCTCGACATCCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACCGTGTCACCATCACTT
+              GCCGGGGCAAGTCAAATCATTAGCAACTATCTAAACTGGTATCAGCAGAAACCAGGGAAAGCCCCTAAGCTCCTGATCTA
+              TGCTACATCCAATTTGCACAGTGGGGTCCCATCACGCTTCAGTGGCAGTGGATCTGGGACAGATTTCACTCTCACCATCA
+              GCAGTCTGCAACCTGAAGATTTTGCAACTTACTACTGTCAACAGAGTTACAGTTTCCCGCCCACTTTCGGCGGAGGTACC
+              AAGGTGGAGATCAAACGTACGGTTGCCGCTCCTTCTGTATTCATATTTCCGCCCTCCGATGAACAGCTTAAATCGGGCAC
+              TGCTTCGGTAGTCTGCCTTCTGAATAATTTCTATCCCCGCGAGGCCAAGGTGCAATGGAAAGTCGACAATGCACTGCAAA
+              GTGGAAACTCGCAAGAAAGCGTCACCGAACAGGACAGTAAAGATTCCACCTATAGCCTGTCATCGACACTTACCCTGAGT
+              AAGGCTGATTACGAAAAGCACAAGGTTTACGCTTGCGAAGTAACTCACCAGGGCCTCTCAAGCCCTGTTACAAAGTCATT
+              TAACAGAGGGGAATGCTAATTCTAGATAATTATCAAGGAGACAGTCATAATGAAATACCTATTGCCTACGGCAGCCGCTG
+              GATTGTTATTACTCGCTGCCCAACCAGCCATGGCCGAGGTGCAGCTGCTCGAGGTGCAGCTGTTGGAGTCTGGGGGAGGC
+              TTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGACTGACGATCTCATCCTACGCAATGTCATGGGT
+              CCGCCAGGCTCCAGGGAANGGGGCTGGAGT"""
+    air_api = Airr("human", adaptable=True)
+    airr_table = air_api.run_single("scfv", scfv.replace("\n", "").replace(" ", ""), scfv=True)
+    assert airr_table.table.fwr1_aa_heavy.iloc[0] == "EVQLLESGGGLVQPGGSLRLSCAAS"
+    assert airr_table.table.fwr2_aa_heavy.iloc[0] == "MSWVRQAPGXGAGV"
+    assert isinstance(airr_table, ScfvAirrTable)
 
 
 def _run_cli(args, tmpfile):
