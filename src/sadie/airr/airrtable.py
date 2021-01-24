@@ -170,7 +170,7 @@ class AirrTable:
 
         # If these aren't productive, who cares
         if not liable_sequences.empty:
-            logger.warning(f"Caution - sequences {list(liable_sequences['sequence_id'])} may need manual inspections")
+            logger.debug(f"Caution - sequences {list(liable_sequences['sequence_id'])} may need manual inspections")
             self._table.loc[liable_sequences.index, "note"] = "liable"
         self._non_airr_columns = list(set(self._table.columns) - set(IGBLAST_AIRR.keys()))
         self._airr_columns = list(set(self._table.columns).intersection(IGBLAST_AIRR.keys()))
