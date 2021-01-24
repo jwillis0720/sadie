@@ -514,15 +514,15 @@ class Airr:
         _filetype = filetype.guess(file)
         if _filetype:
             logger.info("Guess File Type is %s ", _filetype.extension)
+            if _filetype.extension not in ["gz", "bz2"]:
+                raise BadRequstedFileType(_filetype, ["bzip2", "gzip"])
             with tempfile.NamedTemporaryFile(delete=False, dir=self.temp_directory) as tmpfile:
                 if _filetype.extension == "gz":
                     logger.info("File type is compressed gzip")
                     file_buffer = gzip.open(file)
-                elif _filetype.extension == "bz2":
+                else:
                     logger.info("File type is compressed bzip2")
                     file_buffer = bz2.open(file)
-                else:
-                    raise BadRequstedFileType(_filetype, ["bzip2", "gzip"])
                 logger.debug(f"copying {file} to {tmpfile.name}")
                 shutil.copyfileobj(file_buffer, tmpfile)
                 logger.debug(f"copied {file} to {tmpfile.name}")

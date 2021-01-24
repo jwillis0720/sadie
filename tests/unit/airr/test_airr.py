@@ -79,7 +79,7 @@ def test_airr_from_file():
     airr_api = Airr("human")
     result = airr_api.run_file(f)
     assert isinstance(result, AirrTable)
-    f = get_file("fasta_inputs/card.png")
+    f = get_file("card.png")
     with pytest.raises(BadRequstedFileType) as execinfo:
         airr_api.run_file(f)
     assert execinfo.value.__str__()
