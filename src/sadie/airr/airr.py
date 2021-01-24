@@ -65,14 +65,6 @@ class BadRequstedFileType(Error):
         return "{} file passed, only accepts {}".format(self.requested_type, self.accepted_types)
 
 
-class EagerError(Error):
-    def __init__(self):
-        super().__init__()
-
-    def __str__(self):
-        return "Pleas run Airr first"
-
-
 class GermlineData:
     """
     The germline data paths are extremely cumbersome to workwith. This class will abstract away their paths to make it easier to fold into IgBLAST
