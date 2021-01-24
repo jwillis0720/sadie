@@ -1,6 +1,6 @@
 __version__ = "0.1.0"
 
-from .airr import BadDataSet, Airr, BadRequstedFileType
-from .airrtable import AirrTable
+from .airr import Airr, BadDataSet, BadRequstedFileType, GermlineData
+from .airrtable import AirrTable, ScfvAirrTable
 
-__all__ = ["BadDataSet", "Airr", "AirrTable", "BadRequstedFileType"]
+__all__ = ["Airr", "AirrTable", "ScfvAirrTable", "BadDataSet", "BadRequstedFileType", "GermlineData"]
