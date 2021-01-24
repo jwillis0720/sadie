@@ -8,7 +8,7 @@ from itertools import product
 import tempfile
 from numpy import isnan
 import pandas as pd
-from sadie.airr import Airr, BadDataSet, AirrTable
+from sadie.airr import Airr, BadDataSet, AirrTable, BadRequstedFileType
 from sadie.airr import app
 
 logger = logging.getLogger()
@@ -29,9 +29,9 @@ def test_airr_init():
         air_api.get_available_datasets()
         assert isinstance(air_api, Airr)
     # show we can catch bad species inputs
-    with pytest.raises(BadDataSet):
-        for species in ["robot", "scarecrow"]:
-            air_api = Airr(species)
+    with pytest.raises(BadDataSet) as execinfo:
+        air_api = Airr("robot")
+    assert execinfo.value.__str__()
 
 
 def test_airr_single_sequence():
@@ -79,6 +79,10 @@ def test_airr_from_file():
     airr_api = Airr("human")
     result = airr_api.run_file(f)
     assert isinstance(result, AirrTable)
+    f = get_file("fasta_inputs/card.png")
+    with pytest.raises(BadRequstedFileType) as execinfo:
+        airr_api.run_file(f)
+    assert execinfo.value.__str__()
 
 
 def test_adaptable_penalty():

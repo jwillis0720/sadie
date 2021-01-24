@@ -51,7 +51,7 @@ class BadDataSet(Error):
 
 
 class BadRequstedFileType(Error):
-    """Exception raised for not finiding the igblast module
+    """Exception raised for unsupported file types
 
     Attributes:
     """
@@ -690,12 +690,3 @@ class Airr:
         if self._create_temp:
             # If we created a temp directory, let's blow it aways
             shutil.rmtree(self.temp_directory)
-
-
-if __name__ == "__main__":
-    api_air = Airr("human")
-    sub_sample_file = "/Users/jordanwillis/repos/personal/sadie/tests/integration/airr/fixtures/OAS_subsample.fasta"
-    airr_api = Airr(species="human", database="imgt", functional="all")
-    with tempfile.NamedTemporaryFile(mode="w") as f:
-        f.writelines(open(sub_sample_file).readlines())
-        sadie_airr = airr_api.run_file(f.name)

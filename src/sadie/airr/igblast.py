@@ -385,7 +385,7 @@ class IgBLASTN:
                 else:
                     raise BadIgBLASTExe(
                         igblastn_path,
-                        f"Can't find igblastn in package {__package__} or in path {os.env['PATH']}",
+                        f"Can't find igblastn in package {__package__} or in path {os.environ['PATH']}",
                     )
         else:  # User specifed custome path
             logger.debug(f"User passed custom igblastn {path}")
