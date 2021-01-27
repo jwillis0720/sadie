@@ -7,8 +7,9 @@ from pkg_resources import resource_filename
 
 import pandas as pd
 
-from sadie.airr import AirrTable
+from sadie.airr import AirrTable, Airr, ScfvAirrTable
 from sadie.airr.airrtable import MissingAirrColumns
+from Bio.SeqRecord import SeqRecord
 
 logger = logging.getLogger()
 
@@ -18,7 +19,7 @@ def fixture_file(file):
     return resource_filename(__name__, "fixtures/{}".format(file))
 
 
-def test_airr_init():
+def test_airrtable_init():
     test_csv = fixture_file("airr_tables/dog_igh.csv.gz")
     # Test we can initllize with staic meathod
     airr_table = AirrTable.read_csv(test_csv)
@@ -56,7 +57,20 @@ def test_airr_init():
     ]
     assert not airr_table.empty
 
+    # gen bank
+    genbanks = airr_table.get_genbank()
+    assert all([isinstance(i, SeqRecord) for i in genbanks])
+
     # I will not accept a busted table sam I am
     busted_table = fixture_file("airr_tables/busted.csv.gz")
-    with pytest.raises(MissingAirrColumns):
+    with pytest.raises(MissingAirrColumns) as e:
         AirrTable.read_csv(busted_table)
+    assert e.value.__str__()
+
+
+def test_scfv_airrtable():
+    airr_api = Airr("human")
+    scfv_airr_table = airr_api.run_file(fixture_file("fasta_inputs/scfv.fasta"), scfv=True)
+    heavy, light = ScfvAirrTable.deconstruct_scfv(scfv_airr_table)
+    assert type(heavy) == AirrTable
+    assert type(light) == AirrTable
