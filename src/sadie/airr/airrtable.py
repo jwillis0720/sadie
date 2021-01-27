@@ -5,7 +5,6 @@ from typing import Tuple, Union
 
 import pandas as pd
 from Bio import SeqIO
-from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from numpy import nan
 
@@ -33,32 +32,32 @@ class MissingAirrColumns(Error):
         return "Must have all AIRR columns defined, missing {}".format(self.missing_columns)
 
 
-class AirrResultError(Error):
-    """Exception raised for airr resultsa
+# class AirrResultError(Error):
+#     """Exception raised for airr resultsa
 
-    Attributes:
-    """
+#     Attributes:
+#     """
 
-    def __init__(self, msg):
-        super().__init__()
-        self.msg = msg
+#     def __init__(self, msg):
+#         super().__init__()
+#         self.msg = msg
 
-    def __str__(self):
-        return self.msg
+#     def __str__(self):
+#         return self.msg
 
 
-class JoinAirrError(Error):
-    """Exception raised for Joined airr tables contanin different indexes
+# class JoinAirrError(Error):
+#     """Exception raised for Joined airr tables contanin different indexes
 
-    Attributes:
-    """
+#     Attributes:
+#     """
 
-    def __init__(self, msg):
-        super().__init__()
-        self.msg = msg
+#     def __init__(self, msg):
+#         super().__init__()
+#         self.msg = msg
 
-    def __str__(self):
-        return self.msg
+#     def __str__(self):
+#         return self.msg
 
 
 class AirrTable:
@@ -370,8 +369,9 @@ class AirrTable:
             other_v = v_call.split(",")[1:]
 
         if not isinstance(d_call, float):
-            top_d = d_call.split(",")[0]
-            other_d = d_call.split(",")[1:]
+            if d_call:
+                top_d = d_call.split(",")[0]
+                other_d = d_call.split(",")[1:]
 
         if not isinstance(j_call, float):
             top_j = j_call.split(",")[0]
@@ -606,28 +606,6 @@ class AirrTable:
             AirrTable object"""
         return AirrTable(pd.read_json(*args, **kwargs))
 
-    # Private method
-    def _fill_missing_fw4(self):
-        """Fills in missing FW4 region that are sometimes missing in Airrtable."""
-        try:
-            # Get only the rows which have no cdr3 or j_gene end
-            candidate_rows = self._table[~(self._table["cdr3_end"].isna()) & ~(self._table["j_sequence_end"].isna())][
-                ["sequence", "cdr3_end", "j_sequence_end"]
-            ]
-            if candidate_rows.empty:
-                logger.debug("no cdr3 ends are present")
-                return
-            candidate_rows["fwr4"] = candidate_rows.apply(
-                lambda x: str(x["sequence"])[int(x["cdr3_end"]) : int(x["j_sequence_end"]) + 1],
-                axis=1,
-            )
-            candidate_rows["fwr4_aa"] = candidate_rows["fwr4"].apply(lambda x: str(Seq(x).translate()))
-            candidate_rows["fwr4_start"] = candidate_rows["cdr3_end"] + 1
-            candidate_rows["fwr4_end"] = candidate_rows["j_sequence_end"] + 1
-            self._table.update(candidate_rows)
-        except TypeError:
-            logger.warning("Cant parse FW4")
-
     def _check_j_gene_liability(self, X):
         fw1 = X[0]
         cdr1 = X[1]
@@ -760,7 +738,7 @@ class ScfvAirrTable:
     def set_index(self, *args, **kwargs):
         return self._joined_table.set_index(*args, **kwargs)
 
-    def get_sanatized_antibodies(self):
+    def get_sanitized_antibodies(self):
         """
         Get only productive full length scfv reads with heavy and light chains
         """
@@ -857,6 +835,8 @@ class ScfvAirrTable:
             Heavy airr and light airr
         """
         non_airr = []
+        if isinstance(dataframe, ScfvAirrTable):
+            dataframe = dataframe.table
         for x in dataframe.columns:
             if "_heavy" in x or "_light" in x:
                 continue
