@@ -39,9 +39,6 @@ jobs:
       - name: Test
         run: |
           env
-          # coverage run --source=src/sadie --branch -m pytest -v tests/unit
-          # coverage xml
-          # coverage report
           # I can't get pytest plugin to work on github acitons
           pytest --cov=sadie --cov-report=xml --cov-report=term tests/unit
           # cat ./coverage.xml
