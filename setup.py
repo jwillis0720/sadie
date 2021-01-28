@@ -69,5 +69,5 @@ setup(
         ]
     },
     test_suite="tests",
-    cmdclass={"test": PyTest, "bdist_wheel": bdist_wheel},
+    cmdclass={"test": PyTest},
 )
