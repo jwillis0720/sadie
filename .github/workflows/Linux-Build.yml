@@ -39,14 +39,25 @@ jobs:
       - name: Test
         run: |
           env
-          # coverage run --source=src/sadie --branch -m pytest -v tests/unit
-          # coverage xml
-          # coverage report
           # I can't get pytest plugin to work on github acitons
           pytest --cov=sadie --cov-report=xml --cov-report=term tests/unit
           # cat ./coverage.xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.15
-      - name: Integration Testing
+      # - name: Integration Testing
+      #   run: |
+      #     pytest -v tests/integration
+      - name: Install Twine/Wheel
         run: |
-          pytest -v tests/integration
+         pip install wheel twine
+         python setup.py sdist bdist_wheel
+      - name: Publish distribution 📦 to Test PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+      # - name: Publish distribution 📦 to PyPI
+      #   if: startsWith(github.ref, 'refs/tags')
+      #   uses: pypa/gh-action-pypi-publish@master
+      #   with:
+      #     password: ${{ secrets.PYPI_API_TOKEN }}
