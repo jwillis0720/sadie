@@ -38,36 +38,25 @@ jobs:
             ${{ runner.os }}-pip-
       - name: PreCommit
         uses: pre-commit/action@v2.0.0
-      - name: Unit Testing
-        run: |
-          pytest -v tests/unit
-      - name: Integration Testing
-        run: |
-          pytest -v tests/integration
+      # - name: Unit Testing
+      #   run: |
+      #     pytest -v tests/unit
+      # - name: Integration Testing
+      #   run: |
+      #     pytest -v tests/integration
       - name: Install Twine/Wheel
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
          pip install wheel twine setuptools
          python setup.py sdist bdist_wheel
       - name: Publish distribution to Test PyP
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_TEST_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_TEST_PASSWORD }}
-        run: |
-          twine upload --repository testpypi dist/*.whl
-      - name: Publish distribution to PyPI
+        if: startsWith(github.ref, 'refs/tags/v')
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        if: startsWith(github.ref, 'refs/tags/v')
         run: |
+          twine upload --repository testpypi dist/*.whl
           twine upload --repository pypi dist/*.whl
-      - name: Publish source to Test PyPi
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_TEST_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_TEST_PASSWORD }}
-        if: matrix.python-version == '3.8'
-        run: |
-          twine upload --repository testpypi dist/*.tar.gz
       - name: Publish source to PyPI
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
@@ -75,6 +64,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v') && matrix.python-version == '3.8'
         run: |
           twine upload --repository PyPi dist/*.tar.gz
+          twine upload --repository testpypi dist/*.tar.gz
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
