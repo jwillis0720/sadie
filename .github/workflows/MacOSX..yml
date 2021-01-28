@@ -39,12 +39,9 @@ jobs:
       - name: Unit Testing
         run: |
           pytest -v tests/unit
-      - name: Integration Testing
-        run: |
-          pytest -v tests/integration
-      - name: Integration Testing
-        run: |
-          pytest -v tests/integration
+      # - name: Integration Testing
+      #   run: |
+      #     pytest -v tests/integration
       - name: Install Twine/Wheel
         run: |
          pip install wheel twine
