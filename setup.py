@@ -46,7 +46,7 @@ class PyTest(test):
 # https://stackoverflow.com/questions/50155464/using-pytest-with-a-src-layer
 
 setup(
-    name="sadie",
+    name="sadie-antibody",
     version="0.1.1",
     python_requires=">=3.6",
     long_description_content_type="text/markdown",
