@@ -47,7 +47,7 @@ class PyTest(test):
 
 setup(
     name="sadie-antibody",
-    version="0.1.3",
+    version="0.1.4",
     python_requires=">=3.6",
     long_description_content_type="text/markdown",
     description="sadie: The Complete Antibody Library",
