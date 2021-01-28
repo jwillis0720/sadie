@@ -63,7 +63,7 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         if: startsWith(github.ref, 'refs/tags/v') && matrix.python-version == '3.8'
         run: |
-          twine upload --repository PyPi dist/*.tar.gz
+          twine upload --repository pypi dist/*.tar.gz
           twine upload --repository testpypi dist/*.tar.gz
       - name: Dump GitHub context
         env:
