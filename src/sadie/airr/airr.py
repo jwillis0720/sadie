@@ -472,10 +472,12 @@ class Airr:
             raise TypeError("seqrecords must be of type {} pased {}".format(list, type(seqrecords)))
 
         # write to tempfile
+        # dont delete since run file will handle the deletion
         with tempfile.NamedTemporaryFile(suffix=".fasta", dir=self.temp_directory) as temp_fasta:
             SeqIO.write(seqrecords, temp_fasta.name, "fasta")
             logger.info(f"Running tempfile {temp_fasta.name}")
-            return self.run_file(temp_fasta.name, scfv=scfv)
+            results = self.run_file(temp_fasta.name, scfv=scfv)
+        return results
 
     def run_file(self, file: Path, scfv=False) -> Union[AirrTable, Tuple[AirrTable, AirrTable]]:
         """Run airr annotator on a fasta file
@@ -527,8 +529,8 @@ class Airr:
                 scfv_airr.table.insert(2, "species", self.species)
             if _filetype:
                 os.remove(file)
-            if self._create_temp:
-                shutil.rmtree(self.temp_directory)
+            # if self._create_temp:
+            #     shutil.rmtree(self.temp_directory)
             return scfv_airr
 
         else:

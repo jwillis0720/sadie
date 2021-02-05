@@ -3,9 +3,11 @@ import glob
 import logging
 import os
 import tempfile
+import gzip
 from itertools import product
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from Bio import SeqIO
 from pathlib import Path
 import pandas as pd
 import pytest
@@ -130,6 +132,14 @@ def test_run_multiple():
     airr.run_multiple([seq_record, seq_record])
     with pytest.raises(TypeError):
         airr.run_multiple(seq_record)
+
+
+def test_run_multiple_scfv():
+    scfv = get_file("fastq_inputs/long_scfv.fastq.gz")
+    airr = Airr("human")
+    list_to_run = list(SeqIO.parse(gzip.open(scfv, "rt"), "fastq"))
+    results = airr.run_multiple(list_to_run, scfv=True)
+    assert isinstance(results, ScfvAirrTable)
 
 
 def test_airr_from_dataframe():
