@@ -112,7 +112,7 @@ class Anarci:
                 else:
                     raise HmmerExecutionError(
                         hmmer_path,
-                        f"Can't find hmmrscan in package {__package__} or in path {os.env['PATH']}",
+                        f"Can't find hmmrscan in package {__package__} or in path {os.environ['PATH']}",
                     )
         else:  # User specifed custome path
             logger.debug(f"User passed custom hmmer path {path}")
@@ -330,7 +330,7 @@ class Anarci:
                 dup_ids = list(summary_df["Id"].unique())
                 logger.warning(f"multiple results for {dup_ids}\n {summary_df}, using better scoring")
                 summary_df = summary_df.sort_values("score").head(1)
-                # raise AnarciDuplicateIdError(dup_ids, found_number)
+                raise AnarciDuplicateIdError(dup_ids, len(dup_ids))
             alignment_df = _alignment.loc[_alignment["Id"] == group_id]
             summary_series = summary_df.iloc[0]
             _results.append(AnarciResult(summary_series, alignment_df))

@@ -12,12 +12,12 @@ def fixture_file(file):
     return resource_filename(__name__, "fixtures/{}".format(file))
 
 
-def test_busted_seq():
-    anarci_api = Anarci(scheme="imgt", region_assign="imgt", allowed_species=["human"])
-    anarci_api.run_single(
-        "G00158029_V06_P01_G07",
-        "EVQLVESGGGLIQPGGSLRLSCAASGFTVSSNYMSWVRQAPGKGLEWVSVIYSGGSTYYADFVKGRFTISRDNSKKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCARGIGFGEFYWGQGTLVTVSS",
-    )
+# def test_busted_seq():
+#     anarci_api = Anarci(scheme="imgt", region_assign="imgt", allowed_species=["human"])
+#     anarci_api.run_single(
+#         "G00158029_V06_P01_G07",
+#         "EVQLVESGGGLIQPGGSLRLSCAASGFTVSSNYMSWVRQAPGKGLEWVSVIYSGGSTYYADFVKGRFTISRDNSKKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCARGIGFGEFYWGQGTLVTVSS",
+#     )
 
 
 def test_single_seq():
