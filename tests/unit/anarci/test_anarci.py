@@ -1,6 +1,6 @@
 import tempfile
 import pytest
-from sadie.anarci import Anarci, AnarciResult, AnarciResults
+from sadie.anarci import Anarci, AnarciResult, AnarciResults, AnarciDuplicateIdError
 from sadie.antibody import exception
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -10,6 +10,14 @@ from pkg_resources import resource_filename
 def fixture_file(file):
     """Helper method for test execution."""
     return resource_filename(__name__, "fixtures/{}".format(file))
+
+
+def test_busted_seq():
+    anarci_api = Anarci(scheme="imgt", region_assign="imgt", allowed_species=["human"])
+    anarci_api.run_single(
+        "G00158029_V06_P01_G07",
+        "EVQLVESGGGLIQPGGSLRLSCAASGFTVSSNYMSWVRQAPGKGLEWVSVIYSGGSTYYADFVKGRFTISRDNSKKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCARGIGFGEFYWGQGTLVTVSS",
+    )
 
 
 def test_single_seq():
@@ -212,3 +220,23 @@ def test_bad_sequences():
     anarci_api = Anarci()
     result = anarci_api.run_single("bad_sequence", bad_sequence)
     assert result is None
+
+
+def test_duplicated_seq():
+    anarci_api = Anarci()
+    seq_records = [
+        SeqRecord(
+            Seq(
+                "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
+            ),
+            id="DupulimabH",
+        ),
+        SeqRecord(
+            Seq(
+                "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
+            ),
+            id="DupulimabH",
+        ),
+    ]
+    with pytest.raises(AnarciDuplicateIdError):
+        results = anarci_api.run_multiple(seq_records)
