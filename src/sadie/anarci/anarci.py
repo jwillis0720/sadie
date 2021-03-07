@@ -328,8 +328,9 @@ class Anarci:
         for group_id, summary_df in _summary.groupby("Id"):
             if len(summary_df) > 1:
                 dup_ids = list(summary_df["Id"].unique())
-                found_number = len(summary_df)
-                raise AnarciDuplicateIdError(dup_ids, found_number)
+                logger.warning(f"multiple results for {dup_ids}\n {summary_df}, using better scoring")
+                summary_df = summary_df.sort_values("score").head(1)
+                # raise AnarciDuplicateIdError(dup_ids, found_number)
             alignment_df = _alignment.loc[_alignment["Id"] == group_id]
             summary_series = summary_df.iloc[0]
             _results.append(AnarciResult(summary_series, alignment_df))
