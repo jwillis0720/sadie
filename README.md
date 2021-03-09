@@ -45,6 +45,7 @@
 - Provide testable and reusable library that WORKS!
 - Maintain data formats consistent with standards governed by the [AIRR community](https://docs.airr-community.org/en/stable/#table-of-contents)
 
+SADIE is billed as a "complete antibody library" because it contains both low, mid and high level functionality for immunoformatics tools and workflows. You can use SADIE as a framework to develop your own tools, use many of the prebuilt contributed tools, or run it in a notebook to enable data exploration. In addition, SADIE aims to port all code to python because relies heavily on the [Pandas](www.pandas.org) library, the workhorse of the data science/machine learning age.
 
 ## Installation
 
@@ -57,10 +58,45 @@ pip install sadie-antibody
 
 #Or Install and develop
 pip install -r requirements.txt
-pip install -r requirments-dev.txt
 pip install -e .
 ```
 
+## Usage Quickstart
+
+
+SADIE is divided into modules depending on the task.
+
+### SADIE.AIRR
+
+At the heart of every workflow is the need to annotate a nucleotide sequence. This is accomplished using `sadie.airr`.
+
+#### Command line usage
+```
+# annotate antibody sequences only from functional human imgt antibodies
+# sequences will output to a gzipped csv
+airr -q my_sequecnes.fasta --functional -s human -d imgt -z gzip
+```
+
+#### API
+
+```
+# define a single sequence
+pg9_seq = """
+    CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
+    CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
+    GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
+    AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
+    TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
+    TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
+    "\n", ""
+)
+
+# initialize the api
+air_api = Airr("human")
+
+# run single sequence
+airr_table = air_api.run_single("PG9", pg9_seq)
+```
 
 ## License
 
