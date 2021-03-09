@@ -239,4 +239,4 @@ def test_duplicated_seq():
         ),
     ]
     with pytest.raises(AnarciDuplicateIdError):
-        results = anarci_api.run_multiple(seq_records)
+        anarci_api.run_multiple(seq_records)
