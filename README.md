@@ -1,15 +1,69 @@
-# ![icon](images/Social3.png)
+<h1 align="center">
+  <br>
+  <img src="images/Social3.png" alt="SADIE" style="width:80%">
+</h1>
 
- SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. It is a complete antibody library with APIs to antibody repertoire sequencing tools, numbering annotation schemes and low-level antibody library objects. Most importantly it is tested and packaged for portability and use across multiple platforms. It leverages the Pandas DataFrame library for analysis of a single antibody sequence or billions.
+<div class="flex-container" align="center">
+    <a href="https://github.com/jwillis0720/sadie/commits/master">
+    <img src="https://img.shields.io/github/commit-activity/y/jwillis0720/sadie?style=flat-square"
+         alt="GitHub commits">
+    <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
+    <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
+         alt="Linux Build">
+    <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
+    <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
+         alt="Mac Build">
+    <a href="https://img.shields.io/badge/Python-3.6%7C3.7%7C3.8-blue">
+    <img src="https://img.shields.io/badge/Python-3.6%7C3.7%7C3.8-blue"
+        alt="Python Version">
+    <a href="https://github.com/psf/black">
+    <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
+        alt="Format Version">
+    <a href="https://codecov.io/gh/jwillis0720/sadie">
+    <img src="https://codecov.io/gh/jwillis0720/sadie/branch/master/graph/badge.svg?token=EH9QEX4ZMP"
+        alt="Code Coverage">
+    <a href="https://github.com/pre-commit/pre-commit">
+    <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
+        alt="pre commit">
+</div>
+
+<p align="center" style="color:green">
+  <a href="#about">About</a> •
+  <a href="#installation">Installation</a> •
+  <!-- <a href="#contributing">Contributing</a> • -->
+  <!-- <a href="#credits">Credits</a> • -->
+  <!-- <a href="#support">Support</a> • -->
+  <a href="#license">License</a>
+</p>
+
+## About
+
+ SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The goals of the SADIE project is to:
+
+- Provide pre-built command line apps for popular immunoformatics applications.
+- Provide a low level API framework for immunoformatics developers to build higher level tools.
+- Provide testable and reusable library that WORKS!
+- Maintain data formats consistent with standards governed by the [AIRR community](https://docs.airr-community.org/en/stable/#table-of-contents)
 
 
-![Linux Build and Test](https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg)
-![MacOS Build and Test](https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg)
-[![Python Version](https://img.shields.io/badge/Python-3.6%7C3.7%7C3.8-blue)](https://python.org)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![DocString: Pandas](https://img.shields.io/badge/DocString-Pandas-blue)](https://pandas.pydata.org/pandas-docs/stable/development/contributing_docstring.html)
-[![codecov](https://codecov.io/gh/jwillis0720/sadie/branch/master/graph/badge.svg?token=EH9QEX4ZMP)](https://codecov.io/gh/jwillis0720/sadie)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+## Installation
+
+Installation can be handled with the python package installer `pip`
+
+```
+# Install with pip
+pip install sadie-antibody
 
 
-## SADIE is currently in active development and will be released for testing in January 2021
+#Or Install and develop
+pip install -r requirements.txt
+pip install -r requirments-dev.txt
+pip install -e .
+```
+
+
+## License
+
+[![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
+
+- Copyright © Jordan R. Willis
