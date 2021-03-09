@@ -81,11 +81,7 @@ class GermlineData:
     """
 
     def __init__(
-        self,
-        species: str,
-        database="imgt",
-        functional="all",
-        receptor="Ig",
+        self, species: str, database="imgt", functional="all", receptor="Ig",
     ):
         """
 
@@ -278,13 +274,7 @@ class Airr:
     """
 
     def __init__(
-        self,
-        species: str,
-        igblast_exe="",
-        adaptable=True,
-        functional="functional",
-        database="imgt",
-        temp_directory=".airr_tmp",
+        self, species: str, igblast_exe="", adaptable=True, functional="functional", database="imgt", temp_directory="",
     ):
         """Airr constructor
 
@@ -332,8 +322,11 @@ class Airr:
         self.temp_directory = temp_directory
         if self.temp_directory:
             if not os.path.exists(temp_directory):
-                self._create_temp = True
                 os.makedirs(temp_directory)
+
+        else:
+            self.temp_directory = tempfile.gettempdir()
+            logger.info(f"Temp dir - {self.temp_directory}")
 
         # do we try adaptable penalties
         self.adapt_penalty = adaptable
@@ -432,21 +425,14 @@ class Airr:
         """
 
         def _get_seq_generator():
-            for seq_id, seq in zip(
-                dataframe.reset_index()[seq_id_field],
-                dataframe.reset_index()[seq_field],
-            ):
+            for seq_id, seq in zip(dataframe.reset_index()[seq_id_field], dataframe.reset_index()[seq_field],):
                 yield SeqRecord(id=str(seq_id), name=str(seq_id), description="", seq=Seq(seq))
 
         if return_join:
             dataframe[seq_id_field] = dataframe[seq_id_field].astype(str)
             _df = self.run_multiple(_get_seq_generator(), scfv=scfv).table
             # convert seq id field to stry stince sequence_id is cast to string
-            return dataframe.merge(
-                _df,
-                left_on=seq_id_field,
-                right_on="sequence_id",
-            )
+            return dataframe.merge(_df, left_on=seq_id_field, right_on="sequence_id",)
         else:
             return self.run_multiple(_get_seq_generator(), scfv=scfv)
 
@@ -636,10 +622,7 @@ class Airr:
 
         # Grab the Light Chains out of the set
         light_chain_table = pd.concat(
-            [
-                result_a[result_a["locus"].isin(["IGK", "IGL"])],
-                result_b[result_b["locus"].isin(["IGK", "IGL"])],
-            ]
+            [result_a[result_a["locus"].isin(["IGK", "IGL"])], result_b[result_b["locus"].isin(["IGK", "IGL"])],]
         )
 
         # this ia a bit of an edge case but if eithere of the two chains are empty, we can fill it with
@@ -681,6 +664,4 @@ class Airr:
 
     def __del__(self):
         """Destructor"""
-        if self._create_temp:
-            # If we created a temp directory, let's blow it away
-            shutil.rmtree(self.temp_directory)
+        pass
