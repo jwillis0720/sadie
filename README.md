@@ -30,6 +30,7 @@
 <p align="center" style="color:green">
   <a href="#about">About</a> •
   <a href="#installation">Installation</a> •
+  <a href="#usage">Usage Quickstart</a> •
   <!-- <a href="#contributing">Contributing</a> • -->
   <!-- <a href="#credits">Credits</a> • -->
   <!-- <a href="#support">Support</a> • -->
@@ -61,8 +62,7 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-## Usage Quickstart
-
+## Usage
 
 SADIE is divided into modules depending on the task.
 
