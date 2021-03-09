@@ -682,5 +682,5 @@ class Airr:
     def __del__(self):
         """Destructor"""
         if self._create_temp:
-            # If we created a temp directory, let's blow it aways
+            # If we created a temp directory, let's blow it away
             shutil.rmtree(self.temp_directory)
