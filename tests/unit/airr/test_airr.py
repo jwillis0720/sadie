@@ -83,6 +83,10 @@ def test_airr_single_sequence():
     fw2_ = airr_entry["fwr2_aa"]
     fw3_ = airr_entry["fwr3_aa"]
     fw4_ = airr_entry["fwr4_aa"]
+    v_mutation = airr_entry["v_mutation"]
+    d_mutation = airr_entry["d_mutation"]
+    j_mutation = airr_entry["j_mutation"]
+
     assert fw1_ == "QRLVESGGGVVQPGSSLRLSCAAS"
     assert fw2_ == "MHWVRQAPGQGLEWVAF"
     assert fw3_ == "YHADSVWGRLSISRDNSKDTLYLQMNSLRVEDTATYFC"
@@ -90,6 +94,9 @@ def test_airr_single_sequence():
     assert cdr1_ == "GFDFSRQG"
     assert cdr2_ == "IKYDGSEK"
     assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
+    assert v_mutation == 14.0
+    assert d_mutation == 17.875
+    assert j_mutation == 11.3125
     with pytest.raises(TypeError):
         # id must be str
         airr_table = air_api.run_single(9, pg9_seq)
