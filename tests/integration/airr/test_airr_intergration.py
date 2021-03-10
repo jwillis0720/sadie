@@ -267,7 +267,13 @@ def test_catnap_heavy_integration():
     airr_api = Airr(species="human", database="imgt", functional="functional")
     catnap_heavy = airr_api.run_file(heavy_file)
     catnap_light = airr_api.run_file(light_file)
-    light_at = AirrTable.read_csv(fixture_file("catnap_light_airrtable.csv.gz"))
-    heavy_at = AirrTable.read_csv(fixture_file("catnap_heavy_airrtable.csv.gz"))
-    pd.testing.assert_frame_equal(light_at.table, catnap_light.table)
-    pd.testing.assert_frame_equal(heavy_at.table, catnap_heavy.table)
+    light_at = pd.read_feather(fixture_file("catnap_light_airrtable.feather"))
+    heavy_at = pd.read_feather(fixture_file("catnap_heavy_airrtable.feather"))
+    diffs = catnap_light.table.columns.difference(light_at.columns)
+    if not diffs.empty:
+        raise AssertionError(f"Light table has the following different columns {diffs}")
+    diffs = catnap_heavy.table.columns.difference(heavy_at.columns)
+    if not diffs.empty:
+        raise AssertionError(f"Heavy table has the following different columns {diffs}")
+    pd.testing.assert_frame_equal(light_at, catnap_light.table)
+    pd.testing.assert_frame_equal(heavy_at, catnap_heavy.table)
