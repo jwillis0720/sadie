@@ -7,6 +7,7 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from numpy import nan
+from Levenshtein._levenshtein import distance
 
 from .constants import IGBLAST_AIRR
 from .genbank import GenBank, GenBankFeature
@@ -32,32 +33,24 @@ class MissingAirrColumns(Error):
         return "Must have all AIRR columns defined, missing {}".format(self.missing_columns)
 
 
-# class AirrResultError(Error):
-#     """Exception raised for airr resultsa
+def _get_v_aa_distance(X) -> int:
+    """Helper method for getting the amino acid distance
 
-#     Attributes:
-#     """
+    Parameters
+    ----------
+    X : tuple
+        (v_sequence_aligbment_aa,v_sequence_germline_alignment_aa)
 
-#     def __init__(self, msg):
-#         super().__init__()
-#         self.msg = msg
-
-#     def __str__(self):
-#         return self.msg
-
-
-# class JoinAirrError(Error):
-#     """Exception raised for Joined airr tables contanin different indexes
-
-#     Attributes:
-#     """
-
-#     def __init__(self, msg):
-#         super().__init__()
-#         self.msg = msg
-
-#     def __str__(self):
-#         return self.msg
+    Returns
+    -------
+    float
+        percentabe between germ and mature. i.e #(mutations+indels)/len(max(germ,mat))
+    """
+    if isinstance(X["v_sequence_alignment_aa"], float):
+        return
+    _mature = X["v_sequence_alignment_aa"]
+    _germ = X["v_germline_alignment_aa"]
+    return (distance(_mature, _germ) / max(len(_mature), len(_germ))) * 100
 
 
 class AirrTable:
@@ -257,6 +250,17 @@ class AirrTable:
             self._table.insert(
                 self._table.columns.get_loc(call), f"{call}_top", self._table[call].str.split(",").str.get(0)
             )
+
+        # get mutation frequency rather than identity
+        # v identy are in percentage
+        self._table.loc[:, "v_mutation"] = self._table["v_identity"].apply(lambda x: (100 - x))
+        self._table.loc[:, "d_mutation"] = self._table["d_identity"].apply(lambda x: (100 - x))
+        self._table.loc[:, "j_mutation"] = self._table["j_identity"].apply(lambda x: (100 - x))
+
+        # mutation frequency in aa
+        self._table.loc[:, "v_mutation_aa"] = self._table[["v_sequence_alignment_aa", "v_germline_alignment_aa"]].apply(
+            lambda x: _get_v_aa_distance(x), axis=1
+        )
 
     @property
     def non_airr_columns(self) -> list:
