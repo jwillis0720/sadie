@@ -268,13 +268,13 @@ class AirrTable:
         if self.infer:
             self._table["vdj_igl"] = self._table.apply(self._get_igl, axis=1)
             self._table.loc[self._table[self._table["vdj_igl"].isna()].index, "note"] = "liable"
-            self._table["igl_mut_aa"] = self._table[["vdj_aa", "vdj_igl"]].fillna("").apply(self._get_diff, axis=1)
+            self._table["igl_mut_aa"] = self._table[["vdj_aa", "vdj_igl"]].apply(self._get_diff, axis=1)
 
     def _get_diff(self, X):
         "get character levenshtrein distance"
         first = X[0]
         second = X[1]
-        if isinstance(first, float) or isinstance(second, float):
+        if not first or not second or isinstance(first, float) or isinstance(second, float):
             return
         return (distance(first, second) / max(len(first), len(first))) * 100
 
@@ -294,6 +294,8 @@ class AirrTable:
         # get germline components
         v_germline = row.v_germline_alignment_aa
         full_germline = row.germline_alignment_aa
+        if isinstance(v_germline, float):
+            return
         cdr3_j_germline = full_germline[len(v_germline) :]
 
         # get mature components
