@@ -6,3 +6,4 @@ pandas
 wheel
 requests
 python-levenshtein
+pyarrow
