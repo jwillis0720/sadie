@@ -7,6 +7,7 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from numpy import nan
+from Levenshtein._levenshtein import distance
 
 from .constants import IGBLAST_AIRR
 from .genbank import GenBank, GenBankFeature
@@ -32,32 +33,24 @@ class MissingAirrColumns(Error):
         return "Must have all AIRR columns defined, missing {}".format(self.missing_columns)
 
 
-# class AirrResultError(Error):
-#     """Exception raised for airr resultsa
+def _get_v_aa_distance(X) -> int:
+    """Helper method for getting the amino acid distance
 
-#     Attributes:
-#     """
+    Parameters
+    ----------
+    X : tuple
+        (v_sequence_aligbment_aa,v_sequence_germline_alignment_aa)
 
-#     def __init__(self, msg):
-#         super().__init__()
-#         self.msg = msg
-
-#     def __str__(self):
-#         return self.msg
-
-
-# class JoinAirrError(Error):
-#     """Exception raised for Joined airr tables contanin different indexes
-
-#     Attributes:
-#     """
-
-#     def __init__(self, msg):
-#         super().__init__()
-#         self.msg = msg
-
-#     def __str__(self):
-#         return self.msg
+    Returns
+    -------
+    float
+        percentabe between germ and mature. i.e #(mutations+indels)/len(max(germ,mat))
+    """
+    if isinstance(X["v_sequence_alignment_aa"], float):
+        return
+    _mature = X["v_sequence_alignment_aa"]
+    _germ = X["v_germline_alignment_aa"]
+    return (distance(_mature, _germ) / max(len(_mature), len(_germ))) * 100
 
 
 class AirrTable:
@@ -109,7 +102,7 @@ class AirrTable:
         >>> at = AirrTable.read_csv("tests/fixtures/kappa_lev_sample.csv.gz")
     """
 
-    def __init__(self, dataframe: pd.DataFrame, cast=True):
+    def __init__(self, dataframe: pd.DataFrame, cast=True, infer_germline=True):
         """AirrTable consturctor
 
         Parameters
@@ -119,8 +112,11 @@ class AirrTable:
 
         cast: bool
             cast dtypes to save memory
+        infer_germline: bool
+            infer germline sequences
         """
         self.cast = cast
+        self.infer = infer_germline
         self.table = dataframe
 
     @property
@@ -257,6 +253,75 @@ class AirrTable:
             self._table.insert(
                 self._table.columns.get_loc(call), f"{call}_top", self._table[call].str.split(",").str.get(0)
             )
+
+        # get mutation frequency rather than identity
+        # v identy are in percentage
+        self._table.loc[:, "v_mutation"] = self._table["v_identity"].apply(lambda x: (100 - x))
+        self._table.loc[:, "d_mutation"] = self._table["d_identity"].apply(lambda x: (100 - x))
+        self._table.loc[:, "j_mutation"] = self._table["j_identity"].apply(lambda x: (100 - x))
+
+        # mutation frequency in aa
+        self._table.loc[:, "v_mutation_aa"] = self._table[["v_sequence_alignment_aa", "v_germline_alignment_aa"]].apply(
+            lambda x: _get_v_aa_distance(x), axis=1
+        )
+
+        if self.infer:
+            self._table["vdj_igl"] = self._table.apply(self._get_igl, axis=1)
+            self._table.loc[self._table[self._table["vdj_igl"].isna()].index, "note"] = "liable"
+            self._table["igl_mut_aa"] = self._table[["vdj_aa", "vdj_igl"]].apply(self._get_diff, axis=1)
+
+    def _get_diff(self, X):
+        "get character levenshtrein distance"
+        first = X[0]
+        second = X[1]
+        if not first or not second or isinstance(first, float) or isinstance(second, float):
+            return
+        return (distance(first, second) / max(len(first), len(first))) * 100
+
+    def _get_igl(self, row: pd.Series) -> str:
+        """Get infered germline sequenxe
+
+        Parameters
+        ----------
+        row : pd.Series
+            A row from the airr table
+        Returns
+        -------
+        str
+            the igl sequecne
+        """
+
+        # get germline components
+        v_germline = row.v_germline_alignment_aa
+        full_germline = row.germline_alignment_aa
+        if isinstance(v_germline, float):
+            return
+        cdr3_j_germline = full_germline[len(v_germline) :]
+
+        # get mature components
+        v_mature = row.v_sequence_alignment_aa
+        full_mature = row.sequence_alignment_aa
+        cdr3_j_mature = full_mature[len(v_mature) :]
+
+        # if the mature and cdr3 are not the same size
+        # this will happen on non-productive
+        if len(cdr3_j_mature) != len(cdr3_j_germline):
+            logger.info(f"{row.name} - strange iGL")
+            return
+
+            # # quick aligment
+            # _alignments = align.globalxs(cdr3_j_mature, cdr3_j_germline, -10, -1)
+            # cdr3_j_mature, cdr3_j_germline = _alignments[0][0], _alignments[0][1]
+
+        iGL_cdr3 = ""
+        for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
+            if germline == "X" or germline == "-":
+                iGL_cdr3 += mature
+                continue
+            iGL_cdr3 += germline
+
+        full_igl = v_germline + iGL_cdr3
+        return full_igl
 
     @property
     def non_airr_columns(self) -> list:
