@@ -5,3 +5,4 @@ filetype
 pandas
 wheel
 requests
+python-levenshtein
