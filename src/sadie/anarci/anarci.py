@@ -20,10 +20,11 @@ from typing import List, Tuple
 # third party
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+import pandas as pd
 
 from .aa._anarci import (
     check_for_j,
-    dataframe_output,
+    parsed_output,
     number_sequences_from_alignment,
     run_hmmer,
 )
@@ -33,7 +34,8 @@ from .exception import (
     BadRequstedFileType,
     HmmerExecutionError,
 )
-from .result import AnarciResult, AnarciResults
+from .result import AnarciResults
+from .constants import ANARCI_RESULTS
 from ..utility import split_fasta
 
 logger = logging.getLogger("ANARCI")
@@ -314,29 +316,21 @@ class Anarci:
             allowed_species=self.allowed_species,
         )
 
-        _summary, _alignment = dataframe_output(sequences, _numbered, _alignment_details)
-        _summary["scheme"] = self.scheme
-        _alignment["scheme"] = self.scheme
-        _summary["allowed_species"] = ",".join(self.allowed_species)
-        _summary["allowed_chains"] = ",".join(self.allowed_chains)
-        _summary["region_definition"] = self.region_definition
+        _summary = parsed_output(sequences, _numbered, _alignment_details)
+        anarci_results = pd.DataFrame(_summary)
+        anarci_results = AnarciResults(anarci_results.astype(ANARCI_RESULTS))
+        anarci_results["scheme"] = self.scheme
+        anarci_results["region_definition"] = self.region_definition
+        anarci_results["allowed_species"] = ",".join(self.allowed_species)
+        anarci_results["allowed_chains"] = ",".join(self.allowed_chains)
 
-        _results = []
-        if _summary.empty:
-            # If we have nothing
-            return [None]
-        for group_id, summary_df in _summary.groupby("Id"):
-            if len(summary_df) > 1:
-                dup_ids = list(summary_df["Id"].unique())
-                logger.warning(f"multiple results for {dup_ids}\n {summary_df}, using better scoring")
-                summary_df = summary_df.sort_values("score").head(1)
-                raise AnarciDuplicateIdError(dup_ids, len(dup_ids))
-            alignment_df = _alignment.loc[_alignment["Id"] == group_id]
-            summary_series = summary_df.iloc[0]
-            _results.append(AnarciResult(summary_series, alignment_df))
-        return _results
+        if len(anarci_results["Id"].unique()) != len(anarci_results):
+            logger.warning(f"multiple results for {anarci_results[anarci_results['Id'].duplicated()]} is duplicated")
+            anarci_results = anarci_results.sort_values("score").groupby("Id").head(1)
 
-    def run_single(self, seq_id: str, seq: str, scfv=False) -> "AnarciResult":
+        return anarci_results
+
+    def run_single(self, seq_id: str, seq: str, scfv=False) -> "AnarciResults":
         """Run a single string sequence on an amino acid
 
         Parameters
@@ -348,13 +342,13 @@ class Anarci:
 
         Returns
         -------
-            AnarchiResult Object
+            AnarchiResults Object
         """
 
         if not scfv:
             sequences = [(seq_id, seq)]
 
-        return self._run(sequences)[0]
+        return self._run(sequences).iloc[0]
 
     def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> "AnarciResults":
         """Run multiple seq records
@@ -388,7 +382,7 @@ class Anarci:
             _seen.add(seq.id)
 
         _results = self._run(_sequences)
-        return AnarciResults(results=_results)
+        return _results
 
     def run_file(self, file: Path, multi=False) -> "AnarciResults":
         """Run anarci annotator on a fasta file
