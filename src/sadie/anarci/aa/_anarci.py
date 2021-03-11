@@ -271,7 +271,7 @@ def anarci_output(numbered, sequences, alignment_details, outfile, sequence_id=N
         print("//", file=outfile)
 
 
-def dataframe_output(sequences, numbered, details):
+def parsed_output(sequences, numbered, details):
     """
     Write numbered sequences to dataframe
 
@@ -368,31 +368,25 @@ def dataframe_output(sequences, numbered, details):
                 d = dict(numbered[i][j][0])
                 seq_ = [d.get(p, "-") for p in positions]
                 numbering_ = [[int(p[0]), p[1]] for p in positions]
-                align_df = pd.DataFrame(
-                    {
-                        "Id": line[0],
-                        "Chain": cts,
-                        "Numbering": "",
-                        "Insertion": "",
-                        "Sequence": seq_,
-                    }
-                )
-                align_df[["Numbering", "Insertion"]] = numbering_
-                align_df["Numbering"] = align_df["Numbering"].astype(int)
+                # align_df = pd.DataFrame(
+                #     {
+                #         "Id": line[0],
+                #         "Chain": cts,
+                #         "Numbering": "",
+                #         "Insertion": "",
+                #         "Sequence": seq_,
+                #     }
+                # )
+                # align_df[["Numbering", "Insertion"]] = numbering_
+                # align_df["Numbering"] = align_df["Numbering"].astype(int)
                 assert len(line) == len(fields)
                 _df = pd.Series(line, index=fields)
                 _df["Chain"] = cts
-                alignment_dataframes.append(align_df)
+                _df["Numbering"] = list(map(lambda x: x[0], numbering_))
+                _df["Insertion"] = list(map(lambda x: x[1].strip(), numbering_))
+                _df["Numbered_Sequence"] = seq_
                 summary_dataframes.append(_df)
-                # ",".join(line), file=out)
-    if summary_dataframes and alignment_dataframes:
-        return (
-            pd.concat(summary_dataframes, axis=1).transpose(),
-            pd.concat(alignment_dataframes),
-        )
-    else:
-        print(f"Did not detect anything in summary dataframe,{summary_dataframes},{alignment_dataframes}")
-        return pd.DataFrame(), pd.DataFrame()
+    return summary_dataframes
 
 
 def csv_output(sequences, numbered, details, outfileroot):
