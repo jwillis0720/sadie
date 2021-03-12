@@ -328,6 +328,8 @@ class Anarci:
             logger.warning(f"multiple results for {anarci_results[anarci_results['Id'].duplicated()]} is duplicated")
             anarci_results = anarci_results.sort_values("score").groupby("Id").head(1)
 
+        # segment the region
+        anarci_results = anarci_results.add_segment_regions()
         return anarci_results
 
     def run_single(self, seq_id: str, seq: str, scfv=False) -> "AnarciResults":
@@ -348,7 +350,7 @@ class Anarci:
         if not scfv:
             sequences = [(seq_id, seq)]
 
-        return self._run(sequences).iloc[0]
+        return self._run(sequences)
 
     def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> "AnarciResults":
         """Run multiple seq records

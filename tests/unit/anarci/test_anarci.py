@@ -152,7 +152,7 @@ def test_io():
     assert isinstance(results, AnarciResults)
     with tempfile.NamedTemporaryFile(suffix=".anarci.bz2") as temp:
         results.to_csv(temp.name)
-        other_results = AnarciResults.read_csv(temp.name)
+        other_results = AnarciResults.read_csv(temp.name).fillna("")
         assert_frame_equal(other_results, results)
 
 
