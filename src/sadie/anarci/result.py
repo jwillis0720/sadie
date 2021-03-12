@@ -9,8 +9,7 @@ from ast import literal_eval
 
 # from ..antibody import chain
 from .constants import ANARCI_RESULTS
-
-# from .numbering import scheme_numbering
+from .numbering import scheme_numbering
 
 logger = logging.getLogger("ANARCI")
 
@@ -27,6 +26,59 @@ class AnarciResults(pd.DataFrame):
     def _constructor(self):
         return AnarciResults
 
+    def _get_region(self, row, start, end, segment_name):
+        with_segment = "".join(
+            list(
+                map(
+                    lambda x: x[-1],
+                    list(
+                        filter(
+                            lambda x: x[0] >= start and x[0] <= end,
+                            list(
+                                zip(
+                                    row["Numbering"],
+                                    row["Insertion"],
+                                    row["Numbered_Sequence"],
+                                )
+                            ),
+                        )
+                    ),
+                )
+            )
+        )
+        without_segment = with_segment.replace("-", "")
+        return pd.Series(
+            {
+                f"{segment_name}_gaps": with_segment,
+                f"{segment_name}_no_gaps": without_segment,
+            }
+        )
+
+    def add_segment_regions(self):
+        for group, sub_df in self.groupby(["scheme", "region_definition", "Chain"]):
+            numbering = group[0]
+            chain = {"H": "heavy", "l": "light"}[group[-1]]
+            boundaries = group[1]
+            numbering_lookup = scheme_numbering[numbering][chain][boundaries]
+            return_frames = []
+            for region in [
+                "fwr1_aa",
+                "cdr1_aa",
+                "fwr2_aa",
+                "cdr2_aa",
+                "fwr3_aa",
+                "cdr3_aa",
+                "fwr4_aa",
+            ]:
+                _start = numbering_lookup[f"{region}_start"]
+                _end = numbering_lookup[f"{region}_end"]
+                sub_df = sub_df.join(self.apply(lambda x: self._get_region(x, _start, _end, region), axis=1))
+            return_frames.append(sub_df)
+        segmented_df = pd.concat(return_frames).reset_index(drop=True)
+        segmented_df["leader"] = segmented_df[["sequence", "seqstart_index"]].apply(lambda x: x[0][: x[1]], axis=1)
+        segmented_df["tail"] = segmented_df[["sequence", "seqend_index"]].apply(lambda x: x[0][x[1] + 1 :], axis=1)
+        return segmented_df
+
     @staticmethod
     def read_csv(*args, **kwargs):
         return AnarciResults(
@@ -35,7 +87,7 @@ class AnarciResults(pd.DataFrame):
                 index_col=0,
                 dtype=ANARCI_RESULTS,
                 converters={"Numbering": literal_eval, "Insertion": literal_eval, "Numbered_Sequence": literal_eval},
-                **kwargs
+                **kwargs,
             )
         )
 
