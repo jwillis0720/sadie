@@ -3,12 +3,15 @@ import glob
 import logging
 import os
 import tempfile
+
 import gzip
 from itertools import product
+
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
 from pathlib import Path
+
 import pandas as pd
 import pytest
 from click.testing import CliRunner
