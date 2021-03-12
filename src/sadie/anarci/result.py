@@ -70,12 +70,12 @@ class AnarciResults(pd.DataFrame):
         return pd.concat(all_dataframes)
 
     def add_segment_regions(self):
+        return_frames = []
         for group, sub_df in self.groupby(["scheme", "region_definition", "Chain"]):
             numbering = group[0]
-            chain = {"H": "heavy", "l": "light"}[group[-1]]
+            chain = {"H": "heavy", "KL": "light"}[group[-1]]
             boundaries = group[1]
             numbering_lookup = scheme_numbering[numbering][chain][boundaries]
-            return_frames = []
             for region in [
                 "fwr1_aa",
                 "cdr1_aa",
@@ -91,7 +91,7 @@ class AnarciResults(pd.DataFrame):
             return_frames.append(sub_df)
         segmented_df = pd.concat(return_frames).reset_index(drop=True)
         segmented_df["leader"] = segmented_df[["sequence", "seqstart_index"]].apply(lambda x: x[0][: x[1]], axis=1)
-        segmented_df["tail"] = segmented_df[["sequence", "seqend_index"]].apply(lambda x: x[0][x[1] + 1 :], axis=1)
+        segmented_df["follow"] = segmented_df[["sequence", "seqend_index"]].apply(lambda x: x[0][x[1] + 1 :], axis=1)
         return segmented_df
 
     @staticmethod

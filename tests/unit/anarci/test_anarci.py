@@ -21,38 +21,29 @@ def fixture_file(file):
 #     )
 
 
-# def test_single_seq():
-#     anarci_api = Anarci(region_assign="imgt")
-#     result = anarci_api.run_single(
-#         "MySweetAntibody",
-#         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
-#     )
-#     # assert a bunch of numbering
-#     assert result.id == "MySweetAntibody"
-#     assert result.leader == "AAAADAFA"
-#     assert result.framework1_aa == "EVQLVESGG-GLEQPGGSLRLSCAGS"
-#     assert result.framework2_aa == "MTWVRQAPGKGLEWVSS"
-#     assert result.framework3_aa == "YYADSVK-GRFTISRDNSKNTLYLQMNSLRAEDTAVYYC"
-#     assert result.framework4_aa == "WGQGTTVTVSS"
-#     assert result.cdr1_aa == "GFTF----RDYA"
-#     assert result.cdr2_aa == "ISGS--GGNT"
-#     assert result.cdr3_aa == "AKDRLSITIRPRYYGLDV"
-#     assert result.tail == "RRRESV"
-#     assert result.j_gene == "IGHJ6*01"
-#     assert result.v_gene == "IGHV3-23*04"
-#     assert result.scheme == "imgt"
-#     assert result.v_gene_identity == 0.93
-#     assert result.j_gene_identity == 0.93
+def test_single_seq():
+    anarci_api = Anarci(region_assign="imgt")
+    result = anarci_api.run_single(
+        "MySweetAntibody",
+        "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
+    ).iloc[0]
+    # assert a bunch of numbering
 
-#     # get json string
-#     json_string = result.get_json()
-#     result_2 = AnarciResult.from_json(json_string)
-#     assert result == result_2
-
-#     with tempfile.NamedTemporaryFile(mode="w", suffix=".json.gz") as tmpfile:
-#         result.to_json(tmpfile.name)
-#         result3 = AnarciResult.read_json(tmpfile.name)
-#         assert result == result3
+    assert result.Id == "MySweetAntibody"
+    assert result.leader == "AAAADAFA"
+    assert result.fwr1_aa_gaps == "EVQLVESGG-GLEQPGGSLRLSCAGS"
+    assert result.fwr2_aa_gaps == "MTWVRQAPGKGLEWVSS"
+    assert result.fwr3_aa_gaps == "YYADSVK-GRFTISRDNSKNTLYLQMNSLRAEDTAVYYC"
+    assert result.fwr4_aa_gaps == "WGQGTTVTVSS"
+    assert result.cdr1_aa_gaps == "GFTF----RDYA"
+    assert result.cdr2_aa_gaps == "ISGS--GGNT"
+    assert result.cdr3_aa_gaps == "AKDRLSITIRPRYYGLDV"
+    assert result.follow == "RRRESV"
+    assert result.j_gene == "IGHJ6*01"
+    assert result.v_gene == "IGHV3-23*04"
+    assert result.scheme == "imgt"
+    assert float(result.v_identity) == 0.93
+    assert float(result.j_identity) == 0.93
 
 
 def test_alternate_numbering():
@@ -61,17 +52,11 @@ def test_alternate_numbering():
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
-    # chothia_result = result_chothia.to_antibody()
-    # align = "IGHV3-23*04|IGHJ6*01  EVQLVESGGGLVQPGGSLRLSCAAS GFTFSSY AMSWVRQAPGKGLEWVSAI SGSGGS TYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYC\nMySweetAntibody       ...........E...........G. ....RD. ..T..............S. .....N .......................................\n\nIGHV3-23*04|IGHJ6*01  A- K------YYYYYGMDV WGQGTTVTVSS\nMySweetAntibody       .K DRLSITIRPR...L.. ...........\n\n"
-    # assert chothia_result.get_segmented_alignment_aa() == align
     anarci_api = Anarci(scheme="chothia", region_assign="abm")
     anarci_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
-    # align = "IGHV3-23*04|IGHJ6*01  EVQLVESGGGLVQPGGSLRLSCAAS GFTFSSYAMS WVRQAPGKGLEWVS AISGSGGSTY YADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYC\nMySweetAntibody       ...........E...........G. ....RD...T .............. S......N.. .....................................\n\nIGHV3-23*04|IGHJ6*01  A- K------YYYYYGMDV WGQGTTVTVSS\nMySweetAntibody       .K DRLSITIRPR...L.. ...........\n\n"
-    # abm_result = result_abm.to_antibody()
-    # assert abm_result.get_segmented_alignment_aa() == align
 
 
 def test_long_hcdr3():
@@ -97,51 +82,41 @@ def test_long_hcdr3():
     assert e.value.sequence_name == "MySweetAntibody"
 
 
-# def test_anarci_multi_input():
-#     anarci_api = Anarci()
+def test_anarci_multi_input():
+    anarci_api = Anarci()
+    seq_records = [
+        SeqRecord(
+            Seq(
+                "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
+            ),
+            id="DupulimabH",
+        ),
+        SeqRecord(
+            Seq(
+                "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
+            ),
+            id="DupulimabL",
+        ),
+    ]
+    results = anarci_api.run_multiple(seq_records)
+    assert isinstance(results, AnarciResults)
+    single_result_1 = results.query("Id=='DupulimabH'").iloc[0]
+    single_result_2 = results.query("Id=='DupulimabL'").iloc[0]
+    assert single_result_1.fwr1_aa_gaps == "EVQLVESGG-GLEQPGGSLRLSCAGS"
+    assert single_result_1.cdr1_aa_gaps == "GFTF----RDYA"
+    assert single_result_1.fwr2_aa_gaps == "MTWVRQAPGKGLEWVSS"
+    assert single_result_1.cdr2_aa_gaps == "ISGS--GGNT"
+    assert single_result_1.fwr3_aa_gaps == "YYADSVK-GRFTISRDNSKNTLYLQMNSLRAEDTAVYYC"
+    assert single_result_1.cdr3_aa_gaps == "AKDRLSITIRPRYYGLDV"
+    assert single_result_1.fwr4_aa_gaps == "WGQGTTVTVSS"
 
-#     seq_records = [
-#         SeqRecord(
-#             Seq(
-#                 "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
-#             ),
-#             id="DupulimabH",
-#         ),
-#         SeqRecord(
-#             Seq(
-#                 "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
-#             ),
-#             id="DupulimabL",
-#         ),
-#     ]
-#     results = anarci_api.run_multiple(seq_records)
-#     assert isinstance(results, AnarciResults)
-#     single_result_1 = results["DupulimabH"]
-#     single_result_2 = results["DupulimabL"]
-#     assert isinstance(single_result_1, AnarciResult)
-#     assert isinstance(single_result_2, AnarciResult)
-#     assert single_result_1.framework1_aa == "EVQLVESGG-GLEQPGGSLRLSCAGS"
-#     assert single_result_1.cdr1_aa == "GFTF----RDYA"
-#     assert single_result_1.framework2_aa == "MTWVRQAPGKGLEWVSS"
-#     assert single_result_1.cdr2_aa == "ISGS--GGNT"
-#     assert single_result_1.framework3_aa == "YYADSVK-GRFTISRDNSKNTLYLQMNSLRAEDTAVYYC"
-#     assert single_result_1.cdr3_aa == "AKDRLSITIRPRYYGLDV"
-#     assert single_result_1.framework4_aa == "WGQGTTVTVSS"
-
-#     _segment_df = results.segment_table
-#     _summary_table = results.summary_table
-#     _alignment_table = results.alignment_table
-#     reconstructed_results = AnarciResults(
-#         summary_table=_summary_table, alignment_table=_alignment_table, segment_table=_segment_df,
-#     )
-#     assert reconstructed_results == results
-
-#     with tempfile.NamedTemporaryFile(suffix=".json.gz") as f:
-#         results.to_json(f.name)
-#         new_results = AnarciResults.read_json(f.name)
-#         assert new_results == results
-
-#     assert results == AnarciResults.from_json(results.get_json())
+    assert single_result_2.fwr1_aa_gaps == "DIVMTQSPLSLPVTPGEPASISCRSS"
+    assert single_result_2.cdr1_aa_gaps == "QSLLYS-IGYNY"
+    assert single_result_2.fwr2_aa_gaps == "LDWYLQKSGQSPQLLIY"
+    assert single_result_2.cdr2_aa_gaps == "LG-------S"
+    assert single_result_2.fwr3_aa_gaps == "NRASGVP-DRFSGSG--SGTDFTLKISRVEAEDVGFYYC"
+    assert single_result_2.cdr3_aa_gaps == "MQALQ----TPYT"
+    assert single_result_2.fwr4_aa_gaps == "FGQGTKLEIK"
 
 
 def test_io():
@@ -161,34 +136,34 @@ def test_dog():
     result = anarci_api.run_single(
         "V3-38_J4",
         "EVQLVESGGDLVKPGGTLRLSCVASGLSLTSNSMSWVRQSPGKGLQWVAVIWSNGGTYYADAVKGRFTISRDNAKNTLYLQMNSLRAEDTAVYYCASIYYYDADYLHWGQGTLVTVSS",
-    )
-    assert result.framework1_aa == "EVQLVESGG-DLVKPGGTLRLSCVAS"
-    assert result.cdr1_aa == "GLSL----TSNS"
-    assert result.framework2_aa == "MSWVRQSPGKGLQWVAV"
-    assert result.cdr2_aa == "IWSN---GGT"
-    assert result.framework3_aa == "YYADAVK-GRFTISRDNAKNTLYLQMNSLRAEDTAVYYC"
-    assert result.cdr3_aa == "ASIYYY-DADYLH"
-    assert result.framework4_aa == "WGQGTLVTVSS"
+    ).iloc[0]
+    assert result.fwr1_aa_gaps == "EVQLVESGG-DLVKPGGTLRLSCVAS"
+    assert result.cdr1_aa_gaps == "GLSL----TSNS"
+    assert result.fwr2_aa_gaps == "MSWVRQSPGKGLQWVAV"
+    assert result.cdr2_aa_gaps == "IWSN---GGT"
+    assert result.fwr3_aa_gaps == "YYADAVK-GRFTISRDNAKNTLYLQMNSLRAEDTAVYYC"
+    assert result.cdr3_aa_gaps == "ASIYYY-DADYLH"
+    assert result.fwr4_aa_gaps == "WGQGTLVTVSS"
     assert result.v_gene == "IGHV3-38*01"
     assert result.j_gene == "IGHJ2*01"
-    assert result.v_gene_identity == 0.88
-    assert result.j_gene_identity == 0.79
+    assert float(result.v_identity) == 0.88
+    assert float(result.j_identity) == 0.79
 
     result = anarci_api.run_single(
         "V3-38_J4",
         "EIVMTQSPASLSLSQEEKVTITCRASEGISNSLAWYQQKPGQAPKLLIYATSNRATGVPSRFSGSGSGTDFSFTISSLEPEDVAVYYCQQGYKFPLTFGAGTKVELK",
-    )
-    assert result.framework1_aa == "EIVMTQSPASLSLSQEEKVTITCRAS"
-    assert result.cdr1_aa == "EGI------SNS"
-    assert result.framework2_aa == "LAWYQQKPGQAPKLLIY"
-    assert result.cdr2_aa == "AT-------S"
-    assert result.framework3_aa == "NRATGVP-SRFSGSG--SGTDFSFTISSLEPEDVAVYYC"
-    assert result.cdr3_aa == "QQGYK----FPLT"
-    assert result.framework4_aa == "FGAGTKVELK"
+    ).iloc[0]
+    assert result.fwr1_aa_gaps == "EIVMTQSPASLSLSQEEKVTITCRAS"
+    assert result.cdr1_aa_gaps == "EGI------SNS"
+    assert result.fwr2_aa_gaps == "LAWYQQKPGQAPKLLIY"
+    assert result.cdr2_aa_gaps == "AT-------S"
+    assert result.fwr3_aa_gaps == "NRATGVP-SRFSGSG--SGTDFSFTISSLEPEDVAVYYC"
+    assert result.cdr3_aa_gaps == "QQGYK----FPLT"
+    assert result.fwr4_aa_gaps == "FGAGTKVELK"
     assert result.v_gene == "IGKV3S1*01"
     assert result.j_gene == "IGKJ1*01"
-    assert result.v_gene_identity == 0.91
-    assert result.j_gene_identity == 0.92
+    assert float(result.v_identity) == 0.91
+    assert float(result.j_identity) == 0.92
 
 
 def test_cat():
@@ -196,29 +171,25 @@ def test_cat():
     result = anarci_api.run_single(
         "CF-R01-D01",
         "DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF",
-    )
-    assert result.id == "CF-R01-D01"
-    assert result.framework1_aa == "DVQLVESGG-DLAKPGGSLRLTCVAS"
-    assert result.cdr1_aa == "GLSV----TSNS"
-    assert result.framework2_aa == "MSWVRQAPGKGLRWVST"
-    assert result.cdr2_aa == "IWSK---GGT"
-    assert result.framework3_aa == "YYADSVK-GRFTVSRDSAKNTLYLQMDSLATEDTATYYC"
-    assert result.framework4_aa == "WGQGALVTVSF"
-    assert (
-        result.vdj
-        == "DVQLVESGG-DLAKPGGSLRLTCVASGLSV----TSNSMSWVRQAPGKGLRWVSTIWSK---GGTYYADSVK-GRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF"
-    )
+    ).iloc[0]
+    assert result.Id == "CF-R01-D01"
+    assert result.fwr1_aa_gaps == "DVQLVESGG-DLAKPGGSLRLTCVAS"
+    assert result.cdr1_aa_gaps == "GLSV----TSNS"
+    assert result.fwr2_aa_gaps == "MSWVRQAPGKGLRWVST"
+    assert result.cdr2_aa_gaps == "IWSK---GGT"
+    assert result.fwr3_aa_gaps == "YYADSVK-GRFTVSRDSAKNTLYLQMDSLATEDTATYYC"
+    assert result.fwr4_aa_gaps == "WGQGALVTVSF"
     assert result.v_gene == "IGHV17-1*01"
     assert result.j_gene == "IGHJ5*01"
-    assert result.v_gene_identity == 0.84
-    assert result.j_gene_identity == 0.79
+    assert result.v_identity == 0.84
+    assert result.j_identity == 0.79
 
 
 def test_bad_sequences():
     bad_sequence = "SEQLTQPESLTLRPGQPLTIRCQVSYSVSSTGYATHWIRQPDGRGLEWIGGIRIGWKGAKDSLSSQFSLAVDGSSKTITLQGQNMQPGDSAVYYCAR"
     anarci_api = Anarci()
     result = anarci_api.run_single("bad_sequence", bad_sequence)
-    assert result is None
+    assert result.empty
 
 
 def test_duplicated_seq():

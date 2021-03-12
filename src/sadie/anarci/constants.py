@@ -5,6 +5,6 @@ ANARCI_RESULTS = {
     "score": "float16",
     "seqstart_index": "int16",
     "seqend_index": "int16",
-    "v_identity": "float16",
-    "j_identity": "float16",
+    "v_identity": "float",
+    "j_identity": "float",
 }
