@@ -20,8 +20,6 @@ class AnarciResults(pd.DataFrame):
         # that we're inheriting the correct behavior
         super(AnarciResults, self).__init__(*args, **kwargs)
 
-    # this method is makes it so our methods return an instance
-    # of ExtendedDataFrame, instead of a regular DataFrame
     @property
     def _constructor(self):
         return AnarciResults
@@ -53,6 +51,23 @@ class AnarciResults(pd.DataFrame):
                 f"{segment_name}_no_gaps": without_segment,
             }
         )
+
+    def _pivot_alignment(self, row):
+        pivoted_df = (
+            pd.DataFrame(
+                zip(row["Numbering"], row["Insertion"], row["Numbered_Sequence"]),
+                columns=["numbering", "insertion", "sequence"],
+            )
+            .assign(Id=row["Id"])
+            .pivot("Id", ["numbering", "insertion"], "sequence")
+        )
+        return pivoted_df
+
+    def get_alignment_table(self):
+        all_dataframes = []
+        for index in range(len(self)):
+            all_dataframes.append(self._pivot_alignment(self.iloc[index]))
+        return pd.concat(all_dataframes)
 
     def add_segment_regions(self):
         for group, sub_df in self.groupby(["scheme", "region_definition", "Chain"]):
