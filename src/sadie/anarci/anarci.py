@@ -318,6 +318,8 @@ class Anarci:
 
         _summary = parsed_output(sequences, _numbered, _alignment_details)
         anarci_results = pd.DataFrame(_summary)
+        if anarci_results.empty:
+            return AnarciResults()
         anarci_results = AnarciResults(anarci_results.astype(ANARCI_RESULTS))
         anarci_results["scheme"] = self.scheme
         anarci_results["region_definition"] = self.region_definition
