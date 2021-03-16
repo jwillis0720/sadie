@@ -1,8 +1,10 @@
+import glob
 import logging
 import os
 import tempfile
 from itertools import product
 from multiprocessing import Pool
+from pathlib import Path
 
 import pytest
 from Bio.Seq import Seq
@@ -12,7 +14,6 @@ from pandas.testing import assert_frame_equal
 from pkg_resources import resource_filename
 from sadie.anarci import Anarci, AnarciDuplicateIdError, AnarciResults
 from sadie.anarci.app import run_anarci
-from sadie.antibody import exception
 
 logger = logging.getLogger()
 
@@ -88,29 +89,6 @@ def test_alternate_numbering():
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
-
-
-def test_long_hcdr3():
-    anarci_api = Anarci(scheme="chothia", region_assign="chothia")
-    with pytest.raises(exception.LongHCDR3Error) as e:
-        anarci_api.run_single(
-            "MySweetAntibody",
-            "QVQLVESGGGVVQPGRSLRLSCAASGFTFNNYGMHWVRQAPGKGLEWVAVISYGGSDKYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCARDGRGSLPRPKGGFINALSFHWPFGRWLGKSYGTYDSSEDSGGAFDIWGQGTLVTVSS",
-        )
-    assert e.value.hcdr3 == "ARDGRGSLPRPKGGFINALSFHWPFGRWLGKSYGTYDSSEDSGGAFDI"
-    assert e.value.chosen_scheme == "chothia"
-    assert e.value.acceptable_scheme == ["imgt", "aho"]
-
-    anarci_api = Anarci(scheme="kabat", region_assign="chothia")
-    with pytest.raises(exception.LongHCDR3Error) as e:
-        anarci_api.run_single(
-            "MySweetAntibody",
-            "QVQLVESGGGVVQPGRSLRLSCAASGFTFNNYGMHWVRQAPGKGLEWVAVISYGGSDKYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCARDGRGSLPRPKGGFINALSFHWPFGRWLGKSYGTYDSSEDSGGAFDIWGQGTLVTVSS",
-        )
-    assert e.value.hcdr3 == "ARDGRGSLPRPKGGFINALSFHWPFGRWLGKSYGTYDSSEDSGGAFDI"
-    assert e.value.chosen_scheme == "kabat"
-    assert e.value.acceptable_scheme == ["imgt", "aho"]
-    assert e.value.sequence_name == "MySweetAntibody"
 
 
 def test_anarci_multi_input():
@@ -268,8 +246,11 @@ def _run_cli(p_tuple):
         runner = CliRunner()
         result = runner.invoke(run_anarci, cli_input)
         assert result.exit_code == 0
-        # assert _run_cli(cli_input, tmpfile)
-    assert not os.path.exists(tmpfile.name)
+
+        # anarci appends reults and alignment so glob
+        out_file = Path(tmpfile.name).stem + "*"
+    for f in glob.glob(out_file):
+        os.remove(f)
     return True
 
 
@@ -278,10 +259,12 @@ def test_cli():
     test_file_heavy = get_file("catnap_aa_heavy_sample.fasta")
     test_file_light = get_file("catnap_aa_light_sample.fasta")
     species = ["human", "mouse", "rat", "rabbit", "rhesus", "pig", "alpaca", "dog", "cat"]
+    species = ",".join(species)
     ft = ["csv", "json", "feather"]
     schemes = ["imgt", "kabat", "chothia"]
     regions = ["imgt", "kabat", "chothia", "abm", "contact", "scdr"]
-    products = product([test_file_heavy, test_file_light], species, ft, schemes, regions)
+    products = product([test_file_heavy, test_file_light], [species], ft, schemes, regions)
 
-    pool = Pool()
-    assert all(list(pool.map(_run_cli, products)))
+    # pool = Pool()
+    results = list(map(_run_cli, products))
+    print(results)
