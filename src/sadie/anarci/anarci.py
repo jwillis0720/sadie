@@ -69,6 +69,7 @@ class Anarci:
         ],
         tempdir="",
         hmmerpath="",
+        threshold=80,
     ):
         """Anarci constructor"""
         self.scheme = scheme
@@ -79,6 +80,7 @@ class Anarci:
         self.tempdir = tempdir
         self.hmmerpath = hmmerpath
         self.num_cpus = cpu_count()
+        self.threshold_bit = threshold
         if not self.check_combination(self.scheme, self.region_definition):
             raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
 
@@ -363,7 +365,7 @@ class Anarci:
             hmm_database="ALL",
             hmmerpath=self.hmmerpath,
             ncpu=self.num_cpus,
-            bit_score_threshold=80,
+            bit_score_threshold=self.threshold_bit,
             tempdir=self.tempdir,
         )
 
