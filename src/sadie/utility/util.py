@@ -3,47 +3,18 @@ import gzip
 import os
 from functools import partial
 from mimetypes import guess_type
-from pathlib import Path
 
 from Bio import SeqIO as so
+
+from pathlib import Path
 
 
 def get_project_root() -> Path:
     return Path(__file__).parent.parent
 
 
-def get_verbosity_level(verbosity_count):
-    """Get verbosity level by how many --vvv were passed
-
-    Arguments:
-        verboisty_count {int} -- how many v's were passed
-
-    50 - critical
-    40 - error
-    30 - warning
-    20 - info
-    10 -debug
-    0 - notset
-    """
-
-    # If 5, we want 10 debug level logging
-    if verbosity_count >= 5:
-        return 10
-    # If 4, we want 20 info level logging
-    elif verbosity_count == 4:
-        return 20
-    # If 3, we want 30 warming level logging
-    elif verbosity_count == 3:
-        return 30
-    # If 2, we want 40 error level logging
-    elif verbosity_count == 2:
-        return 40
-
-    # always return critical
-    return 50
-
-
 def determine_encoding(parent_file):
+    guess_compress(parent_file)
     encoding = guess_type(parent_file)
     if encoding[1] == "gzip":
         return "gzip", partial(gzip.open, mode="rt")
@@ -52,7 +23,8 @@ def determine_encoding(parent_file):
     return None, open
 
 
-def split_fasta(parent_file, how_many, outdir="."):
+def split_fasta(parent_file, how_many, outdir=".", filetype="fasta"):
+    # files_suffix = {"fasta": ".fasta", "fastq": ".fastq"}
     # get file_counter and base name of fasta_file
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -64,13 +36,13 @@ def split_fasta(parent_file, how_many, outdir="."):
     # our first file name
     if encoding == "gzip":
         parent_file_base_name = ".".join(os.path.basename(parent_file).split(".")[0:-2])
-        suffix = ".fasta.gz"
+        suffix = f".{filetype}.gz"
     elif encoding == "bzip":
         parent_file_base_name = ".".join(os.path.basename(parent_file).split(".")[0:-2])
-        suffix = ".fasta.bz2"
+        suffix = f".{filetype}.bz2"
     else:
-        parent_file_base_name = os.path.basename(parent_file).split(".fasta")[0]
-        suffix = ".fasta"
+        parent_file_base_name = os.path.basename(parent_file).split(f".{filetype}")[0]
+        suffix = f".{filetype}"
 
     file = parent_file_base_name + "_" + str(counter) + suffix
     file = os.path.join(outdir, file)
@@ -80,7 +52,7 @@ def split_fasta(parent_file, how_many, outdir="."):
 
     # _open will . handle all
     with _open(parent_file) as parent_file_handle:
-        for num, record in enumerate(so.parse(parent_file_handle, "fasta"), start=1):
+        for num, record in enumerate(so.parse(parent_file_handle, f"{filetype}"), start=1):
 
             # append records to our list holder
             joiner.append(">" + record.id + "\n" + str(record.seq))
@@ -119,3 +91,75 @@ def split_fasta(parent_file, how_many, outdir="."):
             else:
                 with open(file, "w") as f:
                     f.write("\n".join(joiner))
+
+
+def get_verbosity_level(verbosity_count):
+    """Get verbosity level by how many --vvv were passed
+
+    Arguments:
+        verboisty_count {int} -- how many v's were passed
+
+    50 - critical
+    40 - error
+    30 - warning
+    20 - info
+    10 -debug
+    0 - notset
+    """
+
+    # If 5, we want 10 debug level logging
+    if verbosity_count >= 5:
+        return 10
+    # If 4, we want 20 info level logging
+    elif verbosity_count == 4:
+        return 20
+    # If 3, we want 30 warming level logging
+    elif verbosity_count == 3:
+        return 30
+    # If 2, we want 40 error level logging
+    elif verbosity_count == 2:
+        return 40
+
+    # always return critical
+    return 50
+
+
+def guess_compress(filename):
+    """Guess compression type
+
+    Arguments:
+        filename {str} -- filepath
+
+    Returns:
+        str -- file suffix '.gz.'
+    """
+    magic_dict = {
+        "\x1f\x8b\x08": "gz",
+        "\x42\x5a\x68": "bz2",
+        "\x50\x4b\x03\x04": "zip",
+    }
+    max_len = max(len(x) for x in magic_dict)
+    with open(filename, "r") as f:
+        file_start = f.read(max_len)
+    for magic, filetype in magic_dict.items():
+        if file_start.startswith(magic):
+            return filetype
+    return False
+
+
+def is_tool(name):
+    """Check whether `name` is on PATH and marked as executable."""
+
+    # from whichcraft import which
+    from shutil import which
+
+    return which(name) is not None
+
+
+if __name__ == "__main__":
+    split_fasta(
+        "/workdir/people_help/Ana/cis_display_poc/demux/R1_cis.fastq",
+        5000,
+        "somedir",
+        "fastq",
+    )

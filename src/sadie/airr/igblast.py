@@ -17,7 +17,7 @@ import shutil
 import warnings
 import pandas as pd
 
-from .util import is_tool
+from ..utility.util import is_tool
 from .constants import IGBLAST_AIRR
 
 logger = logging.getLogger("IgBLAST")

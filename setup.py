@@ -66,6 +66,7 @@ setup(
             "airr=sadie.airr.app:run_airr",
             "make-reference=sadie.reference.app:make_igblast_reference",
             "make-genebank=sadie.reference.app:make_genebank_files_from_dbma",
+            "anarci=sadie.anarci.app:run_anarci",
         ]
     },
     test_suite="tests",

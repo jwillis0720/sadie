@@ -3,7 +3,7 @@ import os
 
 import click
 
-from .util import get_verbosity_level
+from ..utility.util import get_verbosity_level
 from .airr import Airr
 
 

@@ -1287,7 +1287,7 @@ def number_chothia_heavy(state_vector, sequence):
     # Chothia H region 7 (index 6)
     # put insertions onto 100
     length = len(_regions[6])
-    if length > 36:
+    if length > 72:
         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[6]))), "chothia")
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="heavy")
     _numbering[6] = [(annotations[i], _regions[6][i][1]) for i in range(length)]
@@ -1537,7 +1537,7 @@ def number_kabat_heavy(state_vector, sequence):
     # Chothia H region 7 (index 6)
     # put insertions onto 100
     length = len(_regions[6])
-    if length > 36:
+    if length > 72:
         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[6]))), "kabat")
     #  Chothia and Kabat the same hereP
     annotations = get_cdr3_annotations(length, scheme="kabat", chain_type="heavy")
@@ -2275,8 +2275,8 @@ def get_cdr3_annotations(length, scheme="imgt", chain_type=""):
 
     This function should be depreciated
     """
-    az = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    za = "ZYXWVUTSRQPONMLKJIHGFEDCBA"
+    az = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrztuvwxyz"
+    za = az[::-1]
 
     if scheme == "imgt":
         start, end = 105, 118  # start (inclusive) end (exclusive)
@@ -2303,7 +2303,7 @@ def get_cdr3_annotations(length, scheme="imgt", chain_type=""):
     elif scheme in ["chothia", "kabat"] and chain_type == "heavy":  # For chothia and kabat
         # Number forwards from 93
         insertions = max(length - 10, 0)
-        assert insertions < 27, "Too many insertions for numbering scheme to handle"  # We ran out of letters.
+        # assert insertions < 27, "Too many insertions for numbering scheme to handle"  # We ran out of letters.
         ordered_deletions = [
             (100, " "),
             (99, " "),
