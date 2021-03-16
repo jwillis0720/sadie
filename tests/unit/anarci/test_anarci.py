@@ -3,7 +3,6 @@ import logging
 import os
 import tempfile
 from itertools import product
-from multiprocessing import Pool
 from pathlib import Path
 
 import pytest
