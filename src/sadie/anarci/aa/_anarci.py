@@ -56,6 +56,7 @@ import tempfile
 import gzip
 import math
 import logging
+from numpy import nan
 from functools import partial
 from textwrap import wrap
 from subprocess import Popen, PIPE
@@ -347,6 +348,12 @@ def parsed_output(sequences, numbered, details):
 
             # Iterate over the domains identified
             for i, j in chain_types[cts]:
+                if details[i][j]["germlines"]["j_gene"][0]:
+                    j_gene = details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[0][1]
+                    j_gene_score = "%.2f" % details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[1]
+                else:
+                    j_gene = nan
+                    j_gene_score = nan
                 line = [
                     sequences[i][0].replace(",", " "),
                     sequences[i][1],
@@ -360,8 +367,8 @@ def parsed_output(sequences, numbered, details):
                     details[i][j].get("germlines", {}).get("v_gene", [["", ""], 0])[0][0],
                     details[i][j].get("germlines", {}).get("v_gene", [["", ""], 0])[0][1],
                     "%.2f" % details[i][j].get("germlines", {}).get("v_gene", [["", ""], 0])[1],
-                    details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[0][1],
-                    "%.2f" % details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[1],
+                    j_gene,
+                    j_gene_score,
                 ]
 
                 # Hash the numbering. Insertion order has been preserved in the positions sort.

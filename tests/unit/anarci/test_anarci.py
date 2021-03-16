@@ -1,11 +1,28 @@
+import logging
+import os
 import tempfile
+from itertools import product
+from multiprocessing import Pool
+
 import pytest
-from sadie.anarci import Anarci, AnarciResults, AnarciDuplicateIdError
-from sadie.antibody import exception
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from pkg_resources import resource_filename
+from click.testing import CliRunner
 from pandas.testing import assert_frame_equal
+from pkg_resources import resource_filename
+from sadie.anarci import Anarci, AnarciDuplicateIdError, AnarciResults
+from sadie.anarci.app import run_anarci
+from sadie.antibody import exception
+
+logger = logging.getLogger()
+
+
+def get_file(file):
+    """Helper method for test execution."""
+    _file = os.path.join(os.path.abspath(os.path.dirname(__file__)), f"fixtures/{file}")
+    if not os.path.exists(_file):
+        raise FileNotFoundError(_file)
+    return _file
 
 
 def fixture_file(file):
@@ -13,12 +30,26 @@ def fixture_file(file):
     return resource_filename(__name__, "fixtures/{}".format(file))
 
 
-# def test_busted_seq():
-#     anarci_api = Anarci(scheme="imgt", region_assign="imgt", allowed_species=["human"])
-#     anarci_api.run_single(
-#         "G00158029_V06_P01_G07",
-#         "EVQLVESGGGLIQPGGSLRLSCAASGFTVSSNYMSWVRQAPGKGLEWVSVIYSGGSTYYADFVKGRFTISRDNSKKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCARGIGFGEFYWGQGTLVTVSS",
-#     )
+def test_long_seq():
+    anarci_api = Anarci(scheme="chothia", region_assign="imgt", allowed_species=["human"])
+    anarci_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
+    anarci_api = Anarci(scheme="kabat", region_assign="imgt", allowed_species=["human"])
+    anarci_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
+
+
+def test_no_j_gene():
+    """no j gene found"""
+    anarci_api = Anarci(scheme="chothia", region_assign="imgt", allowed_species=["rat"])
+    anarci_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
 
 
 def test_single_seq():
@@ -210,3 +241,47 @@ def test_duplicated_seq():
     ]
     with pytest.raises(AnarciDuplicateIdError):
         anarci_api.run_multiple(seq_records)
+
+
+# cli helper
+def _run_cli(p_tuple):
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        cli_input = [
+            "--query",
+            p_tuple[0],
+            "-o",
+            tmpfile.name,
+            "-a",
+            p_tuple[1],
+            "-f",
+            p_tuple[2],
+            "-s",
+            p_tuple[3],
+            "-r",
+            p_tuple[4],
+        ]
+        if not Anarci.check_combination(p_tuple[3], p_tuple[4]):
+            logger.info(f"skipping {p_tuple[4]}-{p_tuple[3]}")
+            return True
+
+        logger.info(f"CLI input {' '.join(cli_input)}")
+        runner = CliRunner()
+        result = runner.invoke(run_anarci, cli_input)
+        assert result.exit_code == 0
+        # assert _run_cli(cli_input, tmpfile)
+    assert not os.path.exists(tmpfile.name)
+    return True
+
+
+def test_cli():
+    """Confirm the CLI works as expecte"""
+    test_file_heavy = get_file("catnap_aa_heavy_sample.fasta")
+    test_file_light = get_file("catnap_aa_light_sample.fasta")
+    species = ["human", "mouse", "rat", "rabbit", "rhesus", "pig", "alpaca", "dog", "cat"]
+    ft = ["csv", "json", "feather"]
+    schemes = ["imgt", "kabat", "chothia"]
+    regions = ["imgt", "kabat", "chothia", "abm", "contact", "scdr"]
+    products = product([test_file_heavy, test_file_light], species, ft, schemes, regions)
+
+    pool = Pool()
+    assert all(list(pool.map(_run_cli, products)))

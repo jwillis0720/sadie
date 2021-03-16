@@ -37,11 +37,16 @@ from .exception import (
 from .result import AnarciResults
 from .constants import ANARCI_RESULTS
 from ..utility import split_fasta
+from .numbering import scheme_numbering
 
 logger = logging.getLogger("ANARCI")
 
 # Get out of here with your partial codon warnigns
 warnings.filterwarnings("ignore", "Partial codon")
+
+
+class Error(Exception):
+    """Base class for exceptions in this module."""
 
 
 class Anarci:
@@ -74,6 +79,8 @@ class Anarci:
         self.tempdir = tempdir
         self.hmmerpath = hmmerpath
         self.num_cpus = cpu_count()
+        if not self.check_combination(self.scheme, self.region_definition):
+            raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
 
     @property
     def hmmerpath(self) -> Path:
@@ -140,10 +147,22 @@ class Anarci:
         accepted: imgt, kabat, chotia, martin, abm
 
         """
-        _accepted_defs = ["imgt", "kabat", "chothia", "abm", "contact", "scdr"]
-        if definition.lower() not in _accepted_defs:
-            raise BadAnarciArgument(definition, _accepted_defs)
+        if definition.lower() not in self.get_available_region_definitions():
+            raise BadAnarciArgument(definition, self.get_available_region_definitions())
         self._region_definition = definition
+
+    @staticmethod
+    def get_available_region_definitions() -> List:
+        """Get currently available antibody region definitions
+
+        Returns
+        -------
+        List
+            a list of region defitions, ex. ["imgt", "kabat", "chothia", "abm", "contact", "scdr"]
+
+        """
+        _accepted_defs = ["imgt", "kabat", "chothia", "abm", "contact", "scdr"]
+        return _accepted_defs
 
     @property
     def scheme(self) -> str:
@@ -157,12 +176,34 @@ class Anarci:
         accepted: imgt, kabat, chotia, martin
 
         """
-        _accepted_schemenes = ["imgt", "kabat", "chothia"]  #
         __future_schemes = ["martin"]
-        if scheme.lower() not in _accepted_schemenes:
+        if scheme.lower() not in self.get_available_region_definitions():
             print(f"need support for {__future_schemes} numbering schemes. See abysis")
-            raise BadAnarciArgument(scheme, _accepted_schemenes)
+            raise BadAnarciArgument(scheme, self.get_available_region_definitions())
         self._scheme = scheme.lower()
+
+    @staticmethod
+    def get_available_numbering_schemes() -> List:
+        """Get currently available antibody numbering schemes
+
+        Returns
+        -------
+        List
+            a list of region defitions, ex. ["imgt", "kabat", "chothia"]
+
+        """
+        _accepted_schemes = ["imgt", "kabat", "chothia"]  #
+        return _accepted_schemes
+
+    @staticmethod
+    def check_combination(scheme: str, region: str) -> bool:
+        scheme_keys = scheme_numbering[scheme]
+        try:
+            scheme_keys["heavy"][region]
+            scheme_keys["light"][region]
+        except KeyError:
+            return False
+        return True
 
     @property
     def tempdir(self) -> Path:
@@ -216,11 +257,23 @@ class Anarci:
         allowed_chains : list,
             e.g, ['H','K'] will only search heavy and kappa chains
         """
-        _allowed_chain = ["H", "K", "L", "A", "B", "G", "D"]
+        _allowed_chain = self.get_allowed_chains()
         _diff = list(set(map(lambda x: x.upper(), allowed_chains)).difference(_allowed_chain))
         if _diff:
             raise BadAnarciArgument(_diff, _allowed_chain)
         self._allowed_chains = allowed_chains
+
+    @staticmethod
+    def get_allowed_chains() -> List:
+        """Get the allowed chains options. Which chains can you align against
+
+        Returns
+        -------
+        List
+            A list of one letter codes that correspond to chains
+        """
+        _allowed_chain = ["H", "K", "L", "A", "B", "G", "D"]
+        return _allowed_chain
 
     @property
     def allowed_species(self) -> list:
@@ -237,6 +290,21 @@ class Anarci:
         allowed_species: list,
             ["human", "mouse", "rat", "rabbit", "rhesus ", "pig", "alpaca"],
         """
+        _allowed_species = self.get_allowed_species()
+        _diff = list(set(map(lambda x: x.lower(), allowed_species)).difference(_allowed_species))
+        if _diff:
+            raise BadAnarciArgument(_diff, _allowed_species)
+        self._allowed_species = allowed_species
+
+    @staticmethod
+    def get_allowed_species() -> List:
+        """Get allowed species that we should align against.
+
+        Returns
+        -------
+        List
+            A list of currently implmented allowed species
+        """
         _allowed_species = [
             "human",
             "mouse",
@@ -248,10 +316,7 @@ class Anarci:
             "dog",
             "cat",
         ]
-        _diff = list(set(map(lambda x: x.lower(), allowed_species)).difference(_allowed_species))
-        if _diff:
-            raise BadAnarciArgument(_diff, _allowed_species)
-        self._allowed_species = allowed_species
+        return _allowed_species
 
     @property
     def assign_germline(self) -> bool:
@@ -320,18 +385,30 @@ class Anarci:
         anarci_results = pd.DataFrame(_summary)
         if anarci_results.empty:
             return AnarciResults()
-        anarci_results = AnarciResults(anarci_results.astype(ANARCI_RESULTS))
+
+        # I really want to set the scheme and region in the constructor
+        # https://stackoverflow.com/questions/66647680/subclassing-pandas-dataframe-and-setting-field-in-constuctor
+        anarci_results = AnarciResults(
+            anarci_results.astype(ANARCI_RESULTS),
+            # scheme=self.scheme,
+            # region_definition=self.region_definition,
+            # allowed_chains=self.allowed_chains,
+            # allowed_species=self.allowed_species,
+        )
+
+        # Must set these schemes before we set the segments
         anarci_results["scheme"] = self.scheme
         anarci_results["region_definition"] = self.region_definition
         anarci_results["allowed_species"] = ",".join(self.allowed_species)
         anarci_results["allowed_chains"] = ",".join(self.allowed_chains)
+        anarci_results = anarci_results._add_segment_regions()
 
         if len(anarci_results["Id"].unique()) != len(anarci_results):
             logger.warning(f"multiple results for {anarci_results[anarci_results['Id'].duplicated()]} is duplicated")
             anarci_results = anarci_results.sort_values("score").groupby("Id").head(1)
 
         # segment the region
-        anarci_results = anarci_results.add_segment_regions()
+        # anarci_results = anarci_results.add_segment_regions()
         return anarci_results
 
     def run_single(self, seq_id: str, seq: str, scfv=False) -> "AnarciResults":
