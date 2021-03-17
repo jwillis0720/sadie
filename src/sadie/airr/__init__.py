@@ -1,4 +1,4 @@
-__version__ = "0.2.7"
+__version__ = "0.2.8"
 
 from .airr import Airr, BadDataSet, BadRequstedFileType, GermlineData
 from .airrtable import AirrTable, ScfvAirrTable
