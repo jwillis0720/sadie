@@ -63,12 +63,13 @@ from subprocess import Popen, PIPE
 from itertools import groupby, islice
 from multiprocessing import Pool
 import pandas as pd
+import warnings
 from Bio.SearchIO.HmmerIO import Hmmer3TextParser as HMMERParser
 
 # Import from the schemes submodule
 from ._schemes import *
 from ._germlines import all_germlines
-from ...antibody.exception import LongHCDR3Error
+from ...antibody.exception import LongHCDR3Error, AnarciDecreasing
 
 all_species = list(all_germlines["V"]["H"].keys())
 logger = logging.getLogger("ANARCI")
@@ -179,7 +180,10 @@ def validate_numbering(xxx_todo_changeme, name_seq=[]):
     nseq = ""
 
     for (index, _), a in numbering:
-        assert index >= last, "Numbering was found to decrease along the sequence %s. Please report." % name
+        if index < last:
+            raise AnarciDecreasing(name, f"decreasing sequence count in the numbering")
+
+            # , "Numbering was found to decrease along the sequence %s. Please report." % name
         last = index
         nseq += a.replace("-", "")
 
@@ -885,6 +889,11 @@ def number_sequences_from_alignment(
                     except LongHCDR3Error as e:
                         e.sequence_name = details["query_name"]
                         raise e
+                    except AnarciDecreasing as e:
+                        warnings.warn(f"Skipping {sequences[i][0]}", UserWarning)
+                        continue
+                        # raise e
+
                     if assign_germline:
                         details["germlines"] = run_germline_assignment(
                             state_vector,

@@ -52,6 +52,33 @@ def test_no_j_gene():
     )
 
 
+def test_trouble_seqs():
+    anarci = Anarci(scheme="kabat", region_assign="imgt")
+    with pytest.warns(UserWarning):
+        results = anarci.run_single(
+            "POS",
+            "DIQMTQSPSSLCASIGDRVTITCRASQSISSYLNQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQSYSTPVTFGGGTKVEIK",
+        )
+        assert results.empty
+
+    # check that we can still get out good sequence in presense of the bad
+    seq_records = [
+        SeqRecord(
+            Seq("DIQMTQSPSSLCASIGDRVTITCRASQSISSYLNQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQSYSTPVTFGGGTKVEIK"),
+            id="POS",
+        ),
+        SeqRecord(
+            Seq(
+                "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
+            ),
+            id="DupulimabL",
+        ),
+    ]
+    with pytest.warns(UserWarning):
+        results = anarci.run_multiple(seq_records)
+    assert len(results) == 1
+
+
 def test_single_seq():
     anarci_api = Anarci(region_assign="imgt")
     result = anarci_api.run_single(

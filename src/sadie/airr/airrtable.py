@@ -46,7 +46,8 @@ def _get_v_aa_distance(X) -> int:
     float
         percentabe between germ and mature. i.e #(mutations+indels)/len(max(germ,mat))
     """
-    if isinstance(X["v_sequence_alignment_aa"], float):
+    # X = X.fillna("")
+    if X.isna().any():
         return
     _mature = X["v_sequence_alignment_aa"]
     _germ = X["v_germline_alignment_aa"]
@@ -306,7 +307,7 @@ class AirrTable:
         # if the mature and cdr3 are not the same size
         # this will happen on non-productive
         if len(cdr3_j_mature) != len(cdr3_j_germline):
-            logger.info(f"{row.name} - strange iGL")
+            logger.debug(f"{row.name} - strange iGL")
             return
 
             # # quick aligment

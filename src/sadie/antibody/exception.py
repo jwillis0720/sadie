@@ -19,6 +19,22 @@ class LongHCDR3Error(Error):
         return f"{self.sequence_name} with an HCDR3 {self.hcdr3} is too long for the chosen numbering scheme {self.chosen_scheme}. Consider using {self.acceptable_scheme}"
 
 
+class AnarciDecreasing(Error):
+
+    """Exception raised for HCDR3 being too long for chosen numbering scheme.
+
+    Attributes:
+    """
+
+    def __init__(self, sequence_name, msg):
+        super().__init__()
+        self.sequence_name = sequence_name
+        self.msg = msg
+
+    def __str__(self):
+        return f"{self.sequence_name}:{self.msg}"
+
+
 # class Warning(UserWarning):
 #     pass
 
