@@ -15,11 +15,12 @@ import platform
 import warnings
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Union, Generator
 
 # third party
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+from Bio.Seq import Seq
 import pandas as pd
 
 from .aa._anarci import (
@@ -392,10 +393,6 @@ class Anarci:
         # https://stackoverflow.com/questions/66647680/subclassing-pandas-dataframe-and-setting-field-in-constuctor
         anarci_results = AnarciResults(
             anarci_results.astype(ANARCI_RESULTS),
-            # scheme=self.scheme,
-            # region_definition=self.region_definition,
-            # allowed_chains=self.allowed_chains,
-            # allowed_species=self.allowed_species,
         )
 
         # Must set these schemes before we set the segments
@@ -413,7 +410,7 @@ class Anarci:
         # anarci_results = anarci_results.add_segment_regions()
         return anarci_results
 
-    def run_single(self, seq_id: str, seq: str, scfv=False) -> "AnarciResults":
+    def run_single(self, seq_id: str, seq: str, scfv=False) -> AnarciResults:
         """Run a single string sequence on an amino acid
 
         Parameters
@@ -433,7 +430,7 @@ class Anarci:
 
         return self._run(sequences)
 
-    def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> "AnarciResults":
+    def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> AnarciResults:
         """Run multiple seq records
 
         Parameters
@@ -450,7 +447,7 @@ class Anarci:
         TypeError
             if you don't pass a list of SeqRecords
         """
-        if not isinstance(seqrecords, (list, type(SeqIO.FastaIO.FastaIterator))):
+        if not isinstance(seqrecords, (list, type(SeqIO.FastaIO.FastaIterator), Generator)):
             raise TypeError(f"seqrecords must be of type {list} pased {type(seqrecords)}")
 
         if isinstance(seqrecords, list) and not all([type(i) is SeqRecord for i in seqrecords]):
@@ -466,6 +463,55 @@ class Anarci:
 
         _results = self._run(_sequences)
         return _results
+
+    def run_dataframe(
+        self,
+        dataframe: pd.DataFrame,
+        seq_id_field: Union[str, int],
+        seq_field: Union[str, int],
+        return_join=False,
+    ) -> AnarciResults:
+        """Pass dataframe and field and run airr.
+
+        Parameters
+        ----------
+        dataframe : pd.DataFrame
+            The input dataframe to run airr on
+
+        seq_field: Union[str,int]
+           The field in the dataframe to run airr on
+
+        seq_id_field: Union[str,int]:
+            The field that you want the "Sequence ID" in the airr table to correspond to.
+
+        Returns
+        -------
+        AnarciResults
+            AnarciResults object
+
+        ToDo
+        -------
+        Default seq_id to be index. But have to account for it being a multi index
+        """
+
+        def _get_seq_generator():
+            for seq_id, seq in zip(
+                dataframe.reset_index()[seq_id_field],
+                dataframe.reset_index()[seq_field],
+            ):
+                yield SeqRecord(id=str(seq_id), name=str(seq_id), description="", seq=Seq(str(seq)))
+
+        if return_join:
+            dataframe[seq_id_field] = dataframe[seq_id_field].astype(str)
+            _df = self.run_multiple(_get_seq_generator())
+            # convert seq id field to stry stince sequence_id is cast to string
+            return dataframe.merge(
+                _df,
+                left_on=seq_id_field,
+                right_on="sequence_id",
+            )
+        else:
+            return self.run_multiple(_get_seq_generator())
 
     def run_file(self, file: Path, multi=False) -> "AnarciResults":
         """Run anarci annotator on a fasta file

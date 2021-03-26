@@ -5,7 +5,9 @@ import tempfile
 from itertools import product
 from pathlib import Path
 
+import pandas as pd
 import pytest
+from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from click.testing import CliRunner
@@ -294,3 +296,13 @@ def test_cli():
     # pool = Pool()
     results = list(map(_run_cli, products))
     print(results)
+
+
+def test_df():
+    test_file_heavy = get_file("catnap_aa_heavy_sample.fasta")
+    df = pd.DataFrame(
+        [{"id": x.id, "seq": x.seq, "description": x.description} for x in SeqIO.parse(test_file_heavy, "fasta")]
+    )
+    anarci_obj = Anarci()
+    anarci_results = anarci_obj.run_dataframe(df, "id", "seq")
+    assert isinstance(anarci_results, (AnarciResults, pd.DataFrame))
