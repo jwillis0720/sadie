@@ -68,23 +68,23 @@ def test_airrtable_init():
     assert e.value.__str__()
 
 
-def test_airrtable_reference():
-    test_file = pd.read_feather("tests/integration/airr/fixtures/catnap_heavy_airrtable.feather")
-    airr_table = AirrTable(test_file)
-    referenece_table = airr_table.get_reference_table(buff=0)
-    assert not referenece_table.empty
+# def test_airrtable_reference():
+#     test_file = pd.read_feather("tests/integration/airr/fixtures/catnap_heavy_airrtable.feather")
+#     airr_table = AirrTable(test_file)
+#     referenece_table = airr_table.get_reference_table(buff=0)
+#     assert not referenece_table.empty
 
 
-def test_mutational_analysis():
-    test_file = pd.read_feather("tests/integration/airr/fixtures/catnap_heavy_airrtable.feather")
-    airr_table = AirrTable(test_file)
-    airr_table_with_mutations = airr_table.add_mutation_analysis()
-    assert "mutations" in airr_table_with_mutations.columns
+# def test_mutational_analysis():
+#     test_file = pd.read_feather("tests/integration/airr/fixtures/catnap_heavy_airrtable.feather")
+#     airr_table = AirrTable(test_file)
+#     airr_table_with_mutations = airr_table.add_mutation_analysis()
+#     assert "mutations" in airr_table_with_mutations.columns
 
-    test_file = pd.read_feather("tests/integration/airr/fixtures/catnap_light_airrtable.feather")
-    airr_table = AirrTable(test_file)
-    airr_table_with_mutations = airr_table.add_mutation_analysis()
-    assert "mutations" in airr_table_with_mutations.columns
+#     test_file = pd.read_feather("tests/integration/airr/fixtures/catnap_light_airrtable.feather")
+#     airr_table = AirrTable(test_file)
+#     airr_table_with_mutations = airr_table.add_mutation_analysis()
+#     assert "mutations" in airr_table_with_mutations.columns
 
 
 def test_scfv_airrtable():
