@@ -250,6 +250,12 @@ def test_adaptable_penalty():
     assert isinstance(airr_table, ScfvAirrTable)
 
 
+# def test_mutational_analysis():
+#     integration_file = "tests/integration/airr/catnap_nt_heavy.fasta.gz"
+#     airr_api = Airr("human")
+#     airrtable = airr_api.run_file(integration_file)
+
+
 def _run_cli(args, tmpfile):
     runner = CliRunner()
     result = runner.invoke(app.run_airr, args)

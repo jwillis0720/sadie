@@ -11,6 +11,8 @@ from Levenshtein._levenshtein import distance
 
 from .constants import IGBLAST_AIRR
 from .genbank import GenBank, GenBankFeature
+from ..antibody.genetable import VGeneTable
+from ..anarci import Anarci, AnarciResults
 
 logger = logging.getLogger("AIRRTable")
 
@@ -405,10 +407,6 @@ class AirrTable:
             & (_sanitized["fwr4_aa"].str.len() >= 8)
         ]
 
-    @property
-    def empty(self) -> bool:
-        return self._table.empty
-
     @staticmethod
     def parse_row_to_genbank(row: Tuple[int, pd.core.series.Series], suffix="") -> SeqRecord:
         single_seq = row[1]
@@ -707,11 +705,67 @@ class AirrTable:
         """
         return self.sanitized_antibodies
 
-    def join(self, *args, **kwargs):
-        return self._table.join(*args, **kwargs)
+    def get_reference_table(self, scheme="kabat", region="imgt", buff=10, **kwargs) -> AnarciResults:
+        logger.debug("Getting germline gene table from results")
+        _table = VGeneTable().gene_table.copy()
+        _table = _table[_table["species"].isin(self.table["species"].unique().tolist())]
+        _table = _table[_table["full"].isin(self.table["v_call_top"].unique().tolist())]
+        logger.debug(f"have {len(_table)} reference germlines")
+        return _table
 
     def set_index(self, *args, **kwargs):
         return self._table.set_index(*args, **kwargs)
+
+    def add_mutation_analysis(self, scheme="kabat", region="imgt", **kwargs) -> "AirrTable":
+        anarci_api = Anarci(scheme=scheme, region_assign=region, **kwargs)
+        logger.debug(f"Running debug on {len(self.table)} sequences")
+        anarci_results = anarci_api.run_dataframe(self.table, "sequence_id", "vdj_aa")
+        anarci_results_good = anarci_results.drop_bad_anarci()
+        bad_indexes = anarci_results_good.index.difference(anarci_results.index)
+        if not bad_indexes.empty:
+            logger.info(f"The following indexes could not be numbered and are being excluded: {bad_indexes}")
+
+        # get reference table
+        reference_table = self.get_reference_table(scheme=scheme, region=region)
+        reference_table_at = reference_table.get_alignment_table().set_index("Id")
+
+        # get alignment table
+        alignment_table_at = anarci_results_good.get_alignment_table()
+
+        # clean anarci heavy is unblinded heavyclean_anarci_heavy
+        lookup = self.table.set_index("sequence_id")[["v_call_top"]].to_dict(orient="index").copy()
+        alignment_table_at.insert(
+            1,
+            "v_call_top",
+            alignment_table_at["Id"].apply(lambda x: lookup[x]["v_call_top"]),
+        )
+        mutations_df = []
+        for group, group_df in alignment_table_at.groupby("v_call_top"):
+            lookup_ref = reference_table_at.fillna("-").loc[group]
+            last_v_gene_num = lookup_ref.index[-1]
+            sliced_df = group_df.iloc[
+                :, list(group_df.columns).index("1") : list(group_df.columns).index(last_v_gene_num)
+            ]
+            for index, row in sliced_df.fillna("-").iterrows():
+                mutations = []
+                for number in row.index:
+                    if number not in lookup_ref.index:
+                        reference = "-"
+                    else:
+                        reference = lookup_ref[number]
+                    target = row[number]
+                    if reference != target:
+                        ref_string = f"{reference}{number}{target}"
+                        mutations.append(ref_string)
+                mutations_df.append({"index": index, "mutations": mutations})
+        mutations_df = pd.DataFrame(mutations_df)
+        mutations_df = alignment_table_at[["Id", "scheme"]].join(pd.DataFrame(mutations_df).set_index("index"))
+        self._table = self._table.merge(mutations_df, left_on="sequence_id", right_on="Id")
+        return self.table
+
+    @property
+    def empty(self) -> bool:
+        return self._table.empty
 
     def __getitem__(self, col):
         return self._table[col]
