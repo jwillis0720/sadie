@@ -2,7 +2,6 @@
 
 # Std library
 import bz2
-import glob
 import gzip
 import logging
 import multiprocessing
@@ -37,7 +36,6 @@ from .exception import (
 )
 from .result import AnarciResults
 from .constants import ANARCI_RESULTS
-from ..utility import split_fasta
 from .numbering import scheme_numbering
 
 logger = logging.getLogger("ANARCI")
@@ -71,8 +69,36 @@ class Anarci:
         tempdir="",
         hmmerpath="",
         threshold=80,
+        run_multiproc=True,
     ):
-        """Anarci constructor"""
+        """[summary]
+
+        Parameters
+        ----------
+        scheme : str, optional
+            [description], by default "imgt"
+        region_assign : str, optional
+            [description], by default "imgt"
+        allowed_chain : list, optional
+            [description], by default ["H", "K", "L"]
+        assign_germline : bool, optional
+            [description], by default True
+        allowed_species : list, optional
+            [description], by default [ "human", "mouse", "rat", "rabbit", "rhesus", "pig", "alpaca", "dog", "cat", ]
+        tempdir : str, optional
+            [description], by default ""
+        hmmerpath : str, optional
+            [description], by default ""
+        threshold : int, optional
+            [description], by default 80
+        run_multiproc : bool, optional
+            [description], by default True
+
+        Raises
+        ------
+        NotImplementedError
+            [description]
+        """
         self.scheme = scheme
         self.region_definition = region_assign
         self.allowed_chains = allowed_chain
@@ -81,6 +107,7 @@ class Anarci:
         self.tempdir = tempdir
         self.hmmerpath = hmmerpath
         self.num_cpus = cpu_count()
+        self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
         if not self.check_combination(self.scheme, self.region_definition):
             raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
@@ -181,7 +208,7 @@ class Anarci:
         """
         __future_schemes = ["martin"]
         if scheme.lower() not in self.get_available_region_definitions():
-            print(f"need support for {__future_schemes} numbering schemes. See abysis")
+            logger.warning(f"need support for {__future_schemes} numbering schemes. See abysis")
             raise BadAnarciArgument(scheme, self.get_available_region_definitions())
         self._scheme = scheme.lower()
 
@@ -461,7 +488,17 @@ class Anarci:
             _sequences.append((seq.id, str(seq.seq)))
             _seen.add(seq.id)
 
-        _results = self._run(_sequences)
+        if self.run_multiproc:
+            # split a list into evenly sized chunks
+            def chunks(list_to_split, n):
+                return [list_to_split[i : i + n] for i in range(0, len(list_to_split), n)]
+
+            # split sequences into chunks
+            _sequences = chunks(_sequences, min(multiprocessing.cpu_count(), len(_sequences)))
+            multiproc = multiprocessing.Pool()
+            _results = pd.concat(multiproc.map(self._run, _sequences))
+        else:
+            _results = self._run(_sequences)
         return _results
 
     def run_dataframe(
@@ -513,7 +550,7 @@ class Anarci:
         else:
             return self.run_multiple(_get_seq_generator())
 
-    def run_file(self, file: Path, multi=False) -> "AnarciResults":
+    def run_file(self, file: Path) -> "AnarciResults":
         """Run anarci annotator on a fasta file
 
         Parameters
@@ -553,41 +590,25 @@ class Anarci:
                 shutil.copyfileobj(file_buffer, tmpfile)
                 file = tmpfile.name
 
-        if not multi:
             # run on fasta
-            _results = self.run_multiple(list(SeqIO.parse(file, "fasta")))
-            # if we had a file delete it
-            if _filetype:
-                os.unlink(tmpfile.name)
-        else:
-            _results = self._run_mp(file)
+        _results = self.run_multiple(list(SeqIO.parse(file, "fasta")))
+        # if we had a file delete it
+        if _filetype:
+            os.unlink(tmpfile.name)
         return _results
-
-    def _run_mp(self, table: Path) -> "AnarciResults":
-        results = []
-        if isinstance(table, (str, Path)):
-            with tempfile.TemporaryDirectory(dir=".", suffix="anarci_mp") as d:
-                split_fasta(table, 1000, d)
-                files = list(glob.glob(d + "/*.fasta*"))
-                p = multiprocessing.Pool()
-                results = AnarciResults.concat(p.map(self.run_file, files))
-        return results
 
 
 if __name__ == "__main__":
-
-    from pprint import pprint
-
     anarci_api = Anarci(scheme="chothia", region_assign="scdr")
-    result = anarci_api.run_single(
-        "MySweetAntibody",
-        "EVQLLESGGGLVQPGGSLRLSCAASGFTFPVYNMAWVRQAPGKGLEWVSGIAHNGRNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKGHEISRFSRWSSFDYWGQGTLVTVSS",
-    )
+    anarci_api.run_file("tests/integration/airr/fixtures/catnap_aa_heavy.fasta.gz")
+    #     "MySweetAntibody",
+    #     "EVQLLESGGGLVQPGGSLRLSCAASGFTFPVYNMAWVRQAPGKGLEWVSGIAHNGRNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKGHEISRFSRWSSFDYWGQGTLVTVSS",
+    # )
 
-    pprint(result.segment_table_no_gaps)
-    anarci_api = Anarci(scheme="kabat", region_assign="scdr")
-    result = anarci_api.run_single(
-        "MySweetAntibody",
-        "DIQMTQSPSSLSASVGDRVTITCRPNQNIATYINWYQQKPGKAPKLLIYAASGLQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQHSWEIPYTFGQGTKVEIK",
-    )
-    pprint(result.segment_table_no_gaps)
+    # pprint(result.segment_table_no_gaps)
+    # anarci_api = Anarci(scheme="kabat", region_assign="scdr")
+    # result = anarci_api.run_single(
+    #     "MySweetAntibody",
+    #     "DIQMTQSPSSLSASVGDRVTITCRPNQNIATYINWYQQKPGKAPKLLIYAASGLQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQHSWEIPYTFGQGTKVEIK",
+    # )
+    # pprint(result.segment_table_no_gaps)
