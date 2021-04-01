@@ -76,6 +76,10 @@ def test_trouble_seqs():
             id="DupulimabL",
         ),
     ]
+    results = anarci.run_multiple(seq_records)
+
+    # can't capture this user warning with multiprocess
+    anarci = Anarci(scheme="kabat", region_assign="imgt", run_multiproc=False)
     with pytest.warns(UserWarning):
         results = anarci.run_multiple(seq_records)
     assert len(results) == 1
