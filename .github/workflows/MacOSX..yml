@@ -40,10 +40,10 @@ jobs:
         uses: pre-commit/action@v2.0.0
       - name: Unit Testing
         run: |
-          pytest -v tests/unit
+          pytest -v tests/unit --disable-warnings
       - name: Integration Testing
         run: |
-          pytest -v tests/integration
+          pytest -v tests/integration --disable-warnings
       - name: Install Twine/Wheel
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
