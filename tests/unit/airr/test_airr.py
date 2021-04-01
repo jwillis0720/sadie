@@ -250,10 +250,11 @@ def test_adaptable_penalty():
     assert isinstance(airr_table, ScfvAirrTable)
 
 
-# def test_mutational_analysis():
-#     integration_file = "tests/integration/airr/catnap_nt_heavy.fasta.gz"
-#     airr_api = Airr("human")
-#     airrtable = airr_api.run_file(integration_file)
+def test_mutational_analysis():
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta.gz"
+    airr_api = Airr("human")
+    airrtable = airr_api.run_file(integration_file)
+    airrtable.table.to_feather("look_at_me_feather.feather")
 
 
 def _run_cli(args, tmpfile):
