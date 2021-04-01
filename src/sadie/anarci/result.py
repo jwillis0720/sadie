@@ -1,13 +1,7 @@
-# import gzip
-# import bz2
-# import json
-# from pathlib import Path
-# from typing import List, Union
 import logging
 import pandas as pd
 from ast import literal_eval
 
-# from ..antibody import chain
 from .constants import ANARCI_RESULTS
 from .numbering import scheme_numbering
 
@@ -133,6 +127,10 @@ class AnarciResults(pd.DataFrame):
         )
         return pivoted_df
 
+    def get_sanatized_antibodies(self):
+        # drop sequences that don't start at the first amino acid and dont end at the last amino acid.
+        return self[(self["seqstart_index"] == 0) & (self["seqend_index"] == self["sequence"].str.len() - 1)]
+
     @staticmethod
     def read_csv(*args, **kwargs):
         return AnarciResults(
@@ -144,3 +142,6 @@ class AnarciResults(pd.DataFrame):
                 **kwargs,
             )
         )
+
+    def drop_bad_anarci(self) -> "AnarciResults":
+        return self[(self["seqstart_index"] == 0) & (self["seqend_index"] == self["sequence"].str.len() - 1)]

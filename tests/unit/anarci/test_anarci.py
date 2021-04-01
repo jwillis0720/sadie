@@ -76,6 +76,10 @@ def test_trouble_seqs():
             id="DupulimabL",
         ),
     ]
+    results = anarci.run_multiple(seq_records)
+
+    # can't capture this user warning with multiprocess
+    anarci = Anarci(scheme="kabat", region_assign="imgt", run_multiproc=False)
     with pytest.warns(UserWarning):
         results = anarci.run_multiple(seq_records)
     assert len(results) == 1
@@ -265,14 +269,18 @@ def _run_cli(p_tuple):
             p_tuple[3],
             "-r",
             p_tuple[4],
+            "-vvvvv",
         ]
         if not Anarci.check_combination(p_tuple[3], p_tuple[4]):
             logger.info(f"skipping {p_tuple[4]}-{p_tuple[3]}")
             return True
 
         logger.info(f"CLI input {' '.join(cli_input)}")
-        runner = CliRunner()
+        runner = CliRunner(mix_stderr=False)
         result = runner.invoke(run_anarci, cli_input)
+        if result.exit_code != 0:
+            logger.info(f"!!!STDERR {result.stderr}")
+
         assert result.exit_code == 0
 
         # anarci appends reults and alignment so glob
