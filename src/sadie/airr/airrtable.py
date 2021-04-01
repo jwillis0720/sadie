@@ -13,7 +13,6 @@ from Bio import pairwise2
 from Bio.SubsMat import MatrixInfo as matlist
 from numpy import nan
 from Levenshtein._levenshtein import distance
-from pandarallel import pandarallel
 
 from .constants import IGBLAST_AIRR
 from .genbank import GenBank, GenBankFeature
@@ -21,10 +20,7 @@ from ..antibody.genetable import VGeneTable
 from ..anarci import Anarci, AnarciResults
 
 logger = logging.getLogger("AIRRTable")
-
-# blosum_matrix = substitution_matrices.load("BLOSUM62")
 blosum_matrix = matlist.blosum62
-pandarallel.initialize(progress_bar=True)
 
 
 class Error(Exception):
