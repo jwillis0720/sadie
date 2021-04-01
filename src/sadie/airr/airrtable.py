@@ -10,7 +10,9 @@ from Bio.SeqRecord import SeqRecord
 from Bio import pairwise2
 
 # from Bio.Align import substitution_matrices
-from Bio.SubsMat import MatrixInfo as matlist
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    from Bio.SubsMat import MatrixInfo as matlist
 from numpy import nan
 from Levenshtein._levenshtein import distance
 

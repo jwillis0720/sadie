@@ -254,7 +254,14 @@ def test_mutational_analysis():
     integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta.gz"
     airr_api = Airr("human")
     airrtable = airr_api.run_file(integration_file)
-    airrtable.table.to_feather("look_at_me_feather.feather")
+    kabat_table = Airr.run_mutational_analysis(airrtable, "kabat")
+    assert "mutations" in kabat_table.table.columns
+
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta.gz"
+    airr_api = Airr("human")
+    airrtable = airr_api.run_file(integration_file)
+    kabat_table = Airr.run_mutational_analysis(airrtable, "kabat")
+    assert "mutations" in kabat_table.table.columns
 
 
 def _run_cli(args, tmpfile):
