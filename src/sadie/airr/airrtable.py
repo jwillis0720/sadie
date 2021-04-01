@@ -1,13 +1,19 @@
 import json
 import logging
 import warnings
+from pathlib import Path
 from typing import Tuple, Union
 
 import pandas as pd
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+from Bio import pairwise2
+
+# from Bio.Align import substitution_matrices
+from Bio.SubsMat import MatrixInfo as matlist
 from numpy import nan
 from Levenshtein._levenshtein import distance
+from pandarallel import pandarallel
 
 from .constants import IGBLAST_AIRR
 from .genbank import GenBank, GenBankFeature
@@ -15,6 +21,10 @@ from ..antibody.genetable import VGeneTable
 from ..anarci import Anarci, AnarciResults
 
 logger = logging.getLogger("AIRRTable")
+
+# blosum_matrix = substitution_matrices.load("BLOSUM62")
+blosum_matrix = matlist.blosum62
+pandarallel.initialize(progress_bar=True)
 
 
 class Error(Exception):
@@ -170,14 +180,13 @@ class AirrTable:
         if not liable_sequences.empty:
             logger.debug(f"Caution - sequences {list(liable_sequences['sequence_id'])} may need manual inspections")
             self._table.loc[liable_sequences.index, "note"] = "liable"
-        self._non_airr_columns = list(set(self._table.columns) - set(IGBLAST_AIRR.keys()))
-        self._airr_columns = list(set(self._table.columns).intersection(IGBLAST_AIRR.keys()))
 
-        if len(self._airr_columns) != len(IGBLAST_AIRR.keys()):
-            raise MissingAirrColumns(set(IGBLAST_AIRR.keys()).difference(self._airr_columns))
+        missing_columns = set(IGBLAST_AIRR.keys()).difference(self._table.columns)
+        if missing_columns:
+            raise MissingAirrColumns(missing_columns)
 
         if self.cast:
-            self._table = dataframe.astype(IGBLAST_AIRR)
+            self._table = self._table.astype(IGBLAST_AIRR)
 
         # set those bool values
         self._table["productive"] = (
@@ -257,6 +266,77 @@ class AirrTable:
                 self._table.columns.get_loc(call), f"{call}_top", self._table[call].str.split(",").str.get(0)
             )
 
+        # indels are not handled in the amino acid sequence
+        indel_indexes = self._table[
+            (self._table["sequence_alignment_aa"].str.len() != self._table["germline_alignment_aa"].str.len())
+            & (~self._table["sequence_alignment_aa"].isna())
+            & (~self._table["germline_alignment_aa"].isna())
+        ].index
+        logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid alignments")
+
+        # indels are not handled in the amino acid sequence
+        v_indel_indexes = self._table[
+            (self._table["v_sequence_alignment_aa"].str.len() != self._table["v_germline_alignment_aa"].str.len())
+            & (~self._table["v_sequence_alignment_aa"].isna())
+            & (~self._table["v_germline_alignment_aa"].isna())
+        ].index
+        logger.info(f"Have {len(v_indel_indexes)} possible v-gene indels that are not in amino acid alignments")
+
+        def _correct_alignment(X, field_1, field_2):
+            alignment_aa_1 = X[field_1]
+            alignment_aa_2 = X[field_2]
+            if any([isinstance(alignment_aa_1, float), isinstance(alignment_aa_2, float)]):
+                return pd.Series({field_1: alignment_aa_1, field_2: alignment_aa_2})
+
+            # get alignments
+            try:
+                alignments = pairwise2.align.globalds(
+                    alignment_aa_1,
+                    alignment_aa_2,
+                    blosum_matrix,
+                    -12,
+                    -4,
+                    penalize_extend_when_opening=True,
+                    penalize_end_gaps=False,
+                )
+            except SystemError:
+                logger.debug(f"System error most likely due to * in germline alignment...falling back {alignment_aa_2}")
+                alignments = pairwise2.align.globalms(
+                    alignment_aa_1,
+                    alignment_aa_2,
+                    4,
+                    -1,
+                    -12,
+                    -4,
+                    penalize_extend_when_opening=True,
+                    penalize_end_gaps=False,
+                )
+            alignment_1_aa_corrected = alignments[0][0]
+            alignment_2_aa_corrected = alignments[0][1]
+            return pd.Series(
+                {
+                    field_1: alignment_1_aa_corrected,
+                    field_2: alignment_2_aa_corrected,
+                }
+            )
+
+        if not indel_indexes.empty:
+            correction_alignments = self._table.loc[indel_indexes, :].apply(
+                lambda x: _correct_alignment(x, "sequence_alignment_aa", "germline_alignment_aa"), axis=1
+            )
+            # Correction in place
+            self._table.update(correction_alignments)
+            self._table.loc[indel_indexes, "alignment_correct"] = True
+
+        if not v_indel_indexes.empty:
+            correction_v_alignments = self._table.loc[v_indel_indexes, :].apply(
+                lambda x: _correct_alignment(x, "v_sequence_alignment_aa", "v_germline_alignment_aa"), axis=1
+            )
+            # Correction in place
+            self._table.update(correction_v_alignments)
+            self._table.loc[v_indel_indexes, "alignment_correct"] = True
+
+            logger.debug("Corrected gapped sequences")
         # get mutation frequency rather than identity
         # v identy are in percentage
         self._table.loc[:, "v_mutation"] = self._table["v_identity"].apply(lambda x: (100 - x))
@@ -272,6 +352,10 @@ class AirrTable:
             self._table["vdj_igl"] = self._table.apply(self._get_igl, axis=1)
             self._table.loc[self._table[self._table["vdj_igl"].isna()].index, "note"] = "liable"
             self._table["igl_mut_aa"] = self._table[["vdj_aa", "vdj_igl"]].apply(self._get_diff, axis=1)
+
+        # finally add what is airr columns and what is not
+        self._non_airr_columns = list(set(self._table.columns) - set(IGBLAST_AIRR.keys()))
+        self._airr_columns = list(set(self._table.columns).intersection(IGBLAST_AIRR.keys()))
 
     def _get_diff(self, X):
         "get character levenshtrein distance"
@@ -323,7 +407,7 @@ class AirrTable:
                 continue
             iGL_cdr3 += germline
 
-        full_igl = v_germline + iGL_cdr3
+        full_igl = v_germline.replace("-", "") + iGL_cdr3.replace("-", "")
         return full_igl
 
     @property
@@ -762,6 +846,22 @@ class AirrTable:
         mutations_df = alignment_table_at[["Id", "scheme"]].join(pd.DataFrame(mutations_df).set_index("index"))
         self._table = self._table.merge(mutations_df, left_on="sequence_id", right_on="Id")
         return self.table
+
+    def write_fasta(self, id_field: str, sequence_field: str, file_out: Path):
+        """given an id field and sequence field, write out dataframe to fasata
+
+        Parameters
+        ----------
+        id_field : str
+            the id field from the dataframe to use in the fasta header
+        sequence_field : str
+            the seq field to use as the sqeuence
+        file_out : Path
+            the file output path to fasta
+        """
+        with open(file_out, "w") as f:
+            for _, row in self._table.iterrows():
+                f.write(f">{row[id_field]}\n{row[sequence_field]}\n")
 
     @property
     def empty(self) -> bool:

@@ -25,12 +25,19 @@ def test_airrtable_init():
     airr_table = AirrTable.read_csv(test_csv)
     assert not airr_table.empty
     assert sorted(airr_table.non_airr_columns) == [
+        "alignment_correct",
         "d_call_top",
+        "d_mutation",
+        "igl_mut_aa",
         "j_call_top",
+        "j_mutation",
         "note",
         "species",
         "v_call_top",
+        "v_mutation",
+        "v_mutation_aa",
         "vdj_aa",
+        "vdj_igl",
         "vdj_nt",
     ]
     # Tes twe can init with a direct pandas call
@@ -41,20 +48,6 @@ def test_airrtable_init():
     # test we can read in json too
     test_json = fixture_file("airr_tables/heavy_sample.json.gz")
     airr_table = AirrTable.read_json(test_json)
-    assert sorted(airr_table.non_airr_columns) == [
-        "cdr3_aa_length",
-        "chain",
-        "d_call_top",
-        "d_family",
-        "j_call_top",
-        "j_family",
-        "note",
-        "species",
-        "v_call_top",
-        "v_family",
-        "vdj_aa",
-        "vdj_nt",
-    ]
     assert not airr_table.empty
 
     # gen bank
