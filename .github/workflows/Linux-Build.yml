@@ -41,7 +41,7 @@ jobs:
       - name: Test
         run: |
           env
-          pytest --cov=sadie --cov-report=xml --cov-report=term tests/unit --disable-warnings
+          pytest --cov=sadie --cov-report=xml --cov-report=term tests/unit
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.15
       - name: Integration Testing
