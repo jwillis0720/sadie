@@ -66,6 +66,15 @@ def test_airr_init():
     assert air_api.__repr__() == air_api.__str__()
 
 
+def test_custom_mice_init():
+    Airr("hugl18", functional="all")
+    Airr("se09", functional="all")
+    Airr("alt", functional="all")
+    Airr("se09")
+    Airr("hugl18")
+    Airr("alt")
+
+
 def test_airr_single_sequence():
     pg9_seq = """
         CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT

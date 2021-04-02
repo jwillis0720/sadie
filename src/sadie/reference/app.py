@@ -28,7 +28,7 @@ from ..utility.util import get_verbosity_level, get_project_root
     type=click.Path(resolve_path=True, dir_okay=True, writable=True),
     default=os.path.join(get_project_root(), "airr/data/germlines"),
 )
-def make_igblast_reference(verbose, outpath, only_functional=True):
+def make_igblast_reference(verbose, outpath):
     """make the igblast reference files
 
     This script will make the imgt reference files used by igblast or airr, including internal data, the blast
@@ -61,9 +61,9 @@ def make_igblast_reference(verbose, outpath, only_functional=True):
         outpath = os.path.abspath(os.path.dirname(__file__) + "/data/germlines")
         click.echo(f"No outpath specified, using {outpath}")
 
-    generate_internal_annotaion_file_from_db(db_path, outpath, only_functional=only_functional)
+    generate_internal_annotaion_file_from_db(db_path, outpath)
     click.echo(f"Generated Internal Data {outpath}/internal_data")
-    make_igblast_ref_database(db_path, outpath, only_functional=only_functional)
+    make_igblast_ref_database(db_path, outpath)
     click.echo("Successfully made blast data")
 
     # Send it to specialized function

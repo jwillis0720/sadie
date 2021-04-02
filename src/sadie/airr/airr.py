@@ -19,7 +19,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from ..reference import loaded_database
+from ..reference.yaml import YamlRef
 from .airrtable import AirrTable, ScfvAirrTable
 from ..anarci import Anarci
 
@@ -233,10 +233,21 @@ class GermlineData:
            available datasets (common_name, custom|imgt, functional|all)
         """
 
-        functional = list(filter(lambda x: x["functional"] == "F", loaded_database))
-        database_types_all_data = set(map(lambda x: (x["common"], x["source"], "all"), loaded_database))
-        database_types_functional_data = set(map(lambda x: (x["common"], x["source"], "functional"), functional))
-        return list(database_types_all_data) + list(database_types_functional_data)
+        y = YamlRef()
+        db_types = []
+        for database_type in y.yaml:
+            for functional in y.yaml[database_type]:
+                for common in y.yaml[database_type][functional]:
+                    if (common, database_type, functional) not in db_types:
+                        db_types.append((common, database_type, functional))
+        # functional = list(
+        #     filter(
+        #         lambda x: x["functional"] == "F",
+        #     )
+        # )
+        # database_types_all_data = set(map(lambda x: (x["common"], x["source"], "all"), loaded_database))
+        # database_types_functional_data = set(map(lambda x: (x["common"], x["source"], "functional"), functional))
+        return db_types
 
 
 class Airr:

@@ -14,6 +14,6 @@ repos:
     rev: 3.8.1
     hooks:
     -   id: flake8
-        exclude: ^src/sadie/anarci/aa/
+        exclude: (^src/sadie/anarci/aa/|notebooks/)
         additional_dependencies: [flake8-bugbear]
         args: ["--ignore=W503,E501,E203,B006"]
