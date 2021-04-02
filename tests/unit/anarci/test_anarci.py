@@ -276,10 +276,10 @@ def _run_cli(p_tuple):
             return True
 
         logger.info(f"CLI input {' '.join(cli_input)}")
-        runner = CliRunner(mix_stderr=False)
+        runner = CliRunner()
         result = runner.invoke(run_anarci, cli_input)
         if result.exit_code != 0:
-            logger.info(f"!!!STDERR {result.stderr}")
+            logger.info(f"!!!STDERR {result}")
 
         assert result.exit_code == 0
 
