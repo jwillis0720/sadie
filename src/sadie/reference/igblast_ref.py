@@ -85,6 +85,8 @@ def make_igblast_ref_database(database, outdir):
         for functional in reference_database.yaml[database]:
             for common in reference_database.yaml[database][functional]:
                 receptor_blast_dir = os.path.join(outdir, f"{database}/{functional}/Ig/blastdb/")
+                if not os.path.exists(receptor_blast_dir):
+                    os.makedirs(receptor_blast_dir)
                 for segment in ["V", "D", "J"]:
                     sub_species_keys = reference_database.get_sub_species(database, functional, common)
                     if len(sub_species_keys) > 1:
