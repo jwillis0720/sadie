@@ -145,7 +145,7 @@ def run_anarci(verbose, query, scheme, region, allowed_species, allowed_chains, 
 
     # feather
     elif file_format.lower() == "feather":
-        anarci_results.to_feather(segment_out)
+        anarci_results.reset_index(drop=True).to_feather(segment_out)
         anarci_results.get_alignment_table().reset_index().to_feather(align_out)
 
     # shouldn't get here, but if they specify a file format that is not recognized using an invoke method
