@@ -1,9 +1,6 @@
 """Main Objects for Interacting with Airr"""
-import bz2
-import gzip
 import logging
 import os
-import shutil
 import tempfile
 
 # Std library
@@ -11,7 +8,6 @@ import warnings
 from pathlib import Path
 from typing import Generator, List, Tuple, Union
 
-import filetype
 import pandas as pd
 
 # third party
@@ -19,9 +15,9 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
+from ..anarci import Anarci
 from ..reference.yaml import YamlRef
 from .airrtable import AirrTable, ScfvAirrTable
-from ..anarci import Anarci
 
 # Module level
 from .igblast import IgBLASTN, ensure_prefix_to
@@ -232,7 +228,6 @@ class GermlineData:
         list
            available datasets (common_name, custom|imgt, functional|all)
         """
-
         y = YamlRef()
         db_types = []
         for database_type in y.yaml:
@@ -240,13 +235,6 @@ class GermlineData:
                 for common in y.yaml[database_type][functional]:
                     if (common, database_type, functional) not in db_types:
                         db_types.append((common, database_type, functional))
-        # functional = list(
-        #     filter(
-        #         lambda x: x["functional"] == "F",
-        #     )
-        # )
-        # database_types_all_data = set(map(lambda x: (x["common"], x["source"], "all"), loaded_database))
-        # database_types_functional_data = set(map(lambda x: (x["common"], x["source"], "functional"), functional))
         return db_types
 
 
@@ -409,7 +397,7 @@ class Airr:
             with tempfile.NamedTemporaryFile(dir=self.temp_directory) as tmpfile:
                 record = SeqRecord(Seq(seq), id=str(seq_id))
                 SeqIO.write(record, tmpfile.name, "fasta")
-                _results = self.run_file(tmpfile.name, scfv=True)
+                _results = self.run_fasta(tmpfile.name, scfv=True)
             return _results
 
     def run_dataframe(
@@ -491,10 +479,10 @@ class Airr:
         with tempfile.NamedTemporaryFile(suffix=".fasta", dir=self.temp_directory) as temp_fasta:
             SeqIO.write(seqrecords, temp_fasta.name, "fasta")
             logger.info(f"Running tempfile {temp_fasta.name}")
-            results = self.run_file(temp_fasta.name, scfv=scfv)
+            results = self.run_fasta(temp_fasta.name, scfv=scfv)
         return results
 
-    def run_file(self, file: Path, scfv=False) -> Union[AirrTable, Tuple[AirrTable, AirrTable]]:
+    def run_fasta(self, file: Path, scfv=False) -> Union[AirrTable, Tuple[AirrTable, AirrTable]]:
         """Run airr annotator on a fasta file
 
         If it contains a scfv linked pair, it will annotate both heavy and light chain
@@ -515,37 +503,26 @@ class Airr:
         Raises
         ------
         BadRequstedFileType
-            not a fasta or compressed file type
+            not a fasta file
         """
         if isinstance(file, Path):
             # cast to str
             file = str(file)
-        _filetype = filetype.guess(file)
-        if _filetype:
-            logger.info("Guess File Type is %s ", _filetype.extension)
-            if _filetype.extension not in ["gz", "bz2"]:
-                raise BadRequstedFileType(_filetype, ["bzip2", "gzip"])
-            with tempfile.NamedTemporaryFile(delete=False, dir=self.temp_directory) as tmpfile:
-                if _filetype.extension == "gz":
-                    logger.info("File type is compressed gzip")
-                    file_buffer = gzip.open(file)
-                else:
-                    logger.info("File type is compressed bzip2")
-                    file_buffer = bz2.open(file)
-                logger.debug(f"copying {file} to {tmpfile.name}")
-                shutil.copyfileobj(file_buffer, tmpfile)
-                logger.debug(f"copied {file} to {tmpfile.name}")
-                file = tmpfile.name
+
+        if not Path(file).exists:
+            raise FileNotFoundError(file)
+
+        # make sure it's fasta
+        try:
+            next(SeqIO.parse(file, "fasta"))
+        except Exception:
+            raise BadRequstedFileType("", "fasta")
 
         if scfv:
             logger.info("scfv file was passed")
             scfv_airr = self._run_scfv(file)
             if not scfv_airr.table.empty:
                 scfv_airr.table.insert(2, "species", self.species)
-            if _filetype:
-                os.remove(file)
-            # if self._create_temp:
-            #     shutil.rmtree(self.temp_directory)
             return scfv_airr
 
         else:
@@ -583,8 +560,6 @@ class Airr:
                     self.adapt_penalty = True
                     result = AirrTable(airr_table)
 
-            if _filetype:
-                os.remove(file)
         return result
 
     def _run_scfv(self, file: Path) -> ScfvAirrTable:
