@@ -54,8 +54,8 @@ def sadie(ctx):
 )
 @click.option(
     "--out-format",
-    type=click.Choice(["infer", "json", "csv", "feather"]),
-    help="output file type format",
+    type=click.Choice(["infer", "json", "csv", "tsv", "feather"]),
+    help="output file type format. Default is to infer from output argument",
     default="infer",
     show_default=True,
 )
@@ -74,10 +74,15 @@ def airr(ctx, verbose, species, gene_type, db_type, compress, skip_mutation, in_
     io = SadieIO(input, output, in_format, out_format, compress)
 
     # airr file handling
+    # only having a fasta file uncompressed allow calling directly on run_fasta
     if io.input_file_type == "fasta" and not io.input_compressed:
         airr_table = airr.run_fasta(io.input)
-        if not skip_mutation:
-            airr_table = Airr.run_mutational_analysis(airr_table, "kabat")
+
+    else:
+        airr_table = airr.run_records(io.get_input_records())
+    # now get mutation analysis
+    if not skip_mutation:
+        airr_table = Airr.run_mutational_analysis(airr_table, "kabat")
     if io.output:
         airr_table.to_csv(io.output, sep="\t")
     else:
