@@ -1,98 +1,63 @@
 # %%
-import sadie
-import pandas as pd
+from yaml import load
+from pprint import pprint
+from yaml import Loader
+from sadie.reference import loaded_database
 
-pd.set_option("display.max_rows", 45)
-pd.set_option("display.max_columns", 500)
-pd.set_option("display.width", 100000)
-airr_api = sadie.airr.Airr("human")
-results = airr_api.run_file("../tests/integration/airr/fixtures/catnap_nt_heavy.fasta.gz")
-#%%
 # %%
-normal = airr_api.run_single(
-    "normal",
-    "GAGGTGCAGCTGGTGGAGTCTGGGGGAGGCTTGGTGAAGCCTGGAGGATCCCTTAGACTCTCATGTTCAGCCTCTGGTTTCGACTTCGATAACGCCTGGATGACTTGGGTCCGCCAGCCTCCAGGGAAGGGCCTCGAATGGGTTGGTCGTATTACGGGTCCAGGTGAAGGTTGGTCAGTGGACTATGCTGCACCCGTGGAAGGCAGATTTACCATCTCGAGACTCAATTCAATAAATTTCTTATATTTGGAGATGAACAATTTAAGAATGGAAGACTCAGGCCTTTACTTCTGTGCCCGCACGGGAAAATATTATGATTTTTGGAGTGGCTATCCGCCGGGAGAAGAATACTTCCAAGACTGGGGCCGGGGCACCCTGGTCACCGTCTCCTCA",
+# pprint(load(open("reference.yml"), Loader=Loader))
+from Bio.SeqIO.Interfaces import SequenceIterator
+from Bio.SeqIO import parse
+
+isinstance(
+    parse(open("../sadie/tests/unit/airr/fixtures/fasta_inputs/PG9_H_multiple.fasta"), "fasta"), SequenceIterator
 )
-# %%
-deletion = airr_api.run_single(
-    "deletion",
-    "GAGGTGCAGCTGGTGGAGTCTGGGGGAGGCTTGGTGAAGCCTGGATCCCTTAGACTCTCATGTTCAGCCTCTGGTTTCGACTTCGATAACGCCTGGATGACTTGGGTCCGCCAGCCTCCAGGGAAGGGCCTCGAATGGGTTGGTCGTATTACGGGTCCAGGTGAAGGTTGGTCAGTGGACTATGCTGCACCCGTGGAAGGCAGATTTACCATCTCGAGACTCAATTCAATAAATTTCTTATATTTGGAGATGAACAATTTAAGAATGGAAGACTCAGGCCTTTACTTCTGTGCCCGCACGGGAAAATATTATGATTTTTGGAGTGGCTATCCGCCGGGAGAAGAATACTTCCAAGACTGGGGCCGGGGCACCCTGGTCACCGTCTCCTCA",
-)
-deletion
 
 # %%
-airr_api.igblast.gap_open = 2
-insertion = airr_api.run_single(
-    "insertion",
-    "GAGGTGCAGCTGGTGGAGTCTGGGGGAGGCTTGGTGAAGCCTGGAGAGGGATCCCTTAGACTCTCATGTTCAGCCTCTGGTTTCGACTTCGATAACGCCTGGATGACTTGGGTCCGCCAGCCTCCAGGGAAGGGCCTCGAATGGGTTGGTCGTATTACGGGTCCAGGTGAAGGTTGGTCAGTGGACTATGCTGCACCCGTGGAAGGCAGATTTACCATCTCGAGACTCAATTCAATAAATTTCTTATATTTGGAGATGAACAATTTAAGAATGGAAGACTCAGGCCTTTACTTCTGTGCCCGCACGGGAAAATATTATGATTTTTGGAGTGGCTATCCGCCGGGAGAAGAATACTTCCAAGACTGGGGCCGGGGCACCCTGGTCACCGTCTCCTCA",
-)
-insertion
-
+with open("custom.yml", "w") as f:
+    for species in ["human", "macaque", "cat", "dog", "mouse", "rat", "alpaca"]:
+        f.write("\t\t" + species + ":\n")
+        f.write(f"\t\t\t{species}:\n")
+        for x in list(
+            map(
+                lambda x: "- " + x["gene"],
+                sorted(
+                    list(
+                        filter(
+                            lambda x: x["common"] == species and x["receptor"] == "Ig",
+                            loaded_database,
+                        )
+                    ),
+                    key=lambda x: x["gene"],
+                ),
+            )
+        ):
+            f.write("\t\t\t" + x + "\n")
 # %%
-correctioon = pd.concat(
-    [normal.table, deletion.table, insertion.table]
-)  # .to_csv("~/DropboxPersonal/Dropbox/look_at_me.csv")
-# %%
-
-
-def correct_sequence_alignments(x):
-    sequence_alignment = x
-    print(sequence_alignment)
-    for x in range(0, len(sequence_alignment), 3):
-        codon = sequence_alignment[x : x + 3]
-
-
-results.table.head(1)["sequence_alignment"].apply(correct_sequence_alignments)
-
-
-# %%
+set(map(lambda x: x["common"], loaded_database))
 # %%
 
-# %%
-# %%
-import numpy as np
-from Bio import pairwise2
-from Bio.SubsMat import MatrixInfo as matlist
-from gspread_pandas import Spread
 
-# gspread = Spread("SadieDebug", create_spread=True)
-matrix = matlist.blosum62
-suspect_results = results[results["sequence_alignment_aa"].str.len() != results["germline_alignment_aa"].str.len()]
+class Sub:
+    pass
 
 
-def get_alignments(x, y):
-    alignments = pairwise2.align.globalds(
-        x, y, matrix, -12, -4, penalize_extend_when_opening=True, penalize_end_gaps=False
-    )
-    corrected_x = alignments[0][0]
-    corrected_y = alignments[0][1]
-    return pd.Series({"sequence_alignment_aa": corrected_x, "germline_alignment_aa": corrected_y})
+class A(Sub):
+    pass
 
 
-d = suspect_results.apply(lambda x: get_alignments(x["sequence_alignment_aa"], x["germline_alignment_aa"]), axis=1)
-d
-# df = suspect_results.join(d)
-# for col in df.dtypes[
-#     df.dtypes.apply(lambda x: x in ["float64", "float16", "int16"] or isinstance(x, pd.Int16Dtype))
-# ].index:
-#     # print(col,df.dtypes[col])
-#     df[col] = df[col].astype("float")
-
-# gspread.df_to_sheet(df, sheet="corrected")
-# d.iloc[0]["y"]
+class B(Sub):
+    pass
 
 
-# %%
-suspect_results[
-    [
-        "sequence_id",
-        "sequence",
-        "sequence_alignment",
-        "germline_alignment",
-        "sequence_alignment_aa",
-        "germline_alignment_aa",
-    ]
-].sample(5).to_markdown()
-# %%
+import typing
+
+
+def func() -> typing.Union[A, B]:
+    if cond1:
+        return A
+    if cond2:
+        return B
+
 
 # %%
