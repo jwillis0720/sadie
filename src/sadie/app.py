@@ -29,7 +29,7 @@ def sadie(ctx):
     help="Species to annotate",
     default="human",
 )
-@click.option("--gene-type", type=click.Choice(["all", "funtional"]), default="all", show_default=True)
+@click.option("--gene-type", type=click.Choice(["all", "functional"]), default="all", show_default=True)
 @click.option(
     "--db-type",
     type=click.Choice(["imgt", "custom"]),
@@ -40,7 +40,7 @@ def sadie(ctx):
 @click.option(
     "--compress",
     "-z",
-    type=click.Choice(["gzip", "bzip2", None]),
+    type=click.Choice(["gzip", "bzip2"]),
     help="file compression for output",
     default=None,
 )
@@ -84,7 +84,7 @@ def airr(ctx, verbose, species, gene_type, db_type, compress, skip_mutation, in_
     if not skip_mutation:
         airr_table = Airr.run_mutational_analysis(airr_table, "kabat")
     if io.output:
-        airr_table.to_csv(io.output, sep="\t")
+        airr_table.to_csv(output, sep="\t")
     else:
         sys.stdout.write(airr_table.to_csv(sep="\t"))
 

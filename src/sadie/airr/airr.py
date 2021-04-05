@@ -787,7 +787,3 @@ class Airr:
 
     def __str__(self):
         return self.__repr__()
-
-    def __del__(self):
-        """Destructor"""
-        pass
