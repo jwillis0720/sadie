@@ -34,8 +34,8 @@ def sadie(ctx):
 @click.option(
     "--compress",
     "-z",
-    type=click.Choice(["gzip", "bzip2", "infer"]),
-    help="file compression for output",
+    type=click.Choice(["gz", "bz2", "infer"]),
+    help="file compression for output, gzip, bzip2 or infer from output name",
     default="infer",
 )
 @click.option("--skip-mutation", is_flag=True, help="Skip the somewhat time instansive mutational analysis")
