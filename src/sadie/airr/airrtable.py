@@ -720,6 +720,13 @@ class AirrTable:
         """
         return self._table.to_csv(path_or_buf, **kwargs)
 
+    def to_feather(self, path_or_buf=None, compression="infer", *args, **kwargs):
+        """write airrtable to csv
+
+        Overloaded pandas.to_csv(*args, **kwargs)
+        """
+        return self._table.to_feather(path_or_buf, **kwargs)
+
     @staticmethod
     def from_json(json_object: json) -> "AirrTable":
         """take in json object serialized and return AirrTable
