@@ -232,15 +232,15 @@ def make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
 
 def test_imgt_integration():
     # sadie annotate
-    file = fixture_file("OAS_subsample_good_anarci.fasta.gz")
+    file = fixture_file("OAS_subsample_good_anarci.fasta")
     airr_api = Airr(species="human", database="imgt", functional="functional", adaptable=True)
     airr_api_all = Airr(species="human", database="imgt", functional="all", adaptable=True)
-    sadie_airr_functional = airr_api.run_file(file)
+    sadie_airr_functional = airr_api.run_fasta(file)
     sadie_comparable_functional = make_sadie_comparable(sadie_airr_functional)
     # sadie_comparable_functional.to_feather("sadie_compare_functional.feather")
 
     # all
-    sadie_airr_all = airr_api_all.run_file(file)
+    sadie_airr_all = airr_api_all.run_fasta(file)
     sadie_comparable_all = make_sadie_comparable(sadie_airr_all)
     # sadie_comparable_all.to_feather("sadie_compare_all.feather")
 
@@ -262,11 +262,11 @@ def test_imgt_integration():
 
 
 def test_catnap_heavy_integration():
-    heavy_file = fixture_file("catnap_nt_heavy.fasta.gz")
-    light_file = fixture_file("catnap_nt_light.fasta.gz")
+    heavy_file = fixture_file("catnap_nt_heavy.fasta")
+    light_file = fixture_file("catnap_nt_light.fasta")
     airr_api = Airr(species="human", database="imgt", functional="functional")
-    catnap_heavy = airr_api.run_file(heavy_file)
-    catnap_light = airr_api.run_file(light_file)
+    catnap_heavy = airr_api.run_fasta(heavy_file)
+    catnap_light = airr_api.run_fasta(light_file)
     light_at = pd.read_feather(fixture_file("catnap_light_airrtable.feather"))
     heavy_at = pd.read_feather(fixture_file("catnap_heavy_airrtable.feather"))
     diffs = catnap_light.table.columns.difference(light_at.columns)

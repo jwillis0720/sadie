@@ -16,7 +16,8 @@ import pandas as pd
 import pytest
 from click.testing import CliRunner
 from numpy import isnan
-from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, ScfvAirrTable, app
+from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, ScfvAirrTable
+from sadie.app import airr as sadie_airr
 
 logger = logging.getLogger()
 
@@ -148,16 +149,16 @@ def test_run_multiple():
     )
     seq = Seq(pg9_seq)
     seq_record = SeqRecord(seq=seq)
-    airr.run_multiple([seq_record, seq_record])
+    airr.run_records([seq_record, seq_record])
     with pytest.raises(TypeError):
-        airr.run_multiple(seq_record)
+        airr.run_records(seq_record)
 
 
 def test_run_multiple_scfv():
     scfv = get_file("fastq_inputs/long_scfv.fastq.gz")
     airr = Airr("human")
     list_to_run = list(SeqIO.parse(gzip.open(scfv, "rt"), "fastq"))
-    results = airr.run_multiple(list_to_run, scfv=True)
+    results = airr.run_records(list_to_run, scfv=True)
     assert isinstance(results, ScfvAirrTable)
 
 
@@ -173,23 +174,27 @@ def test_airr_from_dataframe():
 
 def test_airr_from_file():
     """Test we can pass a dataframe to runtime"""
-    f = get_file("fasta_inputs/PG9_H_multiple.fasta.gz")
+    f = get_file("fasta_inputs/PG9_H_multiple.fasta")
     airr_api = Airr("human")
-    result = airr_api.run_file(f)
+    result = airr_api.run_fasta(f)
     assert isinstance(result, AirrTable)
 
     # see if we can take in paths
-    result = airr_api.run_file(Path(f))
+    result = airr_api.run_fasta(Path(f))
     assert isinstance(result, AirrTable)
 
     f = get_file("card.png")
     with pytest.raises(BadRequstedFileType) as execinfo:
-        airr_api.run_file(f)
+        airr_api.run_fasta(f)
     assert execinfo.value.__str__()
 
-    f = get_file("fasta_inputs/scfv.fasta.gz")
+    f = get_file("fasta_inputs/scfv.fasta")
     airr_api = Airr("human", temp_directory="a_non_existant_directory")
-    airr_api.run_file(f, scfv=True)
+    airr_api.run_fasta(f, scfv=True)
+
+    # cleanup just in case test fails
+    if Path("a_non_existant_directory").exists():
+        Path("a_non_existant_directory").rmdir()
 
 
 def test_adaptable_penalty():
@@ -260,95 +265,105 @@ def test_adaptable_penalty():
 
 
 def test_mutational_analysis():
-    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta.gz"
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
     airr_api = Airr("human")
-    airrtable = airr_api.run_file(integration_file)
+    airrtable = airr_api.run_fasta(integration_file)
     kabat_table = Airr.run_mutational_analysis(airrtable, "kabat")
     assert "mutations" in kabat_table.table.columns
 
-    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta.gz"
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
     airr_api = Airr("human")
-    airrtable = airr_api.run_file(integration_file)
+    airrtable = airr_api.run_fasta(integration_file)
     kabat_table = Airr.run_mutational_analysis(airrtable, "kabat")
     assert "mutations" in kabat_table.table.columns
 
 
 def _run_cli(args, tmpfile):
-    runner = CliRunner()
-    result = runner.invoke(app.run_airr, args)
+    runner = CliRunner(echo_stdin=True)
+    result = runner.invoke(sadie_airr, args)
+    if result.exit_code != 0:
+        logger.error(f"Exception - {result.exception.__str__()}")
+        logger.error(f"{args} produces error")
     assert result.exit_code == 0
     assert os.path.exists(tmpfile.name)
     return True
 
 
-def test_cli():
+def test_cli(caplog):
     """Confirm the CLI works as expecte"""
-    quereies = glob.glob(get_file("fasta_inputs/") + "*")
-    species = ["dog", "rat", "human", "mouse", "macaque"]
-    ft = ["csv", "json"]
-    functions = ["--all", "--functional"]
-    products = product(quereies, species, ["imgt"], ft, functions)
 
-    with tempfile.NamedTemporaryFile() as tmpfile:
+    # we need this fixture because... well i don't know
+    # caplog.set_level(20)
+    # IMGT DB
+    quereies = glob.glob(get_file("fasta_inputs/") + "*")
+    species = ["dog", "rat", "human", "mouse", "macaque", "se09"]
+    # ft = ["csv", "json"]
+    functions = ["all", "functional"]
+    products = product(species, ["imgt"], functions, quereies)
+
+    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
             cli_input = [
-                "--query",
+                "-v",
+                "--species",
                 p_tuple[0],
-                "-o",
-                tmpfile.name,
-                "-s",
+                "--db-type",
                 p_tuple[1],
-                "--database",
+                "--gene-type",
                 p_tuple[2],
-                "-f",
                 p_tuple[3],
-                p_tuple[4],
+                tmpfile.name,
+                "--skip-mutation",
             ]
-            logger.debug(f"CLI input {' '.join(cli_input)}")
-            assert _run_cli(cli_input, tmpfile)
+            print(f"CLI input {' '.join(cli_input)}")
+            test_success = _run_cli(cli_input, tmpfile)
+            assert test_success
+
+
+def test_cli_custom():
     quereies = glob.glob(get_file("fasta_inputs/") + "*")
     species = ["cat", "macaque"]
-    ft = ["csv", "json"]
-    functions = ["--all", "--functional"]
-    products = product(quereies, species, ["custom"], ft, functions)
-    with tempfile.NamedTemporaryFile() as tmpfile:
+    functions = ["all", "functional"]
+    products = product(species, ["custom"], functions, quereies)
+
+    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
             cli_input = [
-                "--query",
+                "-v",
+                "--species",
                 p_tuple[0],
-                "-o",
-                tmpfile.name,
-                "-s",
+                "--db-type",
                 p_tuple[1],
-                "--database",
+                "--gene-type",
                 p_tuple[2],
-                "-f",
                 p_tuple[3],
-                p_tuple[4],
+                tmpfile.name,
+                "--skip-mutation",
             ]
-            logger.debug(f"CLI input {' '.join(cli_input)}")
-            assert _run_cli(cli_input, tmpfile)
-    quereies = [get_file("fasta_inputs/scfv.fasta")]
+            print(f"CLI input {' '.join(cli_input)}")
+            test_success = _run_cli(cli_input, tmpfile)
+            assert test_success
+
+
+def test_cli_scfv():
+    quereies = [get_file("fasta_inputs/scfv.fasta.gz")]
     species = ["human"]
-    ft = ["csv", "json"]
-    functions = ["--all", "--functional"]
-    products = product(quereies, species, ["imgt"], ft, functions)
-    with tempfile.NamedTemporaryFile() as tmpfile:
+    functions = ["all", "functional"]
+    products = product(species, ["imgt"], functions, quereies)
+    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
             cli_input = [
-                "--query",
+                "-v",
+                "--species",
                 p_tuple[0],
-                "-o",
-                tmpfile.name,
-                "-s",
+                "--db-type",
                 p_tuple[1],
-                "--database",
+                "--gene-type",
                 p_tuple[2],
-                "-f",
                 p_tuple[3],
-                p_tuple[4],
-                "--scfv",
+                tmpfile.name,
+                "--skip-mutation",
             ]
-            logger.debug(f"CLI input {' '.join(cli_input)}")
-            assert _run_cli(cli_input, tmpfile)
-    assert not os.path.exists(tmpfile.name)
+            print(f"CLI input {' '.join(cli_input)}")
+            test_success = _run_cli(cli_input, tmpfile)
+            assert test_success

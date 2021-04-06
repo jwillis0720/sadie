@@ -290,6 +290,7 @@ def _run_cli(p_tuple):
     return True
 
 
+# @pytest.skip()
 def test_cli():
     """Confirm the CLI works as expecte"""
     test_file_heavy = get_file("catnap_aa_heavy_sample.fasta")

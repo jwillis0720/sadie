@@ -1,18 +1,11 @@
 """The setup script."""
 import sys
-from glob import glob
-from os.path import splitext, basename
-from setuptools import setup, find_packages
+from setuptools import setup
 from setuptools.command.test import test
 
 
-with open("README.md") as readme_file:
-    readme = readme_file.read()
-requirements = open("requirements.txt").readlines()
-
-
 # From https://stackoverflow.com/questions/45150304/how-to-force-a-python-wheel-to-be-platform-specific-when-building-it
-# Tell bdsit wheel to be platform specific even though we arent compiling
+# Tell bdsit wheel to be platform specific even though we arent compiling extensions
 try:
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
@@ -44,31 +37,7 @@ class PyTest(test):
 
 # great info
 # https://stackoverflow.com/questions/50155464/using-pytest-with-a-src-layer
-
 setup(
-    name="sadie-antibody",
-    version="0.2.11",
-    python_requires=">=3.6",
-    long_description_content_type="text/markdown",
-    description="sadie: The Complete Antibody Library",
-    author="Jordan R Willis",
-    author_email="jwillis0720@gmail.com",
-    url="https://github.com/jwillis0720/sadie",
-    package_dir={"": "src"},
-    packages=find_packages(where="src"),
-    py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
-    include_package_data=True,
-    install_requires=requirements,
-    zip_safe=False,
-    keywords=["airr", "annotating", "antibodies"],
-    entry_points={
-        "console_scripts": [
-            "airr=sadie.airr.app:run_airr",
-            "make-reference=sadie.reference.app:make_igblast_reference",
-            "make-genebank=sadie.reference.app:make_genebank_files_from_dbma",
-            "anarci=sadie.anarci.app:run_anarci",
-        ]
-    },
     test_suite="tests",
     cmdclass={"test": PyTest, "bdist_wheel": bdist_wheel},
 )

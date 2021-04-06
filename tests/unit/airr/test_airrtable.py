@@ -82,7 +82,7 @@ def test_airrtable_init():
 
 def test_scfv_airrtable():
     airr_api = Airr("human")
-    scfv_airr_table = airr_api.run_file(fixture_file("fasta_inputs/scfv.fasta"), scfv=True)
+    scfv_airr_table = airr_api.run_fasta(fixture_file("fasta_inputs/scfv.fasta"), scfv=True)
     heavy, light = ScfvAirrTable.deconstruct_scfv(scfv_airr_table)
     assert type(heavy) == AirrTable
     assert type(light) == AirrTable

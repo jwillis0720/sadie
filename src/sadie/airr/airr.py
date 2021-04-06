@@ -1,30 +1,28 @@
 """Main Objects for Interacting with Airr"""
-import bz2
-import gzip
 import logging
 import os
-import shutil
 import tempfile
 
 # Std library
 import warnings
 from pathlib import Path
 from typing import Generator, List, Tuple, Union
-
-import filetype
+from types import GeneratorType
+import itertools
 import pandas as pd
 
 # third party
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from Bio.SeqIO.Interfaces import SequenceIterator
 
-from ..reference.yaml import YamlRef
-from .airrtable import AirrTable, ScfvAirrTable
-from ..anarci import Anarci
 
 # Module level
 from .igblast import IgBLASTN, ensure_prefix_to
+from ..anarci import Anarci
+from ..reference.yaml import YamlRef
+from .airrtable import AirrTable, ScfvAirrTable
 
 logger = logging.getLogger("AIRR")
 
@@ -232,7 +230,6 @@ class GermlineData:
         list
            available datasets (common_name, custom|imgt, functional|all)
         """
-
         y = YamlRef()
         db_types = []
         for database_type in y.yaml:
@@ -240,29 +237,22 @@ class GermlineData:
                 for common in y.yaml[database_type][functional]:
                     if (common, database_type, functional) not in db_types:
                         db_types.append((common, database_type, functional))
-        # functional = list(
-        #     filter(
-        #         lambda x: x["functional"] == "F",
-        #     )
-        # )
-        # database_types_all_data = set(map(lambda x: (x["common"], x["source"], "all"), loaded_database))
-        # database_types_functional_data = set(map(lambda x: (x["common"], x["source"], "functional"), functional))
         return db_types
 
 
 class Airr:
-    """Immune repertoire and single sequence data AIRR (adaptive immune receptor repertoire)
+    """Immune repertoire data using AIRR standardss(adaptive immune receptor repertoire)
 
     Examples
     --------
 
-    Only run on single sequence
+    Run AIRR on single sequence
     >>> pg9_seq = CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
-              CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
-              GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
-              AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
-              TTTGTTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
-              TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC
+                  CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
+                  GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
+                  AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
+                  TTGTTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTATT
+                  ATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC
     >>> air_api = Airr("human")
     >>> airr_table = air_api.run_single("PG9", pg9_seq)
     >>> airr_table
@@ -274,7 +264,7 @@ class Airr:
 
     >>> pg9_multiple_seqs = list(SeqIO.parse('tests/fixtures/fasta_inputs/PG9_H_multiple.fasta','fasta'))
     >>> air_api = Airr("human")
-    >>> air_api.run_multiple(pg9_multiple_seqs)
+    >>> air_api.run_records(pg9_multiple_seqs)
     sequence_id                                           sequence locus  stop_codon  vj_in_frame  productive  ...  cdr3_end                                 np1 np1_length  np2 np2_length species
     0  GU272045.1  CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGT...   IGH       False         True        True  ...       375  GGCTGGTGGGCCCGACTACCGTAATGGGTACAAC         34  NaN          0   human
     1  GU272045.1  CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGT...   IGH       False         True        True  ...       375  GGCTGGTGGGCCCGACTACCGTAATGGGTACAAC         34  NaN          0   human
@@ -283,7 +273,7 @@ class Airr:
     Or run directly on a file
 
     >>> air_api = Airr("human")
-    >>> air_api.run_file('tests/fixtures/fasta_inputs/PG9_H_multiple.fasta')
+    >>> air_api.run_fasta('tests/fixtures/fasta_inputs/PG9_H_multiple.fasta')
     sequence_id                                           sequence locus  stop_codon  vj_in_frame  productive  ...  cdr3_end                                 np1 np1_length  np2 np2_length species
     0  GU272045.1  CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGT...   IGH       False         True        True  ...       375  GGCTGGTGGGCCCGACTACCGTAATGGGTACAAC         34  NaN          0   human
     1  GU272045.1  CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGT...   IGH       False         True        True  ...       375  GGCTGGTGGGCCCGACTACCGTAATGGGTACAAC         34  NaN          0   human
@@ -409,7 +399,7 @@ class Airr:
             with tempfile.NamedTemporaryFile(dir=self.temp_directory) as tmpfile:
                 record = SeqRecord(Seq(seq), id=str(seq_id))
                 SeqIO.write(record, tmpfile.name, "fasta")
-                _results = self.run_file(tmpfile.name, scfv=True)
+                _results = self.run_fasta(tmpfile.name, scfv=True)
             return _results
 
     def run_dataframe(
@@ -455,7 +445,7 @@ class Airr:
 
         if return_join:
             dataframe[seq_id_field] = dataframe[seq_id_field].astype(str)
-            _df = self.run_multiple(_get_seq_generator(), scfv=scfv).table
+            _df = self.run_records(_get_seq_generator(), scfv=scfv).table
             # convert seq id field to stry stince sequence_id is cast to string
             return dataframe.merge(
                 _df,
@@ -463,15 +453,17 @@ class Airr:
                 right_on="sequence_id",
             )
         else:
-            return self.run_multiple(_get_seq_generator(), scfv=scfv)
+            return self.run_records(_get_seq_generator(), scfv=scfv)
 
-    def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> Union[AirrTable, ScfvAirrTable]:
-        """Run multiple seq records
+    def run_records(
+        self, seqrecords: Union[List[SeqRecord], SequenceIterator, Generator, itertools.chain], scfv=False
+    ) -> Union[AirrTable, ScfvAirrTable]:
+        """Run Airr annotation on seq records
 
         Parameters
         ----------
-        seqrecords : List[SeqRecord]
-            A list of sequence records.
+        seqrecords : Union[List[SeqRecord],SequenceIterator]
+            A list of sequence records or a SequenceIterator from Bio.SeqIO.parse
 
         Returns
         -------
@@ -483,18 +475,29 @@ class Airr:
         TypeError
             if you don't pass a list of sequences
         """
-        if not isinstance(seqrecords, (list, SeqIO.FastaIO.FastaIterator, Generator)):
-            raise TypeError("seqrecords must be of type {} pased {}".format(list, type(seqrecords)))
+
+        # did they pass a sequence type iterator
+        is_iterator = isinstance(seqrecords, SequenceIterator)
+        is_list_of_seqs = False
+        is_generator = isinstance(seqrecords, GeneratorType) or isinstance(seqrecords, itertools.chain)
+        if isinstance(seqrecords, List):
+            if all([isinstance(x, SeqRecord) for x in seqrecords]):
+                is_list_of_seqs = True
+
+        if not any([is_iterator, is_list_of_seqs, is_generator]):
+            raise TypeError(
+                f"seqrecords must be an instance of {SequenceIterator} or be a list of {SeqRecord} not {type(seqrecords)}"
+            )
 
         # write to tempfile
-        # dont delete since run file will handle the deletion
         with tempfile.NamedTemporaryFile(suffix=".fasta", dir=self.temp_directory) as temp_fasta:
             SeqIO.write(seqrecords, temp_fasta.name, "fasta")
-            logger.info(f"Running tempfile {temp_fasta.name}")
-            results = self.run_file(temp_fasta.name, scfv=scfv)
+            logger.info("Running AIRR annotation on records")
+            logger.debug(f"Running tempfile {temp_fasta.name}")
+            results = self.run_fasta(temp_fasta.name, scfv=scfv)
         return results
 
-    def run_file(self, file: Path, scfv=False) -> Union[AirrTable, Tuple[AirrTable, AirrTable]]:
+    def run_fasta(self, file: Path, scfv=False) -> Union[AirrTable, Tuple[AirrTable, AirrTable]]:
         """Run airr annotator on a fasta file
 
         If it contains a scfv linked pair, it will annotate both heavy and light chain
@@ -515,37 +518,26 @@ class Airr:
         Raises
         ------
         BadRequstedFileType
-            not a fasta or compressed file type
+            not a fasta file
         """
         if isinstance(file, Path):
             # cast to str
             file = str(file)
-        _filetype = filetype.guess(file)
-        if _filetype:
-            logger.info("Guess File Type is %s ", _filetype.extension)
-            if _filetype.extension not in ["gz", "bz2"]:
-                raise BadRequstedFileType(_filetype, ["bzip2", "gzip"])
-            with tempfile.NamedTemporaryFile(delete=False, dir=self.temp_directory) as tmpfile:
-                if _filetype.extension == "gz":
-                    logger.info("File type is compressed gzip")
-                    file_buffer = gzip.open(file)
-                else:
-                    logger.info("File type is compressed bzip2")
-                    file_buffer = bz2.open(file)
-                logger.debug(f"copying {file} to {tmpfile.name}")
-                shutil.copyfileobj(file_buffer, tmpfile)
-                logger.debug(f"copied {file} to {tmpfile.name}")
-                file = tmpfile.name
+
+        if not Path(file).exists:
+            raise FileNotFoundError(file)
+
+        # make sure it's fasta - this will consume the generator but blast has its own fasta parser
+        try:
+            next(SeqIO.parse(file, "fasta"))
+        except Exception:
+            raise BadRequstedFileType("", "fasta")
 
         if scfv:
             logger.info("scfv file was passed")
             scfv_airr = self._run_scfv(file)
             if not scfv_airr.table.empty:
                 scfv_airr.table.insert(2, "species", self.species)
-            if _filetype:
-                os.remove(file)
-            # if self._create_temp:
-            #     shutil.rmtree(self.temp_directory)
             return scfv_airr
 
         else:
@@ -583,8 +575,6 @@ class Airr:
                     self.adapt_penalty = True
                     result = AirrTable(airr_table)
 
-            if _filetype:
-                os.remove(file)
         return result
 
     def _run_scfv(self, file: Path) -> ScfvAirrTable:
@@ -690,7 +680,7 @@ class Airr:
 
     @staticmethod
     def run_mutational_analysis(airrtable: AirrTable, scheme: str) -> AirrTable:
-        """Run a mutational analysis given a numbering scheme. Returns
+        """Run a mutational analysis given a numbering scheme. Returns an AirrTable with added mutational analysis columns
 
         This method is computationally expensive. So it's a stand alone static method. It will take in an airr table
 
@@ -735,7 +725,18 @@ class Airr:
             "sequence_alignment_aa",
         )
         logger.info("Getting ANARCI on alignment tables")
+        sets_of_lists = [
+            set(germline_results_anarci["Id"]),
+            set(mature_results_anarci["Id"]),
+            set(airrtable["sequence_id"]),
+        ]
+        sets_of_lists = sorted(sets_of_lists, key=lambda x: len(x))
+        common_results = set.intersection(*sets_of_lists)
+
+        logger.info(f"Can run mutational analysis on {len(common_results)} out of {len(airrtable)} results")
+        germline_results_anarci = germline_results_anarci.loc[germline_results_anarci["Id"].isin(common_results), :]
         germline_results_anarci_at = germline_results_anarci.get_alignment_table()
+        mature_results_anarci = mature_results_anarci.loc[mature_results_anarci["Id"].isin(common_results), :]
         mature_results_anarci_at = mature_results_anarci.get_alignment_table()
         lookup_dataframe = (
             mature_results_anarci_at.drop(["chain_type", "scheme"], axis=1)
@@ -786,7 +787,3 @@ class Airr:
 
     def __str__(self):
         return self.__repr__()
-
-    def __del__(self):
-        """Destructor"""
-        pass
