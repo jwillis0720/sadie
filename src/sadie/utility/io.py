@@ -86,6 +86,8 @@ class SadieIO:
                 self._output = "stdout"
             else:
                 # add appropriate handle
+                if self.isdir:
+                    raise ValueError("If a directory is input, you have to specify an output name")
                 output_path = self._get_name_without_suffix(self.input)
                 suffix = f".{self.output_format}"
                 if self.output_compressed in ["gz", "bz2"]:
@@ -125,6 +127,8 @@ class SadieIO:
                 inferred_format = output_path.suffixes[0].lstrip(".")
                 if inferred_format != self.output_format:
                     raise ValueError(f"{inferred_format} of {output_path} does not match selected {self.output_format}")
+
+                self.infered_output_format = self.output_format
 
                 # get compression
                 if self.output_compressed == "gz":
@@ -260,10 +264,9 @@ class SadieIO:
             raise TypeError(f"{directory_path} must be directory")
         if not directory_path.exists:
             return FileNotFoundError(f"{directory_path} does not exist")
-        return {
-            file: SadieIO.get_file_type(file, SadieIO.guess_input_compression(file))
-            for file in glob.glob(str(directory_path) + "/*", recursive=True)
-        }
+        glob_files = glob.glob(str(directory_path) + "/*")
+        glob_files = list(filter(lambda x: Path(x).stem != "Icon\r", list(glob_files)))
+        return {file: SadieIO.get_file_type(file, SadieIO.guess_input_compression(file)) for file in glob_files}
 
     @staticmethod
     def guess_sequence_file_type(input_path: Union[Path, str]) -> str:
@@ -293,7 +296,7 @@ class SadieIO:
             _all_files_in_dir = SadieIO.get_file_type_dict(input_path)
             if len(set(_all_files_in_dir.values())) != 1:
                 raise NotImplementedError(
-                    f"all files in {input_path} directory are not of the same type {_all_files_in_dir}"
+                    pformat(f"all files in {input_path} directory are not of the same type {_all_files_in_dir}")
                 )
             else:
                 return list(_all_files_in_dir.values())[0]

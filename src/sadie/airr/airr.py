@@ -8,7 +8,7 @@ import warnings
 from pathlib import Path
 from typing import Generator, List, Tuple, Union
 from types import GeneratorType
-
+import itertools
 import pandas as pd
 
 # third party
@@ -456,7 +456,7 @@ class Airr:
             return self.run_records(_get_seq_generator(), scfv=scfv)
 
     def run_records(
-        self, seqrecords: Union[List[SeqRecord], SequenceIterator, Generator], scfv=False
+        self, seqrecords: Union[List[SeqRecord], SequenceIterator, Generator, itertools.chain], scfv=False
     ) -> Union[AirrTable, ScfvAirrTable]:
         """Run Airr annotation on seq records
 
@@ -479,7 +479,7 @@ class Airr:
         # did they pass a sequence type iterator
         is_iterator = isinstance(seqrecords, SequenceIterator)
         is_list_of_seqs = False
-        is_generator = isinstance(seqrecords, GeneratorType)
+        is_generator = isinstance(seqrecords, GeneratorType) or isinstance(seqrecords, itertools.chain)
         if isinstance(seqrecords, List):
             if all([isinstance(x, SeqRecord) for x in seqrecords]):
                 is_list_of_seqs = True

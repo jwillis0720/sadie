@@ -83,13 +83,13 @@ def airr(ctx, verbose, species, gene_type, db_type, compress, skip_mutation, in_
 
     # handle output
     click.echo(f"Writing {len(airr_table)} to output to {io.output} file")
-    if io.output_format == "csv":
+    if io.infered_output_format == "csv":
         airr_table.to_csv(io.output)
-    elif io.output_format == "tsv":
+    elif io.infered_output_format == "tsv":
         airr_table.to_csv(io.output, sep="\t")
-    elif io.output_format == "feather":
+    elif io.infered_output_format == "feather":
         airr_table.to_feather(io.output)
-    elif io.output_format == "json":
+    elif io.infered_output_format == "json":
         airr_table.to_json(io.output)
     else:
         sys.stdout.write(airr_table.to_csv(sep="\t"))

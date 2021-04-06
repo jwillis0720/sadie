@@ -88,7 +88,7 @@ def test_io_single_files():
 def test_io_folders():
     # infer filetypes of non compressed
     input_file = get_file("fasta_folder")
-    io = SadieIO(input_file, out_format="csv")
+    io = SadieIO(input_file, output_path="test.csv", out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
     assert io.input_compressed == "directory"
@@ -97,7 +97,7 @@ def test_io_folders():
     assert all([isinstance(i, SeqRecord) for i in io.get_input_records()])
 
     input_file = get_file("fastq_folder")
-    io = SadieIO(input_file, out_format="csv")
+    io = SadieIO(input_file, output_path="test.csv", out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
     assert io.input_compressed == "directory"
@@ -106,7 +106,7 @@ def test_io_folders():
     assert all([isinstance(i, SeqRecord) for i in io.get_input_records()])
 
     input_file = get_file("ab1_files")
-    io = SadieIO(input_file, out_format="csv")
+    io = SadieIO(input_file, output_path="test.csv", out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
     assert io.input_compressed == "directory"
