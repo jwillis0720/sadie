@@ -192,6 +192,10 @@ def test_airr_from_file():
     airr_api = Airr("human", temp_directory="a_non_existant_directory")
     airr_api.run_fasta(f, scfv=True)
 
+    # cleanup just in case test fails
+    if Path("a_non_existant_directory").exists():
+        Path("a_non_existant_directory").rmdir()
+
 
 def test_adaptable_penalty():
     test_sequence = """

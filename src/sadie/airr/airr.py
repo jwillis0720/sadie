@@ -527,7 +527,7 @@ class Airr:
         if not Path(file).exists:
             raise FileNotFoundError(file)
 
-        # make sure it's fasta
+        # make sure it's fasta - this will consume the generator but blast has its own fasta parser
         try:
             next(SeqIO.parse(file, "fasta"))
         except Exception:
