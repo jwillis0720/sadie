@@ -65,20 +65,32 @@ def airr(ctx, verbose, species, gene_type, db_type, compress, skip_mutation, in_
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
     airr = Airr(species=species, functional=gene_type, database=db_type)
+
+    # force this so we don't get an error
+    if not output and out_format == "infer":
+        out_format = "csv"
     io = SadieIO(input, output, in_format, out_format, compress)
 
     # airr file handling
     # only having a fasta file uncompressed allow calling directly on run_fasta
     if io.input_file_type == "fasta" and not io.input_compressed:
         airr_table = airr.run_fasta(io.input)
-
     else:
         airr_table = airr.run_records(io.get_input_records())
     # now get mutation analysis
     if not skip_mutation:
         airr_table = Airr.run_mutational_analysis(airr_table, "kabat")
-    if io.output:
-        airr_table.to_csv(output, sep="\t")
+
+    # handle output
+    click.echo(f"Writing {len(airr_table)} to output to {io.output} file")
+    if io.output_format == "csv":
+        airr_table.to_csv(io.output)
+    elif io.output_format == "tsv":
+        airr_table.to_csv(io.output, sep="\t")
+    elif io.output_format == "feather":
+        airr_table.to_feather(io.output)
+    elif io.output_format == "json":
+        airr_table.to_json(io.output)
     else:
         sys.stdout.write(airr_table.to_csv(sep="\t"))
 

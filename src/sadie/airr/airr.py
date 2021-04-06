@@ -17,12 +17,12 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqIO.Interfaces import SequenceIterator
 
-from ..anarci import Anarci
-from ..reference.yaml import YamlRef
-from .airrtable import AirrTable, ScfvAirrTable
 
 # Module level
 from .igblast import IgBLASTN, ensure_prefix_to
+from ..anarci import Anarci
+from ..reference.yaml import YamlRef
+from .airrtable import AirrTable, ScfvAirrTable
 
 logger = logging.getLogger("AIRR")
 
