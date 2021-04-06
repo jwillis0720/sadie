@@ -3,11 +3,9 @@ import sys
 from setuptools import setup
 from setuptools.command.test import test
 
-# requirements = open("requirements.txt").readlines()
-
 
 # From https://stackoverflow.com/questions/45150304/how-to-force-a-python-wheel-to-be-platform-specific-when-building-it
-# Tell bdsit wheel to be platform specific even though we arent compiling
+# Tell bdsit wheel to be platform specific even though we arent compiling extensions
 try:
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
@@ -39,7 +37,6 @@ class PyTest(test):
 
 # great info
 # https://stackoverflow.com/questions/50155464/using-pytest-with-a-src-layer
-
 setup(
     test_suite="tests",
     cmdclass={"test": PyTest, "bdist_wheel": bdist_wheel},
