@@ -30,19 +30,13 @@ def sadie(ctx):
     default="human",
 )
 @click.option("--gene-type", type=click.Choice(["all", "functional"]), default="all", show_default=True)
-@click.option(
-    "--db-type",
-    type=click.Choice(["imgt", "custom"]),
-    default="imgt",
-    show_default=True,
-    help="Does the input an scfv sequence contain phagemid sequences?",
-)
+@click.option("--db-type", type=click.Choice(["imgt", "custom"]), default="imgt", show_default=True)
 @click.option(
     "--compress",
     "-z",
-    type=click.Choice(["gzip", "bzip2"]),
+    type=click.Choice(["gzip", "bzip2", "infer"]),
     help="file compression for output",
-    default=None,
+    default="infer",
 )
 @click.option("--skip-mutation", is_flag=True, help="Skip the somewhat time instansive mutational analysis")
 @click.option(
@@ -54,7 +48,7 @@ def sadie(ctx):
 )
 @click.option(
     "--out-format",
-    type=click.Choice(["infer", "json", "csv", "tsv", "feather"]),
+    type=click.Choice(["infer", "json", "csv", "tsv", "feather", "stdout"]),
     help="output file type format. Default is to infer from output argument",
     default="infer",
     show_default=True,
