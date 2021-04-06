@@ -1,11 +1,9 @@
 """The setup script."""
 import sys
-from glob import glob
-from os.path import splitext, basename
-from setuptools import setup, find_packages
+from setuptools import setup
 from setuptools.command.test import test
 
-requirements = open("requirements.txt").readlines()
+# requirements = open("requirements.txt").readlines()
 
 
 # From https://stackoverflow.com/questions/45150304/how-to-force-a-python-wheel-to-be-platform-specific-when-building-it
@@ -43,18 +41,6 @@ class PyTest(test):
 # https://stackoverflow.com/questions/50155464/using-pytest-with-a-src-layer
 
 setup(
-    package_dir={"": "src"},
-    packages=find_packages(where="src"),
-    py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
-    include_package_data=True,
-    install_requires=requirements,
-    zip_safe=False,
-    keywords=["airr", "annotating", "antibodies"],
-    entry_points={
-        "console_scripts": [
-            "sadie=sadie.app:sadie",
-        ]
-    },
     test_suite="tests",
     cmdclass={"test": PyTest, "bdist_wheel": bdist_wheel},
 )
