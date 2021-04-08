@@ -704,6 +704,9 @@ class Airr:
         if not isinstance(airrtable, AirrTable):
             raise TypeError(f"{type(airrtable)} must be of type AirrTable")
 
+        if not airrtable.table.index.is_monotonic_increasing:
+            raise IndexError(f"{airrtable.table.index} must be monotonic increasing")
+
         # create anarci api
         logger.info("Running ANARCI on germline alignment")
         anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"])
