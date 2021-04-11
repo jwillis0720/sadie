@@ -256,8 +256,9 @@ class Airr:
         functional="functional",
         database="imgt",
         v_gene_penalty=-1,
-        d_gene_panalty=-1,
+        d_gene_penalty=-1,
         j_gene_penalty=-2,
+        allow_vdj_overlap=False,
         temp_directory="",
     ):
         """Airr constructor
@@ -267,43 +268,66 @@ class Airr:
         species : str
             the species to annotate against, ex. 'human
         igblast_exe : str, optional
-            the executable. Can be a full path but has to be in $PATH, by default "igblastn"
-        functional : str,
-            run on only functional genes
-        database : str,
-           custom or imgt database
+            override sadie package executable has to be in $PATH
+        adaptable : bool, optional
+            turn on adaptable penalties, by default True
+        functional : str, optional
+            run on functional germline genes or all genes, by default "functional"
+        database : str, optional
+            run on custom or imgt database, by default "imgt"
+        v_gene_penalty : int, optional
+            the penalty for mismatched v gene nt, by default -1
+        d_gene_penalty : int, optional
+            the penalty for mismatched d gene nt, by default -1
+        j_gene_penalty : int, optional
+            the penalty for mismatched j gene nt, by default -2
+        allow_vdj_overlap : bool, optional
+            allow vdj overlap genes, by default False
+        temp_directory : str, optional
+            the temporary working directory, by default uses your enviroments tempdir
 
         Raises
         ------
         BadSpecies
-            If you ask for a species that does not have a reference dataset, ex. robot
+            If you ask for a species that does not have a reference dataset, ex. robot or database=custom,species=human
         """
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
 
         # quickly check if we have chosen bad species
-        _available_datasets = GermlineData.get_available_datasets()
-        _chosen_datasets = (species.lower(), database.lower(), functional.lower())
-        if _chosen_datasets not in _available_datasets:
-            raise BadDataSet(_chosen_datasets, _available_datasets)
 
-        # if not, proceed
+        # the setter handles all the logic behind choosign the correct executables
         self.executable = igblast_exe
         self.igblast = IgBLASTN(self.executable)
-        # Can catch bad executables here
 
         # Properties of airr that will be shared with IgBlast class
-        self.v_gene_penalty = v_gene_penalty
-        self.d_gene_penalty = d_gene_panalty
-        self.j_gene_penalty = j_gene_penalty
+        self._v_gene_penalty = v_gene_penalty
+        self._d_gene_penalty = d_gene_penalty
+        self._j_gene_penalty = j_gene_penalty
+        self._allow_vdj_overlap = allow_vdj_overlap
+
+        # if we set allow_vdj, we have to adjust penalties
+        if self._allow_vdj_overlap:
+            if self._d_gene_penalty != -4:
+                self._d_gene_penalty = -4
+                logger.warning("Allow V(D)J overlap, d_gene_penalty set to -4")
+            if self._j_gene_penalty != -3:
+                self._j_gene_penalty = -3
+                logger.warning("Allow V(D)J overlap, j_gene_penalty set to -3")
 
         # Properties that will be passed to germline Data Class.
         self.species = species
         self.functional = functional
         self.database = database
 
-        # Set germline data and setup igblast
+        # Check if this requested dataset is available
+        _available_datasets = GermlineData.get_available_datasets()
+        _chosen_datasets = (species.lower(), database.lower(), functional.lower())
+        if _available_datasets not in _chosen_datasets:
+            raise BadDataSet(_chosen_datasets, _available_datasets)
+
+        # set the germline data
         self.germline_data = GermlineData(self.species, functional=functional, database=database)
 
         # This will set all the igblast params given the Germline Data class whcih validates them
@@ -313,10 +337,14 @@ class Airr:
         self.igblast.germline_db_j = self.germline_data.j_gene_dir
         self.igblast.aux_path = self.germline_data.aux_path
         self.igblast.organism = species
-        self.igblast.v_penalty = self.v_gene_penalty
-        self.igblast.d_penalty = self.d_gene_penalty
-        self.igblast.j_penalty = self.j_gene_penalty
 
+        # setting penalties
+        self.igblast.v_penalty = self._v_gene_penalty
+        self.igblast.d_penalty = self._d_gene_penalty
+        self.igblast.j_penalty = self._j_gene_penalty
+        self.allow_vdj_overlap = self._allow_vdj_overlap
+
+        # set local instance and igblast temp dir instance
         self.igblast.temp_dir = temp_directory
         self.temp_directory = temp_directory
 
@@ -337,6 +365,23 @@ class Airr:
         # Init pre run check to make sure everything is good
         # We don't have to do this now as it happens at execution.
         self.igblast._pre_check()
+
+    @property
+    def igblast(self) -> IgBLASTN:
+        """Get IgBLAST instance
+
+        Returns
+        -------
+        IgBLASTN
+            igblastn instance
+        """
+        return self._igblast
+
+    @igblast.setter
+    def igblast(self, igblast: IgBLASTN):
+        if not isinstance(igblast, IgBLASTN):
+            raise TypeError(f"{igblast} must be an instance of {IgBLASTN}")
+        self._igblast = igblast
 
     @property
     def executable(self) -> Path:

@@ -3,8 +3,9 @@ from math import nan
 from pathlib import Path
 
 import pandas as pd
+import pytest
 from pkg_resources import resource_filename
-from sadie.airr import constants, AirrTable, Airr
+from sadie.airr import Airr, AirrTable, constants
 
 
 def fixture_file(file):
@@ -230,6 +231,7 @@ def make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+@pytest.mark.skip(reason="integration tests will change under this active development")
 def test_imgt_integration():
     # sadie annotate
     file = fixture_file("OAS_subsample_good_anarci.fasta")
@@ -261,7 +263,8 @@ def test_imgt_integration():
     pd.testing.assert_frame_equal(compare, integration_comparison)
 
 
-def test_catnap_heavy_integration():
+@pytest.mark.skip(reason="integration tests will change under this active development")
+def test_catnap_integration():
     heavy_file = fixture_file("catnap_nt_heavy.fasta")
     light_file = fixture_file("catnap_nt_light.fasta")
     airr_api = Airr(species="human", database="imgt", functional="functional")
