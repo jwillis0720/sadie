@@ -1,67 +1,36 @@
-"""Main Objects for Interacting with Airr"""
+"""SADIE Airr module"""
+# Std library
+import itertools
 import logging
 import os
+import platform
+import shutil
 import tempfile
-
-# Std library
 import warnings
 from pathlib import Path
-from typing import Generator, List, Tuple, Union
 from types import GeneratorType
-import itertools
-import pandas as pd
+from typing import Generator, List, Tuple, Union
+
 
 # third party
+import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 from Bio.SeqIO.Interfaces import SequenceIterator
+from Bio.SeqRecord import SeqRecord
 
 
-# Module level
-from .igblast import IgBLASTN, ensure_prefix_to
+# package/module level
 from ..anarci import Anarci
 from ..reference.yaml import YamlRef
 from .airrtable import AirrTable, ScfvAirrTable
+from .igblast import IgBLASTN, ensure_prefix_to
+from .exceptions import BadIgBLASTExe, BadDataSet, BadRequstedFileType
 
 logger = logging.getLogger("AIRR")
 
 # Get out of here with your partial codon warnigns
 warnings.filterwarnings("ignore", "Partial codon")
-
-
-class Error(Exception):
-    """Base class for exceptions in this module."""
-
-
-class BadDataSet(Error):
-    """Exception raised for annotating a bad species
-
-    Attributes:
-    """
-
-    def __init__(self, requested_type, accepted_types):
-        super().__init__()
-        self.requested_type = requested_type
-        self.accepted_types = accepted_types
-
-    def __str__(self):
-        return "{} dataset, avail datasets{}".format(self.requested_type, sorted(self.accepted_types))
-
-
-class BadRequstedFileType(Error):
-    """Exception raised for unsupported file types
-
-    Attributes:
-    """
-
-    def __init__(self, requested_type, accepted_types):
-        super().__init__()
-        self.requested_type = requested_type
-        self.accepted_types = accepted_types
-
-    def __str__(self):
-        return "{} file passed, only accepts {}".format(self.requested_type, self.accepted_types)
 
 
 class GermlineData:
@@ -286,6 +255,10 @@ class Airr:
         adaptable=True,
         functional="functional",
         database="imgt",
+        v_gene_penalty=-1,
+        d_gene_penalty=-1,
+        j_gene_penalty=-2,
+        allow_vdj_overlap=False,
         temp_directory="",
     ):
         """Airr constructor
@@ -295,47 +268,92 @@ class Airr:
         species : str
             the species to annotate against, ex. 'human
         igblast_exe : str, optional
-            the executable. Can be a full path but has to be in $PATH, by default "igblastn"
-        functional : str,
-            run on only functional genes
-        database : str,
-           custom or imgt database
+            override sadie package executable has to be in $PATH
+        adaptable : bool, optional
+            turn on adaptable penalties, by default True
+        functional : str, optional
+            run on functional germline genes or all genes, by default "functional"
+        database : str, optional
+            run on custom or imgt database, by default "imgt"
+        v_gene_penalty : int, optional
+            the penalty for mismatched v gene nt, by default -1
+        d_gene_penalty : int, optional
+            the penalty for mismatched d gene nt, by default -1
+        j_gene_penalty : int, optional
+            the penalty for mismatched j gene nt, by default -2
+        allow_vdj_overlap : bool, optional
+            allow vdj overlap genes, by default False
+        temp_directory : str, optional
+            the temporary working directory, by default uses your enviroments tempdir
 
         Raises
         ------
         BadSpecies
-            If you ask for a species that does not have a reference dataset, ex. robot
+            If you ask for a species that does not have a reference dataset, ex. robot or database=custom,species=human
         """
-        # Init igblast api module
+
+        # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
 
         # quickly check if we have chosen bad species
+
+        # the setter handles all the logic behind choosign the correct executables
+        self.executable = igblast_exe
+        self.igblast = IgBLASTN(self.executable)
+
+        # Properties of airr that will be shared with IgBlast class
+        self._v_gene_penalty = v_gene_penalty
+        self._d_gene_penalty = d_gene_penalty
+        self._j_gene_penalty = j_gene_penalty
+        self._allow_vdj_overlap = allow_vdj_overlap
+
+        # if we set allow_vdj, we have to adjust penalties
+        if self._allow_vdj_overlap:
+            if self._d_gene_penalty != -4:
+                self._d_gene_penalty = -4
+                logger.warning("Allow V(D)J overlap, d_gene_penalty set to -4")
+            if self._j_gene_penalty != -3:
+                self._j_gene_penalty = -3
+                logger.warning("Allow V(D)J overlap, j_gene_penalty set to -3")
+
+        # Properties that will be passed to germline Data Class.
+        self.species = species
+        self.functional = functional
+        self.database = database
+
+        # Check if this requested dataset is available
         _available_datasets = GermlineData.get_available_datasets()
         _chosen_datasets = (species.lower(), database.lower(), functional.lower())
         if _chosen_datasets not in _available_datasets:
             raise BadDataSet(_chosen_datasets, _available_datasets)
 
-        # if not, proceed
-        self.igblast = IgBLASTN()
-        self.species = species
+        # set the germline data
+        self.germline_data = GermlineData(self.species, functional=functional, database=database)
 
-        # Can catch bad executables here
-        self.igblast.executable = igblast_exe
-
-        # Set germline data and setup igblast
-        self.germline_data = GermlineData(species, functional=functional, database=database)
+        # This will set all the igblast params given the Germline Data class whcih validates them
         self.igblast.igdata = self.germline_data.igdata
         self.igblast.germline_db_v = self.germline_data.v_gene_dir
         self.igblast.germline_db_d = self.germline_data.d_gene_dir
         self.igblast.germline_db_j = self.germline_data.j_gene_dir
         self.igblast.aux_path = self.germline_data.aux_path
         self.igblast.organism = species
+
+        # setting penalties
+        self.igblast.v_penalty = self._v_gene_penalty
+        self.igblast.d_penalty = self._d_gene_penalty
+        self.igblast.j_penalty = self._j_gene_penalty
+        self.allow_vdj_overlap = self._allow_vdj_overlap
+
+        # set local instance and igblast temp dir instance
         self.igblast.temp_dir = temp_directory
         self.temp_directory = temp_directory
+
+        # if we set the temp diretory, we need to create it
         if self.temp_directory:
             if not os.path.exists(temp_directory):
                 os.makedirs(temp_directory)
 
+        # if not, the tempfile class houses where the users system defaults to store temporary stuff
         else:
             self.temp_directory = tempfile.gettempdir()
             logger.info(f"Temp dir - {self.temp_directory}")
@@ -348,6 +366,70 @@ class Airr:
         # We don't have to do this now as it happens at execution.
         self.igblast._pre_check()
 
+    @property
+    def igblast(self) -> IgBLASTN:
+        """Get IgBLAST instance
+
+        Returns
+        -------
+        IgBLASTN
+            igblastn instance
+        """
+        return self._igblast
+
+    @igblast.setter
+    def igblast(self, igblast: IgBLASTN):
+        if not isinstance(igblast, IgBLASTN):
+            raise TypeError(f"{igblast} must be an instance of {IgBLASTN}")
+        self._igblast = igblast
+
+    @property
+    def executable(self) -> Path:
+        return self._executable
+
+    @executable.setter
+    def executable(self, path: Path):
+        _executable = "igblastn"
+        # if the user wants us to find the executable
+        if not path:
+            system = platform.system().lower()
+            igblastn_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                f"bin/{system}/{_executable}",
+            )
+            # check if its
+            if os.path.exists(igblastn_path):
+                # check if it's executable
+                if shutil.which(igblastn_path):
+                    igblastn_path = shutil.which(igblastn_path)
+                else:
+                    # If it's not check the access
+                    _access = os.access(igblastn_path, os.X_OK)
+                    raise BadIgBLASTExe(igblastn_path, f"is, this executable? Executable-{_access}")
+            else:  # The package igblastn is not working
+                logger.warning(
+                    f"Can't find igblast executable in {igblastn_path}, with system {system} within package {__package__}. Trying to find system installed hmmer"
+                )
+                igblastn_path = shutil.which(_executable)
+                if not igblastn_path:
+                    raise BadIgBLASTExe(
+                        igblastn_path,
+                        f"Can't find igblastn in package {__package__} or in path {os.environ['PATH']}",
+                    )
+        else:  # User specifed custome path
+            logger.debug(f"User passed custom igblastn {path}")
+            igblastn_path = shutil.which(path)
+            if igblastn_path:
+                self._executable = igblastn_path
+            else:
+                _access = os.access(igblastn_path, os.X_OK)
+                raise BadIgBLASTExe(
+                    igblastn_path,
+                    f"Custom igblastn path is not executable {igblastn_path}, {_access} ",
+                )
+        self._executable = igblastn_path
+
+    # Run methods below
     def run_single(self, seq_id: str, seq: str, scfv=False) -> Union[AirrTable, ScfvAirrTable]:
         """Run a single string sequence
 
@@ -577,6 +659,7 @@ class Airr:
 
         return result
 
+    # private run methods
     def _run_scfv(self, file: Path) -> ScfvAirrTable:
         """An internal method to run a special scfv execution on paired scfv or other linked chains
 

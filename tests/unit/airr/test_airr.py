@@ -107,6 +107,8 @@ def test_airr_single_sequence():
     assert cdr1_ == "GFDFSRQG"
     assert cdr2_ == "IKYDGSEK"
     assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
+
+    # will def change based on penalties, so be careful
     assert v_mutation == 14.0
     assert d_mutation == 17.875
     assert j_mutation == 11.3125
