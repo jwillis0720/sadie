@@ -9,17 +9,31 @@ import os
 import subprocess
 import sys
 import tempfile
+import warnings
+import semantic_version
+from shutil import which
 from io import StringIO
+
 from pathlib import Path
 from typing import List, Union
-import platform
-import shutil
-import warnings
+
+# Third party
 import pandas as pd
 
+# package/module level
 from ..utility.util import is_tool
 from .constants import IGBLAST_AIRR
+from .exceptions import (
+    BadIgBLASTArgument,
+    BadIgBLASTExe,
+    BadIgDATA,
+    MissingIgBLASTArgument,
+    EmtpyFileError,
+    IgBLASTRunTimeError,
+)
 
+
+# get logger in global scope
 logger = logging.getLogger("IgBLAST")
 
 
@@ -63,93 +77,6 @@ def ensure_prefix_to(path: str):
     if not glob.glob(glob_path):
         return False
     return os.path.join(directory_path, basename)
-
-
-class Error(Exception):
-    """Base class for exceptions in this module."""
-
-
-class BadIgBLASTExe(Error):
-    """Exception raised for not finiding the igblast module
-
-    Attributes:
-    """
-
-    def __init__(self, passed_executable, msg):
-        super().__init__()
-        self.passed_arguments = passed_executable
-        self.msg = msg
-
-    def __str__(self):
-        _env = os.environ["PATH"]
-        return f"Cant find IgBLAST {self.passed_arguments}. Check {_env}\n {self.msg}"
-
-
-class EmtpyFileError(Error):
-    """Exception raised for a file passed to igblast being empty
-
-    this is needed because blasts accepts empty files but we will not
-
-    """
-
-    def __init__(self, file):
-        super().__init__()
-        self.passed_arguments = file
-
-    def __str__(self):
-        return "{} is empty".format(self.passed_arguments)
-
-
-class MissingIgBLASTArgument(Error):
-    """Missing a required IgBLAST command argument
-
-    If a required command is missing
-
-    """
-
-    def __init__(self, msg):
-        super().__init__()
-        self.msg = msg
-
-    def __str__(self):
-        return self.msg
-
-
-class BadIgBLASTArgument(Error):
-    """Exception raised for passing incorrect params to an igblast arguments"""
-
-    def __init__(self, passed_arguments, accepted_argumetns):
-        super().__init__()
-        self.passed_arguments = passed_arguments
-        self.accepted_arguments = accepted_argumetns
-
-    def __str__(self):
-        return "Passed argument {}. Only accepts {}".format(self.passed_arguments, self.accepted_arguments)
-
-
-class BadIgDATA(Error):
-    """Exception raised for IgData path (which is crucial) not being found
-
-    Attributes:
-    """
-
-    def __init__(self, passed_arguments):
-        super().__init__()
-        self.passed_arguments = passed_arguments
-
-    def __str__(self):
-        return f"Bad IgDAta path {self.passed_arguments} - please provide where IgDATA is located"
-
-
-class IgBLASTRunTimeError(Error):
-    """Exception raised for Igblast runtime error"""
-
-    def __init__(self, stderr):
-        super().__init__()
-        self.stderr = stderr
-
-    def __str__(self):
-        return "Runtime Error with Blast {}".format(self.stderr.decode("utf-8"))
 
 
 class IgBLASTArgument:
@@ -260,11 +187,11 @@ class IgBLASTN:
 
     IgBLASTN class.  A tool for immunoglobulin (IG) and T cell receptor (TR) V domain sequences from nucletodies.
 
-    This is a lower level class and probably should use airr to interact
+    This is a lower level class and you should probably use sadie.airr to interact
 
     Examples
     --------
-    >>> ig_blast = igblast.IgBLASTN()
+    >>> ig_blast = igblast.IgBLASTN('igblastn')
     >>> germline_ref = "reference/germlines/"
     >>> db_ref = "reference/germlines/blastdb/Ig"
     >>> aux_path = "reference/germlines/aux_data)
@@ -284,6 +211,7 @@ class IgBLASTN:
     # Only allow these attributes
     __slots__ = [
         "_executable",
+        "_version",
         "_min_d_match",
         "_num_v",
         "_num_d",
@@ -311,11 +239,14 @@ class IgBLASTN:
         "_allow_vdj_overlap",
     ]
 
-    def __init__(self):
+    def __init__(self, executable="igblastn"):
         """IgBLASTN with a query. Set everything up with a setter"""
 
-        # setup all the default values
-        self.executable = ""
+        # set the executable dynamically
+        self.executable = executable
+        self._version = self.get_version()
+
+        # setup all the default values if we don't add them
         self.min_d_match = 5
         self.num_v = 3
         self.num_d = 3
@@ -330,12 +261,12 @@ class IgBLASTN:
         self.show_translation = True
         self.extend_5 = True
         self.extend_3 = True
-        self.j_penalty = -2
+        self.j_penalty = -1
         self.v_penalty = -1
-        self.d_penalty = -2
+        self.d_penalty = -1
         self.allow_vdj_overlap = False
 
-        # Make these blank, if they are not set by the caller, then we will complain during runtime.
+        # Make these blank, if they are not set by the caller, then we will complain during runtime. They must be set dynamically
         self._organism = IgBLASTArgument("organism", "organism", "", True)
         self._germline_db_v = IgBLASTArgument("germline_db_v", "germline_db_V", "", True)
         self._germline_db_d = IgBLASTArgument("germline_db_d", "germline_db_D", "", True)
@@ -345,6 +276,13 @@ class IgBLASTN:
         # Igdata is not an official blast argument, it is an enviroment
         self._igdata = ""
         self.temp_dir = "."
+
+    def get_version(self):
+        process = subprocess.run([self.executable, "-version"], capture_output=True)
+        stdout = process.stdout.decode("utf-8")
+        version = stdout.split("\n")[0].split(":")[-1].strip()
+        version = semantic_version.Version(version)
+        return version
 
     @property
     def executable(self) -> Path:
@@ -358,46 +296,15 @@ class IgBLASTN:
         return self._executable
 
     @executable.setter
-    def executable(self, path: Path):
-        _executable = "igblastn"
-        if not path:  # try and use package hmmscan
-            system = platform.system().lower()
-            igblastn_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                f"bin/{system}/{_executable}",
-            )
-            # check if its
-            if os.path.exists(igblastn_path):
-                # check if it's executable
-                if shutil.which(igblastn_path):
-                    self._executable = shutil.which(igblastn_path)
-                else:
-                    # If it's not check the access
-                    _access = os.access(igblastn_path, os.X_OK)
-                    raise BadIgBLASTExe(igblastn_path, f"is, this executable? Executable-{_access}")
-            else:  # The package igblastn is not working
-                logger.warning(
-                    f"Can't find igblast executable in {igblastn_path}, with system {system} within package {__package__}. Trying to find system installed hmmer"
-                )
-                igblastn_path = shutil.which(_executable)
-                if igblastn_path:
-                    self._executable = igblastn_path
-                else:
-                    raise BadIgBLASTExe(
-                        igblastn_path,
-                        f"Can't find igblastn in package {__package__} or in path {os.environ['PATH']}",
-                    )
-        else:  # User specifed custome path
-            logger.debug(f"User passed custom igblastn {path}")
-            igblastn_path = shutil.which(path)
-            if igblastn_path:
-                self._executable = igblastn_path
-            else:
-                _access = os.access(igblastn_path, os.X_OK)
-                raise BadIgBLASTExe(
-                    igblastn_path,
-                    f"Custom igblastn path is not executable {igblastn_path}, {_access} ",
-                )
+    def executable(self, exe: Path):
+        if isinstance(exe, str):
+            exe = Path(exe)
+        exe = which(exe)
+        if not exe:
+            raise BadIgBLASTExe(exe, f"{exe} must exist")
+        if not os.access(exe, os.X_OK):
+            raise BadIgBLASTExe(exe, f"{exe} must be executable")
+        self._executable = Path(exe)
 
     @property
     def temp_dir(self) -> Path:
@@ -884,7 +791,7 @@ class IgBLASTN:
             if blast_arg.required and not (blast_arg.value):
                 raise MissingIgBLASTArgument(f"Missing Blast argument. Need to set IgBLASTN.{blast_arg.name}")
 
-            # # Check the executable
+            #  Check the executable
             if not is_tool(self.executable):
                 raise BadIgBLASTExe(self.executable, "Is not an executable tool")
 
@@ -895,6 +802,7 @@ class IgBLASTN:
                 if not os.path.exists(self.igdata):
                     raise BadIgDATA(self.igdata)
 
+    # Run methods
     def run_file(self, file: Path) -> pd.DataFrame:
         """Run IgBlast on a file
 
@@ -913,19 +821,30 @@ class IgBLASTN:
         EmtpyFileError
            if the fasta file is empty
         IgBLASTRunTimeError
-           for any given runtime error for igblastN
+           for any given runtime error for igblastn
         """
+
+        # because igblast uses IGDATA as the internal file structure, we should pass the enviroment to the subprocess
         local_env = os.environ.copy()
+        local_env["IGDATA"] = self.igdata
+
+        # we want to ensure they actually passed a file with stuff in it
         if os.path.getsize(file) == 0:
             raise EmtpyFileError(file)
-        local_env["IGDATA"] = self.igdata
+
+        # take the cmd and finally add the query file
         cmd = self.cmd
         cmd += ["-query", file]
+
+        # run a precheck to make sure everything passed was working
         self._pre_check()
+
         # while we can certainly do this as an output stream on stdout,
-        # It's probably best to take advantage of IGblast output
+        # It's probably best to take advantage of IGblast output and tempfile
         with tempfile.NamedTemporaryFile(dir=self.temp_dir, suffix="_igblast.tsv") as tmpfile:
             cmd += ["-out", tmpfile.name]
+
+            # if we are using a python < 3.6, we can't udnerstand the capture_output of the subprocess module
             if sys.version_info.minor == 6:
                 process = subprocess.run(cmd, env=local_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 if process.stderr:
@@ -934,16 +853,22 @@ class IgBLASTN:
                 process = subprocess.run(cmd, env=local_env, capture_output=True)
                 if process.stderr:
                     raise IgBLASTRunTimeError(process.stderr)
+            # we read the dataframe from the tempfile, it should always be in .TSV. We can also cast it to IGBLAST_AIRR dtypes to save
+            # so much memory
             df = pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)
-            return df
+        if Path(tmpfile.name).exists():
+            logger.debug(f"{tmpfile.name} was not deleted after it exited scope")
+            Path(tmpfile.name).unlink()
+
+        return df
 
     def run_single(self, q: str) -> pd.DataFrame:
-        """Run Igblast on a single fasta string
+        """Run Igblast on a single fasta string. This works by encoding the string and passing it to stdin which IGBLAST accepts
 
         Parameters
         ----------
         q : str
-            A string fasta, ex ">my_file\nATCACA..."
+            A string fasta, ex ">my_file\nATCACA...", It is much easier to use airr.run_single as it will handle this for you
 
         Returns
         -------
@@ -961,9 +886,12 @@ class IgBLASTN:
             raise BadIgBLASTArgument(type(q), "needs to be instance str")
         if not q:
             raise BadIgBLASTArgument(q, "Input query is null, please provide sequence")
-        # Local Env
+
+        # Same as in run_file, we need IGDATA as an environment vairable, so we can copy and pass to subprocess
         local_env = os.environ.copy()
         local_env["IGDATA"] = self.igdata
+
+        # Again, precheck to make sure all file paths are set accordingly
         self._pre_check()
 
         # run process
@@ -977,10 +905,12 @@ class IgBLASTN:
             )
         else:
             process = subprocess.run(self.cmd, env=local_env, input=q.encode("utf-8"), capture_output=True)
+
+        # We are also captureing a single sequence by stdout and decoding
         stdout = process.stdout.decode("utf-8")
         string_io = StringIO(stdout)
         stderr = process.stderr
-        if process.stderr:
+        if stderr:
             raise IgBLASTRunTimeError(stderr)
         else:
             return pd.read_csv(string_io, sep="\t")
