@@ -164,6 +164,21 @@ def test_run_multiple_scfv():
     assert isinstance(results, ScfvAirrTable)
 
 
+def test_vdj_overlap():
+    pg9_seq = """
+        CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
+        CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
+        GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
+        AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
+        TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
+        TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
+        "\n", ""
+    )
+    air_api = Airr("human", allow_vdj_overlap=True)
+    air_api.run_single("PG9", pg9_seq)
+    assert air_api.igblast.allow_vdj_overlap.value is True
+
+
 def test_airr_from_dataframe():
     """Test we can pass a dataframe to runtime"""
     dog_df = pd.read_csv(get_file("airr_tables/dog_igh.csv.gz"), index_col=0)
