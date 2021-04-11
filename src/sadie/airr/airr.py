@@ -324,7 +324,7 @@ class Airr:
         # Check if this requested dataset is available
         _available_datasets = GermlineData.get_available_datasets()
         _chosen_datasets = (species.lower(), database.lower(), functional.lower())
-        if _available_datasets not in _chosen_datasets:
+        if _chosen_datasets not in _available_datasets:
             raise BadDataSet(_chosen_datasets, _available_datasets)
 
         # set the germline data
