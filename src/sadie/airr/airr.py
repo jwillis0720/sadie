@@ -51,9 +51,9 @@ class GermlineData:
     def __init__(
         self,
         species: str,
-        database="imgt",
-        functional="all",
-        receptor="Ig",
+        database: str = "imgt",
+        functional: str = "all",
+        receptor: str = "Ig",
     ):
         """
 
