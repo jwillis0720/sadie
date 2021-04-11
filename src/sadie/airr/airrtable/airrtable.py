@@ -21,9 +21,9 @@ import pandas as pd
 
 
 # module/package
-from .constants import IGBLAST_AIRR
-from .genbank import GenBank, GenBankFeature
-from ..exceptions import MissingAirrColumns
+from sadie.airr.airrtable.constants import IGBLAST_AIRR
+from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
+from sadie.airr.exceptions import MissingAirrColumns
 
 logger = logging.getLogger("AIRRTable")
 blosum_matrix = matlist.blosum62
