@@ -1,12 +1,15 @@
 """Unit tests for antibody."""
 import logging
 import os
+import platform
 
 # third party
 import pytest
+import semantic_version
 
 # package level
 from sadie import airr
+from sadie.airr.exceptions import BadIgBLASTExe
 
 loger = logging.getLogger()
 
@@ -32,7 +35,11 @@ def test_antibody_igblast_setup():
     """
     testing if we can manually setup IgBlast databases
     """
-    ig_blast = airr.igblast.IgBLASTN()
+    system = platform.system().lower()
+    executable = os.path.join(os.path.dirname(airr.__file__), f"bin/{system}/igblastn")
+
+    ig_blast = airr.igblast.IgBLASTN(executable)
+    assert ig_blast.version == semantic_version.Version("1.17.1")
     germline_ref = os.path.join(os.path.dirname(os.path.abspath(airr.__file__)), "data/germlines")
     assert os.path.exists(germline_ref)
 
@@ -75,12 +82,21 @@ def test_antibody_igblast_setup():
             with pytest.raises(airr.igblast.BadIgBLASTArgument):
                 ig_blast.aux_path = aux_ref
 
+    with pytest.raises(BadIgBLASTExe):
+        # pass an executable that is not igblast
+        airr.igblast.IgBLASTN("ls")
+
 
 def test_antibody_igblast_file_run():
     """
     testing if we can manually run igblast
     """
-    ig_blast = airr.igblast.IgBLASTN()
+
+    # this should be fixture
+    system = platform.system().lower()
+    executable = os.path.join(os.path.dirname(airr.__file__), f"bin/{system}/igblastn")
+
+    ig_blast = airr.igblast.IgBLASTN(executable)
     germline_ref = os.path.join(os.path.dirname(os.path.abspath(airr.__file__)), "data/germlines")
     db_ref = os.path.join(germline_ref, "imgt/all/Ig/blastdb/")
     aux_path = os.path.join(germline_ref, "imgt/aux_db/")

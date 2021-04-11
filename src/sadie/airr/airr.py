@@ -257,7 +257,7 @@ class Airr:
         database="imgt",
         v_gene_penalty=-1,
         d_gene_panalty=-1,
-        j_gene_penalty=-1,
+        j_gene_penalty=-2,
         temp_directory="",
     ):
         """Airr constructor
@@ -289,9 +289,9 @@ class Airr:
             raise BadDataSet(_chosen_datasets, _available_datasets)
 
         # if not, proceed
-        self.igblast = IgBLASTN()
+        self.executable = igblast_exe
+        self.igblast = IgBLASTN(self.executable)
         # Can catch bad executables here
-        self.igblast.executable = igblast_exe
 
         # Properties of airr that will be shared with IgBlast class
         self.v_gene_penalty = v_gene_penalty
@@ -339,10 +339,6 @@ class Airr:
         self.igblast._pre_check()
 
     @property
-    def igblast(self) -> IgBLASTN:
-        return self.igblast
-
-    @property
     def executable(self) -> Path:
         return self._executable
 
@@ -360,7 +356,7 @@ class Airr:
             if os.path.exists(igblastn_path):
                 # check if it's executable
                 if shutil.which(igblastn_path):
-                    self._executable = shutil.which(igblastn_path)
+                    igblastn_path = shutil.which(igblastn_path)
                 else:
                     # If it's not check the access
                     _access = os.access(igblastn_path, os.X_OK)
@@ -370,9 +366,7 @@ class Airr:
                     f"Can't find igblast executable in {igblastn_path}, with system {system} within package {__package__}. Trying to find system installed hmmer"
                 )
                 igblastn_path = shutil.which(_executable)
-                if igblastn_path:
-                    self._executable = igblastn_path
-                else:
+                if not igblastn_path:
                     raise BadIgBLASTExe(
                         igblastn_path,
                         f"Can't find igblastn in package {__package__} or in path {os.environ['PATH']}",
