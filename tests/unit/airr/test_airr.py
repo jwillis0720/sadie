@@ -86,7 +86,7 @@ def test_airr_single_sequence():
         TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
         "\n", ""
     )
-    air_api = Airr("human", d_gene_panalty=-1, j_gene_penalty=-2)
+    air_api = Airr("human")
     airr_table = air_api.run_single("PG9", pg9_seq)
     airr_entry = airr_table.iloc[0]
     cdr3_ = airr_entry["cdr3_aa"]
