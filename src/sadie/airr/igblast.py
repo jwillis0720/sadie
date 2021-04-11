@@ -7,7 +7,6 @@ import glob
 import logging
 import os
 import subprocess
-import sys
 import tempfile
 import warnings
 import semantic_version
@@ -430,6 +429,18 @@ class IgBLASTN:
 
     @organism.setter
     def organism(self, o: str):
+        """Organism
+
+        Parameters
+        ----------
+        o : str
+            an organism string
+
+        Raises
+        ------
+        BadIgBLASTArgument
+            if igblast is not a str
+        """
         # I don't want to hardcode in the organisms here.
         # I will handle that logic at a higher level,
         # this is because blast has no preset organims and it's all about the v,d,j blast paths which are set dynamically
@@ -853,17 +864,11 @@ class IgBLASTN:
         with tempfile.NamedTemporaryFile(dir=self.temp_dir, suffix="_igblast.tsv") as tmpfile:
             cmd += ["-out", tmpfile.name]
 
-            # if we are using a python < 3.6, we can't udnerstand the capture_output of the subprocess module
-            if sys.version_info.minor == 6:
-                process = subprocess.run(cmd, env=local_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                if process.stderr:
-                    raise IgBLASTRunTimeError(process.stderr)
-            else:
-                process = subprocess.run(cmd, env=local_env, capture_output=True)
-                if process.stderr:
-                    raise IgBLASTRunTimeError(process.stderr)
-            # we read the dataframe from the tempfile, it should always be in .TSV. We can also cast it to IGBLAST_AIRR dtypes to save
-            # so much memory
+            process = subprocess.run(cmd, env=local_env, capture_output=True)
+            if process.stderr:
+                raise IgBLASTRunTimeError(process.stderr)
+            # we read the dataframe from the tempfile, it should always be in .TSV.
+            # We can also cast it to IGBLAST_AIRR dtypes to save memory
             df = pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)
         if Path(tmpfile.name).exists():
             logger.debug(f"{tmpfile.name} was not deleted after it exited scope")
@@ -904,16 +909,7 @@ class IgBLASTN:
         self._pre_check()
 
         # run process
-        if sys.version_info.minor == 6:
-            process = subprocess.run(
-                self.cmd,
-                env=local_env,
-                input=q.encode("utf-8"),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-        else:
-            process = subprocess.run(self.cmd, env=local_env, input=q.encode("utf-8"), capture_output=True)
+        process = subprocess.run(self.cmd, env=local_env, input=q.encode("utf-8"), capture_output=True)
 
         # We are also captureing a single sequence by stdout and decoding
         stdout = process.stdout.decode("utf-8")
