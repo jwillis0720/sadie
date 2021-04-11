@@ -280,6 +280,11 @@ class IgBLASTN:
     def get_version(self):
         process = subprocess.run([self.executable, "-version"], capture_output=True)
         stdout = process.stdout.decode("utf-8")
+        if process.stderr:
+            logger.error(
+                f"{self.executable}, has no returned and error when checking version,. Tried igblastn -version: {process.stderr.decode('utf-8')}"
+            )
+            raise BadIgBLASTExe(self.executable, process.stderr.decode("utf-8"))
         version = stdout.split("\n")[0].split(":")[-1].strip()
         version = semantic_version.Version(version)
         return version
@@ -295,15 +300,19 @@ class IgBLASTN:
         """
         return self._executable
 
+    @property
+    def version(self) -> semantic_version.Version:
+        return self._version
+
     @executable.setter
     def executable(self, exe: Path):
         if isinstance(exe, str):
             exe = Path(exe)
-        exe = which(exe)
-        if not exe:
+        full_exe_path = which(exe)
+        if not full_exe_path:
             raise BadIgBLASTExe(exe, f"{exe} must exist")
-        if not os.access(exe, os.X_OK):
-            raise BadIgBLASTExe(exe, f"{exe} must be executable")
+        if not os.access(full_exe_path, os.X_OK):
+            raise BadIgBLASTExe(exe, f"{full_exe_path} must be executable")
         self._executable = Path(exe)
 
     @property
@@ -767,7 +776,7 @@ class IgBLASTN:
     @property
     def cmd(self) -> list:
         """Return the blast cmd that will be run by subprocess"""
-        _cmd = [self.executable]
+        _cmd = [str(self.executable)]
         for blast_arg in self.arguments:
             kv = blast_arg.get_formatted_blast_arg()
             if kv:
@@ -826,7 +835,7 @@ class IgBLASTN:
 
         # because igblast uses IGDATA as the internal file structure, we should pass the enviroment to the subprocess
         local_env = os.environ.copy()
-        local_env["IGDATA"] = self.igdata
+        local_env["IGDATA"] = str(self.igdata)
 
         # we want to ensure they actually passed a file with stuff in it
         if os.path.getsize(file) == 0:
@@ -916,7 +925,7 @@ class IgBLASTN:
             return pd.read_csv(string_io, sep="\t")
 
     def __repr__(self):
-        return "IgBLAST: env IGDATA={} {}".format(self.igdata, " ".join(self.cmd))
+        return "IgBLAST: env IGDATA={} {}".format(str(self.igdata), " ".join(self.cmd))
 
     def __str__(self):
         return self.__repr__()

@@ -86,7 +86,7 @@ def test_airr_single_sequence():
         TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
         "\n", ""
     )
-    air_api = Airr("human")
+    air_api = Airr("human", d_gene_panalty=-1, j_gene_penalty=-2)
     airr_table = air_api.run_single("PG9", pg9_seq)
     airr_entry = airr_table.iloc[0]
     cdr3_ = airr_entry["cdr3_aa"]
@@ -107,6 +107,8 @@ def test_airr_single_sequence():
     assert cdr1_ == "GFDFSRQG"
     assert cdr2_ == "IKYDGSEK"
     assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
+
+    # will def change based on penalties, so be careful
     assert v_mutation == 14.0
     assert d_mutation == 17.875
     assert j_mutation == 11.3125
