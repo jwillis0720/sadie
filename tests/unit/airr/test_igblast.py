@@ -65,7 +65,7 @@ def test_antibody_igblast_setup():
     germline_ref = "reference/germlines/"
 
     # Set data
-    with pytest.raises(airr.igblast.BadIgDATA):
+    with pytest.raises(airr.exceptions.BadIgDATA):
         ig_blast.igdata = germline_ref
         ig_blast._pre_check()
     for function in ["all", "functional"]:
@@ -73,13 +73,13 @@ def test_antibody_igblast_setup():
             db_ref = os.path.join(germline_ref, f"imgt/{function}/Ig/blastdb/")
             internal_ref = os.path.join(germline_ref, f"imgt/{function}/Ig/")
             aux_ref = os.path.join(germline_ref, "imgt/aux_db/")
-            with pytest.raises(airr.igblast.BadIgBLASTArgument):
+            with pytest.raises(airr.exceptions.BadIgBLASTArgument):
                 ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(species))
             with pytest.warns(UserWarning):
                 ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(species))
-            with pytest.raises(airr.igblast.BadIgBLASTArgument):
+            with pytest.raises(airr.exceptions.BadIgBLASTArgument):
                 ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(species))
-            with pytest.raises(airr.igblast.BadIgBLASTArgument):
+            with pytest.raises(airr.exceptions.BadIgBLASTArgument):
                 ig_blast.aux_path = aux_ref
 
     with pytest.raises(BadIgBLASTExe):

@@ -1,44 +1,32 @@
+"""The AirrTable module"""
+# std lib
 import json
 import logging
 import warnings
 from pathlib import Path
 from typing import Tuple, Union
 
-import pandas as pd
-from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
-from Bio import pairwise2
 
-# from Bio.Align import substitution_matrices
+# third party
 with warnings.catch_warnings():
+    from Bio import SeqIO, pairwise2
+    from Bio.SeqRecord import SeqRecord
+
     warnings.simplefilter("ignore")
     from Bio.SubsMat import MatrixInfo as matlist
-from numpy import nan
-from Levenshtein._levenshtein import distance
 
+from Levenshtein._levenshtein import distance
+from numpy import nan
+import pandas as pd
+
+
+# module/package
 from .constants import IGBLAST_AIRR
 from .genbank import GenBank, GenBankFeature
+from ..exceptions import MissingAirrColumns
 
 logger = logging.getLogger("AIRRTable")
 blosum_matrix = matlist.blosum62
-
-
-class Error(Exception):
-    """Base class for exceptions in this module."""
-
-
-class MissingAirrColumns(Error):
-    """Exception raised for not finiding the igblast module
-
-    Attributes:
-    """
-
-    def __init__(self, missing_columns):
-        super().__init__()
-        self.missing_columns = missing_columns
-
-    def __str__(self):
-        return "Must have all AIRR columns defined, missing {}".format(self.missing_columns)
 
 
 def _get_v_aa_distance(X) -> int:
