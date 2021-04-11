@@ -243,7 +243,7 @@ class IgBLASTN:
 
         # set the executable dynamically
         self.executable = executable
-        self._version = self.get_version()
+        self._version = self._get_version()
 
         # setup all the default values if we don't add them
         self.min_d_match = 5
@@ -276,7 +276,14 @@ class IgBLASTN:
         self._igdata = ""
         self.temp_dir = "."
 
-    def get_version(self):
+    def _get_version(self) -> semantic_version.Version:
+        """Private method to parse igblast -version and get semantic_version
+
+        Returns
+        -------
+        semantic_version.Version
+            the igblast version
+        """
         process = subprocess.run([self.executable, "-version"], capture_output=True)
         stdout = process.stdout.decode("utf-8")
         if process.stderr:
@@ -285,7 +292,10 @@ class IgBLASTN:
             )
             raise BadIgBLASTExe(self.executable, process.stderr.decode("utf-8"))
         version = stdout.split("\n")[0].split(":")[-1].strip()
-        version = semantic_version.Version(version)
+        try:
+            version = semantic_version.Version(version)
+        except ValueError:
+            raise BadIgBLASTExe(self.executable, f"semantic version can't parse {version}")
         return version
 
     @property
