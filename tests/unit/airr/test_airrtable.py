@@ -8,7 +8,7 @@ from pkg_resources import resource_filename
 import pandas as pd
 
 from sadie.airr import AirrTable, Airr, ScfvAirrTable
-from sadie.airr.airrtable import MissingAirrColumns
+from sadie.airr.exceptions import MissingAirrColumns
 from Bio.SeqRecord import SeqRecord
 
 logger = logging.getLogger()

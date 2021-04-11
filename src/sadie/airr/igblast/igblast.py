@@ -20,9 +20,9 @@ from typing import List, Union
 import pandas as pd
 
 # package/module level
-from ..utility.util import is_tool
-from .constants import IGBLAST_AIRR
-from .exceptions import (
+from sadie.utility.util import is_tool
+from sadie.airr.airrtable.constants import IGBLAST_AIRR
+from sadie.airr.exceptions import (
     BadIgBLASTArgument,
     BadIgBLASTExe,
     BadIgDATA,
@@ -260,7 +260,7 @@ class IgBLASTN:
         self.show_translation = True
         self.extend_5 = True
         self.extend_3 = True
-        self.j_penalty = -1
+        self.j_penalty = -2
         self.v_penalty = -1
         self.d_penalty = -1
         self.allow_vdj_overlap = False
@@ -705,7 +705,7 @@ class IgBLASTN:
 
     @allow_vdj_overlap.setter
     def allow_vdj_overlap(self, allow: bool):
-        if self.j_penalty != -3 and self.d_penalty != -4 and allow:
+        if self.j_penalty.value != -3 and self.d_penalty.value != -4 and allow:
             warnings.warn(
                 f"Allows vdj overlap set but j penalty and d penalty need to be -3 and -4, now are {self.j_penalty}, {self.d_penalty}",
                 UserWarning,
