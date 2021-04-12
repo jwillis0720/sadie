@@ -544,10 +544,7 @@ class Airr:
 
         # Grab the Light Chains out of the set
         light_chain_table = pd.concat(
-            [
-                result_a[result_a["locus"].isin(["IGK", "IGL"])],
-                result_b[result_b["locus"].isin(["IGK", "IGL"])],
-            ]
+            [result_a[result_a["locus"].isin(["IGK", "IGL"])], result_b[result_b["locus"].isin(["IGK", "IGL"])]]
         )
 
         # this ia a bit of an edge case but if eithere of the two chains are empty, we can fill it with
@@ -679,13 +676,7 @@ class Airr:
         mature_results_anarci["mutations"] = mutation_arrays
         return AirrTable(
             airrtable.table.merge(
-                mature_results_anarci.rename({"Id": "sequence_id"}, axis=1)[
-                    [
-                        "sequence_id",
-                        "scheme",
-                        "mutations",
-                    ]
-                ],
+                mature_results_anarci.rename({"Id": "sequence_id"}, axis=1)[["sequence_id", "scheme", "mutations"]],
                 on="sequence_id",
             )
         )
