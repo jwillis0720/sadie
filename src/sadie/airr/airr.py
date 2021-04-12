@@ -22,7 +22,7 @@ from Bio.SeqRecord import SeqRecord
 
 # package/module level
 from sadie.anarci import Anarci
-from sadie.airr.airrtable import AirrTable, ScfvAirrTable
+from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.airr.igblast import IgBLASTN, GermlineData
 from sadie.airr.exceptions import BadIgBLASTExe, BadDataSet, BadRequstedFileType
 
@@ -245,13 +245,12 @@ class Airr:
             else:
                 _access = os.access(igblastn_path, os.X_OK)
                 raise BadIgBLASTExe(
-                    igblastn_path,
-                    f"Custom igblastn path is not executable {igblastn_path}, {_access} ",
+                    igblastn_path, f"Custom igblastn path is not executable {igblastn_path}, {_access} "
                 )
         self._executable = igblastn_path
 
     # Run methods below
-    def run_single(self, seq_id: str, seq: str, scfv=False) -> Union[AirrTable, ScfvAirrTable]:
+    def run_single(self, seq_id: str, seq: str, scfv=False) -> Union[AirrTable, LinkedAirrTable]:
         """Run a single string sequence
 
         Parameters
@@ -263,7 +262,7 @@ class Airr:
 
         Returns
         -------
-        Union[AirrTable, ScfvAirrTable]
+        Union[AirrTable, ]
             Either a single airrtable for a single chain or an ScFV airrtable
         """
         if not isinstance(seq_id, str):
@@ -275,11 +274,11 @@ class Airr:
             result.insert(2, "species", self.species)
             result = AirrTable(result)
 
-            # There is liable sequences
-            if (result["note"].str.lower() != "liable").all():
+            # There is not liable sequences
+            if result[result["liable"]].empty:
                 return result
             else:
-                self._liable_seqs = set(result[result["note"].str.lower() == "liable"].sequence_id)
+                self._liable_seqs = set(result["liable"].sequence_id)
 
                 # If we allow adaption,
                 if self.adapt_penalty:
@@ -360,7 +359,7 @@ class Airr:
 
     def run_records(
         self, seqrecords: Union[List[SeqRecord], SequenceIterator, Generator, itertools.chain], scfv=False
-    ) -> Union[AirrTable, ScfvAirrTable]:
+    ) -> Union[AirrTable, LinkedAirrTable]:
         """Run Airr annotation on seq records
 
         Parameters
@@ -370,7 +369,7 @@ class Airr:
 
         Returns
         -------
-        Union[AirrTable, ScfvAirrTable]
+        Union[AirrTable, ]
             Either a single airrtable for a single chain or an ScFV airrtable
 
         Raises
@@ -415,7 +414,7 @@ class Airr:
 
         Returns
         -------
-        Union[AirrTable, ScfvAirrTable]
+        Union[AirrTable, ]
             Either a single airrtable for a single chain or an ScFV AirrTable
 
         Raises
@@ -439,8 +438,8 @@ class Airr:
         if scfv:
             logger.info("scfv file was passed")
             scfv_airr = self._run_scfv(file)
-            if not scfv_airr.table.empty:
-                scfv_airr.table.insert(2, "species", self.species)
+            if not scfv_airr.empty:
+                scfv_airr.insert(2, "species", self.species)
             return scfv_airr
 
         else:
@@ -449,7 +448,7 @@ class Airr:
             logger.info(f"Ran blast on  {file}")
             result.insert(2, "species", self.species)
             result = AirrTable(result)
-            if (result["note"].str.lower() == "liable").any():
+            if result["liable"].any():
                 self._liable_seqs = set(result[result["note"].str.lower() == "liable"].sequence_id)
                 # If we allow adaption,
                 if self.adapt_penalty:
@@ -481,13 +480,13 @@ class Airr:
         return result
 
     # private run methods
-    def _run_scfv(self, file: Path) -> ScfvAirrTable:
-        """An internal method to run a special scfv execution on paired scfv or other linked chains
+    def _run_scfv(self, file: Path) -> LinkedAirrTable:
+        """An internal method kito run a special scfv execution on paired scfv or other linked chains
 
 
         Returns
         -------
-            ScfvAirrTable - A joined heavy light airr table
+             - A joined heavy light airr table
         """
         # Do one round of blast on a file
         result_a = self.igblast.run_file(file)
@@ -508,8 +507,8 @@ class Airr:
             # Now run airr again, but this time on the remaining sequencess
             result_b = self.igblast.run_file(tmpfile.name)
 
-        airr_table_a = AirrTable(result_a).table
-        airr_table_b = AirrTable(result_b).table
+        airr_table_a = AirrTable(result_a)
+        airr_table_b = AirrTable(result_b)
 
         # since we removed the seqeunce out of result B to run it, lets adjust the numerical columns
         adjuster = airr_table_a["sequence"].str.len() - airr_table_b["sequence"].str.len()
@@ -565,7 +564,9 @@ class Airr:
         light_chain_table = light_chain_table.groupby(["sequence_id", "sequence"]).head(1)
         _heavy_airr = AirrTable(heavy_chain_table.reset_index(drop=True))
         _light_airr = AirrTable(light_chain_table.reset_index(drop=True))
-        return ScfvAirrTable(_heavy_airr, _light_airr)
+        linked_table = _heavy_airr.merge(_light_airr, suffixes=["_heavy", "_light"], on="sequence_id")
+        linked_table = LinkedAirrTable(linked_table)
+        return linked_table
 
     @staticmethod
     def get_available_datasets() -> list:
