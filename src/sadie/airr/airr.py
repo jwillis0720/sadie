@@ -9,7 +9,7 @@ import tempfile
 import warnings
 from pathlib import Path
 from types import GeneratorType
-from typing import Generator, List, Tuple, Union
+from typing import Generator, List, Union
 
 
 # third party
@@ -21,7 +21,6 @@ from Bio.SeqRecord import SeqRecord
 
 
 # package/module level
-from sadie.anarci import Anarci
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.airr.igblast import IgBLASTN, GermlineData
 from sadie.airr.exceptions import BadIgBLASTExe, BadDataSet, BadRequstedFileType
@@ -54,7 +53,7 @@ class Airr:
 
     >>> pg9_multiple_seqs = list(SeqIO.parse('tests/fixtures/fasta_inputs/PG9_H_multiple.fasta','fasta'))
     >>> air_api = Airr("human")
-    >>> air_api.run_records(pg9_multiple_seqs)
+    >>> air_api.run_multiple(pg9_multiple_seqs)
     sequence_id                                           sequence locus  stop_codon  vj_in_frame  productive  ...  cdr3_end                                 np1 np1_length  np2 np2_length species
     0  GU272045.1  CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGT...   IGH       False         True        True  ...       375  GGCTGGTGGGCCCGACTACCGTAATGGGTACAAC         34  NaN          0   human
     1  GU272045.1  CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGT...   IGH       False         True        True  ...       375  GGCTGGTGGGCCCGACTACCGTAATGGGTACAAC         34  NaN          0   human
@@ -72,15 +71,16 @@ class Airr:
     def __init__(
         self,
         species: str,
-        igblast_exe="",
-        adaptable=True,
-        functional="functional",
-        database="imgt",
-        v_gene_penalty=-1,
-        d_gene_penalty=-1,
-        j_gene_penalty=-2,
-        allow_vdj_overlap=False,
-        temp_directory="",
+        igblast_exe: Union[Path, str] = "",
+        adaptable: bool = True,
+        functional: str = "functional",
+        database: str = "imgt",
+        v_gene_penalty: int = -1,
+        d_gene_penalty: int = -1,
+        j_gene_penalty: int = -2,
+        allow_vdj_overlap: bool = False,
+        correct_indel: bool = True,
+        temp_directory: Union[str, Path, None] = None,
     ):
         """Airr constructor
 
@@ -104,7 +104,9 @@ class Airr:
             the penalty for mismatched j gene nt, by default -2
         allow_vdj_overlap : bool, optional
             allow vdj overlap genes, by default False
-        temp_directory : str, optional
+        correct_indel : bool, optional
+            correct the indel gaps in the gemrline_aa vs mature_aa alignments in the airrtable
+        temp_directory : Union[str,Path,None], optional
             the temporary working directory, by default uses your enviroments tempdir
 
         Raises
@@ -115,8 +117,6 @@ class Airr:
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
-
-        # quickly check if we have chosen bad species
 
         # the setter handles all the logic behind choosign the correct executables
         self.executable = igblast_exe
@@ -138,9 +138,10 @@ class Airr:
                 logger.warning("Allow V(D)J overlap, j_gene_penalty set to -3")
 
         # Properties that will be passed to germline Data Class.
-        self.species = species
-        self.functional = functional
-        self.database = database
+        # Pass theese as private since germline class will handle setter logic
+        self._species = species
+        self._functional = functional
+        self._database = database
 
         # Check if this requested dataset is available
         _available_datasets = GermlineData.get_available_datasets()
@@ -157,7 +158,7 @@ class Airr:
         self.igblast.germline_db_d = self.germline_data.d_gene_dir
         self.igblast.germline_db_j = self.germline_data.j_gene_dir
         self.igblast.aux_path = self.germline_data.aux_path
-        self.igblast.organism = species
+        self.igblast.organism = self.species
 
         # setting penalties
         self.igblast.v_penalty = self._v_gene_penalty
@@ -166,26 +167,51 @@ class Airr:
         self.igblast.allow_vdj_overlap = self._allow_vdj_overlap
 
         # set local instance and igblast temp dir instance
-        self.igblast.temp_dir = temp_directory
         self.temp_directory = temp_directory
+        self.igblast.temp_dir = self.temp_directory
 
-        # if we set the temp diretory, we need to create it
-        if self.temp_directory:
-            if not os.path.exists(temp_directory):
-                os.makedirs(temp_directory)
-
-        # if not, the tempfile class houses where the users system defaults to store temporary stuff
-        else:
-            self.temp_directory = tempfile.gettempdir()
-            logger.info(f"Temp dir - {self.temp_directory}")
-
-        # do we try adaptable penalties
+        # set airr specific attributes
         self.adapt_penalty = adaptable
-        self._liable_seqs = []
+        self.correct_indel = correct_indel
+        self.liable_seqs = []
 
         # Init pre run check to make sure everything is good
         # We don't have to do this now as it happens at execution.
         self.igblast._pre_check()
+
+    @property
+    def adapt_penalty(self) -> bool:
+        return self._adapt_penalty
+
+    @adapt_penalty.setter
+    def adapt_penalty(self, adapt_penalty: bool):
+        if not isinstance(adapt_penalty, bool):
+            raise TypeError(f"Adapt_penalty must be bool, not {type(adapt_penalty)}")
+        self._adapt_penalty = adapt_penalty
+
+    @property
+    def functional(self) -> str:
+        return self._functional
+
+    @property
+    def species(self) -> str:
+        return self._species
+
+    @property
+    def temp_directory(self) -> Union[None, str, Path]:
+        return self._temp_directory
+
+    @temp_directory.setter
+    def temp_directory(self, temp_directory: Union[None, str, Path]):
+        # if we set the temp diretory, we need to create it
+        if temp_directory:
+            if not os.path.exists(temp_directory):
+                os.makedirs(temp_directory)
+            self._temp_directory = temp_directory
+        # if not, the tempfile class houses where the users system defaults to store temporary stuff
+        else:
+            self._temp_directory = tempfile.gettempdir()
+            logger.info(f"Temp dir - {self._temp_directory}")
 
     @property
     def igblast(self) -> IgBLASTN:
@@ -249,7 +275,6 @@ class Airr:
                 )
         self._executable = igblastn_path
 
-    # Run methods below
     def run_single(self, seq_id: str, seq: str, scfv=False) -> Union[AirrTable, LinkedAirrTable]:
         """Run a single string sequence
 
@@ -295,7 +320,9 @@ class Airr:
 
                     # If we shifted from liable, return the adaptable results
                     if (~adaptable_result["liable"]).all():
-                        return adaptable_result
+                        result = adaptable_result
+                if self.correct_indel:
+                    result.correct_indel()
                 return result
         else:
             with tempfile.NamedTemporaryFile(dir=self.temp_directory) as tmpfile:
@@ -369,7 +396,7 @@ class Airr:
 
         Returns
         -------
-        Union[AirrTable, ]
+        Union[AirrTable, LinkedAirrTable]
             Either a single airrtable for a single chain or an ScFV airrtable
 
         Raises
@@ -399,7 +426,7 @@ class Airr:
             results = self.run_fasta(temp_fasta.name, scfv=scfv)
         return results
 
-    def run_fasta(self, file: Path, scfv=False) -> Union[AirrTable, Tuple[AirrTable, AirrTable]]:
+    def run_fasta(self, file: Path, scfv=False) -> Union[AirrTable, LinkedAirrTable]:
         """Run airr annotator on a fasta file
 
         If it contains a scfv linked pair, it will annotate both heavy and light chain
@@ -414,7 +441,7 @@ class Airr:
 
         Returns
         -------
-        Union[AirrTable, ]
+        Union[AirrTable, LinkedAirrTable]
             Either a single airrtable for a single chain or an ScFV AirrTable
 
         Raises
@@ -440,6 +467,8 @@ class Airr:
             scfv_airr = self._run_scfv(file)
             if not scfv_airr.empty:
                 scfv_airr.insert(2, "species", self.species)
+            if self.correct_indel:
+                scfv_airr.correct_indel()
             return scfv_airr
 
         else:
@@ -477,6 +506,8 @@ class Airr:
                     self.adapt_penalty = True
                     result = AirrTable(airr_table)
 
+        if self.correct_indel:
+            result.correct_indel()
         return result
 
     # private run methods
@@ -579,107 +610,6 @@ class Airr:
             Available species
         """
         return list(set(map(lambda x: x[0], GermlineData.get_available_datasets())))
-
-    @staticmethod
-    def run_mutational_analysis(airrtable: AirrTable, scheme: str) -> AirrTable:
-        """Run a mutational analysis given a numbering scheme. Returns an AirrTable with added mutational analysis columns
-
-        This method is computationally expensive. So it's a stand alone static method. It will take in an airr table
-
-        Parameters
-        ----------
-        airrtable : AirrTable
-            An AirrTable class input
-        scheme : str
-            the numbering scheme: ex, 'martin','kabat','imgt','chothia'
-
-        Returns
-        -------
-        AirrTable
-            returns an airrtable with mutation and scheme fields containing the germline mutations
-
-        Raises
-        ------
-        TypeError
-            if input is not an airrtable
-        """
-        if not isinstance(airrtable, AirrTable):
-            raise TypeError(f"{type(airrtable)} must be of type AirrTable")
-
-        if not airrtable.table.index.is_monotonic_increasing:
-            raise IndexError(f"{airrtable.table.index} must be monotonic increasing")
-
-        # create anarci api
-        logger.info("Running ANARCI on germline alignment")
-        anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"])
-        germline_results_anarci = anarci_api.run_dataframe(
-            airrtable.table["germline_alignment_aa"]
-            .str.replace("-", "")
-            .to_frame()
-            .join(airrtable.table["sequence_id"]),
-            "sequence_id",
-            "germline_alignment_aa",
-        )
-        logger.info("Running ANARCI on mature alignment")
-        mature_results_anarci = anarci_api.run_dataframe(
-            airrtable.table["sequence_alignment_aa"]
-            .str.replace("-", "")
-            .to_frame()
-            .join(airrtable.table["sequence_id"]),
-            "sequence_id",
-            "sequence_alignment_aa",
-        )
-        logger.info("Getting ANARCI on alignment tables")
-        sets_of_lists = [
-            set(germline_results_anarci["Id"]),
-            set(mature_results_anarci["Id"]),
-            set(airrtable["sequence_id"]),
-        ]
-        sets_of_lists = sorted(sets_of_lists, key=lambda x: len(x))
-        common_results = set.intersection(*sets_of_lists)
-
-        logger.info(f"Can run mutational analysis on {len(common_results)} out of {len(airrtable)} results")
-        germline_results_anarci = germline_results_anarci.loc[germline_results_anarci["Id"].isin(common_results), :]
-        germline_results_anarci_at = germline_results_anarci.get_alignment_table()
-        mature_results_anarci = mature_results_anarci.loc[mature_results_anarci["Id"].isin(common_results), :]
-        mature_results_anarci_at = mature_results_anarci.get_alignment_table()
-        lookup_dataframe = (
-            mature_results_anarci_at.drop(["chain_type", "scheme"], axis=1)
-            .set_index("Id")
-            .transpose()
-            .join(
-                germline_results_anarci_at.drop(["chain_type", "scheme"], axis=1).set_index("Id").transpose(),
-                lsuffix="_mature",
-                rsuffix="_germ",
-            )
-        )
-        lookup_dataframe = lookup_dataframe[sorted(lookup_dataframe.columns)].fillna("-")
-        mutation_arrays = []
-        logger.info(f"Finding mutations on {len(mature_results_anarci)} sequences")
-        for x in mature_results_anarci["Id"]:
-            germ_tag = x + "_germ"
-            mat_tag = x + "_mature"
-
-            # get section of dataframe for only the two we are interested in
-            lookup_specific = lookup_dataframe[[germ_tag, mat_tag]]
-
-            # mutation array are all the mutations in a list
-            mutation_array = lookup_specific[
-                lookup_specific.apply(lambda x: x[0] != x[1] and x[0] != "X", axis=1)
-            ].apply(lambda x: x[0] + x.name + x[1], axis=1)
-            if mutation_array.empty:
-                mutation_array = []
-            else:
-                mutation_array = mutation_array.to_list()
-            mutation_arrays.append(mutation_array)
-
-        mature_results_anarci["mutations"] = mutation_arrays
-        return AirrTable(
-            airrtable.table.merge(
-                mature_results_anarci.rename({"Id": "sequence_id"}, axis=1)[["sequence_id", "scheme", "mutations"]],
-                on="sequence_id",
-            )
-        )
 
     def __repr__(self):
         return self.igblast.__repr__()
