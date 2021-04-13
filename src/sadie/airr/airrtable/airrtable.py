@@ -423,57 +423,6 @@ class AirrTable(pd.DataFrame):
         return self.__class__(airrtable)
 
     @staticmethod
-    def static_correct_indel(
-        airrtable_input: Union["AirrTable", "LinkedAirrTable"]
-    ) -> Union["AirrTable", "LinkedAirrTable"]:
-        _fields = [
-            ("sequence_alignment_aa", "germline_alignment_aa"),
-            ("v_sequence_alignment_aa", "v_germline_alignment_aa"),
-        ]
-        if type(airrtable_input) == LinkedAirrTable:
-            _linked_fields = []
-            for suffix in airrtable_input._suffixes:
-                for field_1, field_2 in _fields:
-                    _linked_fields.append([f"{field_1}{suffix}", f"{field_2}{suffix}"])
-            _fields = _linked_fields
-
-        else:
-            if type(airrtable_input) != AirrTable:
-                raise TypeError(f"{type(airrtable_input)} must be of AirrTable or LinkedAirrTable")
-
-        airrtable = pd.DataFrame(airrtable_input)
-
-        def _get_indel_index(airrtable, field_1: str, field_2: str) -> pd.Index:
-            return airrtable[
-                (airrtable[field_1].str.len() != airrtable[field_2].str.len())
-                & (~airrtable[field_1].isna())
-                & (~airrtable[field_2].isna())
-            ].index
-
-        def _update_align(airrtable: Union[AirrTable, LinkedAirrTable], field_1: str, field_2: str):
-            # get indels in sequence_germline_alignment_aa that were not accounted for in the total alignment
-            indel_indexes = _get_indel_index(airrtable, field_1, field_2)
-            logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid germline alignment")
-            airrtable.loc[:, f"{field_2}_corrected"] = False
-            if not indel_indexes.empty:
-                correction_alignments = airrtable.loc[indel_indexes, :].apply(
-                    lambda x: correct_alignment(x, field_1, field_2), axis=1
-                )
-                # Correction in place
-                airrtable.update(correction_alignments)
-                airrtable.loc[indel_indexes, f"{field_2}_corrected"] = True
-
-            return airrtable
-
-        for field_1, field_2 in _fields:
-            airrtable = _update_align(airrtable, field_1, field_2)
-
-        if type(airrtable_input) == LinkedAirrTable:
-            return LinkedAirrTable(airrtable)
-
-        return AirrTable(airrtable)
-
-    @staticmethod
     def parse_row_to_genbank(row: Tuple[int, pd.core.series.Series], suffix="") -> SeqRecord:
         single_seq = row[1]
         # these should be joined by sequence, so even if its heavy or light suffix, sequence should be in common
@@ -674,6 +623,13 @@ class AirrTable(pd.DataFrame):
             AirrTable object"""
         return AirrTable(pd.read_json(*args, **kwargs))
 
+    def __eq__(self, other) -> bool:
+        """equals method for LinkedDataFrame"""
+        # needs to be cast to dataframe and na needs to be fileld
+        _dataframe = pd.DataFrame(self).fillna("")
+        other_dataframe = pd.DataFrame(other).fillna("")
+        return (_dataframe == other_dataframe).all().all()
+
 
 class LinkedAirrTable(AirrTable):
     def __init__(self, data=None, *args, **kwargs):
@@ -703,17 +659,6 @@ class LinkedAirrTable(AirrTable):
         right_airr_columns = list(map(lambda x: x.replace(self._suffixes[1], ""), list(right_table.columns)))
         right_table.columns = right_airr_columns
         return AirrTable(left_table), AirrTable(right_table)
-
-    def __eq__(self, other) -> bool:
-        """equals method for LinkedDataFrame
-
-        Returns
-        -------
-        bool
-        """
-        _dataframe = pd.DataFrame(self).fillna("")
-        other_dataframe = pd.DataFrame(other).fillna("")
-        return (_dataframe == other_dataframe).all().all()
 
 
 if __name__ == "__main__":
