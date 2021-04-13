@@ -1,459 +1,126 @@
 """The AirrTable module"""
 # std lib
-import json
 import logging
-import warnings
 from pathlib import Path
-from typing import Tuple, Union
-
+from typing import Tuple, List
+import warnings
 
 # third party
-with warnings.catch_warnings():
-    from Bio import SeqIO, pairwise2
-    from Bio.SeqRecord import SeqRecord
-
-    warnings.simplefilter("ignore")
-    from Bio.SubsMat import MatrixInfo as matlist
-
+import pandas as pd
 from Levenshtein._levenshtein import distance
 from numpy import nan
-import pandas as pd
-
+from Bio import SeqRecord, SeqIO
 
 # module/package
-from .constants import IGBLAST_AIRR
-from .genbank import GenBank, GenBankFeature
-from ..exceptions import MissingAirrColumns
+from sadie.airr.airrtable.constants import IGBLAST_AIRR
+from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
+from sadie.airr.exceptions import MissingAirrColumns
+from sadie.utility.util import correct_alignment
+from pprint import pformat
 
 logger = logging.getLogger("AIRRTable")
-blosum_matrix = matlist.blosum62
 
 
-def _get_v_aa_distance(X) -> int:
-    """Helper method for getting the amino acid distance
-
-    Parameters
-    ----------
-    X : tuple
-        (v_sequence_aligbment_aa,v_sequence_germline_alignment_aa)
-
-    Returns
-    -------
-    float
-        percentabe between germ and mature. i.e #(mutations+indels)/len(max(germ,mat))
+class AirrTable(pd.DataFrame):
     """
-    # X = X.fillna("")
-    if X.isna().any():
-        return
-    _mature = X["v_sequence_alignment_aa"]
-    _germ = X["v_germline_alignment_aa"]
-    return (distance(_mature, _germ) / max(len(_mature), len(_germ))) * 100
+    Object oriented Airr table
+    compliance with - https://docs.airr-community.org/_/downloads/en/v1.2.1/pdf/
 
-
-class AirrTable:
-    """
-        Object oriented Airr table
-        compliance with - https://docs.airr-community.org/_/downloads/en/v1.2.1/pdf/
-
-        Raises
-        ------
+    Raises
+    ------
     MissingAirrColumns
-            If there is any missing columns from the airr standards
+        If there is any missing columns from the airr standards
 
 
-        Examples
-        --------
+    Examples
+    --------
 
-        Pass in pandas dataframe
-        >>> df = pd.read_csv("tests/fixtures/heavy_lev_sample.csv.gz")
-        >>> at = AirrTable(df)
+    Pass in pandas dataframe
+    >>> df = pd.read_csv("tests/fixtures/heavy_lev_sample.csv.gz")
+    >>> at = AirrTable(df)
 
-        The pandas table is held in the the table attribute
-        >>> at.table.columns
-        >>> ['sequence_id', 'cdr1', 'cdr1_aa', 'cdr1_end', 'cdr1_start', 'cdr2',
-            'cdr2_aa', 'cdr2_end', 'cdr2_start', 'cdr3', 'cdr3_aa',
-            'cdr3_aa_length', 'cdr3_end', 'cdr3_start', 'complete_vdj',
-            'd_alignment_end', 'd_alignment_start', 'd_call', 'd_cigar', 'd_family',
-            'd_germline_alignment', 'd_germline_alignment_aa', 'd_germline_end',
-            'd_germline_start', 'd_identity', 'd_score', 'd_sequence_alignment',
-            'd_sequence_alignment_aa', 'd_sequence_end', 'd_sequence_start',
-            'd_support', 'fwr1', 'fwr1_aa', 'fwr1_end', 'fwr1_start', 'fwr2',
-            'fwr2_aa', 'fwr2_end', 'fwr2_start', 'fwr3', 'fwr3_aa', 'fwr3_end',
-            'fwr3_start', 'fwr4', 'fwr4_aa', 'fwr4_end', 'fwr4_start',
-            'germline_alignment', 'germline_alignment_aa', 'j_alignment_end',
-            'j_alignment_start', 'j_call', 'j_cigar', 'j_family',
-            'j_germline_alignment', 'j_germline_alignment_aa', 'j_germline_end',
-            'j_germline_start', 'j_identity', 'j_score', 'j_sequence_alignment',
-            'j_sequence_alignment_aa', 'j_sequence_end', 'j_sequence_start',
-            'j_support', 'junction', 'junction_aa', 'junction_aa_length',
-            'junction_length', 'locus', 'np1', 'np1_length', 'np2', 'np2_length',
-            'productive', 'rev_comp', 'sequence', 'sequence_alignment',
-            'sequence_alignment_aa', 'stop_codon', 'v_alignment_end',
-            'v_alignment_start', 'v_call', 'v_cigar', 'v_family',
-            'v_germline_alignment', 'v_germline_alignment_aa', 'v_germline_end',
-            'v_germline_start', 'v_identity', 'v_score', 'v_sequence_alignment',
-            'v_sequence_alignment_aa', 'v_sequence_end', 'v_sequence_start',
-            'v_support', 'vj_in_frame', 'chain', 'species'],
+    The pandas table is held in the the table attribute
+    >>> at.table.columns
+    >>> ['sequence_id', 'cdr1', 'cdr1_aa', 'cdr1_end', 'cdr1_start', 'cdr2',
+        'cdr2_aa', 'cdr2_end', 'cdr2_start', 'cdr3', 'cdr3_aa',
+        'cdr3_aa_length', 'cdr3_end', 'cdr3_start', 'complete_vdj',
+        'd_alignment_end', 'd_alignment_start', 'd_call', 'd_cigar', 'd_family',
+        'd_germline_alignment', 'd_germline_alignment_aa', 'd_germline_end',
+        'd_germline_start', 'd_identity', 'd_score', 'd_sequence_alignment',
+        'd_sequence_alignment_aa', 'd_sequence_end', 'd_sequence_start',
+        'd_support', 'fwr1', 'fwr1_aa', 'fwr1_end', 'fwr1_start', 'fwr2',
+        'fwr2_aa', 'fwr2_end', 'fwr2_start', 'fwr3', 'fwr3_aa', 'fwr3_end',
+        'fwr3_start', 'fwr4', 'fwr4_aa', 'fwr4_end', 'fwr4_start',
+        'germline_alignment', 'germline_alignment_aa', 'j_alignment_end',
+        'j_alignment_start', 'j_call', 'j_cigar', 'j_family',
+        'j_germline_alignment', 'j_germline_alignment_aa', 'j_germline_end',
+        'j_germline_start', 'j_identity', 'j_score', 'j_sequence_alignment',
+        'j_sequence_alignment_aa', 'j_sequence_end', 'j_sequence_start',
+        'j_support', 'junction', 'junction_aa', 'junction_aa_length',
+        'junction_length', 'locus', 'np1', 'np1_length', 'np2', 'np2_length',
+        'productive', 'rev_comp', 'sequence', 'sequence_alignment',
+        'sequence_alignment_aa', 'stop_codon', 'v_alignment_end',
+        'v_alignment_start', 'v_call', 'v_cigar', 'v_family',
+        'v_germline_alignment', 'v_germline_alignment_aa', 'v_germline_end',
+        'v_germline_start', 'v_identity', 'v_score', 'v_sequence_alignment',
+        'v_sequence_alignment_aa', 'v_sequence_end', 'v_sequence_start',
+        'v_support', 'vj_in_frame', 'chain', 'species'],
 
-        Can also use static methods
-        >>> at = AirrTable.read_csv("tests/fixtures/kappa_lev_sample.csv.gz")
+    Can also use static methods
+    >>> at = AirrTable.read_csv("tests/fixtures/kappa_lev_sample.csv.gz")
     """
 
-    def __init__(self, dataframe: pd.DataFrame, cast=True, infer_germline=True):
-        """AirrTable consturctor
+    _metadata = ["_suffixes", "_islinked"]
 
-        Parameters
-        ----------
-        dataframe : pd.DataFrame
-           pandas dataframe. Must have all Airr complient columns
-
-        cast: bool
-            cast dtypes to save memory
-        infer_germline: bool
-            infer germline sequences
-        """
-        self.cast = cast
-        self.infer = infer_germline
-        self.table = dataframe
+    def __init__(self, data=None, *args, is_linked: bool = False, **kwargs):
+        super(AirrTable, self).__init__(data=data, *args, **kwargs)
+        if not isinstance(data, pd.core.internals.managers.BlockManager):
+            if not is_linked:
+                self._islinked = is_linked
+                self._suffixes = []
+                self._verify()
 
     @property
-    def table(self) -> pd.DataFrame:
-        """Getter method for table
-
-        Returns
-        -------
-        pd.DataFrame
-           AirrTable
-        """
-        return self._table
-
-    @table.setter
-    def table(self, dataframe: pd.DataFrame):
-        """Set Table
-
-        Parameters
-        ----------
-        dataframe : pd.DataFrame
-            set pandas table
-
-        Raises
-        ------
-        MissingAirrColumns
-           check complient columns
-        """
-        self._table = dataframe
-        self._table.drop([i for i in self._table.columns if "Unnamed" in i], axis=1, inplace=True)
-        self._table.loc[:, "note"] = ""
-
-        # a check that allows us to see if the junction presentation is wrong
-        liable_sequences = self._table[
-            self._table[
-                [
-                    "fwr1_aa",
-                    "cdr1_aa",
-                    "fwr2_aa",
-                    "cdr2_aa",
-                    "fwr3_aa",
-                    "cdr3_aa",
-                    "fwr4_aa",
-                ]
-            ].apply(self._check_j_gene_liability, axis=1)
-        ]
-
-        # If these aren't productive, who cares
-        if not liable_sequences.empty:
-            logger.debug(f"Caution - sequences {list(liable_sequences['sequence_id'])} may need manual inspections")
-            self._table.loc[liable_sequences.index, "note"] = "liable"
-
-        missing_columns = set(IGBLAST_AIRR.keys()).difference(self._table.columns)
-        if missing_columns:
-            raise MissingAirrColumns(missing_columns)
-
-        if self.cast:
-            self._table = self._table.astype(IGBLAST_AIRR)
-
-        # set those bool values
-        self._table["productive"] = (
-            self._table["productive"]
-            .map(
-                {"T": True, "F": False, True: True, False: False, nan: False},
-                na_action="ignore",
-            )
-            .astype(bool)
-        )
-        self._table["stop_codon"] = (
-            self._table["stop_codon"]
-            .map(
-                {"T": True, "F": False, True: True, False: False, nan: False},
-                na_action="ignore",
-            )
-            .astype(bool)
-        )
-        self._table["vj_in_frame"] = (
-            self._table["vj_in_frame"]
-            .map(
-                {"T": True, "F": False, True: True, False: False, nan: False},
-                na_action="ignore",
-            )
-            .astype(bool)
-        )
-        self._table["rev_comp"] = (
-            self._table["rev_comp"]
-            .map(
-                {"T": True, "F": False, True: True, False: False, nan: False},
-                na_action="ignore",
-            )
-            .astype(bool)
-        )
-        self._table["v_frameshift"] = (
-            self._table["v_frameshift"]
-            .map(
-                {"T": True, "F": False, True: True, False: False, nan: False},
-                na_action="ignore",
-            )
-            .astype(bool)
-        )
-        self._table["complete_vdj"] = (
-            self._table["complete_vdj"]
-            .map(
-                {"T": True, "F": False, True: True, False: False, nan: False},
-                na_action="ignore",
-            )
-            .astype(bool)
-        )
-        self._table["locus"] = self._table["locus"].astype(
-            pd.CategoricalDtype(categories=["IGH", "IGL", "IGK"], ordered=True)
-        )
-
-        self._table["vdj_nt"] = self._table[["fwr1", "cdr1", "fwr2", "cdr2", "fwr3", "cdr3", "fwr4"]].apply(
-            lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1
-        )
-        self._table["vdj_aa"] = self._table[
-            [
-                "fwr1_aa",
-                "cdr1_aa",
-                "fwr2_aa",
-                "cdr2_aa",
-                "fwr3_aa",
-                "cdr3_aa",
-                "fwr4_aa",
-            ]
-        ].apply(lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1)
-
-        # Insert the top call for each one
-        for call in ["v_call", "d_call", "j_call"]:
-            if call not in self._table.columns:
-                continue
-            if f"{call}_top" in self._table.columns:
-                self._table.drop(f"{call}_top", inplace=True, axis=1)
-            self._table.insert(
-                self._table.columns.get_loc(call), f"{call}_top", self._table[call].str.split(",").str.get(0)
-            )
-
-        # indels are not handled in the amino acid sequence
-        indel_indexes = self._table[
-            (self._table["sequence_alignment_aa"].str.len() != self._table["germline_alignment_aa"].str.len())
-            & (~self._table["sequence_alignment_aa"].isna())
-            & (~self._table["germline_alignment_aa"].isna())
-        ].index
-        logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid alignments")
-
-        # indels are not handled in the amino acid sequence
-        v_indel_indexes = self._table[
-            (self._table["v_sequence_alignment_aa"].str.len() != self._table["v_germline_alignment_aa"].str.len())
-            & (~self._table["v_sequence_alignment_aa"].isna())
-            & (~self._table["v_germline_alignment_aa"].isna())
-        ].index
-        logger.info(f"Have {len(v_indel_indexes)} possible v-gene indels that are not in amino acid alignments")
-
-        def _correct_alignment(X, field_1, field_2):
-            alignment_aa_1 = X[field_1]
-            alignment_aa_2 = X[field_2]
-            if any([isinstance(alignment_aa_1, float), isinstance(alignment_aa_2, float)]):
-                return pd.Series({field_1: alignment_aa_1, field_2: alignment_aa_2})
-
-            # get alignments
-            try:
-                alignments = pairwise2.align.globalds(
-                    alignment_aa_1,
-                    alignment_aa_2,
-                    blosum_matrix,
-                    -12,
-                    -4,
-                    penalize_extend_when_opening=True,
-                    penalize_end_gaps=False,
-                )
-            except SystemError:
-                logger.debug(f"System error most likely due to * in germline alignment...falling back {alignment_aa_2}")
-                alignments = pairwise2.align.globalms(
-                    alignment_aa_1,
-                    alignment_aa_2,
-                    4,
-                    -1,
-                    -12,
-                    -4,
-                    penalize_extend_when_opening=True,
-                    penalize_end_gaps=False,
-                )
-            alignment_1_aa_corrected = alignments[0][0]
-            alignment_2_aa_corrected = alignments[0][1]
-            return pd.Series(
-                {
-                    field_1: alignment_1_aa_corrected,
-                    field_2: alignment_2_aa_corrected,
-                }
-            )
-
-        if not indel_indexes.empty:
-            correction_alignments = self._table.loc[indel_indexes, :].apply(
-                lambda x: _correct_alignment(x, "sequence_alignment_aa", "germline_alignment_aa"), axis=1
-            )
-            # Correction in place
-            self._table.update(correction_alignments)
-            self._table.loc[indel_indexes, "alignment_correct"] = True
-
-        if not v_indel_indexes.empty:
-            correction_v_alignments = self._table.loc[v_indel_indexes, :].apply(
-                lambda x: _correct_alignment(x, "v_sequence_alignment_aa", "v_germline_alignment_aa"), axis=1
-            )
-            # Correction in place
-            self._table.update(correction_v_alignments)
-            self._table.loc[v_indel_indexes, "alignment_correct"] = True
-
-            logger.debug("Corrected gapped sequences")
-        # get mutation frequency rather than identity
-        # v identy are in percentage
-        self._table.loc[:, "v_mutation"] = self._table["v_identity"].apply(lambda x: (100 - x))
-        self._table.loc[:, "d_mutation"] = self._table["d_identity"].apply(lambda x: (100 - x))
-        self._table.loc[:, "j_mutation"] = self._table["j_identity"].apply(lambda x: (100 - x))
-
-        # mutation frequency in aa
-        self._table.loc[:, "v_mutation_aa"] = self._table[["v_sequence_alignment_aa", "v_germline_alignment_aa"]].apply(
-            lambda x: _get_v_aa_distance(x), axis=1
-        )
-
-        if self.infer:
-            self._table["vdj_igl"] = self._table.apply(self._get_igl, axis=1)
-            self._table.loc[self._table[self._table["vdj_igl"].isna()].index, "note"] = "liable"
-            self._table["igl_mut_aa"] = self._table[["vdj_aa", "vdj_igl"]].apply(self._get_diff, axis=1)
-
-        # finally add what is airr columns and what is not
-        self._non_airr_columns = list(set(self._table.columns) - set(IGBLAST_AIRR.keys()))
-        self._airr_columns = list(set(self._table.columns).intersection(IGBLAST_AIRR.keys()))
-
-    def _get_diff(self, X):
-        "get character levenshtrein distance"
-        first = X[0]
-        second = X[1]
-        if not first or not second or isinstance(first, float) or isinstance(second, float):
-            return
-        return (distance(first, second) / max(len(first), len(first))) * 100
-
-    def _get_igl(self, row: pd.Series) -> str:
-        """Get infered germline sequenxe
-
-        Parameters
-        ----------
-        row : pd.Series
-            A row from the airr table
-        Returns
-        -------
-        str
-            the igl sequecne
-        """
-
-        # get germline components
-        v_germline = row.v_germline_alignment_aa
-        full_germline = row.germline_alignment_aa
-        if isinstance(v_germline, float):
-            return
-        cdr3_j_germline = full_germline[len(v_germline) :]
-
-        # get mature components
-        v_mature = row.v_sequence_alignment_aa
-        full_mature = row.sequence_alignment_aa
-        cdr3_j_mature = full_mature[len(v_mature) :]
-
-        # if the mature and cdr3 are not the same size
-        # this will happen on non-productive
-        if len(cdr3_j_mature) != len(cdr3_j_germline):
-            logger.debug(f"{row.name} - strange iGL")
-            return
-
-            # # quick aligment
-            # _alignments = align.globalxs(cdr3_j_mature, cdr3_j_germline, -10, -1)
-            # cdr3_j_mature, cdr3_j_germline = _alignments[0][0], _alignments[0][1]
-
-        iGL_cdr3 = ""
-        for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
-            if germline == "X" or germline == "-":
-                iGL_cdr3 += mature
-                continue
-            iGL_cdr3 += germline
-
-        full_igl = v_germline.replace("-", "") + iGL_cdr3.replace("-", "")
-        return full_igl
+    def _constructor(self):
+        return AirrTable
 
     @property
-    def non_airr_columns(self) -> list:
-        """Getter for non airr columns that available in table
-
-        Returns
-        -------
-        list
-           columns that are not apart of the airr complicence
-        """
-        return sorted(self._non_airr_columns)
+    def compliant_cols(self) -> List[str]:
+        return list(set(IGBLAST_AIRR.keys()))
 
     @property
-    def airr_columns(self) -> list:
-        """Getter for airr complient columns
+    def non_airr_columns(self) -> pd.Index:
+        """Get an column index of non airr complient columns.
 
-        Returns
-        -------
-        list
-           columns that are apart of the airr complience
-        """
-        return sorted(self._airr_columns)
+        These are columns that were probably joined on the airr dataframe
 
-    @property
-    def productive(self) -> pd.DataFrame:
-        """Get productive airr dataframe
-
-        Returns
-        -------
-        pd.DataFrame
-            Dataframe of just productive sequences
-        """
-        return self._table[self._table["productive"]]
-
-    @property
-    def index(self) -> pd.Index:
-        """
 
         Returns
         -------
         pd.Index
-           returns pandas index
+            The non-airr complient columns
         """
-        return self._table.index
+        return pd.Index(list(set(self.columns) - set(self.compliant_cols)))
 
     @property
-    def iloc(self) -> pd.core.indexing._iLocIndexer:
-        return self._table.iloc
+    def airr_columns(self) -> pd.Index:
+        """Get a column index of airr complient columns.
+
+        Returns
+        -------
+        pd.Index
+            airr complient column indexes
+        """
+        return pd.Index(list(set(self.columns).intersection(self.compliant_cols)))
 
     @property
-    def loc(self) -> pd.core.indexing._LocIndexer:
-        return self._table.loc
-
-    @property
-    def sanitized_antibodies(self) -> pd.DataFrame:
+    def sanitized_antibodies(self) -> "AirrTable":
         """Getter method for airr entires that have  all antibody segments
 
         Returns
         -------
-        pd.DataFrame
-            dataframe of sanitized sequences
+        AirrTable
+            AirrTable for just sanitized_antibodies
         """
         _sanitized = self[
             ~(
@@ -471,9 +138,288 @@ class AirrTable:
             (_sanitized["v_germline_start"] == 1)
             & (_sanitized["productive"])
             & (_sanitized["vj_in_frame"])
-            & (_sanitized["complete_vdj"])
             & (_sanitized["fwr4_aa"].str.len() >= 8)
         ]
+
+    def write_fasta(self, id_field: str, sequence_field: str, file_out: Path):
+        """given an id field and sequence field, write out dataframe to fasata
+
+        Parameters
+        ----------
+        id_field : str
+            the id field from the dataframe to use in the fasta header
+        sequence_field : str
+            the seq field to use as the sqeuence
+        file_out : Path
+            the file output path to fasta
+        """
+        with open(file_out, "w") as f:
+            for _, row in self.iterrows():
+                f.write(f">{row[id_field]}\n{row[sequence_field]}\n")
+
+    # IO
+    def get_genbank(self):
+        _genbanks = []
+        # I'm no sure there is a better way to do this other than go through one by one
+        for row in self.iterrows():
+            _genbanks.append(AirrTable.parse_row_to_genbank(row))
+        return _genbanks
+
+    def to_genbank(self, filename: str, compression="gzip"):
+        """write airrtable to genbank file
+
+        Parameters
+        ----------
+        filename : str
+            file name string path
+        compression: ['gzip']
+        """
+        _records = self.get_genbank()
+        SeqIO.write(_records, filename, "genbank")
+
+    def _verify(self):
+        missing_columns = set(self.compliant_cols).difference(self.columns)
+        if missing_columns:
+            raise MissingAirrColumns(missing_columns)
+
+        # drop any unneeded columns
+        self.drop([i for i in self.columns if "Unnamed" in i], axis=1, inplace=True)
+
+        # set boolean strings to boolelan types
+        _to_boolean = ["productive", "stop_codon", "rev_comp", "v_frameshift", "complete_vdj"]
+        if self._islinked:
+            _to_boolean_link = []
+            for x in self._suffixes:
+                _to_boolean_link += list(map(lambda y: y + x, _to_boolean))
+            _to_boolean = _to_boolean_link
+        self._set_boolean(_to_boolean)
+
+        # a check that allows us to see if the junction presentation is wrong
+        liability_keys = ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]
+        if self._islinked:
+            for suffix in self._suffixes:
+                local_suffix = list(map(lambda x: x + suffix, liability_keys))
+
+                self[f"liable{suffix}"] = self[local_suffix].apply(self._check_j_gene_liability, axis=1)
+        else:
+            self["liable"] = self[["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]].apply(
+                self._check_j_gene_liability, axis=1
+            )
+
+        # assign locus as a category
+        if self._islinked:
+            for suffix in self._suffixes:
+                self[f"locus{suffix}"] = self[f"locus{suffix}"].astype(
+                    pd.CategoricalDtype(categories=["IGH", "IGL", "IGK"], ordered=True)
+                )
+        else:
+            self["locus"] = self["locus"].astype(pd.CategoricalDtype(categories=["IGH", "IGL", "IGK"], ordered=True))
+
+        # get full nt vdj recombination
+        vdj_nt_keys = ["fwr1", "cdr1", "fwr2", "cdr2", "fwr3", "cdr3", "fwr4"]
+        vdj_aa_keys = ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]
+        if self._islinked:
+            for suffix in self._suffixes:
+                _local_suffix_nt = list(map(lambda x: x + suffix, vdj_nt_keys))
+                _local_suffix_aa = list(map(lambda x: x + suffix, vdj_aa_keys))
+                self[f"vdj_nt{suffix}"] = self[_local_suffix_nt].apply(
+                    lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1
+                )
+                # get full aa vdj recombination
+                self[f"vdj_aa{suffix}"] = self[_local_suffix_aa].apply(
+                    lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1
+                )
+        else:
+            # get full nt vdj recombination
+            self["vdj_nt"] = self[vdj_nt_keys].apply(
+                lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1
+            )
+            # get full aa vdj recombination
+            self["vdj_aa"] = self[vdj_aa_keys].apply(
+                lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1
+            )
+
+        if self._islinked:
+            for suffix in self._suffixes:
+                # Insert the top call for each vdj call but right next to the N_call column using the insert method
+                for call in ["v_call", "d_call", "j_call"]:
+                    # pure light chain columns won't have a dcall
+                    call += suffix
+                    if call not in self.columns:
+                        continue
+                    # drop the volumn if it's already there, that helps with backwards compatibility
+                    if f"{call}_top" in self.columns:
+                        self.drop(f"{call}_top", inplace=True, axis=1)
+
+                    # Insert right next to the X_call airr_columns
+                    self.insert(self.columns.get_loc(call), f"{call}_top", self[call].str.split(",").str.get(0))
+
+                # get mutation frequency rather than identity
+                self.loc[:, f"v_mutation{suffix}"] = self[f"v_identity{suffix}"].apply(lambda x: (100 - x))
+
+                # then get a percentage for AA by computing levenshtein
+                self.loc[:, f"v_mutation_aa{suffix}"] = self[
+                    [f"v_sequence_alignment_aa{suffix}", f"v_germline_alignment_aa{suffix}"]
+                ].apply(lambda x: self._get_aa_distance(x), axis=1)
+
+                # do the same for D and J gene segment portions
+                self.loc[:, f"d_mutation{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: (100 - x))
+                self.loc[:, f"d_mutation_aa{suffix}"] = self[
+                    [f"d_sequence_alignment_aa{suffix}", f"d_germline_alignment_aa{suffix}"]
+                ].apply(lambda x: self._get_aa_distance(x), axis=1)
+                self.loc[:, f"j_mutation{suffix}"] = self[f"j_identity{suffix}"].apply(lambda x: (100 - x))
+                self.loc[:, f"j_mutation_aa{suffix}"] = self[
+                    [f"j_sequence_alignment_aa{suffix}", f"j_germline_alignment_aa{suffix}"]
+                ].apply(lambda x: self._get_aa_distance(x), axis=1)
+
+        else:
+            for call in ["v_call", "d_call", "j_call"]:
+                # pure light chain columns won't have a dcall
+                if call not in self.columns:
+                    continue
+                # drop the volumn if it's already there, that helps with backwards compatibility
+                if f"{call}_top" in self.columns:
+                    self.drop(f"{call}_top", inplace=True, axis=1)
+
+                # Insert right next to the X_call airr_columns
+                self.insert(self.columns.get_loc(call), f"{call}_top", self[call].fillna("").str.split(",").str.get(0))
+
+            # get mutation frequency rather than identity
+            self.loc[:, "v_mutation"] = self["v_identity"].apply(lambda x: (100 - x))
+
+            # then get a percentage for AA by computing levenshtein
+            self.loc[:, "v_mutation_aa"] = self[["v_sequence_alignment_aa", "v_germline_alignment_aa"]].apply(
+                lambda x: self._get_aa_distance(x), axis=1
+            )
+
+            # do the same for D and J gene segment portions
+            self.loc[:, "d_mutation"] = self["d_identity"].apply(lambda x: (100 - x))
+            self.loc[:, "d_mutation_aa"] = self[["d_sequence_alignment_aa", "d_germline_alignment_aa"]].apply(
+                lambda x: self._get_aa_distance(x), axis=1
+            )
+            self.loc[:, "j_mutation"] = self["j_identity"].apply(lambda x: (100 - x))
+            self.loc[:, "j_mutation_aa"] = self[["j_sequence_alignment_aa", "j_germline_alignment_aa"]].apply(
+                lambda x: self._get_aa_distance(x), axis=1
+            )
+
+    def _get_aa_distance(self, X):
+        "get character levenshtrein distance, will work with '-' on alignments"
+        first = X[0]
+        second = X[1]
+        if not first or not second or isinstance(first, float) or isinstance(second, float):
+            return
+        return (distance(first, second) / max(len(first), len(first))) * 100
+
+    def _set_boolean(self, columns: List[str]):
+        """Change 'F' and 'T' strings to boolean dataframe values"""
+        for column in columns:
+            self[column] = (
+                self[column]
+                .map(
+                    {"T": True, "F": False, True: True, False: False, nan: False},
+                    na_action="ignore",
+                )
+                .astype(bool)
+            )
+
+    def _check_j_gene_liability(self, X: pd.Series) -> bool:
+        """
+        Check that the CDR3 was recombined with a FW4 J gene.
+        A liable sequence can point to issues with the pentltes
+
+        There are a few different liabilities:
+        1. You have CDR1 and CDR2 but dont have CDR3, that can be a sign of a libaility sequence
+            - Liability
+
+        2. If we get FW3 + CDR3 but no FW4 we probably have a libility
+            - Liability
+
+        3. If we get only get FW3 and CDR3 + FW4, we probably have just sort read sequecning from
+            - No liability
+
+        Parameters
+        ----------
+        X : pd.Series
+            ex. [fwr1, cdr1, fwr2, cdr2, fwr3, cdr3, fwr4]
+
+        Returns
+        -------
+        bool
+           if the entry is liable or not based
+        """
+        fw1 = X[0]
+        cdr1 = X[1]
+        fw2 = X[2]
+        cdr2 = X[3]
+        fw3 = X[4]
+        cdr3 = X[5]
+        fw4 = X[6]
+        isna = [isinstance(i, float) for i in [fw1, cdr1, fw2, cdr2, fw3, cdr3, fw4]]
+        # if they are all nan:
+        if all(isna):
+            return False
+
+        if sum(isna) == (len(isna) - 1):
+            return False
+
+        # If all fw and cdrs are reolsved
+        if sum(isna) == 0:
+            return False
+
+        # if we have cdr2 and fwr3 and dont have cdr3, we probably have a problem
+        if all([isinstance(i, str) for i in [cdr2, fw3]]) and (isinstance(cdr3, float) or cdr3 == ""):
+            return True
+
+        # fw1-cdr2 might be nan but we still get a fwr3-cdr3
+        if any([isinstance(i, float) for i in [fw1, cdr1, fw2, cdr2]]) and (
+            all([isinstance(cdr3, str), isinstance(fw3, str)])
+        ):
+            return False
+
+        # we didn't get the fw4
+        if all([isinstance(fw3, str), isinstance(cdr3, str)]) and (isinstance(fw4, float) or fw4 == ""):
+            return True
+
+        logger.debug(f"Liability shouldn't have gotten here {pformat(X.to_dict())}")
+        return True
+
+    @staticmethod
+    def correct_indel(airrtable: "AirrTable") -> "AirrTable":
+        airrtable = pd.DataFrame(airrtable)
+
+        def _get_indel_index(field_1: str, field_2: str) -> pd.Index:
+            return airrtable[
+                (airrtable[field_1].str.len() != airrtable[field_2].str.len())
+                & (~airrtable[field_1].isna())
+                & (~airrtable[field_2].isna())
+            ].index
+
+        # get indels in sequence_germline_alignment_aa that were not accounted for in the total alignment
+        indel_indexes = _get_indel_index("sequence_alignment_aa", "germline_alignment_aa")
+        logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid germline alignment")
+
+        # get indels in Vgermline_alignment_aa that were not accounted for in the v gene
+        v_indel_indexes = _get_indel_index("v_sequence_alignment_aa", "v_germline_alignment_aa")
+        logger.info(f"Have {len(v_indel_indexes)} possible v-gene indels that are not in amino acid germline alignment")
+        airrtable.loc[:, "germline_alignment_aa_corrected"] = False
+        airrtable.loc[:, "v_germline_alignment_aa_corrected"] = False
+
+        if not indel_indexes.empty:
+            correction_alignments = airrtable.loc[indel_indexes, :].apply(
+                lambda x: correct_alignment(x, "sequence_alignment_aa", "germline_alignment_aa"), axis=1
+            )
+            # Correction in place
+            airrtable.update(correction_alignments)
+            airrtable.loc[indel_indexes, "germline_alignment_aa_corrected"] = True
+
+        if not v_indel_indexes.empty:
+            correction_v_alignments = airrtable.loc[v_indel_indexes, :].apply(
+                lambda x: correct_alignment(x, "v_sequence_alignment_aa", "v_germline_alignment_aa"), axis=1
+            )
+            # Correction in place
+            airrtable.update(correction_v_alignments)
+            airrtable.loc[v_indel_indexes, "v_germline_alignment_aa_corrected"] = True
+        return AirrTable(airrtable)
 
     @staticmethod
     def parse_row_to_genbank(row: Tuple[int, pd.core.series.Series], suffix="") -> SeqRecord:
@@ -656,75 +602,6 @@ class AirrTable:
             gb.add_feature(feature)
         return gb.record
 
-    # IO
-    def get_genbank(self):
-        _genbanks = []
-        # I'm no sure there is a better way to do this other than go through one by one
-        for row in self._table.iterrows():
-            _genbanks.append(AirrTable.parse_row_to_genbank(row))
-        return _genbanks
-
-    def to_genbank(self, filename: str, compression="gzip"):
-        """write airrtable to genbank file
-
-        Parameters
-        ----------
-        filename : str
-            file name string path
-        compression: ['gzip']
-        """
-        _records = self.get_genbank()
-        SeqIO.write(_records, filename, "genbank")
-
-    def get_json(self, indent=False) -> json:
-        """Get json string of AirrTable
-
-        Parameters
-        ----------
-        indent : bool, optional
-            indent json string representation, by default False
-
-        Returns
-        -------
-        json
-            AirrTable as a json table
-        """
-        return self._table.to_json(indent=indent, orient="records")
-
-    def to_json(self, filename: str, compression="gzip"):
-        """write airrtable to json file
-
-        Parameters
-        ----------
-        filename : str
-            file name string path
-        """
-        self._table.to_json(filename, orient="records")
-
-    def to_csv(self, path_or_buf=None, compression="infer", *args, **kwargs):
-        """write airrtable to csv
-
-        Overloaded pandas.to_csv(*args, **kwargs)
-        """
-        return self._table.to_csv(path_or_buf, **kwargs)
-
-    def to_feather(self, path_or_buf=None, compression="infer", *args, **kwargs):
-        """write airrtable to csv
-
-        Overloaded pandas.to_csv(*args, **kwargs)
-        """
-        return self._table.to_feather(path_or_buf, **kwargs)
-
-    @staticmethod
-    def from_json(json_object: json) -> "AirrTable":
-        """take in json object serialized and return AirrTable
-
-        Returns
-        -------
-        AirrTable
-            AirrTable object"""
-        return AirrTable(pd.read_json(json_object))
-
     @staticmethod
     def read_csv(file: str) -> "AirrTable":
         """Read a csv file and return an airrtable object
@@ -745,295 +622,21 @@ class AirrTable:
             AirrTable object"""
         return AirrTable(pd.read_json(*args, **kwargs))
 
-    def _check_j_gene_liability(self, X):
-        fw1 = X[0]
-        cdr1 = X[1]
-        fw2 = X[2]
-        cdr2 = X[3]
-        fw3 = X[4]
-        cdr3 = X[5]
-        fw4 = X[6]
 
-        # If all fw and cdrs are reolsved
-        if all([isinstance(i, str) for i in [fw1, cdr1, fw2, cdr2, fw3, cdr3, fw4]]):
-            return False
-        # if we have cdr2 and fwr3 and dont have cdr3, we probably have a problem
-        if all([isinstance(i, str) for i in [cdr2, fw3]]) and (isinstance(cdr3, float) or cdr3 == ""):
-            return True
-
-        # fw1-cdr2 might be nan but we still get a fwr3-cdr3
-        if any([isinstance(i, float) for i in [fw1, cdr1, fw2, cdr2]]) and (
-            all([isinstance(cdr3, str), isinstance(fw3, str)])
-        ):
-            return False
-
-        # we didn't get the fw4
-        if all([isinstance(fw3, str), isinstance(cdr3, str)]) and (isinstance(fw4, float) or fw4 == ""):
-            return True
-
-        logger.debug(f" You shouldn't have gotten here {[fw1,cdr1, fw2, cdr2, fw3, cdr3, fw4]}")
-        return True
-
-    def get_sanitized_antibodies(self):
-        """
-        Get only entries with full length productive reads
-        """
-        return self.sanitized_antibodies
-
-    def set_index(self, *args, **kwargs):
-        return self._table.set_index(*args, **kwargs)
-
-    def write_fasta(self, id_field: str, sequence_field: str, file_out: Path):
-        """given an id field and sequence field, write out dataframe to fasata
-
-        Parameters
-        ----------
-        id_field : str
-            the id field from the dataframe to use in the fasta header
-        sequence_field : str
-            the seq field to use as the sqeuence
-        file_out : Path
-            the file output path to fasta
-        """
-        with open(file_out, "w") as f:
-            for _, row in self._table.iterrows():
-                f.write(f">{row[id_field]}\n{row[sequence_field]}\n")
+class LinkedAirrTable(AirrTable):
+    def __init__(self, data=None, *args, **kwargs):
+        super(LinkedAirrTable, self).__init__(data=data, *args, is_linked=True, **kwargs)
+        if not isinstance(data, pd.core.internals.managers.BlockManager):
+            self._islinked = True
+            self._suffixes = ["_heavy", "_light"]
+            self._verify()
 
     @property
-    def empty(self) -> bool:
-        return self._table.empty
-
-    def __getitem__(self, col):
-        return self._table[col]
-
-    def __setitem__(self, key, val):
-        self._table[key] = val
-
-    def __len__(self):
-        return len(self._table)
-
-    def __repr__(self):
-        return self._table.__repr__()
-
-    def _repr_html_(self):
-        """HTML reprsentation for jupyter notebooks"""
-        return self._table._repr_html_()
-
-
-class ScfvAirrTable:
-    """Class for joined airr tables that correspond to heavy and light entries"""
-
-    def __init__(
-        self,
-        heavy_airr_table: AirrTable,
-        light_airr_table: AirrTable,
-        join_on=("sequence_id", "sequence"),
-    ):
-        """constructor for heavy light chain airr table
-
-        Args:
-            heavy_airr_table (AirrTable): Heavy Chain Airr Table
-            light_airr_table (AirrTable): Light Chain Airr Table
-
-        Raises:
-            TypeError: If heavy and light are not instances of airr table
-        """
-        if not all(
-            [
-                isinstance(heavy_airr_table, AirrTable),
-                isinstance(light_airr_table, AirrTable),
-            ]
-        ):
-            raise TypeError(
-                f"heavy_airr_table {heavy_airr_table} and light_airr_table {light_airr_table} must be instance of {AirrTable}"
-            )
-
-        self.join_on = list(join_on)
-        self._heavy = heavy_airr_table.set_index(self.join_on)
-        self._light = light_airr_table.set_index(self.join_on)
-        if sorted(self._heavy.index) != sorted(self._light.index):
-            logger.warning("heavy airr and light airr don't share the same indexes, there maybe unpaired chains")
-            # raise JoinAirrError(
-            #     "heavy airr and light airr must have same sequence identification indexes so we can figure out pairing"
-            # )
-        if len(self._heavy) != len(self._light):
-            logger.warning("heavy airr and light airr don't share the same indexes, there maybe unpaired chains")
-            # raise JoinAirrError("heavy airr and light airr must be the same lenght")
-
-        self._joined_table = self._heavy.join(
-            self._light, rsuffix="_light", lsuffix="_heavy", how="outer"
-        ).reset_index()
-        self._joined_table_inner = self._heavy.join(
-            self._light, rsuffix="_light", lsuffix="_heavy", how="inner"
-        ).reset_index()
-
-    @property
-    def table(self) -> pd.DataFrame:
-        return self._joined_table
-
-    @property
-    def table_inner(self) -> pd.DataFrame:
-        return self._joined_table
-
-    @property
-    def heavy(self) -> pd.DataFrame:
-        return self._heavy.reset_index()
-
-    @property
-    def light(self) -> pd.DataFrame:
-        return self._light.reset_index()
-
-    @property
-    def iloc(self) -> pd.core.indexing._iLocIndexer:
-        return self._joined_table.iloc
-
-    @property
-    def loc(self) -> pd.core.indexing._LocIndexer:
-        return self._joined_table.loc
-
-    def set_index(self, *args, **kwargs):
-        return self._joined_table.set_index(*args, **kwargs)
-
-    def get_sanitized_antibodies(self):
-        """
-        Get only productive full length scfv reads with heavy and light chains
-        """
-        _heavy_clean = AirrTable(self.heavy).sanitized_antibodies
-        _light_clean = AirrTable(self.light).sanitized_antibodies
-        _heavy_clean = _heavy_clean.set_index(self.join_on)
-        _light_clean = _light_clean.set_index(self.join_on)
-        return _heavy_clean.join(_light_clean, rsuffix="_light", lsuffix="_heavy", how="inner").reset_index()
-
-    def get_genbank(self):
-        _genbanks = []
-        # I'm no sure there is a better way to do this other than go through one by one
-        for row in self._joined_table.iterrows():
-            _heavy_record = AirrTable.parse_row_to_genbank(row, suffix="_heavy")
-            _light_record = AirrTable.parse_row_to_genbank(row, suffix="_light")
-            _heavy_record.features += _light_record.features
-            _genbanks.append(_heavy_record)
-        return _genbanks
-
-    def to_genbank(self, filename: str, compression="gzip"):
-        """write airrtable to genbank file
-
-        Parameters
-        ----------
-        filename : str
-            file name string path
-        compression: ['gzip']
-        """
-        _records = self.get_genbank()
-        SeqIO.write(_records, filename, "genbank")
-
-    def get_json(self, indent=False) -> json:
-        """Get json string of HeavyLightAirrTable
-
-        Parameters
-        ----------
-        indent : bool, optional
-            indent json string representation, by default False
-
-        Returns
-        -------
-        json
-            HeavyLightAirrTable as a json table
-        """
-        return self._joined_table.to_json(indent=indent, orient="records")
-
-    def to_json(self, filename: str, compression="gzip"):
-        """write airrtable to json file
-
-        Parameters
-        ----------
-        filename : str
-            file name string path
-        """
-        self._joined_table.to_json(filename, orient="records", compression=compression)
-
-    def to_csv(self, path_or_buf=None, compression="infer", *args, **kwargs):
-        """write airrtable to csv
-
-        Overloaded pandas.to_csv(*args, **kwargs)
-        """
-        self._joined_table.to_csv(path_or_buf, **kwargs)
-
-    @staticmethod
-    def from_json(json_object: json) -> "ScfvAirrTable":
-        """take in json object serialized and ScfvAirrTable
-
-        Returns
-        -------
-        ScFVAirrTable
-            ScFVAirrTable object"""
-
-        df = pd.read_json(json_object)
-        joined_heavy = df[[i for i in df.columns if "_heavy" in i] + ["sequence_id"]].rename(
-            columns=lambda x: x.replace("_heavy", "")
-        )
-        joined_light = df[[i for i in df.columns if "_light" in i] + ["sequence_id"]].rename(
-            columns=lambda x: x.replace("_light", "")
-        )
-
-        return ScfvAirrTable(AirrTable(joined_heavy), AirrTable(joined_light))
-
-    @staticmethod
-    def deconstruct_scfv(dataframe: Union["ScfvAirrTable", pd.DataFrame]) -> Tuple[AirrTable, AirrTable]:
-        """A static method to deconstruct an ScFV airr table into a heavy and light airr table
-
-        Parameters
-        ----------
-        dataframe : Either an ScFVAirrTable or a pandas dataframe
-
-        Returns
-        -------
-        Tuple[AirrTable, AirrTable]
-            Heavy airr and light airr
-        """
-        non_airr = []
-        if isinstance(dataframe, ScfvAirrTable):
-            dataframe = dataframe.table
-        for x in dataframe.columns:
-            if "_heavy" in x or "_light" in x:
-                continue
-            non_airr.append(x)
-
-        logger.debug(f"non-airr columns - {non_airr}")
-        joined_heavy = dataframe[non_airr + [i for i in dataframe.columns if "_heavy" in i]].rename(
-            columns=lambda x: x.replace("_heavy", "")
-        )
-
-        joined_light = dataframe[non_airr + [i for i in dataframe.columns if "_light" in i]].rename(
-            columns=lambda x: x.replace("_light", "")
-        )
-        return AirrTable(joined_heavy), AirrTable(joined_light)
-
-    @staticmethod
-    def read_csv(file: str) -> "ScfvAirrTable":
-        """Read a csv file and return an airrtable object
-
-        Returns
-        -------
-        AirrTable
-            AirrTable object"""
-        _heavy, _light = ScfvAirrTable.deconstruct_scfv(pd.read_csv(file))
-        return ScfvAirrTable(_heavy, _light)
-
-    def __getitem__(self, col):
-        return self._joined_table[col]
-
-    def __len__(self):
-        return len(self._joined_table)
-
-    def __repr__(self):
-        return self._joined_table.__repr__()
-
-    def _repr_html_(self):
-        """HTML reprsentation for jupyter notebooks"""
-        return self._joined_table._repr_html_()
-
-    def __setitem__(self, key, val):
-        self._joined_table[key] = val
+    def compliant_cols(self) -> List[str]:
+        _complient_cols = []
+        for suffix in self._suffixes:
+            _complient_cols += list(map(lambda x: x + suffix if x != "sequence_id" else x, list(IGBLAST_AIRR.keys())))
+        return list(set(_complient_cols))
 
 
 if __name__ == "__main__":

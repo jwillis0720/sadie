@@ -1,3 +1,3 @@
-from .airrtable import AirrTable, ScfvAirrTable
+from .airrtable import AirrTable, LinkedAirrTable
 
-__all__ = ["AirrTable", "ScfvAirrTable"]
+__all__ = ["AirrTable", "LinkedAirrTable"]
