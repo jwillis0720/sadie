@@ -75,10 +75,11 @@ def test_indel_correction():
 def test_scfv_airrtable():
     file_path = fixture_file("airr_tables/linked_airr_table_dummy.csv.gz")
     dummy_scfv_table = pd.read_csv(file_path, index_col=0)
-    LinkedAirrTable(dummy_scfv_table)
-
-
-#     scfv_airr_table = airr_api.run_fasta(fixture_file("fasta_inputs/scfv.fasta"), scfv=True)
-#     heavy, light = .deconstruct_scfv(scfv_airr_table)
-#     assert type(heavy) == AirrTable
-#     assert type(light) == AirrTable
+    linked_table = LinkedAirrTable(dummy_scfv_table)
+    # test if we can split
+    heavy_table, light_table = linked_table.get_split_table()
+    assert isinstance(heavy_table, AirrTable)
+    assert isinstance(light_table, AirrTable)
+    rebuild_table = LinkedAirrTable(heavy_table.merge(light_table, on="sequence_id", suffixes=["_heavy", "_light"]))
+    assert rebuild_table == rebuild_table
+    assert rebuild_table == linked_table
