@@ -72,11 +72,11 @@ class AirrTable(pd.DataFrame):
 
     _metadata = ["_suffixes", "_islinked"]
 
-    def __init__(self, data=None, *args, is_linked: bool = False, **kwargs):
+    def __init__(self, data=None, *args, **kwargs):
         super(AirrTable, self).__init__(data=data, *args, **kwargs)
         if not isinstance(data, pd.core.internals.managers.BlockManager):
-            if not is_linked:
-                self._islinked = is_linked
+            if self.__class__ is AirrTable:
+                self._islinked = False
                 self._suffixes = []
                 self._verify()
 
@@ -212,15 +212,6 @@ class AirrTable(pd.DataFrame):
                 self._check_j_gene_liability, axis=1
             )
 
-        # assign locus as a category
-        if self._islinked:
-            for suffix in self._suffixes:
-                self[f"locus{suffix}"] = self[f"locus{suffix}"].astype(
-                    pd.CategoricalDtype(categories=["IGH", "IGL", "IGK"], ordered=True)
-                )
-        else:
-            self["locus"] = self["locus"].astype(pd.CategoricalDtype(categories=["IGH", "IGL", "IGK"], ordered=True))
-
         # get full nt vdj recombination
         vdj_nt_keys = ["fwr1", "cdr1", "fwr2", "cdr2", "fwr3", "cdr3", "fwr4"]
         vdj_aa_keys = ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]
@@ -249,16 +240,20 @@ class AirrTable(pd.DataFrame):
             for suffix in self._suffixes:
                 # Insert the top call for each vdj call but right next to the N_call column using the insert method
                 for call in ["v_call", "d_call", "j_call"]:
+
                     # pure light chain columns won't have a dcall
-                    call += suffix
-                    if call not in self.columns:
+                    if call + suffix not in self.columns:
                         continue
+
+                    new_call = call + f"top{suffix}"
                     # drop the volumn if it's already there, that helps with backwards compatibility
-                    if f"{call}_top" in self.columns:
-                        self.drop(f"{call}_top", inplace=True, axis=1)
+                    if new_call in self.columns:
+                        self.drop(new_call, inplace=True, axis=1)
 
                     # Insert right next to the X_call airr_columns
-                    self.insert(self.columns.get_loc(call), f"{call}_top", self[call].str.split(",").str.get(0))
+                    self.insert(
+                        self.columns.get_loc(call + suffix), new_call, self[call + suffix].str.split(",").str.get(0)
+                    )
 
                 # get mutation frequency rather than identity
                 self.loc[:, f"v_mutation{suffix}"] = self[f"v_identity{suffix}"].apply(lambda x: (100 - x))
@@ -682,12 +677,13 @@ class AirrTable(pd.DataFrame):
 
 class LinkedAirrTable(AirrTable):
     def __init__(self, data=None, *args, **kwargs):
-        super(LinkedAirrTable, self).__init__(data=data, *args, is_linked=True, **kwargs)
+        super(LinkedAirrTable, self).__init__(data=data, *args, **kwargs)
         if not isinstance(data, pd.core.internals.managers.BlockManager):
-            self._islinked = True
-            self._suffixes = ["_heavy", "_light"]
-            if not self.verified:
-                self._verify()
+            if self.__class__ == LinkedAirrTable:
+                self._islinked = True
+                self._suffixes = ["_heavy", "_light"]
+                if not self.verified:
+                    self._verify()
 
     @property
     def compliant_cols(self) -> List[str]:
@@ -695,6 +691,29 @@ class LinkedAirrTable(AirrTable):
         for suffix in self._suffixes:
             _complient_cols += list(map(lambda x: x + suffix if x != "sequence_id" else x, list(IGBLAST_AIRR.keys())))
         return list(set(_complient_cols))
+
+    def get_split_table(self) -> Tuple[AirrTable, AirrTable]:
+        left_rows = [i for i in self.columns if self._suffixes[0] in i]
+        right_rows = [i for i in self.columns if self._suffixes[1] in i]
+        common_columns = list(self.columns.difference(set(left_rows + right_rows)))
+        left_table = self[common_columns + left_rows]
+        left_airr_columns = list(map(lambda x: x.replace(self._suffixes[0], ""), list(left_table.columns)))
+        left_table.columns = left_airr_columns
+        right_table = self[common_columns + right_rows]
+        right_airr_columns = list(map(lambda x: x.replace(self._suffixes[1], ""), list(right_table.columns)))
+        right_table.columns = right_airr_columns
+        return AirrTable(left_table), AirrTable(right_table)
+
+    def __eq__(self, other) -> bool:
+        """equals method for LinkedDataFrame
+
+        Returns
+        -------
+        bool
+        """
+        _dataframe = pd.DataFrame(self).fillna("")
+        other_dataframe = pd.DataFrame(other).fillna("")
+        return (_dataframe == other_dataframe).all().all()
 
 
 if __name__ == "__main__":
