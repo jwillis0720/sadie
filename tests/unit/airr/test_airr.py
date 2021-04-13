@@ -17,6 +17,7 @@ import pytest
 from click.testing import CliRunner
 from numpy import isnan
 from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, LinkedAirrTable
+from sadie.airr import methods as airr_methods
 from sadie.app import airr as sadie_airr
 
 logger = logging.getLogger()
@@ -283,19 +284,18 @@ def test_adaptable_penalty():
     assert isinstance(airr_table, LinkedAirrTable)
 
 
-@pytest.mark.skip(reason="Reimplementing in method module")
 def test_mutational_analysis():
     integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
     airr_api = Airr("human")
     airrtable = airr_api.run_fasta(integration_file)
-    kabat_table = Airr.run_mutational_analysis(airrtable, "kabat")
-    assert "mutations" in kabat_table.table.columns
+    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable, "kabat")
+    assert "mutations" in airrtable_with_analysis.columns
 
     integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
     airr_api = Airr("human")
     airrtable = airr_api.run_fasta(integration_file)
-    kabat_table = Airr.run_mutational_analysis(airrtable, "kabat")
-    assert "mutations" in kabat_table.table.columns
+    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable, "kabat")
+    assert "mutations" in airrtable_with_analysis.columns
 
 
 def _run_cli(args, tmpfile):
