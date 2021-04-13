@@ -293,43 +293,8 @@ class Airr:
         if not isinstance(seq_id, str):
             raise TypeError(f"seq_id must be instance of str, passed {type(seq_id)}")
 
-        if not scfv:
-            query = ">{}\n{}".format(seq_id, seq)
-            result = self.igblast.run_single(query)
-            result.insert(2, "species", self.species)
-            result = AirrTable(result)
-
-            # There is not liable sequences
-            if result[result["liable"]].empty:
-                return result
-            else:
-                self._liable_seqs = set(result[result["liable"]].sequence_id)
-
-                # If we allow adaption,
-                if self.adapt_penalty:
-                    logger.info("Relaxing penalities to resolve liabilities")
-                    _tmp_v = self.igblast.v_penalty.value
-                    _tmp_j = self.igblast.j_penalty.value
-                    self.igblast.v_penalty = -2
-                    self.igblast.j_penalty = -1
-                    adaptable_result = self.igblast.run_single(query)
-                    self.igblast.v_penalty = _tmp_v
-                    self.igblast.j_penalty = _tmp_j
-                    adaptable_result.insert(2, "species", self.species)
-                    adaptable_result = AirrTable(adaptable_result)
-
-                    # If we shifted from liable, return the adaptable results
-                    if (~adaptable_result["liable"]).all():
-                        result = adaptable_result
-                if self.correct_indel:
-                    result.correct_indel()
-                return result
-        else:
-            with tempfile.NamedTemporaryFile(dir=self.temp_directory) as tmpfile:
-                record = SeqRecord(Seq(seq), id=str(seq_id))
-                SeqIO.write(record, tmpfile.name, "fasta")
-                _results = self.run_fasta(tmpfile.name, scfv=True)
-            return _results
+        records = [SeqRecord(Seq(seq), name=seq_id)]
+        return self.run_records(records, scfv=scfv)
 
     def run_dataframe(
         self,

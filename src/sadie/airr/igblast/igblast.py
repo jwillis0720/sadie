@@ -11,7 +11,6 @@ import tempfile
 import warnings
 import semantic_version
 from shutil import which
-from io import StringIO
 
 from pathlib import Path
 from typing import List, Union
@@ -885,50 +884,6 @@ class IgBLASTN:
             Path(tmpfile.name).unlink()
 
         return df
-
-    def run_single(self, q: str) -> pd.DataFrame:
-        """Run Igblast on a single fasta string. This works by encoding the string and passing it to stdin which IGBLAST accepts
-
-        Parameters
-        ----------
-        q : str
-            A string fasta, ex ">my_file\nATCACA...", It is much easier to use airr.run_single as it will handle this for you
-
-        Returns
-        -------
-        pd.DataFrame
-            A dataframe with the IgBLAST results
-
-        Raises
-        ------
-        BadIgBLASTArgument
-            During precheck if any blast arguments are incorrect
-        IgBLASTRunTimeError
-            Any runtime error for igblast
-        """
-        if not isinstance(q, str):
-            raise BadIgBLASTArgument(type(q), "needs to be instance str")
-        if not q:
-            raise BadIgBLASTArgument(q, "Input query is null, please provide sequence")
-
-        # Same as in run_file, we need IGDATA as an environment vairable, so we can copy and pass to subprocess
-        local_env = os.environ.copy()
-        local_env["IGDATA"] = self.igdata
-
-        # Again, precheck to make sure all file paths are set accordingly
-        self._pre_check()
-
-        # run process
-        process = subprocess.run(self.cmd, env=local_env, input=q.encode("utf-8"), capture_output=True)
-
-        # We are also captureing a single sequence by stdout and decoding
-        stdout = process.stdout.decode("utf-8")
-        string_io = StringIO(stdout)
-        stderr = process.stderr
-        if stderr:
-            raise IgBLASTRunTimeError(stderr)
-        else:
-            return pd.read_csv(string_io, sep="\t")
 
     def __repr__(self):
         return "IgBLAST: env IGDATA={} {}".format(str(self.igdata), " ".join(self.cmd))
