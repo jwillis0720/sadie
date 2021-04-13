@@ -287,15 +287,23 @@ def test_adaptable_penalty():
 def test_mutational_analysis():
     integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
     airr_api = Airr("human")
-    airrtable = airr_api.run_fasta(integration_file)
-    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable, "kabat")
+    airrtable_heavy = airr_api.run_fasta(integration_file)
+    airrtable_heavy["cellid"] = airrtable_heavy["sequence_id"].str.split("_").str.get(0)
+    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_heavy, "kabat")
     assert "mutations" in airrtable_with_analysis.columns
 
     integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
     airr_api = Airr("human")
-    airrtable = airr_api.run_fasta(integration_file)
-    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable, "kabat")
+    airrtable_light = airr_api.run_fasta(integration_file)
+    airrtable_light["cellid"] = airrtable_light["sequence_id"].str.split("_").str.get(0)
+    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_light, "kabat")
     assert "mutations" in airrtable_with_analysis.columns
+    link_table = airrtable_heavy.merge(airrtable_light, on="cellid", suffixes=["_heavy", "_light"])
+
+    joined_airr_table = LinkedAirrTable(link_table)
+    joined_airr_table_with_analysis = airr_methods.run_mutational_analysis(joined_airr_table, "kabat")
+    assert "mutations_heavy" in joined_airr_table_with_analysis.columns
+    assert "mutations_light" in joined_airr_table_with_analysis.columns
 
 
 def _run_cli(args, tmpfile):
