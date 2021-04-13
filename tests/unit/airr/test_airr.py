@@ -110,9 +110,9 @@ def test_airr_single_sequence():
     assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
 
     # will def change based on penalties, so be careful
-    assert round(v_mutation, 2) == 13.99
-    assert round(d_mutation, 2) == 17.86
-    assert round(j_mutation, 2) == 11.32
+    assert round(v_mutation, 2) == 14.0
+    assert round(d_mutation, 2) == 17.88
+    assert round(j_mutation, 2) == 11.31
     with pytest.raises(TypeError):
         # id must be str
         airr_table = air_api.run_single(9, pg9_seq)
