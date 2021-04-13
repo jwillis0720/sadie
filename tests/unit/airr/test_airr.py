@@ -16,7 +16,7 @@ import pandas as pd
 import pytest
 from click.testing import CliRunner
 from numpy import isnan
-from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, ScfvAirrTable
+from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, LinkedAirrTable
 from sadie.app import airr as sadie_airr
 
 logger = logging.getLogger()
@@ -109,9 +109,9 @@ def test_airr_single_sequence():
     assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
 
     # will def change based on penalties, so be careful
-    assert v_mutation == 14.0
-    assert d_mutation == 17.875
-    assert j_mutation == 11.3125
+    assert round(v_mutation, 2) == 13.99
+    assert round(d_mutation, 2) == 17.86
+    assert round(j_mutation, 2) == 11.32
     with pytest.raises(TypeError):
         # id must be str
         airr_table = air_api.run_single(9, pg9_seq)
@@ -161,7 +161,7 @@ def test_run_multiple_scfv():
     airr = Airr("human")
     list_to_run = list(SeqIO.parse(gzip.open(scfv, "rt"), "fastq"))
     results = airr.run_records(list_to_run, scfv=True)
-    assert isinstance(results, ScfvAirrTable)
+    assert isinstance(results, LinkedAirrTable)
 
 
 def test_vdj_overlap():
@@ -276,11 +276,14 @@ def test_adaptable_penalty():
               CCGCCAGGCTCCAGGGAANGGGGCTGGAGT"""
     air_api = Airr("human", adaptable=True)
     airr_table = air_api.run_single("scfv", scfv.replace("\n", "").replace(" ", ""), scfv=True)
-    assert airr_table.table.fwr1_aa_heavy.iloc[0] == "EVQLLESGGGLVQPGGSLRLSCAAS"
-    assert airr_table.table.fwr2_aa_heavy.iloc[0] == "MSWVRQAPGXGAGV"
-    assert isinstance(airr_table, ScfvAirrTable)
+    assert airr_table.fwr1_aa_heavy.iloc[0] == "EVQLLESGGGLVQPGGSLRLSCAAS"
+    assert airr_table.fwr2_aa_heavy.iloc[0] == "MSWVRQAPGXGAGV"
+    assert isinstance(airr_table, pd.DataFrame)
+    assert isinstance(airr_table, AirrTable)
+    assert isinstance(airr_table, LinkedAirrTable)
 
 
+@pytest.mark.skip(reason="Reimplementing in method module")
 def test_mutational_analysis():
     integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
     airr_api = Airr("human")

@@ -1,12 +1,21 @@
 import bz2
 import gzip
 import os
+import logging
+import warnings
 from functools import partial
 from mimetypes import guess_type
-
-from Bio import SeqIO as so
-
 from pathlib import Path
+
+import pandas as pd
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    from Bio.SubsMat import MatrixInfo as matlist
+    from Bio import pairwise2, SeqIO
+
+blosum_matrix = matlist.blosum62
+logger = logging.getLogger("Utilility")
 
 
 def get_project_root() -> Path:
@@ -52,7 +61,7 @@ def split_fasta(parent_file, how_many, outdir=".", filetype="fasta"):
 
     # _open will . handle all
     with _open(parent_file) as parent_file_handle:
-        for num, record in enumerate(so.parse(parent_file_handle, f"{filetype}"), start=1):
+        for num, record in enumerate(SeqIO.parse(parent_file_handle, f"{filetype}"), start=1):
 
             # append records to our list holder
             joiner.append(">" + record.id + "\n" + str(record.seq))
@@ -156,10 +165,40 @@ def is_tool(name):
     return which(name) is not None
 
 
-if __name__ == "__main__":
-    split_fasta(
-        "/workdir/people_help/Ana/cis_display_poc/demux/R1_cis.fastq",
-        5000,
-        "somedir",
-        "fastq",
+def correct_alignment(X: pd.Series, field_1: str, field_2: str) -> pd.Series:
+    alignment_aa_1 = X[field_1]
+    alignment_aa_2 = X[field_2]
+    if any([isinstance(alignment_aa_1, float), isinstance(alignment_aa_2, float)]):
+        return pd.Series({field_1: alignment_aa_1, field_2: alignment_aa_2})
+
+    # get alignments
+    try:
+        alignments = pairwise2.align.globalds(
+            alignment_aa_1,
+            alignment_aa_2,
+            blosum_matrix,
+            -12,
+            -4,
+            penalize_extend_when_opening=True,
+            penalize_end_gaps=False,
+        )
+    except SystemError:
+        logger.debug(f"System error most likely due to * in germline alignment...falling back {alignment_aa_2}")
+        alignments = pairwise2.align.globalms(
+            alignment_aa_1,
+            alignment_aa_2,
+            4,
+            -1,
+            -12,
+            -4,
+            penalize_extend_when_opening=True,
+            penalize_end_gaps=False,
+        )
+    alignment_1_aa_corrected = alignments[0][0]
+    alignment_2_aa_corrected = alignments[0][1]
+    return pd.Series(
+        {
+            field_1: alignment_1_aa_corrected,
+            field_2: alignment_2_aa_corrected,
+        }
     )
