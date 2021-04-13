@@ -38,6 +38,13 @@ def run_mutational_analysis(
     if not isinstance(airrtable, AirrTable):
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
+    if airrtable.__class__ == LinkedAirrTable:
+        # split table into left and right (heavy and light) tables
+        left_table, right_table = airrtable.get_split_table()
+        left_table = run_mutational_analysis(left_table, scheme)
+        right_table = run_mutational_analysis(right_table, scheme)
+        return LinkedAirrTable(left_table.merge(right_table, on="cellid", suffixes=airrtable._suffixes))
+
     if not airrtable.index.is_monotonic_increasing:
         raise IndexError(f"{airrtable.index} must be monotonic increasing")
 

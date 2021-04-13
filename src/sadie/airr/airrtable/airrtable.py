@@ -645,7 +645,9 @@ class LinkedAirrTable(AirrTable):
     def compliant_cols(self) -> List[str]:
         _complient_cols = []
         for suffix in self._suffixes:
-            _complient_cols += list(map(lambda x: x + suffix if x != "sequence_id" else x, list(IGBLAST_AIRR.keys())))
+            _complient_cols += list(
+                map(lambda x: x + suffix if x != "cellid" or x != "sequenceid" else x, list(IGBLAST_AIRR.keys()))
+            )
         return list(set(_complient_cols))
 
     def get_split_table(self) -> Tuple[AirrTable, AirrTable]:
