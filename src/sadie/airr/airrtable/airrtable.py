@@ -2,7 +2,7 @@
 # std lib
 import logging
 from pathlib import Path
-from typing import Tuple, List
+from typing import Tuple, List, Union
 import warnings
 
 # third party
@@ -79,6 +79,12 @@ class AirrTable(pd.DataFrame):
                 self._islinked = is_linked
                 self._suffixes = []
                 self._verify()
+
+    @property
+    def verified(self):
+        if not hasattr(self, "_verified"):
+            return False
+        return self._verified
 
     @property
     def _constructor(self):
@@ -301,6 +307,7 @@ class AirrTable(pd.DataFrame):
             self.loc[:, "j_mutation_aa"] = self[["j_sequence_alignment_aa", "j_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
             )
+        self._verified = True
 
     def _get_aa_distance(self, X):
         "get character levenshtrein distance, will work with '-' on alignments"
@@ -383,42 +390,92 @@ class AirrTable(pd.DataFrame):
         logger.debug(f"Liability shouldn't have gotten here {pformat(X.to_dict())}")
         return True
 
-    @staticmethod
-    def correct_indel(airrtable: "AirrTable") -> "AirrTable":
-        airrtable = pd.DataFrame(airrtable)
+    def correct_indel(self) -> Union["AirrTable", "LinkedAirrTable"]:
+        airrtable = pd.DataFrame(self)
+        _fields = [
+            ("sequence_alignment_aa", "germline_alignment_aa"),
+            ("v_sequence_alignment_aa", "v_germline_alignment_aa"),
+        ]
+        if self.__class__ is LinkedAirrTable:
+            _linked_fields = []
+            for suffix in self._suffixes:
+                for field_1, field_2 in _fields:
+                    _linked_fields.append([f"{field_1}{suffix}", f"{field_2}{suffix}"])
+            _fields = _linked_fields
 
         def _get_indel_index(field_1: str, field_2: str) -> pd.Index:
+            return self[
+                (self[field_1].str.len() != self[field_2].str.len()) & (~self[field_1].isna()) & (~self[field_2].isna())
+            ].index
+
+        def _update_align(airrtable: pd.DataFrame, field_1: str, field_2: str):
+            # get indels in sequence_germline_alignment_aa that were not accounted for in the total alignment
+            indel_indexes = _get_indel_index(field_1, field_2)
+            logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid germline alignment")
+            airrtable.loc[:, f"{field_2}_corrected"] = False
+            if not indel_indexes.empty:
+                correction_alignments = airrtable.loc[indel_indexes, :].apply(
+                    lambda x: correct_alignment(x, field_1, field_2), axis=1
+                )
+                # Correction in place
+                airrtable.update(correction_alignments)
+                airrtable.loc[indel_indexes, f"{field_2}_corrected"] = True
+            return airrtable
+
+        for field_1, field_2 in _fields:
+            airrtable = _update_align(airrtable, field_1, field_2)
+
+        return self.__class__(airrtable)
+
+    @staticmethod
+    def static_correct_indel(
+        airrtable_input: Union["AirrTable", "LinkedAirrTable"]
+    ) -> Union["AirrTable", "LinkedAirrTable"]:
+        _fields = [
+            ("sequence_alignment_aa", "germline_alignment_aa"),
+            ("v_sequence_alignment_aa", "v_germline_alignment_aa"),
+        ]
+        if type(airrtable_input) == LinkedAirrTable:
+            _linked_fields = []
+            for suffix in airrtable_input._suffixes:
+                for field_1, field_2 in _fields:
+                    _linked_fields.append([f"{field_1}{suffix}", f"{field_2}{suffix}"])
+            _fields = _linked_fields
+
+        else:
+            if type(airrtable_input) != AirrTable:
+                raise TypeError(f"{type(airrtable_input)} must be of AirrTable or LinkedAirrTable")
+
+        airrtable = pd.DataFrame(airrtable_input)
+
+        def _get_indel_index(airrtable, field_1: str, field_2: str) -> pd.Index:
             return airrtable[
                 (airrtable[field_1].str.len() != airrtable[field_2].str.len())
                 & (~airrtable[field_1].isna())
                 & (~airrtable[field_2].isna())
             ].index
 
-        # get indels in sequence_germline_alignment_aa that were not accounted for in the total alignment
-        indel_indexes = _get_indel_index("sequence_alignment_aa", "germline_alignment_aa")
-        logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid germline alignment")
+        def _update_align(airrtable: Union[AirrTable, LinkedAirrTable], field_1: str, field_2: str):
+            # get indels in sequence_germline_alignment_aa that were not accounted for in the total alignment
+            indel_indexes = _get_indel_index(airrtable, field_1, field_2)
+            logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid germline alignment")
+            airrtable.loc[:, f"{field_2}_corrected"] = False
+            if not indel_indexes.empty:
+                correction_alignments = airrtable.loc[indel_indexes, :].apply(
+                    lambda x: correct_alignment(x, field_1, field_2), axis=1
+                )
+                # Correction in place
+                airrtable.update(correction_alignments)
+                airrtable.loc[indel_indexes, f"{field_2}_corrected"] = True
 
-        # get indels in Vgermline_alignment_aa that were not accounted for in the v gene
-        v_indel_indexes = _get_indel_index("v_sequence_alignment_aa", "v_germline_alignment_aa")
-        logger.info(f"Have {len(v_indel_indexes)} possible v-gene indels that are not in amino acid germline alignment")
-        airrtable.loc[:, "germline_alignment_aa_corrected"] = False
-        airrtable.loc[:, "v_germline_alignment_aa_corrected"] = False
+            return airrtable
 
-        if not indel_indexes.empty:
-            correction_alignments = airrtable.loc[indel_indexes, :].apply(
-                lambda x: correct_alignment(x, "sequence_alignment_aa", "germline_alignment_aa"), axis=1
-            )
-            # Correction in place
-            airrtable.update(correction_alignments)
-            airrtable.loc[indel_indexes, "germline_alignment_aa_corrected"] = True
+        for field_1, field_2 in _fields:
+            airrtable = _update_align(airrtable, field_1, field_2)
 
-        if not v_indel_indexes.empty:
-            correction_v_alignments = airrtable.loc[v_indel_indexes, :].apply(
-                lambda x: correct_alignment(x, "v_sequence_alignment_aa", "v_germline_alignment_aa"), axis=1
-            )
-            # Correction in place
-            airrtable.update(correction_v_alignments)
-            airrtable.loc[v_indel_indexes, "v_germline_alignment_aa_corrected"] = True
+        if type(airrtable_input) == LinkedAirrTable:
+            return LinkedAirrTable(airrtable)
+
         return AirrTable(airrtable)
 
     @staticmethod
@@ -629,7 +686,8 @@ class LinkedAirrTable(AirrTable):
         if not isinstance(data, pd.core.internals.managers.BlockManager):
             self._islinked = True
             self._suffixes = ["_heavy", "_light"]
-            self._verify()
+            if not self.verified:
+                self._verify()
 
     @property
     def compliant_cols(self) -> List[str]:
