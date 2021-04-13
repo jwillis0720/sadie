@@ -161,9 +161,7 @@ def test_run_multiple_scfv():
     airr = Airr("human")
     list_to_run = list(SeqIO.parse(gzip.open(scfv, "rt"), "fastq"))
     results = airr.run_records(list_to_run, scfv=True)
-    assert isinstance(
-        results,
-    )
+    assert isinstance(results, LinkedAirrTable)
 
 
 def test_vdj_overlap():
@@ -278,14 +276,14 @@ def test_adaptable_penalty():
               CCGCCAGGCTCCAGGGAANGGGGCTGGAGT"""
     air_api = Airr("human", adaptable=True)
     airr_table = air_api.run_single("scfv", scfv.replace("\n", "").replace(" ", ""), scfv=True)
-    assert airr_table.table.fwr1_aa_heavy.iloc[0] == "EVQLLESGGGLVQPGGSLRLSCAAS"
-    assert airr_table.table.fwr2_aa_heavy.iloc[0] == "MSWVRQAPGXGAGV"
-    assert isinstance(
-        airr_table,
-    )
+    assert airr_table.fwr1_aa_heavy.iloc[0] == "EVQLLESGGGLVQPGGSLRLSCAAS"
+    assert airr_table.fwr2_aa_heavy.iloc[0] == "MSWVRQAPGXGAGV"
+    assert isinstance(airr_table, pd.DataFrame)
+    assert isinstance(airr_table, AirrTable)
     assert isinstance(airr_table, LinkedAirrTable)
 
 
+@pytest.mark.skip(reason="Reimplementing in method module")
 def test_mutational_analysis():
     integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
     airr_api = Airr("human")

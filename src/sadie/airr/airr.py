@@ -278,7 +278,7 @@ class Airr:
             if result[result["liable"]].empty:
                 return result
             else:
-                self._liable_seqs = set(result["liable"].sequence_id)
+                self._liable_seqs = set(result[result["liable"]].sequence_id)
 
                 # If we allow adaption,
                 if self.adapt_penalty:
@@ -294,7 +294,7 @@ class Airr:
                     adaptable_result = AirrTable(adaptable_result)
 
                     # If we shifted from liable, return the adaptable results
-                    if (adaptable_result["note"].str.lower() != "liable").all():
+                    if (~adaptable_result["liable"]).all():
                         return adaptable_result
                 return result
         else:
@@ -311,7 +311,7 @@ class Airr:
         seq_field: Union[str, int],
         scfv=False,
         return_join=False,
-    ) -> pd.DataFrame:
+    ) -> AirrTable:
         """Pass dataframe and field and run airr.
 
         Parameters
@@ -347,7 +347,7 @@ class Airr:
 
         if return_join:
             dataframe[seq_id_field] = dataframe[seq_id_field].astype(str)
-            _df = self.run_records(_get_seq_generator(), scfv=scfv).table
+            _df = self.run_records(_get_seq_generator(), scfv=scfv)
             # convert seq id field to stry stince sequence_id is cast to string
             return dataframe.merge(
                 _df,
@@ -449,7 +449,7 @@ class Airr:
             result.insert(2, "species", self.species)
             result = AirrTable(result)
             if result["liable"].any():
-                self._liable_seqs = set(result[result["note"].str.lower() == "liable"].sequence_id)
+                self._liable_seqs = set(result[result["liable"]].sequence_id)
                 # If we allow adaption,
                 if self.adapt_penalty:
                     logger.info(f"Relaxing penalities to resolve liabilities for {len(self._liable_seqs)}")
@@ -462,14 +462,14 @@ class Airr:
 
                     # Set to false so we can call recursive
                     self.adapt_penalty = False
-                    liable_dataframe = result.table[result.table["sequence_id"].isin(self._liable_seqs)]
+                    liable_dataframe = result[result["sequence_id"].isin(self._liable_seqs)]
 
                     # Will call without adaptive
                     adaptable_results = self.run_dataframe(liable_dataframe, "sequence_id", "sequence")
 
-                    adaptable_not_liable = adaptable_results[adaptable_results["note"] != "liable"]
+                    adaptable_not_liable = adaptable_results[~adaptable_results["liable"]]
                     logger.info(f"Corrected {len(adaptable_not_liable)} sequences")
-                    airr_table = result.table.set_index("sequence_id")
+                    airr_table = result.set_index("sequence_id")
                     airr_table.update(adaptable_not_liable.set_index("sequence_id"))
                     airr_table = airr_table.reset_index()
                     self.igblast.v_penalty = _tmp_v

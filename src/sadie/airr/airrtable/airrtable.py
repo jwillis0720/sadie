@@ -282,7 +282,7 @@ class AirrTable(pd.DataFrame):
                     self.drop(f"{call}_top", inplace=True, axis=1)
 
                 # Insert right next to the X_call airr_columns
-                self.insert(self.columns.get_loc(call), f"{call}_top", self[call].str.split(",").str.get(0))
+                self.insert(self.columns.get_loc(call), f"{call}_top", self[call].fillna("").str.split(",").str.get(0))
 
             # get mutation frequency rather than identity
             self.loc[:, "v_mutation"] = self["v_identity"].apply(lambda x: (100 - x))
