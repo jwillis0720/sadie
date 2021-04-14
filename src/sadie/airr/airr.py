@@ -335,6 +335,9 @@ class Airr:
                 dataframe.reset_index()[seq_id_field],
                 dataframe.reset_index()[seq_field],
             ):
+                if not isinstance(seq, str) or not isinstance(seq_id, str):
+                    raise ValueError(f"{seq_id} needs to have string. passed {type(seq)}, drop nan's first")
+
                 yield SeqRecord(id=str(seq_id), name=str(seq_id), description="", seq=Seq(seq))
 
         if return_join:
