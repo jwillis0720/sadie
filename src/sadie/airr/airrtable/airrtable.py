@@ -206,7 +206,7 @@ class AirrTable(pd.DataFrame):
         self.drop([i for i in self.columns if "Unnamed" in i], axis=1, inplace=True)
 
         # set boolean strings to boolelan types
-        _to_boolean = ["productive", "stop_codon", "rev_comp", "v_frameshift", "complete_vdj"]
+        _to_boolean = ["productive", "vj_in_frame", "stop_codon", "rev_comp", "v_frameshift", "complete_vdj"]
         if self._islinked:
             _to_boolean_link = []
             for x in self._suffixes:
