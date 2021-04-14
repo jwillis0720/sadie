@@ -300,7 +300,7 @@ def test_mutational_analysis():
     assert "mutations" in airrtable_with_analysis.columns
     link_table = airrtable_heavy.merge(airrtable_light, on="cellid", suffixes=["_heavy", "_light"])
 
-    joined_airr_table = LinkedAirrTable(link_table)
+    joined_airr_table = LinkedAirrTable(link_table, key_column="cellid")
     joined_airr_table_with_analysis = airr_methods.run_mutational_analysis(joined_airr_table, "kabat")
     assert "mutations_heavy" in joined_airr_table_with_analysis.columns
     assert "mutations_light" in joined_airr_table_with_analysis.columns

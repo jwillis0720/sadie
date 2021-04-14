@@ -83,3 +83,23 @@ def test_scfv_airrtable():
     rebuild_table = LinkedAirrTable(heavy_table.merge(light_table, on="sequence_id", suffixes=["_heavy", "_light"]))
     assert rebuild_table == rebuild_table
     assert rebuild_table == linked_table
+
+    heavy_table["cell_id"] = heavy_table["sequence_id"]
+    light_table["cell_id"] = light_table["sequence_id"]
+    with pytest.raises(MissingAirrColumns):
+        LinkedAirrTable(heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]))
+    rebuild_data = LinkedAirrTable(
+        heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]), key_column="cell_id"
+    )
+    heavy_table_split, light_table_split = rebuild_data.get_split_table()
+    assert heavy_table_split.columns.difference(heavy_table.columns).empty
+    assert light_table_split.columns.difference(light_table.columns).empty
+    assert heavy_table == heavy_table_split[heavy_table.columns]
+    assert light_table == light_table_split[light_table.columns]
+    assert rebuild_data.key_column == "cell_id"
+    assert rebuild_data.suffixes == ["_heavy", "_light"]
+
+    rebuild_data = LinkedAirrTable(
+        heavy_table.merge(light_table, on="cell_id", suffixes=["_h", "_l"]), suffixes=["_h", "_l"], key_column="cell_id"
+    )
+    assert rebuild_data.suffixes == ["_h", "_l"]

@@ -38,12 +38,14 @@ def run_mutational_analysis(
     if not isinstance(airrtable, AirrTable):
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
+    key = airrtable.key_column
     if airrtable.__class__ == LinkedAirrTable:
         # split table into left and right (heavy and light) tables
         left_table, right_table = airrtable.get_split_table()
         left_table = run_mutational_analysis(left_table, scheme)
         right_table = run_mutational_analysis(right_table, scheme)
-        return LinkedAirrTable(left_table.merge(right_table, on="cellid", suffixes=airrtable._suffixes))
+        key = airrtable.key_column
+        return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=airrtable.suffixes), key_column=key)
 
     if not airrtable.index.is_monotonic_increasing:
         raise IndexError(f"{airrtable.index} must be monotonic increasing")
@@ -52,21 +54,21 @@ def run_mutational_analysis(
     logger.info("Running ANARCI on germline alignment")
     anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"])
     germline_results_anarci = anarci_api.run_dataframe(
-        airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable["sequence_id"]),
-        "sequence_id",
+        airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
+        key,
         "germline_alignment_aa",
     )
     logger.info("Running ANARCI on mature alignment")
     mature_results_anarci = anarci_api.run_dataframe(
-        airrtable["sequence_alignment_aa"].str.replace("-", "").to_frame().join(airrtable["sequence_id"]),
-        "sequence_id",
+        airrtable["sequence_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
+        key,
         "sequence_alignment_aa",
     )
     logger.info("Getting ANARCI on alignment tables")
     sets_of_lists = [
         set(germline_results_anarci["Id"]),
         set(mature_results_anarci["Id"]),
-        set(airrtable["sequence_id"]),
+        set(airrtable[key]),
     ]
     sets_of_lists = sorted(sets_of_lists, key=lambda x: len(x))
     common_results = set.intersection(*sets_of_lists)
@@ -108,10 +110,8 @@ def run_mutational_analysis(
 
     mature_results_anarci["mutations"] = mutation_arrays
     return AirrTable(
-        airrtable.merge(
-            mature_results_anarci.rename({"Id": "sequence_id"}, axis=1)[["sequence_id", "scheme", "mutations"]],
-            on="sequence_id",
-        )
+        airrtable.merge(mature_results_anarci.rename({"Id": key}, axis=1)[[key, "scheme", "mutations"]], on=key),
+        key_column=key,
     )
 
 

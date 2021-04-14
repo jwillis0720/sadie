@@ -72,11 +72,12 @@ class AirrTable(pd.DataFrame):
 
     _metadata = ["_suffixes", "_islinked"]
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, data=None, *args, key_column="sequence_id", **kwargs):
         super(AirrTable, self).__init__(data=data, *args, **kwargs)
         if not isinstance(data, pd.core.internals.managers.BlockManager):
             if self.__class__ is AirrTable:
                 self._islinked = False
+                self._key_column = key_column
                 self._suffixes = []
                 self._verify()
 
@@ -91,8 +92,15 @@ class AirrTable(pd.DataFrame):
         return AirrTable
 
     @property
+    def key_column(self):
+        return self._key_column
+
+    @property
     def compliant_cols(self) -> List[str]:
-        return list(set(IGBLAST_AIRR.keys()))
+        compliant_cols = list(set(IGBLAST_AIRR.keys()))
+        if self.key_column not in compliant_cols:
+            compliant_cols += [self.key_column]
+        return compliant_cols
 
     @property
     def non_airr_columns(self) -> pd.Index:
@@ -187,6 +195,12 @@ class AirrTable(pd.DataFrame):
         missing_columns = set(self.compliant_cols).difference(self.columns)
         if missing_columns:
             raise MissingAirrColumns(missing_columns)
+
+        # # if Linked DataFrame, we need the key column that links them
+        # if hasattr(self, "key_column"):
+        #     key_column = self.key_column
+        #     if key_column not in self.columns:
+        #         raise ValueError(f"{key_column} is not in the LinkedAirrTable columns")
 
         # drop any unneeded columns
         self.drop([i for i in self.columns if "Unnamed" in i], axis=1, inplace=True)
@@ -632,35 +646,58 @@ class AirrTable(pd.DataFrame):
 
 
 class LinkedAirrTable(AirrTable):
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, data=None, *args, suffixes=["_heavy", "_light"], key_column: str = "sequence_id", **kwargs):
         super(LinkedAirrTable, self).__init__(data=data, *args, **kwargs)
         if not isinstance(data, pd.core.internals.managers.BlockManager):
             if self.__class__ == LinkedAirrTable:
                 self._islinked = True
-                self._suffixes = ["_heavy", "_light"]
+                self._key_column = key_column
+                self._suffixes = suffixes
                 if not self.verified:
                     self._verify()
 
     @property
+    def key_column(self) -> str:
+        return self._key_column
+
+    @property
+    def suffixes(self) -> List[str]:
+        if not hasattr(self, "_suffixes"):
+            return []
+        return self._suffixes
+
+    @property
+    def left_suffix(self):
+        return self.suffixes[0]
+
+    @property
+    def right_suffix(self):
+        return self.suffixes[1]
+
+    @property
     def compliant_cols(self) -> List[str]:
         _complient_cols = []
+        joined_keys = list(IGBLAST_AIRR.keys())
         for suffix in self._suffixes:
-            _complient_cols += list(
-                map(lambda x: x + suffix if x != "cellid" or x != "sequenceid" else x, list(IGBLAST_AIRR.keys()))
-            )
-        return list(set(_complient_cols))
+            _complient_cols += list(map(lambda x: x + suffix if x != f"{self.key_column}" else x, joined_keys))
+        _complient_cols = list(set(_complient_cols))
+        _complient_cols += [self.key_column]
+        return _complient_cols
 
     def get_split_table(self) -> Tuple[AirrTable, AirrTable]:
-        left_rows = [i for i in self.columns if self._suffixes[0] in i]
-        right_rows = [i for i in self.columns if self._suffixes[1] in i]
+        left_rows = [i for i in self.columns if self.left_suffix in i]
+        right_rows = [i for i in self.columns if self.right_suffix in i]
+        key_column = self.key_column
         common_columns = list(self.columns.difference(set(left_rows + right_rows)))
+        if key_column not in common_columns:
+            raise ValueError(f"{key_column} key column not in common columns")
         left_table = self[common_columns + left_rows]
         left_airr_columns = list(map(lambda x: x.replace(self._suffixes[0], ""), list(left_table.columns)))
         left_table.columns = left_airr_columns
         right_table = self[common_columns + right_rows]
         right_airr_columns = list(map(lambda x: x.replace(self._suffixes[1], ""), list(right_table.columns)))
         right_table.columns = right_airr_columns
-        return AirrTable(left_table), AirrTable(right_table)
+        return AirrTable(left_table, key_column=key_column), AirrTable(right_table, key_column=key_column)
 
 
 if __name__ == "__main__":
