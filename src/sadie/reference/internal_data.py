@@ -74,9 +74,8 @@ def generate_internal_annotaion_file_from_db(database, outpath):
                         filter(lambda x: x["common"] == sub_species and x["gene"] in gene_segments, filtered_data)
                     )
                     if len(request_list) != len(gene_segments):
-                        raise BadGene(
-                            sub_species, gene_segments, list(map(lambda x: (x["common"], x["gene"]), filtered_data))
-                        )
+                        accepted_genes = list(map(lambda x: x["gene"], filtered_data))
+                        raise BadGene(sub_species, gene_segments, accepted_genes)
                     requested_entries += request_list
 
                 # if len(sub_species_keys) > 1:
