@@ -16,7 +16,7 @@ def run_mutational_analysis(
 ) -> Union[AirrTable, LinkedAirrTable]:
     """Run a mutational analysis given a numbering scheme. Returns an AirrTable with added mutational analysis columns
 
-    This method is computationally expensive. So it's a stand alone static method. It will take in an airr table
+    This method is computationally expensive.
 
     Parameters
     ----------
