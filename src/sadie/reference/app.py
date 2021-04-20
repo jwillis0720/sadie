@@ -28,7 +28,13 @@ from ..utility.util import get_verbosity_level, get_project_root
     type=click.Path(resolve_path=True, dir_okay=True, writable=True),
     default=os.path.join(get_project_root(), "airr/data/germlines"),
 )
-def make_igblast_reference(verbose, outpath):
+@click.option(
+    "--database",
+    help="Current database path",
+    type=click.Path(resolve_path=True, dir_okay=False, exists=True),
+    default=os.path.join(get_project_root(), "reference/data/ig_database.json.gz"),
+)
+def make_igblast_reference(verbose, outpath, database):
     """make the igblast reference files
 
     This script will make the imgt reference files used by igblast or airr, including internal data, the blast
@@ -41,33 +47,24 @@ def make_igblast_reference(verbose, outpath):
     out_path : path
        the output data directory
 
-    Raises
-    ------
-    Exception
-        Missing IMGT fasta db files
     """
     # Set the root logger in the console script
     # Get back a numeric level associated with number of clicks
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
-    db_path = os.path.abspath(os.path.dirname(__file__) + "/data/ig_database.json.gz")
-    click.echo(f"Default outpath {db_path}")
-
-    if not os.path.exists(db_path):
-        click.echo("Can't find imgt database")
-        raise Exception(f"Can't find  IMGT database {db_path}")
+    click.echo(f"Database path {database}")
 
     if not outpath:
         outpath = os.path.abspath(os.path.dirname(__file__) + "/data/germlines")
         click.echo(f"No outpath specified, using {outpath}")
 
-    generate_internal_annotaion_file_from_db(db_path, outpath)
+    generate_internal_annotaion_file_from_db(database, outpath)
     click.echo(f"Generated Internal Data {outpath}/internal_data")
-    make_igblast_ref_database(db_path, outpath)
+    make_igblast_ref_database(database, outpath)
     click.echo("Successfully made blast data")
 
     # Send it to specialized function
-    make_auxillary_file(db_path, outpath)
+    make_auxillary_file(database, outpath)
     click.echo("Successfully made auxillary data")
     click.echo("Done!")
 
@@ -128,3 +125,4 @@ def make_genebank_files_from_db(verbose, database, outpath):
 
 if __name__ == "__main__":
     make_igblast_reference()
+    ["IGHV1-NL1*01", "IGHV1-2*03", "IGHV4-4*06", "IGHV1-45*01", "IGHV4-30-4*05", "IGHV4-59*09"]

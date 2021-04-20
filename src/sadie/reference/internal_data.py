@@ -57,7 +57,9 @@ def generate_internal_annotaion_file_from_db(database, outpath):
     # The internal data file structure goes {db_type}/{all|filtered}/Ig/internal_path/{species}/
     # Interate through species and make
     for db_type in reference_database.get_reference_types():
+        # db_type eg. cutom, imgt
         for subset in reference_database.get_functional_keys(db_type):
+            # functional, all
             for common in reference_database.get_species_keys(db_type, subset):
                 species_internal_db_path = os.path.join(outpath, db_type, subset, "Ig", "internal_data", common)
                 logger.debug(f"Found species {common}, using {db_type} database file")
@@ -69,12 +71,11 @@ def generate_internal_annotaion_file_from_db(database, outpath):
                 sub_species_keys = reference_database.get_sub_species(db_type, subset, common)
                 requested_entries = []
                 for sub_species in sub_species_keys:
+                    sub_filtered = list(filter(lambda x: x["common"] == sub_species, filtered_data))
                     gene_segments = reference_database.get_gene_segment(db_type, subset, common, sub_species, "V")
-                    request_list = list(
-                        filter(lambda x: x["common"] == sub_species and x["gene"] in gene_segments, filtered_data)
-                    )
+                    request_list = list(filter(lambda x: x["gene"] in gene_segments, sub_filtered))
                     if len(request_list) != len(gene_segments):
-                        accepted_genes = list(map(lambda x: x["gene"], filtered_data))
+                        accepted_genes = list(map(lambda x: x["gene"], sub_filtered))
                         raise BadGene(sub_species, gene_segments, accepted_genes)
                     requested_entries += request_list
 
@@ -87,25 +88,27 @@ def generate_internal_annotaion_file_from_db(database, outpath):
 
                 # normalize will flatten nested json
                 filt_df = pd.json_normalize(requested_entries)
+
+                # if we have hybrid species we shall name them with <species>|gene
                 if len(filt_df["common"].unique()) > 1:
                     filt_df["gene"] = filt_df["common"] + "|" + filt_df["gene"]
 
                 index_df = filt_df[
                     [
                         "gene",
-                        "imgt.fwr1_nt_index_start",
-                        "imgt.fwr1_nt_index_end",
-                        "imgt.cdr1_nt_index_start",
-                        "imgt.cdr1_nt_index_end",
-                        "imgt.fwr2_nt_index_start",
-                        "imgt.fwr2_nt_index_end",
-                        "imgt.cdr2_nt_index_start",
-                        "imgt.cdr2_nt_index_end",
-                        "imgt.fwr3_nt_index_start",
-                        "imgt.fwr3_nt_index_end",
+                        "imgt.fwr1_start",
+                        "imgt.fwr1_end",
+                        "imgt.cdr1_start",
+                        "imgt.cdr1_end",
+                        "imgt.fwr2_start",
+                        "imgt.fwr2_end",
+                        "imgt.cdr2_start",
+                        "imgt.cdr2_end",
+                        "imgt.fwr3_start",
+                        "imgt.fwr3_end",
                     ]
-                ]
-                genes_df = filt_df[["gene", "imgt.v_gene_nt"]].rename({"imgt.v_gene_nt": "sequence"}, axis=1)
+                ].copy()
+                genes_df = filt_df.copy()
                 scheme = "imgt"
                 internal_annotations_file_path = os.path.join(species_internal_db_path, f"{common}.ndm.{scheme}")
                 if len(filt_df["common"].unique()) > 1:

@@ -53,16 +53,17 @@ def get_filtered_data(database_json, source, common, receptor, segment, subset):
         function = ["F"]
     else:
         raise Exception(f"{subset} not a valide option, ['all', 'funtional']")
-    return list(
+    filtered_data = list(
         filter(
             lambda x: x["source"] == source
             and x["common"] == common
             and x["gene_segment"] == segment
-            and x["receptor"] == receptor
+            and x["receptor"] == receptor.upper()
             and x["functional"] in function,
             database_json,
         )
     )
+    return filtered_data
 
 
 def make_igblast_ref_database(database, outdir):
@@ -115,12 +116,12 @@ def make_igblast_ref_database(database, outdir):
                     if chimera:
                         seqs = list(
                             map(
-                                lambda x: (x["common"] + "|" + x["gene"], x["imgt"][f"{segment.lower()}_gene_nt"]),
+                                lambda x: (x["common"] + "|" + x["gene"], x["sequence"]),
                                 actual_genes,
                             )
                         )
                     else:
-                        seqs = list(map(lambda x: (x["gene"], x["imgt"][f"{segment.lower()}_gene_nt"]), actual_genes))
+                        seqs = list(map(lambda x: (x["gene"], x["sequence"]), actual_genes))
                     joined_seqs = [SeqRecord(Seq(seq), name=n, id=n) for n, seq in seqs]
                     fasta_file = write_out_fasta(joined_seqs, out_segment)
                     write_blast_db(fasta_file, fasta_file.split(".fasta")[0])
