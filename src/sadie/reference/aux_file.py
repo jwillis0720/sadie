@@ -60,14 +60,15 @@ def make_auxillary_file(database, outdir):
                 pre_filetered = get_filtered_data(ig_database, sub_species, database, "J")
                 dataset += list(filter(lambda x: x["gene"] in ref_lookup, pre_filetered))
             aux_file_species = os.path.join(receptor_aux_dir, f"{common}_gl.aux")
-            common_df = pd.json_normalize(dataset)
-            common_df = common_df[common_df["imgt.end_cdr3_nt"] != ""]
-            common_df.loc[:, "reading_frame"] = common_df["imgt.reading_frame"].astype(int) - 1
-            common_df.loc[:, "left_over"] = common_df[["imgt.j_gene_nt", "reading_frame"]].apply(
-                _determine_left_over, axis=1
-            )
+            common_df = pd.json_normalize(dataset).fillna("")
+            common_df = common_df[(common_df["imgt.cdr3_end"] != "")]
+            common_df.loc[:, "reading_frame"] = common_df["imgt.reading_frame"].astype(int)
+            common_df.loc[:, "left_over"] = common_df["imgt.remainder"].astype(int)
+            common_df.loc[:, "end"] = common_df["imgt.cdr3_end"].astype(int)
+            #     _determine_left_over, axis=1
+            # )
             common_df["marker"] = common_df["gene"].str.split("-").str.get(0).str[0:4].str[::-1].str[:2]
-            common_df["end"] = common_df["imgt.end_cdr3_nt"].astype(int) - 1
+            # common_df["end"] = common_df["imgt.end_cdr3_nt"].astype(int) - 1
             if chimera:
                 common_df["gene"] = common_df["common"] + "|" + common_df["gene"]
             common_df[["gene", "reading_frame", "marker", "end", "left_over"]].to_csv(
