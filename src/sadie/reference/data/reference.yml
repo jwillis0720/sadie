@@ -3,84 +3,100 @@ custom:
     cat:
       cat:
       - IGHD1-1*01
-      - IGHV21-1*01
-      - IGHV20-1*01
-      - IGHV19-1*01
-      - IGHV18-1*01
-      - IGHV17-1*01
-      - IGHV16-1*01
-      - IGHV15-1*01
-      - IGHV14-1*01
-      - IGHV13-1*01
-      - IGHV12-1*01
-      - IGHV11-1*01
-      - IGHV10-1*01
-      - IGHV9-1*01
-      - IGHV8-1*01
-      - IGHV7-1*01
-      - IGHV6-1*01
-      - IGHV5-1*01
-      - IGHV4-1*01
-      - IGHV3-1*01
-      - IGHV2-1*01
+      - IGHJ1*01
+      - IGHJ2*01
+      - IGHJ3*01
+      - IGHJ3*02
+      - IGHJ4*01
+      - IGHJ4*02
+      - IGHJ4*03
+      - IGHJ5*01
+      - IGHJ5*02
+      - IGHJ6*01
+      - IGHJ6*02
+      - IGHJ6*03
+      - IGHJ6*04
       - IGHV1-1*01
-      - IGHV36-2*01
-      - IGHV34-2*01
-      - IGHV35-2*01
-      - IGHV33-2*01
-      - IGHV32-2*01
-      - IGHV31-2*01
-      - IGHV30-2*01
-      - IGHV29-2*01
-      - IGHV28-2*01
-      - IGHV27-2*01
-      - IGHV26-2*01
-      - IGHV25-2*01
-      - IGHV24-2*01
-      - IGHV23-2*01
-      - IGHV22-2*01
-      - IGHV21-2*01
-      - IGHV20-2*01
-      - IGHV19-2*01
-      - IGHV18-2*01
-      - IGHV17-2*01
-      - IGHV16-2*01
-      - IGHV15-2*01
-      - IGHV14-2*01
-      - IGHV13-2*01
-      - IGHV12-2*01
-      - IGHV11-2*01
-      - IGHV10-2*01
-      - IGHV9-2*01
-      - IGHV8-2*01
-      - IGHV7-2*01
-      - IGHV6-2*01
-      - IGHV5-2*01
-      - IGHV4-2*01
-      - IGHV3-2*01
-      - IGHV2-2*01
       - IGHV1-2*01
-      - IGHV35-1*01
-      - IGHV34-1*01
-      - IGHV33-1*01
-      - IGHV32-1*01
-      - IGHV31-1*01
-      - IGHV30-1*01
-      - IGHV29-1*01
-      - IGHV28-1*01
-      - IGHV27-1*01
-      - IGHV26-1*01
-      - IGHV25-1*01
-      - IGHV24-1*01
-      - IGHV23-1*01
+      - IGHV10-1*01
+      - IGHV10-2*01
+      - IGHV11-1*01
+      - IGHV11-2*01
+      - IGHV12-1*01
+      - IGHV12-2*01
+      - IGHV13-1*01
+      - IGHV13-2*01
+      - IGHV14-1*01
+      - IGHV14-2*01
+      - IGHV15-1*01
+      - IGHV15-2*01
+      - IGHV16-1*01
+      - IGHV16-2*01
+      - IGHV17-1*01
+      - IGHV17-2*01
+      - IGHV18-1*01
+      - IGHV18-2*01
+      - IGHV19-1*01
+      - IGHV19-2*01
+      - IGHV2-1*01
+      - IGHV2-2*01
+      - IGHV20-1*01
+      - IGHV20-2*01
+      - IGHV21-1*01
+      - IGHV21-2*01
       - IGHV22-1*01
+      - IGHV22-2*01
+      - IGHV23-1*01
+      - IGHV23-2*01
+      - IGHV24-1*01
+      - IGHV24-2*01
+      - IGHV25-1*01
+      - IGHV25-2*01
+      - IGHV26-2*01
+      - IGHV27-1*01
+      - IGHV27-2*01
+      - IGHV28-1*01
+      - IGHV28-2*01
+      - IGHV29-1*01
+      - IGHV29-2*01
+      - IGHV3-1*01
+      - IGHV3-2*01
+      - IGHV30-1*01
+      - IGHV30-2*01
+      - IGHV31-1*01
+      - IGHV31-2*01
+      - IGHV32-1*01
+      - IGHV32-2*01
+      - IGHV33-1*01
+      - IGHV33-2*01
+      - IGHV34-1*01
+      - IGHV34-2*01
+      - IGHV35-1*01
+      - IGHV35-2*01
+      - IGHV36-2*01
+      - IGHV4-1*01
+      - IGHV4-2*01
+      - IGHV5-1*01
+      - IGHV5-2*01
+      - IGHV6-1*01
+      - IGHV6-2*01
+      - IGHV7-1*01
+      - IGHV7-2*01
+      - IGHV8-1*01
+      - IGHV8-2*01
+      - IGHV9-1*01
+      - IGHV9-2*01
+      - IGKJ1*01
+      - IGKJ2*01
+      - IGKJ3*01
+      - IGKJ4*01
+      - IGKJ5*01
       - IGKV1-10*01
       - IGKV1-17*01
       - IGKV2-12*01
       - IGKV2-13*01
       - IGKV2-14*01
       - IGKV2-4*01
-      - IGKV2-5*01
       - IGKV2-9*01
       - IGKV4-1*01
       - IGKV6-6*01
@@ -88,6 +104,18 @@ custom:
       - IGKV8-3*01
       - IGKV9-11*01
       - IGKV9-18*01
+      - IGLJ1*01
+      - IGLJ10*01
+      - IGLJ11*01
+      - IGLJ12*01
+      - IGLJ2*01
+      - IGLJ3*01
+      - IGLJ4*01
+      - IGLJ5*01
+      - IGLJ6*01
+      - IGLJ7*01
+      - IGLJ8*01
+      - IGLJ9*01
       - IGLV1-32*01
       - IGLV1-35*01
       - IGLV1-36*01
@@ -135,691 +163,153 @@ custom:
       - IGLV5-68*01
       - IGLV5-71*01
       - IGLV5-79*01
-      - IGKJ1*01
-      - IGKJ2*01
-      - IGKJ3*01
-      - IGKJ4*01
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ10*01
-      - IGLJ11*01
-      - IGLJ12*01
-      - IGLJ2*01
-      - IGLJ3*01
-      - IGLJ4*01
-      - IGLJ5*01
-      - IGLJ6*01
-      - IGLJ7*01
-      - IGLJ8*01
-      - IGLJ9*01
     macaque:
       macaque:
-      - IGHV1-AAU*01
-      - IGHV1-AAU*01_S5608
-      - IGHV1-AAU*01_S8392
-      - IGHV1-AAU*02
-      - IGHV1-AAU*02_S1575
-      - IGHV1-AAU*02_S3533
-      - IGHV1-AAU*02_S4606
-      - IGHV1-ABW*01
-      - IGHV1-ABW*01_S5842
-      - IGHV1-AEP*01
-      - IGHV1-AFG*01
-      - IGHV1-AFG*01_S5797
-      - IGHV1-AFG*01_S9698
-      - IGHV1-AFS*01
-      - IGHV1-KC*01
-      - IGHV1-KC_S1701*01
-      - IGHV1-KL*01
-      - IGHV1-KORF4*01
-      - IGHV1-KORF5*01
-      - IGHV2-ABG*01
-      - IGHV2-ABG*01_S6364
-      - IGHV2-ABG*02
-      - IGHV2-ABG*02_S2032
-      - IGHV2-ABU*01
-      - IGHV2-ABU*01_S6524
-      - IGHV2-ACK*01
-      - IGHV2-AEI*01
-      - IGHV2-AEY*01
-      - IGHV2-KORF1*01
-      - IGHV2-S3*01
-      - IGHV3-AAB*01
-      - IGHV3-AAB*01_S3246
-      - IGHV3-AAB*01_S3636
-      - IGHV3-AAB*01_S6942
-      - IGHV3-AAB*02
-      - IGHV3-AAB*02_S9425
-      - IGHV3-AAD*01
-      - IGHV3-ABA*01
-      - IGHV3-ABA*01_S0254
-      - IGHV3-ABA*01_S9422
-      - IGHV3-ABH*01
-      - IGHV3-ABH*02
-      - IGHV3-ABH*03
-      - IGHV3-ABJ*01
-      - IGHV3-ABJ*01_S8222
-      - IGHV3-ABK*01
-      - IGHV3-ABK*01_S9570
-      - IGHV3-ABY*01
-      - IGHV3-ABY*01_S0577
-      - IGHV3-ABY*01_S4607
-      - IGHV3-ABY*01_S8488
-      - IGHV3-ABY*03
-      - IGHV3-ABZ*01
-      - IGHV3-ABZ*01_S1833
-      - IGHV3-ABZ*01_S3446
-      - IGHV3-ACA*01
-      - IGHV3-ACA*01_S2482
-      - IGHV3-ACI*01
-      - IGHV3-ACN*01
-      - IGHV3-ACN*01_S2915
-      - IGHV3-ACZ*01
-      - IGHV3-ACZ*02
-      - IGHV3-ACZ*03
-      - IGHV3-ACZ*03_S8458
-      - IGHV3-ACZ*04
-      - IGHV3-ADF*01
-      - IGHV3-ADF*01_S0547
-      - IGHV3-ADF*01_S4250
-      - IGHV3-ADL*01
-      - IGHV3-ADM*01
-      - IGHV3-ADM*01_S8234
-      - IGHV3-ADN*01
-      - IGHV3-ADO*01
-      - IGHV3-ADO*02
-      - IGHV3-ADR*01
-      - IGHV3-ADR*01_S2709
-      - IGHV3-ADR*01_S4172
-      - IGHV3-ADR*01_S8388
-      - IGHV3-ADR*03
-      - IGHV3-ADR*03_S4423
-      - IGHV3-ADR*03_S5299
-      - IGHV3-ADR*03_S5597
-      - IGHV3-ADR*03_S5688
-      - IGHV3-ADU*01
-      - IGHV3-ADU*02
-      - IGHV3-ADU*03
-      - IGHV3-ADW*01
-      - IGHV3-ADW*02
-      - IGHV3-ADW*03
-      - IGHV3-ADX*01
-      - IGHV3-ADX*01_S1834
-      - IGHV3-ADX*01_S5361
-      - IGHV3-ADX*01_S5510
-      - IGHV3-ADZ*01
-      - IGHV3-AEE*01
-      - IGHV3-AEF*01
-      - IGHV3-AEF*01_S6030
-      - IGHV3-AEH*01
-      - IGHV3-AEH*01_S3262
-      - IGHV3-AEH*01_S5714
-      - IGHV3-AEH*01_S7229
-      - IGHV3-AEH*01_S9627
-      - IGHV3-AET*01
-      - IGHV3-AET*01_S5460
-      - IGHV3-AET*01_S6894
-      - IGHV3-AEW*01
-      - IGHV3-AEW*01_S0457
-      - IGHV3-AEW*01_S1282
-      - IGHV3-AEW*01_S4331
-      - IGHV3-AEW*01_S9854
-      - IGHV3-AEW*03
-      - IGHV3-AFC*01
-      - IGHV3-AFE*01
-      - IGHV3-AFE*01_S3736
-      - IGHV3-AFE*01_S4619
-      - IGHV3-AFR*01
-      - IGHV3-AFR*01_S3488
-      - IGHV3-AFW*01
-      - IGHV3-AFY*01
-      - IGHV3-AFY*02
-      - IGHV3-AFY*05
-      - IGHV3-AFY*06
-      - IGHV3-AFY*10
-      - IGHV3-AGQ*01
-      - IGHV3-AGQ*02
-      - IGHV3-AGV*01
-      - IGHV3-AGV*02
-      - IGHV3-AGV*03
-      - IGHV3-AHA*01
-      - IGHV3-AHG*01
-      - IGHV3-AHH*01
-      - IGHV3-KORF10*01
-      - IGHV3-KORF20*01
-      - IGHV3-KORF21_S7413*01
-      - IGHV3-KORF8*01
-      - IGHV3-KORF9*01
-      - IGHV3-KSEQ1*01
-      - IGHV3-KSEQ13*01
-      - IGHV3-KSEQ25*01
-      - IGHV3-KSEQ5*01
-      - IGHV3-S49*01
-      - IGHV3-S60*01
-      - IGHV4-ABB*01
-      - IGHV4-ABB*01_S8200
-      - IGHV4-ACQ*01
-      - IGHV4-ACS*01
-      - IGHV4-ADD*01
-      - IGHV4-ADD*01_S5847
-      - IGHV4-ADG*01
-      - IGHV4-ADG*01_S1296
-      - IGHV4-ADG*01_S3005
-      - IGHV4-AEB*01
-      - IGHV4-AEC*01
-      - IGHV4-AEX*01
-      - IGHV4-AEX*01_S8720
-      - IGHV4-AEX*01_S9508
-      - IGHV4-AFB*01
-      - IGHV4-AFI*01
-      - IGHV4-AFL*01
-      - IGHV4-AFQ*01
-      - IGHV4-AFQ*01_S0868
-      - IGHV4-AFQ*01_S2532
-      - IGHV4-AFU*01
-      - IGHV4-AGL*01
-      - IGHV4-AGR*01
-      - IGHV4-AGR*01_S4099
-      - IGHV4-AGR*01_S5203
-      - IGHV4-AGU*01
-      - IGHV4-AGU*01_S6186
-      - IGHV4-AGU*01_S6650
-      - IGHV4-KORF3*01
-      - IGHV4-KORF4*01
-      - IGHV4-KORF4_S3924*01
-      - IGHV4-S11*01
-      - IGHV4-S11_S0312*01
-      - IGHV5-ABI*01
-      - IGHV5-ABI*01_S2502
-      - IGHV5-ABI*01_S4790
-      - IGHV5-ABI*03
-      - IGHV5-AER*01
-      - IGHV5-AER*01_S8185
-      - IGHV5-I1*01
-      - IGHV6-ACF*01
-      - IGHV6-ACF*02
-      - IGHV6-KORF1*01
-      - IGHV7-AAF*01
-      - IGHV7-ABS*01
-      - IGHV7-ABS*01_S4281
-      - IGHV7-AGO*01
-      - IGHV7-AGO*01_S2159
-      - IGHV1-LJI138*01
-      - IGHV1-LJI138-A*01
-      - IGHV1-LJI142*01
-      - IGHV1-LJI170*01
-      - IGHV1-LJI193*01
-      - IGHV1-LJI193_S2680*01
-      - IGHV1-LJI193_S6037*01
-      - IGHV1-LJI58*01
-      - IGHV1-LJI58-A*01
-      - IGHV1-LJI60*01
-      - IGHV1-LJI84*01
-      - IGHV1-LJI84-A*01
-      - IGHV1-LJI84-A_S0561*01
-      - IGHV1-LJI84-A_S0608*01
-      - IGHV1-LJI84-A_S9171*01
-      - IGHV2-LJI69*01
-      - IGHV2-LJI69-A*01
-      - IGHV2-LJI69-A_S0779*01
-      - IGHV2-LJI7-A*01
-      - IGHV3-LJI100*01
-      - IGHV3-LJI100_S4375*01
-      - IGHV3-LJI100-A*01
-      - IGHV3-LJI107*01
-      - IGHV3-LJI107-A*01
-      - IGHV3-LJI119*01
-      - IGHV3-LJI119_S8059*01
-      - IGHV3-LJI119-A*01
-      - IGHV3-LJI120*01
-      - IGHV3-LJI127*01
-      - IGHV3-LJI127_S2988*01
-      - IGHV3-LJI128*01
-      - IGHV3-LJI128_S5016*01
-      - IGHV3-LJI128-A*01
-      - IGHV3-LJI128-A_S0204*01
-      - IGHV3-LJI141*01
-      - IGHV3-LJI141-A*01
-      - IGHV3-LJI175*01
-      - IGHV3-LJI175_S0372*01
-      - IGHV3-LJI177*01
-      - IGHV3-LJI177_S4361*01
-      - IGHV3-LJI177_S5369*01
-      - IGHV3-LJI185*01
-      - IGHV3-LJI185-A*01
-      - IGHV3-LJI187*01
-      - IGHV3-LJI195*01
-      - IGHV3-LJI28*01
-      - IGHV3-LJI28_S7540*01
-      - IGHV3-LJI34*01
-      - IGHV3-LJI34-A*01
-      - IGHV3-LJI35-A*01
-      - IGHV3-LJI36*01
-      - IGHV3-LJI36_S5206*01
-      - IGHV3-LJI36_S7141*01
-      - IGHV3-LJI36-A*01
-      - IGHV3-LJI37*01
-      - IGHV3-LJI37-A*01
-      - IGHV3-LJI5*01
-      - IGHV3-LJI5_S8753*01
-      - IGHV3-LJI50*01
-      - IGHV3-LJI50_S5668*01
-      - IGHV3-LJI50_S7867*01
-      - IGHV3-LJI50-A*01
-      - IGHV3-LJI52*01
-      - IGHV3-LJI52-A*01
-      - IGHV3-LJI53*01
-      - IGHV3-LJI53-A*01
-      - IGHV3-LJI76*01
-      - IGHV3-LJI76_S1598*01
-      - IGHV3-LJI76-A*01
-      - IGHV3-LJI76-A_S3135*01
-      - IGHV3-LJI76-A_S4190*01
-      - IGHV3-LJI8*01
-      - IGHV3-LJI8-A*01
-      - IGHV3-LJI83*01
-      - IGHV3-LJI83-A*01
-      - IGHV3-LJI87*01
-      - IGHV3-LJI88-A*01
-      - IGHV3-LJI88-A_S6762*01
-      - IGHV3-LJI88-A_S7485*01
-      - IGHV3-LJI88-A_S9033*01
-      - IGHV3-LJI9*01
-      - IGHV3-LJI94*01
-      - IGHV3-LJI94_S0802*01
-      - IGHV3-LJI94_S2872*01
-      - IGHV4-LJI144*01
-      - IGHV4-LJI144_S4510*01
-      - IGHV4-LJI144-A*01
-      - IGHV4-LJI149*01
-      - IGHV4-LJI149_S3986*01
-      - IGHV4-LJI149_S9711*01
-      - IGHV4-LJI149-A*01
-      - IGHV4-LJI150*01
-      - IGHV4-LJI174*01
-      - IGHV4-LJI174-A*01
-      - IGHV4-LJI67-A*01
-      - IGHV4-LJI72*01
-      - IGHV4-LJI79-A*01
-      - IGHV4-LJI79-A_S9501*01
-      - IGHV5-LJI131-A*01
-      - IGHV5-LJI15*01
-      - IGHV5-LJI15_S9061*01
-      - IGHV5-LJI157*01
-      - IGHV5-LJI157_S5960*01
-      - IGHV5-LJI157-A*01
-      - IGHV5-LJI157-A_S3096*01
-      - IGHV5-LJI157-A_S8313*01
-      - IGHV6-LJI1*01
-      - IGHV7-LJI135-A*01
-      - IGHV7-LJI86-A*01
-      - IGKV1-AAD*01
-      - IGKV1-AAL*01
-      - IGKV1-AAL*01_S2543
-      - IGKV1-AAS*01
-      - IGKV1-AAS*03
-      - IGKV1-AAU*01
-      - IGKV1-AAY*01
-      - IGKV1-AAZ*01
-      - IGKV1-ABL*01
-      - IGKV1-ABL*02
-      - IGKV1-ABM*01
-      - IGKV1-ABM*01_S8638
-      - IGKV1-ABR*01
-      - IGKV1-ABV*01
-      - IGKV1-ABV*02
-      - IGKV1-ABZ*01
-      - IGKV1-ACE*01
-      - IGKV1-ACE*02
-      - IGKV1-ACE*03
-      - IGKV1-ACI*01
-      - IGKV1-ACI*02
-      - IGKV1-ACK*01
-      - IGKV1-ACK*01_S9718
-      - IGKV1-ACY*01
-      - IGKV1-ADD*01
-      - IGKV1-ADF*01
-      - IGKV1-ADF*01_S1146
-      - IGKV1-ADK*01
-      - IGKV1-ADO*01
-      - IGKV1-ADO*01_S6906
-      - IGKV1-ADT*01
-      - IGKV1-ADT*01_S3718
-      - IGKV1-ADT*02
-      - IGKV1-AEA*01
-      - IGKV1-AEA*01_S8672
-      - IGKV1-AEA*02
-      - IGKV1-AEA*03
-      - IGKV1-AEA*03_S1706
-      - IGKV1-AEE*01
-      - IGKV1-AEE*02
-      - IGKV1-AEE*03
-      - IGKV1-AEG*01
-      - IGKV1-AEJ*01
-      - IGKV1-AEK*01
-      - IGKV1-AEK*02
-      - IGKV1-AES*01
-      - IGKV1-AEU*01
-      - IGKV1-AEW*01
-      - IGKV1-AEW*03
-      - IGKV1-AEW*04
-      - IGKV1-I10*01
-      - IGKV1-I14*01
-      - IGKV1-I17*01
-      - IGKV1-I17_S1805*01
-      - IGKV1-I18*01
-      - IGKV1-I2*01
-      - IGKV1-I20*01
-      - IGKV1-I21*01
-      - IGKV1-I9*01
-      - IGKV1-LJI13*01
-      - IGKV1-LJI16-A*01
-      - IGKV1-LJI16-A_S4373*01
-      - IGKV1-LJI20*01
-      - IGKV1-LJI20-A*01
-      - IGKV1-LJI21*01
-      - IGKV1-LJI21-A*01
-      - IGKV1-LJI25*01
-      - IGKV1-LJI25_S3517*01
-      - IGKV1-LJI25-A*01
-      - IGKV1-LJI26*01
-      - IGKV1-LJI29*01
-      - IGKV1-LJI29-A*01
-      - IGKV1-LJI35-A*01
-      - IGKV1-LJI41*01
-      - IGKV1-LJI41-A*01
-      - IGKV1-LJI43*01
-      - IGKV1-LJI44*01
-      - IGKV1-LJI44-A*01
-      - IGKV1-LJI46*01
-      - IGKV1-LJI46-A*01
-      - IGKV1-LJI49*01
-      - IGKV1-LJI50*01
-      - IGKV1-LJI51*01
-      - IGKV1-LJI51-A*01
-      - IGKV1-LJI56*01
-      - IGKV1-LJI56-A*01
-      - IGKV1-LJI59*01
-      - IGKV1-LJI59-A*01
-      - IGKV1-LJI61*01
-      - IGKV1-LJI61-A*01
-      - IGKV1-LJI63*01
-      - IGKV1-LJI63-A*01
-      - IGKV1-LJI64*01
-      - IGKV1-LJI68*01
-      - IGKV1-LJI68-A*01
-      - IGKV1-LJI87*01
-      - IGKV1-S37*01
-      - IGKV1-S40*01
-      - IGKV1-S42*01
-      - IGKV1-S49*01
-      - IGKV1-S57*01
-      - IGKV2-AAE*01
-      - IGKV2-AAI*01
-      - IGKV2-AAK*01
-      - IGKV2-AAN*01
-      - IGKV2-AAO*01
-      - IGKV2-AAQ*01
-      - IGKV2-ABB*01
-      - IGKV2-ABW*01
-      - IGKV2-ACB*01
-      - IGKV2-ACL*01
-      - IGKV2-ACR*01
-      - IGKV2-ADA*01
-      - IGKV2-ADC*01
-      - IGKV2-ADH*01
-      - IGKV2-ADJ*01
-      - IGKV2-ADV*01
-      - IGKV2-ADZ*01
-      - IGKV2-AEB*01
-      - IGKV2-AEB*01_S5603
-      - IGKV2-AEF*01
-      - IGKV2-AEH*01
-      - IGKV2-AEH*01_S0859
-      - IGKV2-AEH*01_S3585
-      - IGKV2-AEI*01
-      - IGKV2-AEL*01
-      - IGKV2-AEM*01
-      - IGKV2-AEN*01
-      - IGKV2-I11*01
-      - IGKV2-I3*01
-      - IGKV2-LJI28*01
-      - IGKV2-LJI28-A*01
-      - IGKV2-LJI4*01
-      - IGKV2-LJI4-A*01
-      - IGKV2-LJI53*01
-      - IGKV2-LJI53-A*01
-      - IGKV2-LJI54*01
-      - IGKV2-LJI57*01
-      - IGKV2-LJI57-A*01
-      - IGKV2-LJI58*01
-      - IGKV2-LJI58-A*01
-      - IGKV2-LJI60*01
-      - IGKV2-LJI65*01
-      - IGKV2-LJI67*01
-      - IGKV2-LJI71*01
-      - IGKV2-LJI71-A*01
-      - IGKV2-LJI80*01
-      - IGKV2-LJI81*01
-      - IGKV2-LJI82*01
-      - IGKV2-LJI83*01
-      - IGKV2-LJI84*01
-      - IGKV2-LJI86*01
-      - IGKV2-LJI88*01
-      - IGKV2-LJI92*01
-      - IGKV2-S39*01
-      - IGKV2-S41*01
-      - IGKV2-S44*01
-      - IGKV2-S45*01
-      - IGKV2-S46*01
-      - IGKV2-S58*01
-      - IGKV2-S59*01
-      - IGKV3-AAH*01
-      - IGKV3-AAP*01
-      - IGKV3-AAP*01_S6980
-      - IGKV3-ABD*01
-      - IGKV3-ABF*01
-      - IGKV3-ABT*01
-      - IGKV3-ACF*01
-      - IGKV3-ADN*01
-      - IGKV3-ADW*01
-      - IGKV3-ADW*01_S9009
-      - IGKV3-AED*01
-      - IGKV3-I2*01
-      - IGKV3-I3*01
-      - IGKV3-I3_S9612*01
-      - IGKV3-I7*01
-      - IGKV3-I9*01
-      - IGKV3-LJI11*01
-      - IGKV3-LJI15*01
-      - IGKV3-LJI19*01
-      - IGKV3-LJI24*01
-      - IGKV3-LJI24-A*01
-      - IGKV3-LJI34*01
-      - IGKV3-LJI34-A*01
-      - IGKV3-LJI47-A*01
-      - IGKV3-LJI52*01
-      - IGKV3-LJI7*01
-      - IGKV3-LJI7-A*01
-      - IGKV3-LJI9*01
-      - IGKV3-LJI9-A*01
-      - IGKV3-S36*01
-      - IGKV4-ACX*01
-      - IGKV4-I3*01
-      - IGKV5-AEP*01
-      - IGKV5-I1*01
-      - IGKV5-LJI8*01
-      - IGKV5-LJI8-A*01
-      - IGKV6-ABA*01
-      - IGKV6-ABK*01
-      - IGKV6-LJI32-A*01
-      - IGKV6-LJI40*01
-      - IGKV6-LJI40-A*01
-      - IGKV7-ACH*01
-      - IGKV7-I1*01
-      - IGKV7-LJI10*01
-      - IGLV1-ABB*01
-      - IGLV1-ABN*01
-      - IGLV1-ABN*02
-      - IGLV1-ABS*01
-      - IGLV1-ACN*01
-      - IGLV1-ACN*02
-      - IGLV1-ACN*03
-      - IGLV1-ACR*01
-      - IGLV1-ACV*01
-      - IGLV1-ACW*01
-      - IGLV1-ACW*02
-      - IGLV1-ACW*03
-      - IGLV1-ADA*01
-      - IGLV1-ADA*01_S3486
-      - IGLV1-ADA*01_S7920
-      - IGLV1-ADL*01
-      - IGLV1-ADL*01_S5805
-      - IGLV1-ADL*02
-      - IGLV1-ADU*01
-      - IGLV1-LJI103*01
-      - IGLV1-LJI68*01
-      - IGLV1-LJI68-A*01
-      - IGLV1-LJI69*01
-      - IGLV1-LJI69-A*01
-      - IGLV1-LJI70*01
-      - IGLV1-LJI71*01
-      - IGLV1-LJI71-A*01
-      - IGLV1-S16*01
-      - IGLV1-S16_S1272*01
-      - IGLV1-S16_S2133*01
-      - IGLV1-S18*01
-      - IGLV1-S19*01
-      - IGLV1-S20*01
-      - IGLV1-S22*01
-      - IGLV1-S30*01
-      - IGLV1-S37*01
-      - IGLV10-AAO*01
-      - IGLV11-AAY*01
-      - IGLV11-AAY*02
-      - IGLV2-ABE*01
-      - IGLV2-ABE*01_S2946
-      - IGLV2-ABI*01
-      - IGLV2-ABI*01_S7244
-      - IGLV2-ABI*01_S9741
-      - IGLV2-ABJ*01
-      - IGLV2-ABJ*01_S9052
-      - IGLV2-ABU*01
-      - IGLV2-ABU*01_S3471
-      - IGLV2-ABU*02
-      - IGLV2-ABX*01
-      - IGLV2-ACE*01
-      - IGLV2-ADC*01
-      - IGLV2-ADK*01
-      - IGLV2-KA*01
-      - IGLV2-LJI10*01
-      - IGLV2-LJI10_S2593*01
-      - IGLV2-LJI112*01
-      - IGLV2-LJI112_S8864*01
-      - IGLV2-LJI115*01
-      - IGLV2-LJI118*01
-      - IGLV2-LJI12*01
-      - IGLV2-LJI18*01
-      - IGLV2-LJI29*01
-      - IGLV2-LJI29-A*01
-      - IGLV2-LJI33*01
-      - IGLV2-LJI33-A*01
-      - IGLV2-S3*01
-      - IGLV2-S44*01
-      - IGLV2-S9*01
-      - IGLV3-AAB*01
-      - IGLV3-AAI*01
-      - IGLV3-AAJ*01
-      - IGLV3-AAT*01
-      - IGLV3-AAT*02
-      - IGLV3-AAT*05
-      - IGLV3-AAV*01
-      - IGLV3-AAV*02
-      - IGLV3-AAV*03
-      - IGLV3-AAV*04
-      - IGLV3-AAV*05
-      - IGLV3-AAV*06
-      - IGLV3-ACB*01
-      - IGLV3-ACB*03
-      - IGLV3-ADT*01
-      - IGLV3-ADT*02
-      - IGLV3-ADT*03
-      - IGLV3-AEB*02
-      - IGLV3-AEB*03
-      - IGLV3-AEC*01
-      - IGLV3-AED*01
-      - IGLV3-AED*06
-      - IGLV3-LJI117*01
-      - IGLV3-LJI117-A*01
-      - IGLV3-LJI119*01
-      - IGLV3-LJI12*01
-      - IGLV3-LJI13*01
-      - IGLV3-LJI17*01
-      - IGLV3-LJI25-A*01
-      - IGLV3-LJI27*01
-      - IGLV3-LJI27-A*01
-      - IGLV3-LJI28*01
-      - IGLV3-LJI28-A*01
-      - IGLV3-LJI31*01
-      - IGLV3-LJI32*01
-      - IGLV3-LJI34*01
-      - IGLV3-LJI35*01
-      - IGLV3-S1*01
-      - IGLV3-S11*01
-      - IGLV3-S47*01
-      - IGLV3-S6*01
-      - IGLV3-S8*01
-      - IGLV4-ACF*01
-      - IGLV4-ACF*02
-      - IGLV4-LJI16*01
-      - IGLV4-LJI8*01
-      - IGLV4-LJI8-A*01
-      - IGLV4-S2*01
-      - IGLV4-S36*01
-      - IGLV5-AAM*01
-      - IGLV5-AAP*01
-      - IGLV5-AAX*01
-      - IGLV5-AAX*01_S4360
-      - IGLV5-AAX*02
-      - IGLV5-AAX*03
-      - IGLV5-ABG*01
-      - IGLV5-ABG*02
-      - IGLV5-ABG*03
-      - IGLV5-ABL*01
-      - IGLV5-ABL*02
-      - IGLV5-ABT*01
-      - IGLV5-ACY*01
-      - IGLV5-ACY*01_S3912
-      - IGLV5-ACY*02
-      - IGLV5-ADQ*01
-      - IGLV5-ADQ*01_S6109
-      - IGLV5-LJI61*01
-      - IGLV5-S17*01
-      - IGLV5-S23*01
-      - IGLV6-AAC*01
-      - IGLV6-AAC*02
-      - IGLV6-AAC*05
-      - IGLV6-AAC*05_S8052
-      - IGLV6-ADD*01
-      - IGLV6-ADW*01
-      - IGLV6-S39*01
-      - IGLV6-S40*01
-      - IGLV7-AAK*01
-      - IGLV7-ABD*01
-      - IGLV7-ABO*01
-      - IGLV7-ADB*01
-      - IGLV7-ADJ*01
-      - IGLV7-ADJ*02
-      - IGLV7-S24*01
-      - IGLV8-ABK*01
-      - IGLV8-ABK*02
-      - IGLV8-AEE*01
-      - IGLV8-AEE*02
-      - IGLV8-LJI123*01
-      - IGLV8-S43*01
-      - IGLV9-LJI51*01
-      - IGLV9-S29*01
-      - IGLVTEST*01
+      - IGHD1-1*01
+      - IGHD1-1*01_S001
+      - IGHD1-1*02
+      - IGHD1-12*01
+      - IGHD1-19*01
+      - IGHD1-19*02
+      - IGHD1-2*01
+      - IGHD1-3*01
+      - IGHD1-39*01
+      - IGHD1-39*02
+      - IGHD1-4*01
+      - IGHD1-5*01
+      - IGHD1-6*01
+      - IGHD1-7*01
+      - IGHD1-7*01_S001
+      - IGHD1-8*01
+      - IGHD1-J5*01
+      - IGHD1-J6*01
+      - IGHD1-J7*01
+      - IGHD1-J8*01
+      - IGHD2-10*01
+      - IGHD2-10*01_S295
+      - IGHD2-10*01_S8741
+      - IGHD2-11*01
+      - IGHD2-11*01_S1259
+      - IGHD2-12*01
+      - IGHD2-13*01
+      - IGHD2-13*01_S001
+      - IGHD2-14*01
+      - IGHD2-14*02_S0040
+      - IGHD2-14*02_S0100
+      - IGHD2-14*02_S1717
+      - IGHD2-2*01
+      - IGHD2-20*01
+      - IGHD2-20*02
+      - IGHD2-25*01
+      - IGHD2-30*01
+      - IGHD2-35*01
+      - IGHD2-8*01
+      - IGHD2-8*02
+      - IGHD2-9*01
+      - IGHD2-I1*01
+      - IGHD2-I2*01
+      - IGHD2-I3*01
+      - IGHD2-I4*01
+      - IGHD2-I5*01
+      - IGHD2-I6*01
+      - IGHD2-J11*01
+      - IGHD2-J14*01
+      - IGHD3-14*01
+      - IGHD3-15*01
+      - IGHD3-16*01
+      - IGHD3-17*01
+      - IGHD3-18*01
+      - IGHD3-19*02_S4720
+      - IGHD3-20*01
+      - IGHD3-21*01
+      - IGHD3-26*01
+      - IGHD3-26*02
+      - IGHD3-3*01
+      - IGHD3-36*01
+      - IGHD3-41*01
+      - IGHD3-41*01_S1308
+      - IGHD3-41*01_S1524
+      - IGHD3-41*01_S4389
+      - IGHD3-41*01_S8240
+      - IGHD3-9*01
+      - IGHD3-I2*01
+      - IGHD3-I4*01
+      - IGHD3-J15*01
+      - IGHD3-J16*01
+      - IGHD3-J17*01
+      - IGHD3-J18*01
+      - IGHD3-J41*01
+      - IGHD3-KC*01
+      - IGHD4-15*01
+      - IGHD4-21*01
+      - IGHD4-22*01
+      - IGHD4-23*01
+      - IGHD4-24*01
+      - IGHD4-25*01
+      - IGHD4-27*01
+      - IGHD4-27*02
+      - IGHD4-32*01
+      - IGHD4-4*02
+      - IGHD4-J21*01
+      - IGHD4-J22*01
+      - IGHD4-J23*01
+      - IGHD4-J24*01
+      - IGHD4-J25*01
+      - IGHD5-10*01
+      - IGHD5-10*02
+      - IGHD5-23*01
+      - IGHD5-27*01
+      - IGHD5-28*01
+      - IGHD5-28*01_S001
+      - IGHD5-29*01
+      - IGHD5-31*01
+      - IGHD5-32*01
+      - IGHD5-32*01_S0263
+      - IGHD5-32*01_S0995
+      - IGHD5-32*01_S2987
+      - IGHD5-33*01
+      - IGHD5-5*02
+      - IGHD5-J29*01
+      - IGHD6-11*01
+      - IGHD6-24*01
+      - IGHD6-29*01
+      - IGHD6-33*01
+      - IGHD6-34*01
+      - IGHD6-34*01_S001
+      - IGHD6-35*01
+      - IGHD6-36*01
+      - IGHD6-38*01
+      - IGHD6-38*01_S001
+      - IGHD6-38*01_S4618
+      - IGHD6-39*01
+      - IGHD6-39*01_S0850
+      - IGHD6-6*01
+      - IGHD6-J35*01
+      - IGHD7-40*01
+      - IGHD7-J40*01
+      - IGHJ1*01
+      - IGHJ1*02
+      - IGHJ1-1*01
+      - IGHJ2*01
+      - IGHJ2*01_S5087
+      - IGHJ2-I1*01
+      - IGHJ3*01
+      - IGHJ3-2*01
+      - IGHJ4*01
+      - IGHJ4-3*01
+      - IGHJ4-3*01_S9191
+      - IGHJ5-1*01
+      - IGHJ5-2*01
+      - IGHJ5-4*01
+      - IGHJ5-4*01
+      - IGHJ5-4*02
+      - IGHJ5-4*03
+      - IGHJ5-5*01
+      - IGHJ5-5*01_S6098
+      - IGHJ5-5*02
+      - IGHJ6*01
+      - IGHJ6-6*01
+      - IGHJ6-6*01_S0171
       - IGHV1-105*01
       - IGHV1-105*01_S0606
       - IGHV1-124*01
@@ -857,6 +347,29 @@ custom:
       - IGHV1-84*01_S8557
       - IGHV1-84*01_S9171
       - IGHV1-84*01_S9366
+      - IGHV1-AAU*01_S5608
+      - IGHV1-AAU*01_S8392
+      - IGHV1-AAU*02
+      - IGHV1-AAU*02_S1575
+      - IGHV1-AAU*02_S3533
+      - IGHV1-AAU*02_S4606
+      - IGHV1-ABW*01
+      - IGHV1-AFG*01
+      - IGHV1-AFG*01_S5797
+      - IGHV1-AFG*01_S9698
+      - IGHV1-KC*01
+      - IGHV1-KC_S1701*01
+      - IGHV1-KL*01
+      - IGHV1-KORF4*01
+      - IGHV1-KORF5*01
+      - IGHV1-LJI142*01
+      - IGHV1-LJI193*01
+      - IGHV1-LJI193_S2680*01
+      - IGHV1-LJI58*01
+      - IGHV1-LJI60*01
+      - IGHV1-LJI84-A*01
+      - IGHV1-LJI84-A_S0561*01
+      - IGHV1-LJI84-A_S0608*01
       - IGHV1-NL_1*01_S2052
       - IGHV1-NL_1*01_S6622
       - IGHV1-NL_1*01_S8523
@@ -864,7 +377,6 @@ custom:
       - IGHV1-NL_2*01_S2228
       - IGHV1-NL_2*01_S3477
       - IGHV1-NL_2*01_S3568
-      - IGHV1-NL_2*01_S5797
       - IGHV1-NL_2*01_S5959
       - IGHV1-NL_2*01_S7386
       - IGHV1-NL_2*01_S9896
@@ -896,6 +408,12 @@ custom:
       - IGHV2-7*02_S3534
       - IGHV2-7*02_S4078
       - IGHV2-7*02_S4285
+      - IGHV2-ABG*02
+      - IGHV2-ABG*02_S2032
+      - IGHV2-ABU*01
+      - IGHV2-ABU*01_S6524
+      - IGHV2-AEI*01
+      - IGHV2-LJI7-A*01
       - IGHV2-NL_1*01_S2133
       - IGHV2-NL_1*01_S2488
       - IGHV2-NL_1*01_S3296
@@ -907,6 +425,7 @@ custom:
       - IGHV2-NL_1*01_S9725
       - IGHV2-NL_2*01_S2193
       - IGHV2-NL_2*01_S8873
+      - IGHV2-S3*01
       - IGHV3-100*01
       - IGHV3-100*01_S2822
       - IGHV3-100*01_S4205
@@ -1029,7 +548,6 @@ custom:
       - IGHV3-5*01_S6059
       - IGHV3-50*01
       - IGHV3-50*01_S1524
-      - IGHV3-50*01_S1879
       - IGHV3-50*01_S3548
       - IGHV3-50*01_S4628
       - IGHV3-50*01_S5299
@@ -1117,34 +635,132 @@ custom:
       - IGHV3-94*01_S4458
       - IGHV3-94*01_S5120
       - IGHV3-94*01_S7982
-      - IGHV3-NL_1*01_S1080
+      - IGHV3-AAB*01_S3246
+      - IGHV3-AAB*02_S9425
+      - IGHV3-AAD*01
+      - IGHV3-ABA*01_S0254
+      - IGHV3-ABA*01_S9422
+      - IGHV3-ABH*01
+      - IGHV3-ABH*02
+      - IGHV3-ABH*03
+      - IGHV3-ABJ*01_S8222
+      - IGHV3-ABK*01_S9570
+      - IGHV3-ABY*01_S4607
+      - IGHV3-ABY*03
+      - IGHV3-ABZ*01_S1833
+      - IGHV3-ABZ*01_S3446
+      - IGHV3-ACA*01
+      - IGHV3-ACA*01_S2482
+      - IGHV3-ACI*01
+      - IGHV3-ACZ*02
+      - IGHV3-ACZ*04
+      - IGHV3-ADF*01
+      - IGHV3-ADF*01_S0547
+      - IGHV3-ADF*01_S4250
+      - IGHV3-ADM*01
+      - IGHV3-ADM*01_S8234
+      - IGHV3-ADN*01
+      - IGHV3-ADO*02
+      - IGHV3-ADR*01_S4172
+      - IGHV3-ADR*03
+      - IGHV3-ADR*03_S5597
+      - IGHV3-ADU*01
+      - IGHV3-ADU*02
+      - IGHV3-ADU*03
+      - IGHV3-ADW*01
+      - IGHV3-ADW*02
+      - IGHV3-ADW*03
+      - IGHV3-ADX*01_S5361
+      - IGHV3-ADZ*01
+      - IGHV3-AEE*01
+      - IGHV3-AEF*01_S6030
+      - IGHV3-AEH*01
+      - IGHV3-AEH*01_S3262
+      - IGHV3-AEH*01_S5714
+      - IGHV3-AEH*01_S7229
+      - IGHV3-AEH*01_S9627
+      - IGHV3-AET*01
+      - IGHV3-AET*01_S5460
+      - IGHV3-AET*01_S6894
+      - IGHV3-AEW*01
+      - IGHV3-AEW*01_S0457
+      - IGHV3-AEW*01_S1282
+      - IGHV3-AEW*01_S4331
+      - IGHV3-AEW*01_S9854
+      - IGHV3-AEW*03
+      - IGHV3-AFE*01
+      - IGHV3-AFE*01_S3736
+      - IGHV3-AFE*01_S4619
+      - IGHV3-AFR*01_S3488
+      - IGHV3-AFY*05
+      - IGHV3-AFY*10
+      - IGHV3-AGQ*01
+      - IGHV3-AGQ*02
+      - IGHV3-AGV*01
+      - IGHV3-AGV*02
+      - IGHV3-AGV*03
+      - IGHV3-AHA*01
+      - IGHV3-AHG*01
+      - IGHV3-AHH*01
+      - IGHV3-KORF20*01
+      - IGHV3-KORF21_S7413*01
+      - IGHV3-KORF8*01
+      - IGHV3-KORF9*01
+      - IGHV3-KSEQ1*01
+      - IGHV3-KSEQ13*01
+      - IGHV3-KSEQ5*01
+      - IGHV3-LJI100-A*01
+      - IGHV3-LJI107*01
+      - IGHV3-LJI107-A*01
+      - IGHV3-LJI119_S8059*01
+      - IGHV3-LJI120*01
+      - IGHV3-LJI127_S2988*01
+      - IGHV3-LJI128_S5016*01
+      - IGHV3-LJI141*01
+      - IGHV3-LJI141-A*01
+      - IGHV3-LJI175_S0372*01
+      - IGHV3-LJI177*01
+      - IGHV3-LJI177_S4361*01
+      - IGHV3-LJI185*01
+      - IGHV3-LJI185-A*01
+      - IGHV3-LJI187*01
+      - IGHV3-LJI195*01
+      - IGHV3-LJI34*01
+      - IGHV3-LJI34-A*01
+      - IGHV3-LJI35-A*01
+      - IGHV3-LJI36-A*01
+      - IGHV3-LJI37*01
+      - IGHV3-LJI37-A*01
+      - IGHV3-LJI50-A*01
+      - IGHV3-LJI50_S7867*01
+      - IGHV3-LJI52-A*01
+      - IGHV3-LJI5_S8753*01
+      - IGHV3-LJI76-A*01
+      - IGHV3-LJI76-A_S3135*01
+      - IGHV3-LJI76_S1598*01
+      - IGHV3-LJI8*01
+      - IGHV3-LJI8-A*01
+      - IGHV3-LJI88-A*01
+      - IGHV3-LJI88-A_S6762*01
+      - IGHV3-LJI94_S0802*01
+      - IGHV3-LJI94_S2872*01
       - IGHV3-NL_1*01_S2031
       - IGHV3-NL_1*01_S2788
       - IGHV3-NL_1*01_S3947
-      - IGHV3-NL_1*01_S4331
       - IGHV3-NL_1*01_S4549
       - IGHV3-NL_1*01_S5238
-      - IGHV3-NL_1*01_S9422
-      - IGHV3-NL_1*01_S9854
       - IGHV3-NL_10*02_S1970
       - IGHV3-NL_10*02_S2212
       - IGHV3-NL_11*01_S2687
-      - IGHV3-NL_11*01_S3736
-      - IGHV3-NL_11*01_S4619
-      - IGHV3-NL_11*01_S5714
       - IGHV3-NL_11*01_S6390
-      - IGHV3-NL_11*01_S8390
       - IGHV3-NL_11*01_S8458
       - IGHV3-NL_11*01_S8670
-      - IGHV3-NL_11*01_S9627
       - IGHV3-NL_11*02_S2668
       - IGHV3-NL_12*02_S1760
       - IGHV3-NL_12*02_S2468
       - IGHV3-NL_12*02_S5864
-      - IGHV3-NL_12*02_S6994
       - IGHV3-NL_13*01_S2791
       - IGHV3-NL_13*01_S3277
-      - IGHV3-NL_13*01_S3940
       - IGHV3-NL_13*01_S5549
       - IGHV3-NL_13*01_S5767
       - IGHV3-NL_14*01_S0218
@@ -1166,11 +782,8 @@ custom:
       - IGHV3-NL_15*01_S5125
       - IGHV3-NL_15*01_S7302
       - IGHV3-NL_16*01_S5133
-      - IGHV3-NL_16*01_S8234
-      - IGHV3-NL_17*01_S0507
       - IGHV3-NL_17*01_S1160
       - IGHV3-NL_17*01_S3909
-      - IGHV3-NL_17*01_S4250
       - IGHV3-NL_17*01_S4257
       - IGHV3-NL_17*01_S4736
       - IGHV3-NL_17*01_S5770
@@ -1178,16 +791,13 @@ custom:
       - IGHV3-NL_17*01_S8244
       - IGHV3-NL_17*01_S9589
       - IGHV3-NL_18*01_S0984
-      - IGHV3-NL_18*01_S3867
       - IGHV3-NL_18*01_S5825
       - IGHV3-NL_18*01_S6383
       - IGHV3-NL_18*01_S7053
       - IGHV3-NL_19*01_S2472
       - IGHV3-NL_19*01_S4000
       - IGHV3-NL_19*01_S5168
-      - IGHV3-NL_19*01_S5460
       - IGHV3-NL_19*01_S6635
-      - IGHV3-NL_19*01_S6894
       - IGHV3-NL_19*01_S7515
       - IGHV3-NL_19*01_S9323
       - IGHV3-NL_2*01_S1693
@@ -1203,10 +813,10 @@ custom:
       - IGHV3-NL_5*01_S8361
       - IGHV3-NL_6*02_S7808
       - IGHV3-NL_7*01_S0199
+      - IGHV3-NL_8*01_S7474
       - IGHV3-NL_8*01_S7860
       - IGHV3-NL_8*01_S9578
-      - IGHV3-NL_8*01_S7474
-      - IGHV3-NL_9*01_S6098
+      - IGHV3-S49*01
       - IGHV4-117*01
       - IGHV4-117*01_S0201
       - IGHV4-117*01_S0312
@@ -1279,7 +889,6 @@ custom:
       - IGHV4-67*01_S4509
       - IGHV4-67*01_S6131
       - IGHV4-67*01_S8827
-      - IGHV4-67*01_S8901
       - IGHV4-67*02
       - IGHV4-67*02_S6848
       - IGHV4-67*02_S7550
@@ -1301,6 +910,34 @@ custom:
       - IGHV4-93*01_S5203
       - IGHV4-93*01_S6528
       - IGHV4-93*01_S8059
+      - IGHV4-ABB*01
+      - IGHV4-ABB*01_S8200
+      - IGHV4-ACQ*01
+      - IGHV4-ACS*01
+      - IGHV4-ADD*01
+      - IGHV4-ADD*01_S5847
+      - IGHV4-ADG*01
+      - IGHV4-ADG*01_S1296
+      - IGHV4-ADG*01_S3005
+      - IGHV4-AEB*01
+      - IGHV4-AEC*01
+      - IGHV4-AEX*01
+      - IGHV4-AEX*01_S8720
+      - IGHV4-AEX*01_S9508
+      - IGHV4-AFL*01
+      - IGHV4-AFQ*01
+      - IGHV4-AFQ*01_S0868
+      - IGHV4-AFQ*01_S2532
+      - IGHV4-AGL*01
+      - IGHV4-AGR*01_S4099
+      - IGHV4-AGU*01
+      - IGHV4-AGU*01_S6186
+      - IGHV4-AGU*01_S6650
+      - IGHV4-KORF3*01
+      - IGHV4-LJI144_S4510*01
+      - IGHV4-LJI149*01
+      - IGHV4-LJI149-A*01
+      - IGHV4-LJI79-A*01
       - IGHV4-NL_1*01_S0419
       - IGHV4-NL_1*01_S0477
       - IGHV4-NL_1*01_S0689
@@ -1317,12 +954,9 @@ custom:
       - IGHV4-NL_1*01_S5424
       - IGHV4-NL_1*01_S5917
       - IGHV4-NL_1*01_S7240
-      - IGHV4-NL_1*01_S7297
       - IGHV4-NL_1*01_S8446
       - IGHV4-NL_1*01_S8621
-      - IGHV4-NL_1*01_S8720
       - IGHV4-NL_1*01_S9290
-      - IGHV4-NL_1*01_S9508
       - IGHV4-NL_1*02_S1702
       - IGHV4-NL_1*02_S1777
       - IGHV4-NL_1*02_S1821
@@ -1352,10 +986,8 @@ custom:
       - IGHV4-NL_15*01_S5717
       - IGHV4-NL_15*01_S7687
       - IGHV4-NL_16*01_S2138
-      - IGHV4-NL_16*01_S2324
       - IGHV4-NL_16*01_S3062
       - IGHV4-NL_16*01_S3640
-      - IGHV4-NL_17*01_S0904
       - IGHV4-NL_17*01_S0936
       - IGHV4-NL_17*01_S2080
       - IGHV4-NL_17*01_S2142
@@ -1364,7 +996,6 @@ custom:
       - IGHV4-NL_17*01_S2814
       - IGHV4-NL_17*01_S3082
       - IGHV4-NL_17*01_S4004
-      - IGHV4-NL_17*01_S4099
       - IGHV4-NL_17*01_S4839
       - IGHV4-NL_17*01_S4954
       - IGHV4-NL_17*01_S5431
@@ -1372,24 +1003,20 @@ custom:
       - IGHV4-NL_17*01_S7355
       - IGHV4-NL_19*01_S1944
       - IGHV4-NL_19*01_S2661
-      - IGHV4-NL_19*01_S3005
       - IGHV4-NL_20*01_S0030
       - IGHV4-NL_20*01_S2908
       - IGHV4-NL_20*01_S3862
       - IGHV4-NL_20*01_S3868
       - IGHV4-NL_20*01_S4754
       - IGHV4-NL_20*01_S5229
-      - IGHV4-NL_20*01_S6186
       - IGHV4-NL_20*01_S6889
       - IGHV4-NL_20*01_S7244
-      - IGHV4-NL_21*01_S0138
       - IGHV4-NL_21*01_S0142
       - IGHV4-NL_21*01_S1118
       - IGHV4-NL_21*01_S3257
       - IGHV4-NL_21*01_S4478
       - IGHV4-NL_21*01_S6308
       - IGHV4-NL_21*01_S6468
-      - IGHV4-NL_21*01_S6650
       - IGHV4-NL_21*01_S7469
       - IGHV4-NL_21*01_S9849
       - IGHV4-NL_22*01_S2393
@@ -1397,7 +1024,6 @@ custom:
       - IGHV4-NL_22*01_S5234
       - IGHV4-NL_22*01_S6977
       - IGHV4-NL_22*01_S9255
-      - IGHV4-NL_23*01_S1296
       - IGHV4-NL_23*01_S4212
       - IGHV4-NL_23*01_S6914
       - IGHV4-NL_23*01_S7000
@@ -1456,10 +1082,8 @@ custom:
       - IGHV4-NL_31*01_S7693
       - IGHV4-NL_32*01_S3033
       - IGHV4-NL_33*01_S1148
-      - IGHV4-NL_33*01_S2532
       - IGHV4-NL_33*01_S3086
       - IGHV4-NL_33*01_S4143
-      - IGHV4-NL_33*01_S4377
       - IGHV4-NL_33*01_S4467
       - IGHV4-NL_33*01_S5330
       - IGHV4-NL_33*01_S5535
@@ -1476,12 +1100,10 @@ custom:
       - IGHV4-NL_36*01_S3780
       - IGHV4-NL_36*01_S5000
       - IGHV4-NL_36*01_S5319
-      - IGHV4-NL_36*01_S5847
       - IGHV4-NL_36*01_S6474
       - IGHV4-NL_36*01_S6687
       - IGHV4-NL_36*01_S6973
       - IGHV4-NL_36*01_S7873
-      - IGHV4-NL_36*01_S8200
       - IGHV4-NL_36*01_S9506
       - IGHV4-NL_36*01_S9644
       - IGHV4-NL_38*01_S0981
@@ -1504,7 +1126,6 @@ custom:
       - IGHV4-NL_42*01_S3572
       - IGHV4-NL_42*01_S3666
       - IGHV4-NL_42*01_S6064
-      - IGHV4-NL_43*01_S4510
       - IGHV4-NL_5*01_S0876
       - IGHV4-NL_5*01_S1492
       - IGHV4-NL_5*01_S2528
@@ -1560,9 +1181,16 @@ custom:
       - IGHV5-157*02_S5108
       - IGHV5-157*02_S7648
       - IGHV5-157*02_S8705
+      - IGHV5-ABI*03
+      - IGHV5-I1*01
+      - IGHV5-LJI131-A*01
+      - IGHV5-LJI157-A*01
+      - IGHV5-LJI157-A_S8313*01
       - IGHV6-1*01
       - IGHV6-1*02
       - IGHV6-1*02_S1768
+      - IGHV6-ACF*02
+      - IGHV6-KORF1*01
       - IGHV7-135*01
       - IGHV7-135*01_S4281
       - IGHV7-135*01_S9086
@@ -1581,176 +1209,521 @@ custom:
       - IGHV7-86*01_S8420
       - IGHV7-86*01_S9209
       - IGHV7-86*02
-      - IGHD1-1*01
-      - IGHD1-2*01
-      - IGHD1-3*01
-      - IGHD1-4*01
-      - IGHD1-5*01
-      - IGHD1-6*01
-      - IGHD1-7*01
-      - IGHD1-8*01
-      - IGHD2-10*01
-      - IGHD2-10*01_S295
-      - IGHD2-10*01_S8741
-      - IGHD2-11*01
-      - IGHD2-11*01_S1259
-      - IGHD2-12*01
-      - IGHD2-13*01
-      - IGHD2-14*01
-      - IGHD2-14*02_S0040
-      - IGHD2-14*02_S0100
-      - IGHD2-14*02_S1717
-      - IGHD2-9*01
-      - IGHD3-15*01
-      - IGHD3-16*01
-      - IGHD3-17*01
-      - IGHD3-18*01
-      - IGHD3-19*02_S4720
-      - IGHD3-20*01
-      - IGHD3-41*01
-      - IGHD3-41*01_S1308
-      - IGHD3-41*01_S1524
-      - IGHD3-41*01_S4389
-      - IGHD3-41*01_S8240
-      - IGHD4-21*01
-      - IGHD4-23*01
-      - IGHD4-24*01
-      - IGHD4-25*01
-      - IGHD5-27*01
-      - IGHD5-28*01
-      - IGHD5-29*01
-      - IGHD5-31*01
-      - IGHD5-32*01
-      - IGHD5-32*01_S0263
-      - IGHD5-32*01_S0995
-      - IGHD5-32*01_S2987
-      - IGHD6-33*01
-      - IGHD6-34*01
-      - IGHD6-35*01
-      - IGHD6-36*01
-      - IGHD6-38*01
-      - IGHD6-38*01_S4618
-      - IGHD6-39*01
-      - IGHD6-39*01_S0850
-      - IGHD7-40*01
+      - IGHV7-AGO*01_S2159
+      - IGHV7-LJI135-A*01
+      - IGKJ1-I1*01
       - IGKJ1-I1*01
       - IGKJ2-I2*01
+      - IGKJ2-I2*01
+      - IGKJ3-I3*01
       - IGKJ3-I3*01
       - IGKJ4-I4*01
+      - IGKJ4-I4*01
       - IGKJ5-I5*01
-      - IGLJ1-S1*01
+      - IGKJ5-I5*01
+      - IGKV1-AAD*01
+      - IGKV1-AAL*01
+      - IGKV1-AAL*01_S2543
+      - IGKV1-AAS*01
+      - IGKV1-AAS*03
+      - IGKV1-AAU*01
+      - IGKV1-AAY*01
+      - IGKV1-AAZ*01
+      - IGKV1-ABL*01
+      - IGKV1-ABL*02
+      - IGKV1-ABM*01
+      - IGKV1-ABM*01_S8638
+      - IGKV1-ABR*01
+      - IGKV1-ABV*01
+      - IGKV1-ABV*02
+      - IGKV1-ABZ*01
+      - IGKV1-ACE*01
+      - IGKV1-ACE*02
+      - IGKV1-ACE*03
+      - IGKV1-ACI*01
+      - IGKV1-ACI*02
+      - IGKV1-ACK*01
+      - IGKV1-ACK*01_S9718
+      - IGKV1-ACY*01
+      - IGKV1-ADD*01
+      - IGKV1-ADF*01
+      - IGKV1-ADF*01_S1146
+      - IGKV1-ADK*01
+      - IGKV1-ADO*01
+      - IGKV1-ADO*01_S6906
+      - IGKV1-ADT*01
+      - IGKV1-ADT*01_S3718
+      - IGKV1-ADT*02
+      - IGKV1-AEA*01
+      - IGKV1-AEA*01_S8672
+      - IGKV1-AEA*02
+      - IGKV1-AEA*03
+      - IGKV1-AEA*03_S1706
+      - IGKV1-AEE*01
+      - IGKV1-AEE*02
+      - IGKV1-AEE*03
+      - IGKV1-AEG*01
+      - IGKV1-AEJ*01
+      - IGKV1-AEK*01
+      - IGKV1-AEK*02
+      - IGKV1-AES*01
+      - IGKV1-AEU*01
+      - IGKV1-AEW*01
+      - IGKV1-AEW*03
+      - IGKV1-AEW*04
+      - IGKV1-I10*01
+      - IGKV1-I14*01
+      - IGKV1-I17*01
+      - IGKV1-I17_S1805*01
+      - IGKV1-I18*01
+      - IGKV1-I2*01
+      - IGKV1-I20*01
+      - IGKV1-I21*01
+      - IGKV1-I9*01
+      - IGKV1-LJI13*01
+      - IGKV1-LJI16-A*01
+      - IGKV1-LJI16-A_S4373*01
+      - IGKV1-LJI20*01
+      - IGKV1-LJI20-A*01
+      - IGKV1-LJI21*01
+      - IGKV1-LJI21-A*01
+      - IGKV1-LJI25*01
+      - IGKV1-LJI25-A*01
+      - IGKV1-LJI25_S3517*01
+      - IGKV1-LJI26*01
+      - IGKV1-LJI29*01
+      - IGKV1-LJI29-A*01
+      - IGKV1-LJI35-A*01
+      - IGKV1-LJI41*01
+      - IGKV1-LJI41-A*01
+      - IGKV1-LJI43*01
+      - IGKV1-LJI44*01
+      - IGKV1-LJI44-A*01
+      - IGKV1-LJI46*01
+      - IGKV1-LJI46-A*01
+      - IGKV1-LJI49*01
+      - IGKV1-LJI50*01
+      - IGKV1-LJI51*01
+      - IGKV1-LJI51-A*01
+      - IGKV1-LJI56*01
+      - IGKV1-LJI56-A*01
+      - IGKV1-LJI59*01
+      - IGKV1-LJI59-A*01
+      - IGKV1-LJI61*01
+      - IGKV1-LJI61-A*01
+      - IGKV1-LJI63*01
+      - IGKV1-LJI63-A*01
+      - IGKV1-LJI64*01
+      - IGKV1-LJI68*01
+      - IGKV1-LJI68-A*01
+      - IGKV1-LJI87*01
+      - IGKV1-S37*01
+      - IGKV1-S40*01
+      - IGKV1-S49*01
+      - IGKV1-S57*01
+      - IGKV2-AAE*01
+      - IGKV2-AAI*01
+      - IGKV2-AAK*01
+      - IGKV2-AAN*01
+      - IGKV2-AAO*01
+      - IGKV2-AAQ*01
+      - IGKV2-ABB*01
+      - IGKV2-ABW*01
+      - IGKV2-ACB*01
+      - IGKV2-ACL*01
+      - IGKV2-ACR*01
+      - IGKV2-ADA*01
+      - IGKV2-ADC*01
+      - IGKV2-ADH*01
+      - IGKV2-ADJ*01
+      - IGKV2-ADV*01
+      - IGKV2-ADZ*01
+      - IGKV2-AEB*01
+      - IGKV2-AEB*01_S5603
+      - IGKV2-AEF*01
+      - IGKV2-AEH*01
+      - IGKV2-AEH*01_S0859
+      - IGKV2-AEH*01_S3585
+      - IGKV2-AEI*01
+      - IGKV2-AEL*01
+      - IGKV2-AEM*01
+      - IGKV2-AEN*01
+      - IGKV2-I11*01
+      - IGKV2-I3*01
+      - IGKV2-LJI28*01
+      - IGKV2-LJI28-A*01
+      - IGKV2-LJI4*01
+      - IGKV2-LJI4-A*01
+      - IGKV2-LJI53*01
+      - IGKV2-LJI53-A*01
+      - IGKV2-LJI54*01
+      - IGKV2-LJI57*01
+      - IGKV2-LJI57-A*01
+      - IGKV2-LJI58*01
+      - IGKV2-LJI58-A*01
+      - IGKV2-LJI60*01
+      - IGKV2-LJI65*01
+      - IGKV2-LJI67*01
+      - IGKV2-LJI71*01
+      - IGKV2-LJI71-A*01
+      - IGKV2-LJI80*01
+      - IGKV2-LJI81*01
+      - IGKV2-LJI82*01
+      - IGKV2-LJI83*01
+      - IGKV2-LJI84*01
+      - IGKV2-LJI86*01
+      - IGKV2-LJI88*01
+      - IGKV2-LJI92*01
+      - IGKV2-S39*01
+      - IGKV2-S41*01
+      - IGKV2-S44*01
+      - IGKV2-S45*01
+      - IGKV2-S46*01
+      - IGKV2-S58*01
+      - IGKV2-S59*01
+      - IGKV3-AAH*01
+      - IGKV3-AAP*01
+      - IGKV3-AAP*01_S6980
+      - IGKV3-ABD*01
+      - IGKV3-ABF*01
+      - IGKV3-ABT*01
+      - IGKV3-ACF*01
+      - IGKV3-ADN*01
+      - IGKV3-ADW*01
+      - IGKV3-ADW*01_S9009
+      - IGKV3-AED*01
+      - IGKV3-I2*01
+      - IGKV3-I3*01
+      - IGKV3-I3_S9612*01
+      - IGKV3-I7*01
+      - IGKV3-I9*01
+      - IGKV3-LJI11*01
+      - IGKV3-LJI15*01
+      - IGKV3-LJI19*01
+      - IGKV3-LJI24*01
+      - IGKV3-LJI24-A*01
+      - IGKV3-LJI34*01
+      - IGKV3-LJI34-A*01
+      - IGKV3-LJI47-A*01
+      - IGKV3-LJI52*01
+      - IGKV3-LJI7*01
+      - IGKV3-LJI7-A*01
+      - IGKV3-LJI9*01
+      - IGKV3-LJI9-A*01
+      - IGKV3-S36*01
+      - IGKV4-ACX*01
+      - IGKV4-I3*01
+      - IGKV5-AEP*01
+      - IGKV5-I1*01
+      - IGKV5-LJI8*01
+      - IGKV5-LJI8-A*01
+      - IGKV6-ABA*01
+      - IGKV6-ABK*01
+      - IGKV6-LJI32-A*01
+      - IGKV6-LJI40*01
+      - IGKV6-LJI40-A*01
+      - IGKV7-ACH*01
+      - IGKV7-I1*01
+      - IGKV7-LJI10*01
       - IGLJ1*01
+      - IGLJ1*01
+      - IGLJ1-S1*01
+      - IGLJ1-S1*01
       - IGLJ2-S2*01
-      - IGLJ3-S3*01
+      - IGLJ2-S2*01
       - IGLJ3*01
+      - IGLJ3*01
+      - IGLJ3-S3*01
+      - IGLJ3-S3*01
+      - IGLJ4-S4*01
       - IGLJ4-S4*01
       - IGLJ5-S5*01
-      - IGLJ6-S6*01
+      - IGLJ5-S5*01
       - IGLJ6*01
+      - IGLJ6*01
+      - IGLJ6-S6*01
+      - IGLJ6-S6*01
+      - IGLJ6_1*01
+      - IGLJ6_1*01
+      - IGLJ7*01
       - IGLJ7*01
       - IGLJ7*02
+      - IGLJ7*02
       - IGLJ7*03
-      - IGLJ6_1*01
-      - IGHJ1-1*01
-      - IGHJ2*01
-      - IGHJ2*01_S5087
-      - IGHJ3-2*01
-      - IGHJ4-3*01
-      - IGHJ4-3*01_S9191
-      - IGHJ5-4*01
-      - IGHJ5-4*02
-      - IGHJ5-4*03
-      - IGHJ5-5*01
-      - IGHJ5-5*01_S6098
-      - IGHJ5-5*02
-      - IGHJ6-6*01
-      - IGHJ6-6*01_S0171
+      - IGLJ7*03
+      - IGLV1-ABB*01
+      - IGLV1-ABN*01
+      - IGLV1-ABN*02
+      - IGLV1-ABS*01
+      - IGLV1-ACN*01
+      - IGLV1-ACN*02
+      - IGLV1-ACN*03
+      - IGLV1-ACR*01
+      - IGLV1-ACV*01
+      - IGLV1-ACW*01
+      - IGLV1-ACW*02
+      - IGLV1-ACW*03
+      - IGLV1-ADA*01
+      - IGLV1-ADA*01_S3486
+      - IGLV1-ADA*01_S7920
+      - IGLV1-ADL*01
+      - IGLV1-ADL*01_S5805
+      - IGLV1-ADL*02
+      - IGLV1-ADU*01
+      - IGLV1-LJI103*01
+      - IGLV1-LJI68*01
+      - IGLV1-LJI68-A*01
+      - IGLV1-LJI69*01
+      - IGLV1-LJI69-A*01
+      - IGLV1-LJI70*01
+      - IGLV1-LJI71*01
+      - IGLV1-LJI71-A*01
+      - IGLV1-S16*01
+      - IGLV1-S16_S1272*01
+      - IGLV1-S16_S2133*01
+      - IGLV1-S18*01
+      - IGLV1-S19*01
+      - IGLV1-S20*01
+      - IGLV1-S22*01
+      - IGLV1-S30*01
+      - IGLV1-S37*01
+      - IGLV10-AAO*01
+      - IGLV11-AAY*01
+      - IGLV11-AAY*02
+      - IGLV2-ABE*01
+      - IGLV2-ABE*01_S2946
+      - IGLV2-ABI*01
+      - IGLV2-ABI*01_S7244
+      - IGLV2-ABI*01_S9741
+      - IGLV2-ABJ*01
+      - IGLV2-ABJ*01_S9052
+      - IGLV2-ABU*01
+      - IGLV2-ABU*01_S3471
+      - IGLV2-ABU*02
+      - IGLV2-ABX*01
+      - IGLV2-ACE*01
+      - IGLV2-ADC*01
+      - IGLV2-ADK*01
+      - IGLV2-KA*01
+      - IGLV2-LJI10*01
+      - IGLV2-LJI10_S2593*01
+      - IGLV2-LJI112*01
+      - IGLV2-LJI112_S8864*01
+      - IGLV2-LJI115*01
+      - IGLV2-LJI118*01
+      - IGLV2-LJI12*01
+      - IGLV2-LJI18*01
+      - IGLV2-LJI29*01
+      - IGLV2-LJI29-A*01
+      - IGLV2-LJI33*01
+      - IGLV2-LJI33-A*01
+      - IGLV2-S3*01
+      - IGLV2-S44*01
+      - IGLV2-S9*01
+      - IGLV3-AAB*01
+      - IGLV3-AAI*01
+      - IGLV3-AAJ*01
+      - IGLV3-AAT*01
+      - IGLV3-AAT*02
+      - IGLV3-AAT*05
+      - IGLV3-AAV*01
+      - IGLV3-AAV*02
+      - IGLV3-AAV*03
+      - IGLV3-AAV*04
+      - IGLV3-AAV*05
+      - IGLV3-AAV*06
+      - IGLV3-ACB*01
+      - IGLV3-ACB*03
+      - IGLV3-ADT*01
+      - IGLV3-ADT*02
+      - IGLV3-ADT*03
+      - IGLV3-AEB*02
+      - IGLV3-AEB*03
+      - IGLV3-AEC*01
+      - IGLV3-AED*01
+      - IGLV3-AED*06
+      - IGLV3-LJI117-A*01
+      - IGLV3-LJI119*01
+      - IGLV3-LJI12*01
+      - IGLV3-LJI13*01
+      - IGLV3-LJI17*01
+      - IGLV3-LJI25-A*01
+      - IGLV3-LJI27*01
+      - IGLV3-LJI27-A*01
+      - IGLV3-LJI28*01
+      - IGLV3-LJI28-A*01
+      - IGLV3-LJI31*01
+      - IGLV3-LJI32*01
+      - IGLV3-LJI34*01
+      - IGLV3-LJI35*01
+      - IGLV3-S1*01
+      - IGLV3-S11*01
+      - IGLV3-S47*01
+      - IGLV3-S6*01
+      - IGLV3-S8*01
+      - IGLV4-ACF*01
+      - IGLV4-ACF*02
+      - IGLV4-LJI16*01
+      - IGLV4-LJI8*01
+      - IGLV4-LJI8-A*01
+      - IGLV4-S2*01
+      - IGLV4-S36*01
+      - IGLV5-AAM*01
+      - IGLV5-AAP*01
+      - IGLV5-AAX*01
+      - IGLV5-AAX*01_S4360
+      - IGLV5-AAX*02
+      - IGLV5-AAX*03
+      - IGLV5-ABG*01
+      - IGLV5-ABG*02
+      - IGLV5-ABG*03
+      - IGLV5-ABL*01
+      - IGLV5-ABL*02
+      - IGLV5-ABT*01
+      - IGLV5-ACY*01
+      - IGLV5-ACY*01_S3912
+      - IGLV5-ACY*02
+      - IGLV5-ADQ*01
+      - IGLV5-ADQ*01_S6109
+      - IGLV5-LJI61*01
+      - IGLV5-S17*01
+      - IGLV5-S23*01
+      - IGLV6-AAC*01
+      - IGLV6-AAC*02
+      - IGLV6-AAC*05
+      - IGLV6-AAC*05_S8052
+      - IGLV6-ADD*01
+      - IGLV6-ADW*01
+      - IGLV6-S39*01
+      - IGLV6-S40*01
+      - IGLV7-AAK*01
+      - IGLV7-ABD*01
+      - IGLV7-ABO*01
+      - IGLV7-ADB*01
+      - IGLV7-ADJ*01
+      - IGLV7-ADJ*02
+      - IGLV7-S24*01
+      - IGLV8-ABK*01
+      - IGLV8-ABK*02
+      - IGLV8-AEE*01
+      - IGLV8-AEE*02
+      - IGLV8-LJI123*01
+      - IGLV8-S43*01
+      - IGLV9-LJI51*01
+      - IGLV9-S29*01
   functional:
     cat:
       cat:
-      - IGHV21-1*01
-      - IGHV20-1*01
-      - IGHV19-1*01
-      - IGHV18-1*01
-      - IGHV17-1*01
-      - IGHV16-1*01
-      - IGHV15-1*01
-      - IGHV14-1*01
-      - IGHV13-1*01
-      - IGHV12-1*01
-      - IGHV11-1*01
-      - IGHV10-1*01
-      - IGHV9-1*01
-      - IGHV8-1*01
-      - IGHV7-1*01
-      - IGHV6-1*01
-      - IGHV5-1*01
-      - IGHV4-1*01
-      - IGHV3-1*01
-      - IGHV2-1*01
+      - IGHD1-1*01
+      - IGHJ1*01
+      - IGHJ2*01
+      - IGHJ3*01
+      - IGHJ3*02
+      - IGHJ4*01
+      - IGHJ4*02
+      - IGHJ4*03
+      - IGHJ5*01
+      - IGHJ5*02
+      - IGHJ6*01
+      - IGHJ6*02
+      - IGHJ6*03
+      - IGHJ6*04
       - IGHV1-1*01
-      - IGHV36-2*01
-      - IGHV34-2*01
-      - IGHV35-2*01
-      - IGHV33-2*01
-      - IGHV32-2*01
-      - IGHV31-2*01
-      - IGHV30-2*01
-      - IGHV29-2*01
-      - IGHV28-2*01
-      - IGHV27-2*01
-      - IGHV26-2*01
-      - IGHV25-2*01
-      - IGHV24-2*01
-      - IGHV23-2*01
-      - IGHV22-2*01
-      - IGHV21-2*01
-      - IGHV20-2*01
-      - IGHV19-2*01
-      - IGHV18-2*01
-      - IGHV17-2*01
-      - IGHV16-2*01
-      - IGHV15-2*01
-      - IGHV14-2*01
-      - IGHV13-2*01
-      - IGHV12-2*01
-      - IGHV11-2*01
-      - IGHV10-2*01
-      - IGHV9-2*01
-      - IGHV8-2*01
-      - IGHV7-2*01
-      - IGHV6-2*01
-      - IGHV5-2*01
-      - IGHV4-2*01
-      - IGHV3-2*01
-      - IGHV2-2*01
       - IGHV1-2*01
-      - IGHV35-1*01
-      - IGHV34-1*01
-      - IGHV33-1*01
-      - IGHV32-1*01
-      - IGHV31-1*01
-      - IGHV30-1*01
-      - IGHV29-1*01
-      - IGHV28-1*01
-      - IGHV27-1*01
-      - IGHV26-1*01
-      - IGHV25-1*01
-      - IGHV24-1*01
-      - IGHV23-1*01
+      - IGHV10-1*01
+      - IGHV10-2*01
+      - IGHV11-1*01
+      - IGHV11-2*01
+      - IGHV12-1*01
+      - IGHV12-2*01
+      - IGHV13-1*01
+      - IGHV13-2*01
+      - IGHV14-1*01
+      - IGHV14-2*01
+      - IGHV15-1*01
+      - IGHV15-2*01
+      - IGHV16-1*01
+      - IGHV16-2*01
+      - IGHV17-1*01
+      - IGHV17-2*01
+      - IGHV18-1*01
+      - IGHV18-2*01
+      - IGHV19-1*01
+      - IGHV19-2*01
+      - IGHV2-1*01
+      - IGHV2-2*01
+      - IGHV20-1*01
+      - IGHV20-2*01
+      - IGHV21-1*01
+      - IGHV21-2*01
       - IGHV22-1*01
+      - IGHV22-2*01
+      - IGHV23-1*01
+      - IGHV23-2*01
+      - IGHV24-1*01
+      - IGHV24-2*01
+      - IGHV25-1*01
+      - IGHV25-2*01
+      - IGHV26-2*01
+      - IGHV27-1*01
+      - IGHV27-2*01
+      - IGHV28-1*01
+      - IGHV28-2*01
+      - IGHV29-1*01
+      - IGHV29-2*01
+      - IGHV3-1*01
+      - IGHV3-2*01
+      - IGHV30-1*01
+      - IGHV30-2*01
+      - IGHV31-1*01
+      - IGHV31-2*01
+      - IGHV32-1*01
+      - IGHV32-2*01
+      - IGHV33-1*01
+      - IGHV33-2*01
+      - IGHV34-1*01
+      - IGHV34-2*01
+      - IGHV35-1*01
+      - IGHV35-2*01
+      - IGHV36-2*01
+      - IGHV4-1*01
+      - IGHV4-2*01
+      - IGHV5-1*01
+      - IGHV5-2*01
+      - IGHV6-1*01
+      - IGHV6-2*01
+      - IGHV7-1*01
+      - IGHV7-2*01
+      - IGHV8-1*01
+      - IGHV8-2*01
+      - IGHV9-1*01
+      - IGHV9-2*01
+      - IGKJ1*01
+      - IGKJ2*01
+      - IGKJ3*01
+      - IGKJ4*01
+      - IGKJ5*01
       - IGKV1-10*01
       - IGKV1-17*01
       - IGKV2-12*01
       - IGKV2-13*01
       - IGKV2-14*01
       - IGKV2-4*01
-      - IGKV2-5*01
       - IGKV2-9*01
       - IGKV4-1*01
       - IGKV6-6*01
       - IGKV8-16*01
       - IGKV8-3*01
+      - IGLJ1*01
+      - IGLJ10*01
+      - IGLJ11*01
+      - IGLJ2*01
+      - IGLJ4*01
+      - IGLJ5*01
+      - IGLJ6*01
+      - IGLJ7*01
+      - IGLJ8*01
+      - IGLJ9*01
       - IGLV1-32*01
       - IGLV1-36*01
       - IGLV1-37*01
@@ -1783,703 +1756,153 @@ custom:
       - IGLV5-68*01
       - IGLV5-71*01
       - IGLV5-79*01
-      - IGHD1-1*01
-      - IGKJ1*01
-      - IGKJ2*01
-      - IGKJ3*01
-      - IGKJ4*01
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ10*01
-      - IGLJ11*01
-      - IGLJ2*01
-      - IGLJ4*01
-      - IGLJ5*01
-      - IGLJ6*01
-      - IGLJ7*01
-      - IGLJ8*01
-      - IGLJ9*01
-      - IGHJ1*01
-      - IGHJ2*01
-      - IGHJ3*01
-      - IGHJ3*02
-      - IGHJ4*01
-      - IGHJ4*02
-      - IGHJ4*03
-      - IGHJ5*01
-      - IGHJ5*02
-      - IGHJ6*01
-      - IGHJ6*02
-      - IGHJ6*03
-      - IGHJ6*04
     macaque:
       macaque:
-      - IGHV1-AAU*01
-      - IGHV1-AAU*01_S5608
-      - IGHV1-AAU*01_S8392
-      - IGHV1-AAU*02
-      - IGHV1-AAU*02_S1575
-      - IGHV1-AAU*02_S3533
-      - IGHV1-AAU*02_S4606
-      - IGHV1-ABW*01
-      - IGHV1-ABW*01_S5842
-      - IGHV1-AEP*01
-      - IGHV1-AFG*01
-      - IGHV1-AFG*01_S5797
-      - IGHV1-AFG*01_S9698
-      - IGHV1-AFS*01
-      - IGHV1-KC*01
-      - IGHV1-KC_S1701*01
-      - IGHV1-KL*01
-      - IGHV1-KORF4*01
-      - IGHV1-KORF5*01
-      - IGHV2-ABG*01
-      - IGHV2-ABG*01_S6364
-      - IGHV2-ABG*02
-      - IGHV2-ABG*02_S2032
-      - IGHV2-ABU*01
-      - IGHV2-ABU*01_S6524
-      - IGHV2-ACK*01
-      - IGHV2-AEI*01
-      - IGHV2-AEY*01
-      - IGHV2-KORF1*01
-      - IGHV2-S3*01
-      - IGHV3-AAB*01
-      - IGHV3-AAB*01_S3246
-      - IGHV3-AAB*01_S3636
-      - IGHV3-AAB*01_S6942
-      - IGHV3-AAB*02
-      - IGHV3-AAB*02_S9425
-      - IGHV3-AAD*01
-      - IGHV3-ABA*01
-      - IGHV3-ABA*01_S0254
-      - IGHV3-ABA*01_S9422
-      - IGHV3-ABH*01
-      - IGHV3-ABH*02
-      - IGHV3-ABH*03
-      - IGHV3-ABJ*01
-      - IGHV3-ABJ*01_S8222
-      - IGHV3-ABK*01
-      - IGHV3-ABK*01_S9570
-      - IGHV3-ABY*01
-      - IGHV3-ABY*01_S0577
-      - IGHV3-ABY*01_S4607
-      - IGHV3-ABY*01_S8488
-      - IGHV3-ABY*03
-      - IGHV3-ABZ*01
-      - IGHV3-ABZ*01_S1833
-      - IGHV3-ABZ*01_S3446
-      - IGHV3-ACA*01
-      - IGHV3-ACA*01_S2482
-      - IGHV3-ACI*01
-      - IGHV3-ACN*01
-      - IGHV3-ACN*01_S2915
-      - IGHV3-ACZ*01
-      - IGHV3-ACZ*02
-      - IGHV3-ACZ*03
-      - IGHV3-ACZ*03_S8458
-      - IGHV3-ACZ*04
-      - IGHV3-ADF*01
-      - IGHV3-ADF*01_S0547
-      - IGHV3-ADF*01_S4250
-      - IGHV3-ADL*01
-      - IGHV3-ADM*01
-      - IGHV3-ADM*01_S8234
-      - IGHV3-ADN*01
-      - IGHV3-ADO*01
-      - IGHV3-ADO*02
-      - IGHV3-ADR*01
-      - IGHV3-ADR*01_S2709
-      - IGHV3-ADR*01_S4172
-      - IGHV3-ADR*01_S8388
-      - IGHV3-ADR*03
-      - IGHV3-ADR*03_S4423
-      - IGHV3-ADR*03_S5299
-      - IGHV3-ADR*03_S5597
-      - IGHV3-ADR*03_S5688
-      - IGHV3-ADU*01
-      - IGHV3-ADU*02
-      - IGHV3-ADU*03
-      - IGHV3-ADW*01
-      - IGHV3-ADW*02
-      - IGHV3-ADW*03
-      - IGHV3-ADX*01
-      - IGHV3-ADX*01_S1834
-      - IGHV3-ADX*01_S5361
-      - IGHV3-ADX*01_S5510
-      - IGHV3-ADZ*01
-      - IGHV3-AEE*01
-      - IGHV3-AEF*01
-      - IGHV3-AEF*01_S6030
-      - IGHV3-AEH*01
-      - IGHV3-AEH*01_S3262
-      - IGHV3-AEH*01_S5714
-      - IGHV3-AEH*01_S7229
-      - IGHV3-AEH*01_S9627
-      - IGHV3-AET*01
-      - IGHV3-AET*01_S5460
-      - IGHV3-AET*01_S6894
-      - IGHV3-AEW*01
-      - IGHV3-AEW*01_S0457
-      - IGHV3-AEW*01_S1282
-      - IGHV3-AEW*01_S4331
-      - IGHV3-AEW*01_S9854
-      - IGHV3-AEW*03
-      - IGHV3-AFC*01
-      - IGHV3-AFE*01
-      - IGHV3-AFE*01_S3736
-      - IGHV3-AFE*01_S4619
-      - IGHV3-AFR*01
-      - IGHV3-AFR*01_S3488
-      - IGHV3-AFW*01
-      - IGHV3-AFY*01
-      - IGHV3-AFY*02
-      - IGHV3-AFY*05
-      - IGHV3-AFY*06
-      - IGHV3-AFY*10
-      - IGHV3-AGQ*01
-      - IGHV3-AGQ*02
-      - IGHV3-AGV*01
-      - IGHV3-AGV*02
-      - IGHV3-AGV*03
-      - IGHV3-AHA*01
-      - IGHV3-AHG*01
-      - IGHV3-AHH*01
-      - IGHV3-KORF10*01
-      - IGHV3-KORF20*01
-      - IGHV3-KORF21_S7413*01
-      - IGHV3-KORF8*01
-      - IGHV3-KORF9*01
-      - IGHV3-KSEQ1*01
-      - IGHV3-KSEQ13*01
-      - IGHV3-KSEQ25*01
-      - IGHV3-KSEQ5*01
-      - IGHV3-S49*01
-      - IGHV3-S60*01
-      - IGHV4-ABB*01
-      - IGHV4-ABB*01_S8200
-      - IGHV4-ACQ*01
-      - IGHV4-ACS*01
-      - IGHV4-ADD*01
-      - IGHV4-ADD*01_S5847
-      - IGHV4-ADG*01
-      - IGHV4-ADG*01_S1296
-      - IGHV4-ADG*01_S3005
-      - IGHV4-AEB*01
-      - IGHV4-AEC*01
-      - IGHV4-AEX*01
-      - IGHV4-AEX*01_S8720
-      - IGHV4-AEX*01_S9508
-      - IGHV4-AFB*01
-      - IGHV4-AFI*01
-      - IGHV4-AFL*01
-      - IGHV4-AFQ*01
-      - IGHV4-AFQ*01_S0868
-      - IGHV4-AFQ*01_S2532
-      - IGHV4-AFU*01
-      - IGHV4-AGL*01
-      - IGHV4-AGR*01
-      - IGHV4-AGR*01_S4099
-      - IGHV4-AGR*01_S5203
-      - IGHV4-AGU*01
-      - IGHV4-AGU*01_S6186
-      - IGHV4-AGU*01_S6650
-      - IGHV4-KORF3*01
-      - IGHV4-KORF4*01
-      - IGHV4-KORF4_S3924*01
-      - IGHV4-S11*01
-      - IGHV4-S11_S0312*01
-      - IGHV5-ABI*01
-      - IGHV5-ABI*01_S2502
-      - IGHV5-ABI*01_S4790
-      - IGHV5-ABI*03
-      - IGHV5-AER*01
-      - IGHV5-AER*01_S8185
-      - IGHV5-I1*01
-      - IGHV6-ACF*01
-      - IGHV6-ACF*02
-      - IGHV6-KORF1*01
-      - IGHV7-AAF*01
-      - IGHV7-ABS*01
-      - IGHV7-ABS*01_S4281
-      - IGHV7-AGO*01
-      - IGHV7-AGO*01_S2159
-      - IGHV1-LJI138*01
-      - IGHV1-LJI138-A*01
-      - IGHV1-LJI142*01
-      - IGHV1-LJI170*01
-      - IGHV1-LJI193*01
-      - IGHV1-LJI193_S2680*01
-      - IGHV1-LJI193_S6037*01
-      - IGHV1-LJI58*01
-      - IGHV1-LJI58-A*01
-      - IGHV1-LJI60*01
-      - IGHV1-LJI84*01
-      - IGHV1-LJI84-A*01
-      - IGHV1-LJI84-A_S0561*01
-      - IGHV1-LJI84-A_S0608*01
-      - IGHV1-LJI84-A_S9171*01
-      - IGHV2-LJI69*01
-      - IGHV2-LJI69-A*01
-      - IGHV2-LJI69-A_S0779*01
-      - IGHV2-LJI7-A*01
-      - IGHV3-LJI100*01
-      - IGHV3-LJI100_S4375*01
-      - IGHV3-LJI100-A*01
-      - IGHV3-LJI107*01
-      - IGHV3-LJI107-A*01
-      - IGHV3-LJI119*01
-      - IGHV3-LJI119_S8059*01
-      - IGHV3-LJI119-A*01
-      - IGHV3-LJI120*01
-      - IGHV3-LJI127*01
-      - IGHV3-LJI127_S2988*01
-      - IGHV3-LJI128*01
-      - IGHV3-LJI128_S5016*01
-      - IGHV3-LJI128-A*01
-      - IGHV3-LJI128-A_S0204*01
-      - IGHV3-LJI141*01
-      - IGHV3-LJI141-A*01
-      - IGHV3-LJI175*01
-      - IGHV3-LJI175_S0372*01
-      - IGHV3-LJI177*01
-      - IGHV3-LJI177_S4361*01
-      - IGHV3-LJI177_S5369*01
-      - IGHV3-LJI185*01
-      - IGHV3-LJI185-A*01
-      - IGHV3-LJI187*01
-      - IGHV3-LJI195*01
-      - IGHV3-LJI28*01
-      - IGHV3-LJI28_S7540*01
-      - IGHV3-LJI34*01
-      - IGHV3-LJI34-A*01
-      - IGHV3-LJI35-A*01
-      - IGHV3-LJI36*01
-      - IGHV3-LJI36_S5206*01
-      - IGHV3-LJI36_S7141*01
-      - IGHV3-LJI36-A*01
-      - IGHV3-LJI37*01
-      - IGHV3-LJI37-A*01
-      - IGHV3-LJI5*01
-      - IGHV3-LJI5_S8753*01
-      - IGHV3-LJI50*01
-      - IGHV3-LJI50_S5668*01
-      - IGHV3-LJI50_S7867*01
-      - IGHV3-LJI50-A*01
-      - IGHV3-LJI52*01
-      - IGHV3-LJI52-A*01
-      - IGHV3-LJI53*01
-      - IGHV3-LJI53-A*01
-      - IGHV3-LJI76*01
-      - IGHV3-LJI76_S1598*01
-      - IGHV3-LJI76-A*01
-      - IGHV3-LJI76-A_S3135*01
-      - IGHV3-LJI76-A_S4190*01
-      - IGHV3-LJI8*01
-      - IGHV3-LJI8-A*01
-      - IGHV3-LJI83*01
-      - IGHV3-LJI83-A*01
-      - IGHV3-LJI87*01
-      - IGHV3-LJI88-A*01
-      - IGHV3-LJI88-A_S6762*01
-      - IGHV3-LJI88-A_S7485*01
-      - IGHV3-LJI88-A_S9033*01
-      - IGHV3-LJI9*01
-      - IGHV3-LJI94*01
-      - IGHV3-LJI94_S0802*01
-      - IGHV3-LJI94_S2872*01
-      - IGHV4-LJI144*01
-      - IGHV4-LJI144_S4510*01
-      - IGHV4-LJI144-A*01
-      - IGHV4-LJI149*01
-      - IGHV4-LJI149_S3986*01
-      - IGHV4-LJI149_S9711*01
-      - IGHV4-LJI149-A*01
-      - IGHV4-LJI150*01
-      - IGHV4-LJI174*01
-      - IGHV4-LJI174-A*01
-      - IGHV4-LJI67-A*01
-      - IGHV4-LJI72*01
-      - IGHV4-LJI79-A*01
-      - IGHV4-LJI79-A_S9501*01
-      - IGHV5-LJI131-A*01
-      - IGHV5-LJI15*01
-      - IGHV5-LJI15_S9061*01
-      - IGHV5-LJI157*01
-      - IGHV5-LJI157_S5960*01
-      - IGHV5-LJI157-A*01
-      - IGHV5-LJI157-A_S3096*01
-      - IGHV5-LJI157-A_S8313*01
-      - IGHV6-LJI1*01
-      - IGHV7-LJI135-A*01
-      - IGHV7-LJI86-A*01
-      - IGKV1-AAD*01
-      - IGKV1-AAL*01
-      - IGKV1-AAL*01_S2543
-      - IGKV1-AAS*01
-      - IGKV1-AAS*03
-      - IGKV1-AAU*01
-      - IGKV1-AAY*01
-      - IGKV1-AAZ*01
-      - IGKV1-ABL*01
-      - IGKV1-ABL*02
-      - IGKV1-ABM*01
-      - IGKV1-ABM*01_S8638
-      - IGKV1-ABR*01
-      - IGKV1-ABV*01
-      - IGKV1-ABV*02
-      - IGKV1-ABZ*01
-      - IGKV1-ACE*01
-      - IGKV1-ACE*02
-      - IGKV1-ACE*03
-      - IGKV1-ACI*01
-      - IGKV1-ACI*02
-      - IGKV1-ACK*01
-      - IGKV1-ACK*01_S9718
-      - IGKV1-ACY*01
-      - IGKV1-ADD*01
-      - IGKV1-ADF*01
-      - IGKV1-ADF*01_S1146
-      - IGKV1-ADK*01
-      - IGKV1-ADO*01
-      - IGKV1-ADO*01_S6906
-      - IGKV1-ADT*01
-      - IGKV1-ADT*01_S3718
-      - IGKV1-ADT*02
-      - IGKV1-AEA*01
-      - IGKV1-AEA*01_S8672
-      - IGKV1-AEA*02
-      - IGKV1-AEA*03
-      - IGKV1-AEA*03_S1706
-      - IGKV1-AEE*01
-      - IGKV1-AEE*02
-      - IGKV1-AEE*03
-      - IGKV1-AEG*01
-      - IGKV1-AEJ*01
-      - IGKV1-AEK*01
-      - IGKV1-AEK*02
-      - IGKV1-AES*01
-      - IGKV1-AEU*01
-      - IGKV1-AEW*01
-      - IGKV1-AEW*03
-      - IGKV1-AEW*04
-      - IGKV1-I10*01
-      - IGKV1-I14*01
-      - IGKV1-I17*01
-      - IGKV1-I17_S1805*01
-      - IGKV1-I18*01
-      - IGKV1-I2*01
-      - IGKV1-I20*01
-      - IGKV1-I21*01
-      - IGKV1-I9*01
-      - IGKV1-LJI13*01
-      - IGKV1-LJI16-A*01
-      - IGKV1-LJI16-A_S4373*01
-      - IGKV1-LJI20*01
-      - IGKV1-LJI20-A*01
-      - IGKV1-LJI21*01
-      - IGKV1-LJI21-A*01
-      - IGKV1-LJI25*01
-      - IGKV1-LJI25_S3517*01
-      - IGKV1-LJI25-A*01
-      - IGKV1-LJI26*01
-      - IGKV1-LJI29*01
-      - IGKV1-LJI29-A*01
-      - IGKV1-LJI35-A*01
-      - IGKV1-LJI41*01
-      - IGKV1-LJI41-A*01
-      - IGKV1-LJI43*01
-      - IGKV1-LJI44*01
-      - IGKV1-LJI44-A*01
-      - IGKV1-LJI46*01
-      - IGKV1-LJI46-A*01
-      - IGKV1-LJI49*01
-      - IGKV1-LJI50*01
-      - IGKV1-LJI51*01
-      - IGKV1-LJI51-A*01
-      - IGKV1-LJI56*01
-      - IGKV1-LJI56-A*01
-      - IGKV1-LJI59*01
-      - IGKV1-LJI59-A*01
-      - IGKV1-LJI61*01
-      - IGKV1-LJI61-A*01
-      - IGKV1-LJI63*01
-      - IGKV1-LJI63-A*01
-      - IGKV1-LJI64*01
-      - IGKV1-LJI68*01
-      - IGKV1-LJI68-A*01
-      - IGKV1-LJI87*01
-      - IGKV1-S37*01
-      - IGKV1-S40*01
-      - IGKV1-S42*01
-      - IGKV1-S49*01
-      - IGKV1-S57*01
-      - IGKV2-AAE*01
-      - IGKV2-AAI*01
-      - IGKV2-AAK*01
-      - IGKV2-AAN*01
-      - IGKV2-AAO*01
-      - IGKV2-AAQ*01
-      - IGKV2-ABB*01
-      - IGKV2-ABW*01
-      - IGKV2-ACB*01
-      - IGKV2-ACL*01
-      - IGKV2-ACR*01
-      - IGKV2-ADA*01
-      - IGKV2-ADC*01
-      - IGKV2-ADH*01
-      - IGKV2-ADJ*01
-      - IGKV2-ADV*01
-      - IGKV2-ADZ*01
-      - IGKV2-AEB*01
-      - IGKV2-AEB*01_S5603
-      - IGKV2-AEF*01
-      - IGKV2-AEH*01
-      - IGKV2-AEH*01_S0859
-      - IGKV2-AEH*01_S3585
-      - IGKV2-AEI*01
-      - IGKV2-AEL*01
-      - IGKV2-AEM*01
-      - IGKV2-AEN*01
-      - IGKV2-I11*01
-      - IGKV2-I3*01
-      - IGKV2-LJI28*01
-      - IGKV2-LJI28-A*01
-      - IGKV2-LJI4*01
-      - IGKV2-LJI4-A*01
-      - IGKV2-LJI53*01
-      - IGKV2-LJI53-A*01
-      - IGKV2-LJI54*01
-      - IGKV2-LJI57*01
-      - IGKV2-LJI57-A*01
-      - IGKV2-LJI58*01
-      - IGKV2-LJI58-A*01
-      - IGKV2-LJI60*01
-      - IGKV2-LJI65*01
-      - IGKV2-LJI67*01
-      - IGKV2-LJI71*01
-      - IGKV2-LJI71-A*01
-      - IGKV2-LJI80*01
-      - IGKV2-LJI81*01
-      - IGKV2-LJI82*01
-      - IGKV2-LJI83*01
-      - IGKV2-LJI84*01
-      - IGKV2-LJI86*01
-      - IGKV2-LJI88*01
-      - IGKV2-LJI92*01
-      - IGKV2-S39*01
-      - IGKV2-S41*01
-      - IGKV2-S44*01
-      - IGKV2-S45*01
-      - IGKV2-S46*01
-      - IGKV2-S58*01
-      - IGKV2-S59*01
-      - IGKV3-AAH*01
-      - IGKV3-AAP*01
-      - IGKV3-AAP*01_S6980
-      - IGKV3-ABD*01
-      - IGKV3-ABF*01
-      - IGKV3-ABT*01
-      - IGKV3-ACF*01
-      - IGKV3-ADN*01
-      - IGKV3-ADW*01
-      - IGKV3-ADW*01_S9009
-      - IGKV3-AED*01
-      - IGKV3-I2*01
-      - IGKV3-I3*01
-      - IGKV3-I3_S9612*01
-      - IGKV3-I7*01
-      - IGKV3-I9*01
-      - IGKV3-LJI11*01
-      - IGKV3-LJI15*01
-      - IGKV3-LJI19*01
-      - IGKV3-LJI24*01
-      - IGKV3-LJI24-A*01
-      - IGKV3-LJI34*01
-      - IGKV3-LJI34-A*01
-      - IGKV3-LJI47-A*01
-      - IGKV3-LJI52*01
-      - IGKV3-LJI7*01
-      - IGKV3-LJI7-A*01
-      - IGKV3-LJI9*01
-      - IGKV3-LJI9-A*01
-      - IGKV3-S36*01
-      - IGKV4-ACX*01
-      - IGKV4-I3*01
-      - IGKV5-AEP*01
-      - IGKV5-I1*01
-      - IGKV5-LJI8*01
-      - IGKV5-LJI8-A*01
-      - IGKV6-ABA*01
-      - IGKV6-ABK*01
-      - IGKV6-LJI32-A*01
-      - IGKV6-LJI40*01
-      - IGKV6-LJI40-A*01
-      - IGKV7-ACH*01
-      - IGKV7-I1*01
-      - IGKV7-LJI10*01
-      - IGLV1-ABB*01
-      - IGLV1-ABN*01
-      - IGLV1-ABN*02
-      - IGLV1-ABS*01
-      - IGLV1-ACN*01
-      - IGLV1-ACN*02
-      - IGLV1-ACN*03
-      - IGLV1-ACR*01
-      - IGLV1-ACV*01
-      - IGLV1-ACW*01
-      - IGLV1-ACW*02
-      - IGLV1-ACW*03
-      - IGLV1-ADA*01
-      - IGLV1-ADA*01_S3486
-      - IGLV1-ADA*01_S7920
-      - IGLV1-ADL*01
-      - IGLV1-ADL*01_S5805
-      - IGLV1-ADL*02
-      - IGLV1-ADU*01
-      - IGLV1-LJI103*01
-      - IGLV1-LJI68*01
-      - IGLV1-LJI68-A*01
-      - IGLV1-LJI69*01
-      - IGLV1-LJI69-A*01
-      - IGLV1-LJI70*01
-      - IGLV1-LJI71*01
-      - IGLV1-LJI71-A*01
-      - IGLV1-S16*01
-      - IGLV1-S16_S1272*01
-      - IGLV1-S16_S2133*01
-      - IGLV1-S18*01
-      - IGLV1-S19*01
-      - IGLV1-S20*01
-      - IGLV1-S22*01
-      - IGLV1-S30*01
-      - IGLV1-S37*01
-      - IGLV10-AAO*01
-      - IGLV11-AAY*01
-      - IGLV11-AAY*02
-      - IGLV2-ABE*01
-      - IGLV2-ABE*01_S2946
-      - IGLV2-ABI*01
-      - IGLV2-ABI*01_S7244
-      - IGLV2-ABI*01_S9741
-      - IGLV2-ABJ*01
-      - IGLV2-ABJ*01_S9052
-      - IGLV2-ABU*01
-      - IGLV2-ABU*01_S3471
-      - IGLV2-ABU*02
-      - IGLV2-ABX*01
-      - IGLV2-ACE*01
-      - IGLV2-ADC*01
-      - IGLV2-ADK*01
-      - IGLV2-KA*01
-      - IGLV2-LJI10*01
-      - IGLV2-LJI10_S2593*01
-      - IGLV2-LJI112*01
-      - IGLV2-LJI112_S8864*01
-      - IGLV2-LJI115*01
-      - IGLV2-LJI118*01
-      - IGLV2-LJI12*01
-      - IGLV2-LJI18*01
-      - IGLV2-LJI29*01
-      - IGLV2-LJI29-A*01
-      - IGLV2-LJI33*01
-      - IGLV2-LJI33-A*01
-      - IGLV2-S3*01
-      - IGLV2-S44*01
-      - IGLV2-S9*01
-      - IGLV3-AAB*01
-      - IGLV3-AAI*01
-      - IGLV3-AAJ*01
-      - IGLV3-AAT*01
-      - IGLV3-AAT*02
-      - IGLV3-AAT*05
-      - IGLV3-AAV*01
-      - IGLV3-AAV*02
-      - IGLV3-AAV*03
-      - IGLV3-AAV*04
-      - IGLV3-AAV*05
-      - IGLV3-AAV*06
-      - IGLV3-ACB*01
-      - IGLV3-ACB*03
-      - IGLV3-ADT*01
-      - IGLV3-ADT*02
-      - IGLV3-ADT*03
-      - IGLV3-AEB*02
-      - IGLV3-AEB*03
-      - IGLV3-AEC*01
-      - IGLV3-AED*01
-      - IGLV3-AED*06
-      - IGLV3-LJI117*01
-      - IGLV3-LJI117-A*01
-      - IGLV3-LJI119*01
-      - IGLV3-LJI12*01
-      - IGLV3-LJI13*01
-      - IGLV3-LJI17*01
-      - IGLV3-LJI25-A*01
-      - IGLV3-LJI27*01
-      - IGLV3-LJI27-A*01
-      - IGLV3-LJI28*01
-      - IGLV3-LJI28-A*01
-      - IGLV3-LJI31*01
-      - IGLV3-LJI32*01
-      - IGLV3-LJI34*01
-      - IGLV3-LJI35*01
-      - IGLV3-S1*01
-      - IGLV3-S11*01
-      - IGLV3-S47*01
-      - IGLV3-S6*01
-      - IGLV3-S8*01
-      - IGLV4-ACF*01
-      - IGLV4-ACF*02
-      - IGLV4-LJI16*01
-      - IGLV4-LJI8*01
-      - IGLV4-LJI8-A*01
-      - IGLV4-S2*01
-      - IGLV4-S36*01
-      - IGLV5-AAM*01
-      - IGLV5-AAP*01
-      - IGLV5-AAX*01
-      - IGLV5-AAX*01_S4360
-      - IGLV5-AAX*02
-      - IGLV5-AAX*03
-      - IGLV5-ABG*01
-      - IGLV5-ABG*02
-      - IGLV5-ABG*03
-      - IGLV5-ABL*01
-      - IGLV5-ABL*02
-      - IGLV5-ABT*01
-      - IGLV5-ACY*01
-      - IGLV5-ACY*01_S3912
-      - IGLV5-ACY*02
-      - IGLV5-ADQ*01
-      - IGLV5-ADQ*01_S6109
-      - IGLV5-LJI61*01
-      - IGLV5-S17*01
-      - IGLV5-S23*01
-      - IGLV6-AAC*01
-      - IGLV6-AAC*02
-      - IGLV6-AAC*05
-      - IGLV6-AAC*05_S8052
-      - IGLV6-ADD*01
-      - IGLV6-ADW*01
-      - IGLV6-S39*01
-      - IGLV6-S40*01
-      - IGLV7-AAK*01
-      - IGLV7-ABD*01
-      - IGLV7-ABO*01
-      - IGLV7-ADB*01
-      - IGLV7-ADJ*01
-      - IGLV7-ADJ*02
-      - IGLV7-S24*01
-      - IGLV8-ABK*01
-      - IGLV8-ABK*02
-      - IGLV8-AEE*01
-      - IGLV8-AEE*02
-      - IGLV8-LJI123*01
-      - IGLV8-S43*01
-      - IGLV9-LJI51*01
-      - IGLV9-S29*01
-      - IGLVTEST*01
+      - IGHD1-1*01
+      - IGHD1-1*01_S001
+      - IGHD1-1*02
+      - IGHD1-12*01
+      - IGHD1-19*01
+      - IGHD1-19*02
+      - IGHD1-2*01
+      - IGHD1-3*01
+      - IGHD1-39*01
+      - IGHD1-39*02
+      - IGHD1-4*01
+      - IGHD1-5*01
+      - IGHD1-6*01
+      - IGHD1-7*01
+      - IGHD1-7*01_S001
+      - IGHD1-8*01
+      - IGHD1-J5*01
+      - IGHD1-J6*01
+      - IGHD1-J7*01
+      - IGHD1-J8*01
+      - IGHD2-10*01
+      - IGHD2-10*01_S295
+      - IGHD2-10*01_S8741
+      - IGHD2-11*01
+      - IGHD2-11*01_S1259
+      - IGHD2-12*01
+      - IGHD2-13*01
+      - IGHD2-13*01_S001
+      - IGHD2-14*01
+      - IGHD2-14*02_S0040
+      - IGHD2-14*02_S0100
+      - IGHD2-14*02_S1717
+      - IGHD2-2*01
+      - IGHD2-20*01
+      - IGHD2-20*02
+      - IGHD2-25*01
+      - IGHD2-30*01
+      - IGHD2-35*01
+      - IGHD2-8*01
+      - IGHD2-8*02
+      - IGHD2-9*01
+      - IGHD2-I1*01
+      - IGHD2-I2*01
+      - IGHD2-I3*01
+      - IGHD2-I4*01
+      - IGHD2-I5*01
+      - IGHD2-I6*01
+      - IGHD2-J11*01
+      - IGHD2-J14*01
+      - IGHD3-14*01
+      - IGHD3-15*01
+      - IGHD3-16*01
+      - IGHD3-17*01
+      - IGHD3-18*01
+      - IGHD3-19*02_S4720
+      - IGHD3-20*01
+      - IGHD3-21*01
+      - IGHD3-26*01
+      - IGHD3-26*02
+      - IGHD3-3*01
+      - IGHD3-36*01
+      - IGHD3-41*01
+      - IGHD3-41*01_S1308
+      - IGHD3-41*01_S1524
+      - IGHD3-41*01_S4389
+      - IGHD3-41*01_S8240
+      - IGHD3-9*01
+      - IGHD3-I2*01
+      - IGHD3-I4*01
+      - IGHD3-J15*01
+      - IGHD3-J16*01
+      - IGHD3-J17*01
+      - IGHD3-J18*01
+      - IGHD3-J41*01
+      - IGHD3-KC*01
+      - IGHD4-15*01
+      - IGHD4-21*01
+      - IGHD4-22*01
+      - IGHD4-23*01
+      - IGHD4-24*01
+      - IGHD4-25*01
+      - IGHD4-27*01
+      - IGHD4-27*02
+      - IGHD4-32*01
+      - IGHD4-4*02
+      - IGHD4-J21*01
+      - IGHD4-J22*01
+      - IGHD4-J23*01
+      - IGHD4-J24*01
+      - IGHD4-J25*01
+      - IGHD5-10*01
+      - IGHD5-10*02
+      - IGHD5-23*01
+      - IGHD5-27*01
+      - IGHD5-28*01
+      - IGHD5-28*01_S001
+      - IGHD5-29*01
+      - IGHD5-31*01
+      - IGHD5-32*01
+      - IGHD5-32*01_S0263
+      - IGHD5-32*01_S0995
+      - IGHD5-32*01_S2987
+      - IGHD5-33*01
+      - IGHD5-5*02
+      - IGHD5-J29*01
+      - IGHD6-11*01
+      - IGHD6-24*01
+      - IGHD6-29*01
+      - IGHD6-33*01
+      - IGHD6-34*01
+      - IGHD6-34*01_S001
+      - IGHD6-35*01
+      - IGHD6-36*01
+      - IGHD6-38*01
+      - IGHD6-38*01_S001
+      - IGHD6-38*01_S4618
+      - IGHD6-39*01
+      - IGHD6-39*01_S0850
+      - IGHD6-6*01
+      - IGHD6-J35*01
+      - IGHD7-40*01
+      - IGHD7-J40*01
+      - IGHJ1*01
+      - IGHJ1*02
+      - IGHJ1-1*01
+      - IGHJ2*01
+      - IGHJ2*01_S5087
+      - IGHJ2-I1*01
+      - IGHJ3*01
+      - IGHJ3-2*01
+      - IGHJ4*01
+      - IGHJ4-3*01
+      - IGHJ4-3*01_S9191
+      - IGHJ5-1*01
+      - IGHJ5-2*01
+      - IGHJ5-4*01
+      - IGHJ5-4*01
+      - IGHJ5-4*02
+      - IGHJ5-4*03
+      - IGHJ5-5*01
+      - IGHJ5-5*01_S6098
+      - IGHJ5-5*02
+      - IGHJ6*01
+      - IGHJ6-6*01
+      - IGHJ6-6*01_S0171
       - IGHV1-105*01
       - IGHV1-105*01_S0606
       - IGHV1-124*01
@@ -2517,6 +1940,29 @@ custom:
       - IGHV1-84*01_S8557
       - IGHV1-84*01_S9171
       - IGHV1-84*01_S9366
+      - IGHV1-AAU*01_S5608
+      - IGHV1-AAU*01_S8392
+      - IGHV1-AAU*02
+      - IGHV1-AAU*02_S1575
+      - IGHV1-AAU*02_S3533
+      - IGHV1-AAU*02_S4606
+      - IGHV1-ABW*01
+      - IGHV1-AFG*01
+      - IGHV1-AFG*01_S5797
+      - IGHV1-AFG*01_S9698
+      - IGHV1-KC*01
+      - IGHV1-KC_S1701*01
+      - IGHV1-KL*01
+      - IGHV1-KORF4*01
+      - IGHV1-KORF5*01
+      - IGHV1-LJI142*01
+      - IGHV1-LJI193*01
+      - IGHV1-LJI193_S2680*01
+      - IGHV1-LJI58*01
+      - IGHV1-LJI60*01
+      - IGHV1-LJI84-A*01
+      - IGHV1-LJI84-A_S0561*01
+      - IGHV1-LJI84-A_S0608*01
       - IGHV1-NL_1*01_S2052
       - IGHV1-NL_1*01_S6622
       - IGHV1-NL_1*01_S8523
@@ -2524,7 +1970,6 @@ custom:
       - IGHV1-NL_2*01_S2228
       - IGHV1-NL_2*01_S3477
       - IGHV1-NL_2*01_S3568
-      - IGHV1-NL_2*01_S5797
       - IGHV1-NL_2*01_S5959
       - IGHV1-NL_2*01_S7386
       - IGHV1-NL_2*01_S9896
@@ -2556,6 +2001,12 @@ custom:
       - IGHV2-7*02_S3534
       - IGHV2-7*02_S4078
       - IGHV2-7*02_S4285
+      - IGHV2-ABG*02
+      - IGHV2-ABG*02_S2032
+      - IGHV2-ABU*01
+      - IGHV2-ABU*01_S6524
+      - IGHV2-AEI*01
+      - IGHV2-LJI7-A*01
       - IGHV2-NL_1*01_S2133
       - IGHV2-NL_1*01_S2488
       - IGHV2-NL_1*01_S3296
@@ -2567,6 +2018,7 @@ custom:
       - IGHV2-NL_1*01_S9725
       - IGHV2-NL_2*01_S2193
       - IGHV2-NL_2*01_S8873
+      - IGHV2-S3*01
       - IGHV3-100*01
       - IGHV3-100*01_S2822
       - IGHV3-100*01_S4205
@@ -2689,7 +2141,6 @@ custom:
       - IGHV3-5*01_S6059
       - IGHV3-50*01
       - IGHV3-50*01_S1524
-      - IGHV3-50*01_S1879
       - IGHV3-50*01_S3548
       - IGHV3-50*01_S4628
       - IGHV3-50*01_S5299
@@ -2777,34 +2228,132 @@ custom:
       - IGHV3-94*01_S4458
       - IGHV3-94*01_S5120
       - IGHV3-94*01_S7982
-      - IGHV3-NL_1*01_S1080
+      - IGHV3-AAB*01_S3246
+      - IGHV3-AAB*02_S9425
+      - IGHV3-AAD*01
+      - IGHV3-ABA*01_S0254
+      - IGHV3-ABA*01_S9422
+      - IGHV3-ABH*01
+      - IGHV3-ABH*02
+      - IGHV3-ABH*03
+      - IGHV3-ABJ*01_S8222
+      - IGHV3-ABK*01_S9570
+      - IGHV3-ABY*01_S4607
+      - IGHV3-ABY*03
+      - IGHV3-ABZ*01_S1833
+      - IGHV3-ABZ*01_S3446
+      - IGHV3-ACA*01
+      - IGHV3-ACA*01_S2482
+      - IGHV3-ACI*01
+      - IGHV3-ACZ*02
+      - IGHV3-ACZ*04
+      - IGHV3-ADF*01
+      - IGHV3-ADF*01_S0547
+      - IGHV3-ADF*01_S4250
+      - IGHV3-ADM*01
+      - IGHV3-ADM*01_S8234
+      - IGHV3-ADN*01
+      - IGHV3-ADO*02
+      - IGHV3-ADR*01_S4172
+      - IGHV3-ADR*03
+      - IGHV3-ADR*03_S5597
+      - IGHV3-ADU*01
+      - IGHV3-ADU*02
+      - IGHV3-ADU*03
+      - IGHV3-ADW*01
+      - IGHV3-ADW*02
+      - IGHV3-ADW*03
+      - IGHV3-ADX*01_S5361
+      - IGHV3-ADZ*01
+      - IGHV3-AEE*01
+      - IGHV3-AEF*01_S6030
+      - IGHV3-AEH*01
+      - IGHV3-AEH*01_S3262
+      - IGHV3-AEH*01_S5714
+      - IGHV3-AEH*01_S7229
+      - IGHV3-AEH*01_S9627
+      - IGHV3-AET*01
+      - IGHV3-AET*01_S5460
+      - IGHV3-AET*01_S6894
+      - IGHV3-AEW*01
+      - IGHV3-AEW*01_S0457
+      - IGHV3-AEW*01_S1282
+      - IGHV3-AEW*01_S4331
+      - IGHV3-AEW*01_S9854
+      - IGHV3-AEW*03
+      - IGHV3-AFE*01
+      - IGHV3-AFE*01_S3736
+      - IGHV3-AFE*01_S4619
+      - IGHV3-AFR*01_S3488
+      - IGHV3-AFY*05
+      - IGHV3-AFY*10
+      - IGHV3-AGQ*01
+      - IGHV3-AGQ*02
+      - IGHV3-AGV*01
+      - IGHV3-AGV*02
+      - IGHV3-AGV*03
+      - IGHV3-AHA*01
+      - IGHV3-AHG*01
+      - IGHV3-AHH*01
+      - IGHV3-KORF20*01
+      - IGHV3-KORF21_S7413*01
+      - IGHV3-KORF8*01
+      - IGHV3-KORF9*01
+      - IGHV3-KSEQ1*01
+      - IGHV3-KSEQ13*01
+      - IGHV3-KSEQ5*01
+      - IGHV3-LJI100-A*01
+      - IGHV3-LJI107*01
+      - IGHV3-LJI107-A*01
+      - IGHV3-LJI119_S8059*01
+      - IGHV3-LJI120*01
+      - IGHV3-LJI127_S2988*01
+      - IGHV3-LJI128_S5016*01
+      - IGHV3-LJI141*01
+      - IGHV3-LJI141-A*01
+      - IGHV3-LJI175_S0372*01
+      - IGHV3-LJI177*01
+      - IGHV3-LJI177_S4361*01
+      - IGHV3-LJI185*01
+      - IGHV3-LJI185-A*01
+      - IGHV3-LJI187*01
+      - IGHV3-LJI195*01
+      - IGHV3-LJI34*01
+      - IGHV3-LJI34-A*01
+      - IGHV3-LJI35-A*01
+      - IGHV3-LJI36-A*01
+      - IGHV3-LJI37*01
+      - IGHV3-LJI37-A*01
+      - IGHV3-LJI50-A*01
+      - IGHV3-LJI50_S7867*01
+      - IGHV3-LJI52-A*01
+      - IGHV3-LJI5_S8753*01
+      - IGHV3-LJI76-A*01
+      - IGHV3-LJI76-A_S3135*01
+      - IGHV3-LJI76_S1598*01
+      - IGHV3-LJI8*01
+      - IGHV3-LJI8-A*01
+      - IGHV3-LJI88-A*01
+      - IGHV3-LJI88-A_S6762*01
+      - IGHV3-LJI94_S0802*01
+      - IGHV3-LJI94_S2872*01
       - IGHV3-NL_1*01_S2031
       - IGHV3-NL_1*01_S2788
       - IGHV3-NL_1*01_S3947
-      - IGHV3-NL_1*01_S4331
       - IGHV3-NL_1*01_S4549
       - IGHV3-NL_1*01_S5238
-      - IGHV3-NL_1*01_S9422
-      - IGHV3-NL_1*01_S9854
       - IGHV3-NL_10*02_S1970
       - IGHV3-NL_10*02_S2212
       - IGHV3-NL_11*01_S2687
-      - IGHV3-NL_11*01_S3736
-      - IGHV3-NL_11*01_S4619
-      - IGHV3-NL_11*01_S5714
       - IGHV3-NL_11*01_S6390
-      - IGHV3-NL_11*01_S8390
       - IGHV3-NL_11*01_S8458
       - IGHV3-NL_11*01_S8670
-      - IGHV3-NL_11*01_S9627
       - IGHV3-NL_11*02_S2668
       - IGHV3-NL_12*02_S1760
       - IGHV3-NL_12*02_S2468
       - IGHV3-NL_12*02_S5864
-      - IGHV3-NL_12*02_S6994
       - IGHV3-NL_13*01_S2791
       - IGHV3-NL_13*01_S3277
-      - IGHV3-NL_13*01_S3940
       - IGHV3-NL_13*01_S5549
       - IGHV3-NL_13*01_S5767
       - IGHV3-NL_14*01_S0218
@@ -2826,11 +2375,8 @@ custom:
       - IGHV3-NL_15*01_S5125
       - IGHV3-NL_15*01_S7302
       - IGHV3-NL_16*01_S5133
-      - IGHV3-NL_16*01_S8234
-      - IGHV3-NL_17*01_S0507
       - IGHV3-NL_17*01_S1160
       - IGHV3-NL_17*01_S3909
-      - IGHV3-NL_17*01_S4250
       - IGHV3-NL_17*01_S4257
       - IGHV3-NL_17*01_S4736
       - IGHV3-NL_17*01_S5770
@@ -2838,16 +2384,13 @@ custom:
       - IGHV3-NL_17*01_S8244
       - IGHV3-NL_17*01_S9589
       - IGHV3-NL_18*01_S0984
-      - IGHV3-NL_18*01_S3867
       - IGHV3-NL_18*01_S5825
       - IGHV3-NL_18*01_S6383
       - IGHV3-NL_18*01_S7053
       - IGHV3-NL_19*01_S2472
       - IGHV3-NL_19*01_S4000
       - IGHV3-NL_19*01_S5168
-      - IGHV3-NL_19*01_S5460
       - IGHV3-NL_19*01_S6635
-      - IGHV3-NL_19*01_S6894
       - IGHV3-NL_19*01_S7515
       - IGHV3-NL_19*01_S9323
       - IGHV3-NL_2*01_S1693
@@ -2863,10 +2406,10 @@ custom:
       - IGHV3-NL_5*01_S8361
       - IGHV3-NL_6*02_S7808
       - IGHV3-NL_7*01_S0199
+      - IGHV3-NL_8*01_S7474
       - IGHV3-NL_8*01_S7860
       - IGHV3-NL_8*01_S9578
-      - IGHV3-NL_8*01_S7474
-      - IGHV3-NL_9*01_S6098
+      - IGHV3-S49*01
       - IGHV4-117*01
       - IGHV4-117*01_S0201
       - IGHV4-117*01_S0312
@@ -2939,7 +2482,6 @@ custom:
       - IGHV4-67*01_S4509
       - IGHV4-67*01_S6131
       - IGHV4-67*01_S8827
-      - IGHV4-67*01_S8901
       - IGHV4-67*02
       - IGHV4-67*02_S6848
       - IGHV4-67*02_S7550
@@ -2961,6 +2503,34 @@ custom:
       - IGHV4-93*01_S5203
       - IGHV4-93*01_S6528
       - IGHV4-93*01_S8059
+      - IGHV4-ABB*01
+      - IGHV4-ABB*01_S8200
+      - IGHV4-ACQ*01
+      - IGHV4-ACS*01
+      - IGHV4-ADD*01
+      - IGHV4-ADD*01_S5847
+      - IGHV4-ADG*01
+      - IGHV4-ADG*01_S1296
+      - IGHV4-ADG*01_S3005
+      - IGHV4-AEB*01
+      - IGHV4-AEC*01
+      - IGHV4-AEX*01
+      - IGHV4-AEX*01_S8720
+      - IGHV4-AEX*01_S9508
+      - IGHV4-AFL*01
+      - IGHV4-AFQ*01
+      - IGHV4-AFQ*01_S0868
+      - IGHV4-AFQ*01_S2532
+      - IGHV4-AGL*01
+      - IGHV4-AGR*01_S4099
+      - IGHV4-AGU*01
+      - IGHV4-AGU*01_S6186
+      - IGHV4-AGU*01_S6650
+      - IGHV4-KORF3*01
+      - IGHV4-LJI144_S4510*01
+      - IGHV4-LJI149*01
+      - IGHV4-LJI149-A*01
+      - IGHV4-LJI79-A*01
       - IGHV4-NL_1*01_S0419
       - IGHV4-NL_1*01_S0477
       - IGHV4-NL_1*01_S0689
@@ -2977,12 +2547,9 @@ custom:
       - IGHV4-NL_1*01_S5424
       - IGHV4-NL_1*01_S5917
       - IGHV4-NL_1*01_S7240
-      - IGHV4-NL_1*01_S7297
       - IGHV4-NL_1*01_S8446
       - IGHV4-NL_1*01_S8621
-      - IGHV4-NL_1*01_S8720
       - IGHV4-NL_1*01_S9290
-      - IGHV4-NL_1*01_S9508
       - IGHV4-NL_1*02_S1702
       - IGHV4-NL_1*02_S1777
       - IGHV4-NL_1*02_S1821
@@ -3012,10 +2579,8 @@ custom:
       - IGHV4-NL_15*01_S5717
       - IGHV4-NL_15*01_S7687
       - IGHV4-NL_16*01_S2138
-      - IGHV4-NL_16*01_S2324
       - IGHV4-NL_16*01_S3062
       - IGHV4-NL_16*01_S3640
-      - IGHV4-NL_17*01_S0904
       - IGHV4-NL_17*01_S0936
       - IGHV4-NL_17*01_S2080
       - IGHV4-NL_17*01_S2142
@@ -3024,7 +2589,6 @@ custom:
       - IGHV4-NL_17*01_S2814
       - IGHV4-NL_17*01_S3082
       - IGHV4-NL_17*01_S4004
-      - IGHV4-NL_17*01_S4099
       - IGHV4-NL_17*01_S4839
       - IGHV4-NL_17*01_S4954
       - IGHV4-NL_17*01_S5431
@@ -3032,24 +2596,20 @@ custom:
       - IGHV4-NL_17*01_S7355
       - IGHV4-NL_19*01_S1944
       - IGHV4-NL_19*01_S2661
-      - IGHV4-NL_19*01_S3005
       - IGHV4-NL_20*01_S0030
       - IGHV4-NL_20*01_S2908
       - IGHV4-NL_20*01_S3862
       - IGHV4-NL_20*01_S3868
       - IGHV4-NL_20*01_S4754
       - IGHV4-NL_20*01_S5229
-      - IGHV4-NL_20*01_S6186
       - IGHV4-NL_20*01_S6889
       - IGHV4-NL_20*01_S7244
-      - IGHV4-NL_21*01_S0138
       - IGHV4-NL_21*01_S0142
       - IGHV4-NL_21*01_S1118
       - IGHV4-NL_21*01_S3257
       - IGHV4-NL_21*01_S4478
       - IGHV4-NL_21*01_S6308
       - IGHV4-NL_21*01_S6468
-      - IGHV4-NL_21*01_S6650
       - IGHV4-NL_21*01_S7469
       - IGHV4-NL_21*01_S9849
       - IGHV4-NL_22*01_S2393
@@ -3057,7 +2617,6 @@ custom:
       - IGHV4-NL_22*01_S5234
       - IGHV4-NL_22*01_S6977
       - IGHV4-NL_22*01_S9255
-      - IGHV4-NL_23*01_S1296
       - IGHV4-NL_23*01_S4212
       - IGHV4-NL_23*01_S6914
       - IGHV4-NL_23*01_S7000
@@ -3116,10 +2675,8 @@ custom:
       - IGHV4-NL_31*01_S7693
       - IGHV4-NL_32*01_S3033
       - IGHV4-NL_33*01_S1148
-      - IGHV4-NL_33*01_S2532
       - IGHV4-NL_33*01_S3086
       - IGHV4-NL_33*01_S4143
-      - IGHV4-NL_33*01_S4377
       - IGHV4-NL_33*01_S4467
       - IGHV4-NL_33*01_S5330
       - IGHV4-NL_33*01_S5535
@@ -3136,12 +2693,10 @@ custom:
       - IGHV4-NL_36*01_S3780
       - IGHV4-NL_36*01_S5000
       - IGHV4-NL_36*01_S5319
-      - IGHV4-NL_36*01_S5847
       - IGHV4-NL_36*01_S6474
       - IGHV4-NL_36*01_S6687
       - IGHV4-NL_36*01_S6973
       - IGHV4-NL_36*01_S7873
-      - IGHV4-NL_36*01_S8200
       - IGHV4-NL_36*01_S9506
       - IGHV4-NL_36*01_S9644
       - IGHV4-NL_38*01_S0981
@@ -3164,7 +2719,6 @@ custom:
       - IGHV4-NL_42*01_S3572
       - IGHV4-NL_42*01_S3666
       - IGHV4-NL_42*01_S6064
-      - IGHV4-NL_43*01_S4510
       - IGHV4-NL_5*01_S0876
       - IGHV4-NL_5*01_S1492
       - IGHV4-NL_5*01_S2528
@@ -3220,9 +2774,16 @@ custom:
       - IGHV5-157*02_S5108
       - IGHV5-157*02_S7648
       - IGHV5-157*02_S8705
+      - IGHV5-ABI*03
+      - IGHV5-I1*01
+      - IGHV5-LJI131-A*01
+      - IGHV5-LJI157-A*01
+      - IGHV5-LJI157-A_S8313*01
       - IGHV6-1*01
       - IGHV6-1*02
       - IGHV6-1*02_S1768
+      - IGHV6-ACF*02
+      - IGHV6-KORF1*01
       - IGHV7-135*01
       - IGHV7-135*01_S4281
       - IGHV7-135*01_S9086
@@ -3241,90 +2802,408 @@ custom:
       - IGHV7-86*01_S8420
       - IGHV7-86*01_S9209
       - IGHV7-86*02
-      - IGHD1-1*01
-      - IGHD1-2*01
-      - IGHD1-3*01
-      - IGHD1-4*01
-      - IGHD1-5*01
-      - IGHD1-6*01
-      - IGHD1-7*01
-      - IGHD1-8*01
-      - IGHD2-10*01
-      - IGHD2-10*01_S295
-      - IGHD2-10*01_S8741
-      - IGHD2-11*01
-      - IGHD2-11*01_S1259
-      - IGHD2-12*01
-      - IGHD2-13*01
-      - IGHD2-14*01
-      - IGHD2-14*02_S0040
-      - IGHD2-14*02_S0100
-      - IGHD2-14*02_S1717
-      - IGHD2-9*01
-      - IGHD3-15*01
-      - IGHD3-16*01
-      - IGHD3-17*01
-      - IGHD3-18*01
-      - IGHD3-19*02_S4720
-      - IGHD3-20*01
-      - IGHD3-41*01
-      - IGHD3-41*01_S1308
-      - IGHD3-41*01_S1524
-      - IGHD3-41*01_S4389
-      - IGHD3-41*01_S8240
-      - IGHD4-21*01
-      - IGHD4-23*01
-      - IGHD4-24*01
-      - IGHD4-25*01
-      - IGHD5-27*01
-      - IGHD5-28*01
-      - IGHD5-29*01
-      - IGHD5-31*01
-      - IGHD5-32*01
-      - IGHD5-32*01_S0263
-      - IGHD5-32*01_S0995
-      - IGHD5-32*01_S2987
-      - IGHD6-33*01
-      - IGHD6-34*01
-      - IGHD6-35*01
-      - IGHD6-36*01
-      - IGHD6-38*01
-      - IGHD6-38*01_S4618
-      - IGHD6-39*01
-      - IGHD6-39*01_S0850
-      - IGHD7-40*01
+      - IGHV7-AGO*01_S2159
+      - IGHV7-LJI135-A*01
+      - IGKJ1-I1*01
       - IGKJ1-I1*01
       - IGKJ2-I2*01
+      - IGKJ2-I2*01
+      - IGKJ3-I3*01
       - IGKJ3-I3*01
       - IGKJ4-I4*01
+      - IGKJ4-I4*01
       - IGKJ5-I5*01
-      - IGLJ1-S1*01
+      - IGKJ5-I5*01
+      - IGKV1-AAD*01
+      - IGKV1-AAL*01
+      - IGKV1-AAL*01_S2543
+      - IGKV1-AAS*01
+      - IGKV1-AAS*03
+      - IGKV1-AAU*01
+      - IGKV1-AAY*01
+      - IGKV1-AAZ*01
+      - IGKV1-ABL*01
+      - IGKV1-ABL*02
+      - IGKV1-ABM*01
+      - IGKV1-ABM*01_S8638
+      - IGKV1-ABR*01
+      - IGKV1-ABV*01
+      - IGKV1-ABV*02
+      - IGKV1-ABZ*01
+      - IGKV1-ACE*01
+      - IGKV1-ACE*02
+      - IGKV1-ACE*03
+      - IGKV1-ACI*01
+      - IGKV1-ACI*02
+      - IGKV1-ACK*01
+      - IGKV1-ACK*01_S9718
+      - IGKV1-ACY*01
+      - IGKV1-ADD*01
+      - IGKV1-ADF*01
+      - IGKV1-ADF*01_S1146
+      - IGKV1-ADK*01
+      - IGKV1-ADO*01
+      - IGKV1-ADO*01_S6906
+      - IGKV1-ADT*01
+      - IGKV1-ADT*01_S3718
+      - IGKV1-ADT*02
+      - IGKV1-AEA*01
+      - IGKV1-AEA*01_S8672
+      - IGKV1-AEA*02
+      - IGKV1-AEA*03
+      - IGKV1-AEA*03_S1706
+      - IGKV1-AEE*01
+      - IGKV1-AEE*02
+      - IGKV1-AEE*03
+      - IGKV1-AEG*01
+      - IGKV1-AEJ*01
+      - IGKV1-AEK*01
+      - IGKV1-AEK*02
+      - IGKV1-AES*01
+      - IGKV1-AEU*01
+      - IGKV1-AEW*01
+      - IGKV1-AEW*03
+      - IGKV1-AEW*04
+      - IGKV1-I10*01
+      - IGKV1-I14*01
+      - IGKV1-I17*01
+      - IGKV1-I17_S1805*01
+      - IGKV1-I18*01
+      - IGKV1-I2*01
+      - IGKV1-I20*01
+      - IGKV1-I21*01
+      - IGKV1-I9*01
+      - IGKV1-LJI13*01
+      - IGKV1-LJI16-A*01
+      - IGKV1-LJI16-A_S4373*01
+      - IGKV1-LJI20*01
+      - IGKV1-LJI20-A*01
+      - IGKV1-LJI21*01
+      - IGKV1-LJI21-A*01
+      - IGKV1-LJI25*01
+      - IGKV1-LJI25-A*01
+      - IGKV1-LJI25_S3517*01
+      - IGKV1-LJI26*01
+      - IGKV1-LJI29*01
+      - IGKV1-LJI29-A*01
+      - IGKV1-LJI35-A*01
+      - IGKV1-LJI41*01
+      - IGKV1-LJI41-A*01
+      - IGKV1-LJI43*01
+      - IGKV1-LJI44*01
+      - IGKV1-LJI44-A*01
+      - IGKV1-LJI46*01
+      - IGKV1-LJI46-A*01
+      - IGKV1-LJI49*01
+      - IGKV1-LJI50*01
+      - IGKV1-LJI51*01
+      - IGKV1-LJI51-A*01
+      - IGKV1-LJI56*01
+      - IGKV1-LJI56-A*01
+      - IGKV1-LJI59*01
+      - IGKV1-LJI59-A*01
+      - IGKV1-LJI61*01
+      - IGKV1-LJI61-A*01
+      - IGKV1-LJI63*01
+      - IGKV1-LJI63-A*01
+      - IGKV1-LJI64*01
+      - IGKV1-LJI68*01
+      - IGKV1-LJI68-A*01
+      - IGKV1-LJI87*01
+      - IGKV1-S37*01
+      - IGKV1-S40*01
+      - IGKV1-S49*01
+      - IGKV1-S57*01
+      - IGKV2-AAE*01
+      - IGKV2-AAI*01
+      - IGKV2-AAK*01
+      - IGKV2-AAN*01
+      - IGKV2-AAO*01
+      - IGKV2-AAQ*01
+      - IGKV2-ABB*01
+      - IGKV2-ABW*01
+      - IGKV2-ACB*01
+      - IGKV2-ACL*01
+      - IGKV2-ACR*01
+      - IGKV2-ADA*01
+      - IGKV2-ADC*01
+      - IGKV2-ADH*01
+      - IGKV2-ADJ*01
+      - IGKV2-ADV*01
+      - IGKV2-ADZ*01
+      - IGKV2-AEB*01
+      - IGKV2-AEB*01_S5603
+      - IGKV2-AEF*01
+      - IGKV2-AEH*01
+      - IGKV2-AEH*01_S0859
+      - IGKV2-AEH*01_S3585
+      - IGKV2-AEI*01
+      - IGKV2-AEL*01
+      - IGKV2-AEM*01
+      - IGKV2-AEN*01
+      - IGKV2-I11*01
+      - IGKV2-I3*01
+      - IGKV2-LJI28*01
+      - IGKV2-LJI28-A*01
+      - IGKV2-LJI4*01
+      - IGKV2-LJI4-A*01
+      - IGKV2-LJI53*01
+      - IGKV2-LJI53-A*01
+      - IGKV2-LJI54*01
+      - IGKV2-LJI57*01
+      - IGKV2-LJI57-A*01
+      - IGKV2-LJI58*01
+      - IGKV2-LJI58-A*01
+      - IGKV2-LJI60*01
+      - IGKV2-LJI65*01
+      - IGKV2-LJI67*01
+      - IGKV2-LJI71*01
+      - IGKV2-LJI71-A*01
+      - IGKV2-LJI80*01
+      - IGKV2-LJI81*01
+      - IGKV2-LJI82*01
+      - IGKV2-LJI83*01
+      - IGKV2-LJI84*01
+      - IGKV2-LJI86*01
+      - IGKV2-LJI88*01
+      - IGKV2-LJI92*01
+      - IGKV2-S39*01
+      - IGKV2-S41*01
+      - IGKV2-S44*01
+      - IGKV2-S45*01
+      - IGKV2-S46*01
+      - IGKV2-S58*01
+      - IGKV2-S59*01
+      - IGKV3-AAH*01
+      - IGKV3-AAP*01
+      - IGKV3-AAP*01_S6980
+      - IGKV3-ABD*01
+      - IGKV3-ABF*01
+      - IGKV3-ABT*01
+      - IGKV3-ACF*01
+      - IGKV3-ADN*01
+      - IGKV3-ADW*01
+      - IGKV3-ADW*01_S9009
+      - IGKV3-AED*01
+      - IGKV3-I2*01
+      - IGKV3-I3*01
+      - IGKV3-I3_S9612*01
+      - IGKV3-I7*01
+      - IGKV3-I9*01
+      - IGKV3-LJI11*01
+      - IGKV3-LJI15*01
+      - IGKV3-LJI19*01
+      - IGKV3-LJI24*01
+      - IGKV3-LJI24-A*01
+      - IGKV3-LJI34*01
+      - IGKV3-LJI34-A*01
+      - IGKV3-LJI47-A*01
+      - IGKV3-LJI52*01
+      - IGKV3-LJI7*01
+      - IGKV3-LJI7-A*01
+      - IGKV3-LJI9*01
+      - IGKV3-LJI9-A*01
+      - IGKV3-S36*01
+      - IGKV4-ACX*01
+      - IGKV4-I3*01
+      - IGKV5-AEP*01
+      - IGKV5-I1*01
+      - IGKV5-LJI8*01
+      - IGKV5-LJI8-A*01
+      - IGKV6-ABA*01
+      - IGKV6-ABK*01
+      - IGKV6-LJI32-A*01
+      - IGKV6-LJI40*01
+      - IGKV6-LJI40-A*01
+      - IGKV7-ACH*01
+      - IGKV7-I1*01
+      - IGKV7-LJI10*01
       - IGLJ1*01
+      - IGLJ1*01
+      - IGLJ1-S1*01
+      - IGLJ1-S1*01
       - IGLJ2-S2*01
-      - IGLJ3-S3*01
+      - IGLJ2-S2*01
       - IGLJ3*01
+      - IGLJ3*01
+      - IGLJ3-S3*01
+      - IGLJ3-S3*01
+      - IGLJ4-S4*01
       - IGLJ4-S4*01
       - IGLJ5-S5*01
-      - IGLJ6-S6*01
+      - IGLJ5-S5*01
       - IGLJ6*01
+      - IGLJ6*01
+      - IGLJ6-S6*01
+      - IGLJ6-S6*01
+      - IGLJ6_1*01
+      - IGLJ6_1*01
+      - IGLJ7*01
       - IGLJ7*01
       - IGLJ7*02
+      - IGLJ7*02
       - IGLJ7*03
-      - IGLJ6_1*01
-      - IGHJ1-1*01
-      - IGHJ2*01
-      - IGHJ2*01_S5087
-      - IGHJ3-2*01
-      - IGHJ4-3*01
-      - IGHJ4-3*01_S9191
-      - IGHJ5-4*01
-      - IGHJ5-4*02
-      - IGHJ5-4*03
-      - IGHJ5-5*01
-      - IGHJ5-5*01_S6098
-      - IGHJ5-5*02
-      - IGHJ6-6*01
-      - IGHJ6-6*01_S0171
+      - IGLJ7*03
+      - IGLV1-ABB*01
+      - IGLV1-ABN*01
+      - IGLV1-ABN*02
+      - IGLV1-ABS*01
+      - IGLV1-ACN*01
+      - IGLV1-ACN*02
+      - IGLV1-ACN*03
+      - IGLV1-ACR*01
+      - IGLV1-ACV*01
+      - IGLV1-ACW*01
+      - IGLV1-ACW*02
+      - IGLV1-ACW*03
+      - IGLV1-ADA*01
+      - IGLV1-ADA*01_S3486
+      - IGLV1-ADA*01_S7920
+      - IGLV1-ADL*01
+      - IGLV1-ADL*01_S5805
+      - IGLV1-ADL*02
+      - IGLV1-ADU*01
+      - IGLV1-LJI103*01
+      - IGLV1-LJI68*01
+      - IGLV1-LJI68-A*01
+      - IGLV1-LJI69*01
+      - IGLV1-LJI69-A*01
+      - IGLV1-LJI70*01
+      - IGLV1-LJI71*01
+      - IGLV1-LJI71-A*01
+      - IGLV1-S16*01
+      - IGLV1-S16_S1272*01
+      - IGLV1-S16_S2133*01
+      - IGLV1-S18*01
+      - IGLV1-S19*01
+      - IGLV1-S20*01
+      - IGLV1-S22*01
+      - IGLV1-S30*01
+      - IGLV1-S37*01
+      - IGLV10-AAO*01
+      - IGLV11-AAY*01
+      - IGLV11-AAY*02
+      - IGLV2-ABE*01
+      - IGLV2-ABE*01_S2946
+      - IGLV2-ABI*01
+      - IGLV2-ABI*01_S7244
+      - IGLV2-ABI*01_S9741
+      - IGLV2-ABJ*01
+      - IGLV2-ABJ*01_S9052
+      - IGLV2-ABU*01
+      - IGLV2-ABU*01_S3471
+      - IGLV2-ABU*02
+      - IGLV2-ABX*01
+      - IGLV2-ACE*01
+      - IGLV2-ADC*01
+      - IGLV2-ADK*01
+      - IGLV2-KA*01
+      - IGLV2-LJI10*01
+      - IGLV2-LJI10_S2593*01
+      - IGLV2-LJI112*01
+      - IGLV2-LJI112_S8864*01
+      - IGLV2-LJI115*01
+      - IGLV2-LJI118*01
+      - IGLV2-LJI12*01
+      - IGLV2-LJI18*01
+      - IGLV2-LJI29*01
+      - IGLV2-LJI29-A*01
+      - IGLV2-LJI33*01
+      - IGLV2-LJI33-A*01
+      - IGLV2-S3*01
+      - IGLV2-S44*01
+      - IGLV2-S9*01
+      - IGLV3-AAB*01
+      - IGLV3-AAI*01
+      - IGLV3-AAJ*01
+      - IGLV3-AAT*01
+      - IGLV3-AAT*02
+      - IGLV3-AAT*05
+      - IGLV3-AAV*01
+      - IGLV3-AAV*02
+      - IGLV3-AAV*03
+      - IGLV3-AAV*04
+      - IGLV3-AAV*05
+      - IGLV3-AAV*06
+      - IGLV3-ACB*01
+      - IGLV3-ACB*03
+      - IGLV3-ADT*01
+      - IGLV3-ADT*02
+      - IGLV3-ADT*03
+      - IGLV3-AEB*02
+      - IGLV3-AEB*03
+      - IGLV3-AEC*01
+      - IGLV3-AED*01
+      - IGLV3-AED*06
+      - IGLV3-LJI117-A*01
+      - IGLV3-LJI119*01
+      - IGLV3-LJI12*01
+      - IGLV3-LJI13*01
+      - IGLV3-LJI17*01
+      - IGLV3-LJI25-A*01
+      - IGLV3-LJI27*01
+      - IGLV3-LJI27-A*01
+      - IGLV3-LJI28*01
+      - IGLV3-LJI28-A*01
+      - IGLV3-LJI31*01
+      - IGLV3-LJI32*01
+      - IGLV3-LJI34*01
+      - IGLV3-LJI35*01
+      - IGLV3-S1*01
+      - IGLV3-S11*01
+      - IGLV3-S47*01
+      - IGLV3-S6*01
+      - IGLV3-S8*01
+      - IGLV4-ACF*01
+      - IGLV4-ACF*02
+      - IGLV4-LJI16*01
+      - IGLV4-LJI8*01
+      - IGLV4-LJI8-A*01
+      - IGLV4-S2*01
+      - IGLV4-S36*01
+      - IGLV5-AAM*01
+      - IGLV5-AAP*01
+      - IGLV5-AAX*01
+      - IGLV5-AAX*01_S4360
+      - IGLV5-AAX*02
+      - IGLV5-AAX*03
+      - IGLV5-ABG*01
+      - IGLV5-ABG*02
+      - IGLV5-ABG*03
+      - IGLV5-ABL*01
+      - IGLV5-ABL*02
+      - IGLV5-ABT*01
+      - IGLV5-ACY*01
+      - IGLV5-ACY*01_S3912
+      - IGLV5-ACY*02
+      - IGLV5-ADQ*01
+      - IGLV5-ADQ*01_S6109
+      - IGLV5-LJI61*01
+      - IGLV5-S17*01
+      - IGLV5-S23*01
+      - IGLV6-AAC*01
+      - IGLV6-AAC*02
+      - IGLV6-AAC*05
+      - IGLV6-AAC*05_S8052
+      - IGLV6-ADD*01
+      - IGLV6-ADW*01
+      - IGLV6-S39*01
+      - IGLV6-S40*01
+      - IGLV7-AAK*01
+      - IGLV7-ABD*01
+      - IGLV7-ABO*01
+      - IGLV7-ADB*01
+      - IGLV7-ADJ*01
+      - IGLV7-ADJ*02
+      - IGLV7-S24*01
+      - IGLV8-ABK*01
+      - IGLV8-ABK*02
+      - IGLV8-AEE*01
+      - IGLV8-AEE*02
+      - IGLV8-LJI123*01
+      - IGLV8-S43*01
+      - IGLV9-LJI51*01
+      - IGLV9-S29*01
 imgt:
   all:
     alpaca:
@@ -3735,13 +3614,30 @@ imgt:
       - IGHD6-4*01
     cat:
       cat:
+      - IGHJ1*01
+      - IGHJ2*01
+      - IGHJ3*01
+      - IGHJ3*02
+      - IGHJ4*01
+      - IGHJ4*02
+      - IGHJ4*03
+      - IGHJ5*01
+      - IGHJ5*02
+      - IGHJ6*01
+      - IGHJ6*02
+      - IGHJ6*03
+      - IGHJ6*04
+      - IGKJ1*01
+      - IGKJ2*01
+      - IGKJ3*01
+      - IGKJ4*01
+      - IGKJ5*01
       - IGKV1-10*01
       - IGKV1-17*01
       - IGKV2-12*01
       - IGKV2-13*01
       - IGKV2-14*01
       - IGKV2-4*01
-      - IGKV2-5*01
       - IGKV2-9*01
       - IGKV4-1*01
       - IGKV6-6*01
@@ -3749,6 +3645,18 @@ imgt:
       - IGKV8-3*01
       - IGKV9-11*01
       - IGKV9-18*01
+      - IGLJ1*01
+      - IGLJ10*01
+      - IGLJ11*01
+      - IGLJ12*01
+      - IGLJ2*01
+      - IGLJ3*01
+      - IGLJ4*01
+      - IGLJ5*01
+      - IGLJ6*01
+      - IGLJ7*01
+      - IGLJ8*01
+      - IGLJ9*01
       - IGLV1-32*01
       - IGLV1-35*01
       - IGLV1-36*01
@@ -3796,25 +3704,20 @@ imgt:
       - IGLV5-68*01
       - IGLV5-71*01
       - IGLV5-79*01
-      - IGKJ1*01
-      - IGKJ2*01
-      - IGKJ3*01
-      - IGKJ4*01
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ10*01
-      - IGLJ11*01
-      - IGLJ12*01
-      - IGLJ2*01
-      - IGLJ3*01
-      - IGLJ4*01
-      - IGLJ5*01
-      - IGLJ6*01
-      - IGLJ7*01
-      - IGLJ8*01
-      - IGLJ9*01
     dog:
       dog:
+      - IGHD1*01
+      - IGHD2*01
+      - IGHD3*01
+      - IGHD4*01
+      - IGHD5*01
+      - IGHD6*01
+      - IGHJ1*01
+      - IGHJ2*01
+      - IGHJ3*01
+      - IGHJ4*01
+      - IGHJ5*01
+      - IGHJ6*01
       - IGHV1-15*01
       - IGHV1-30*01
       - IGHV3-10*01
@@ -3834,6 +3737,7 @@ imgt:
       - IGHV3-31*01
       - IGHV3-32*01
       - IGHV3-33*01
+      - IGHV3-34*01
       - IGHV3-35*01
       - IGHV3-36*01
       - IGHV3-37*01
@@ -3869,6 +3773,11 @@ imgt:
       - IGHV3-83*01
       - IGHV3-9*01
       - IGHV4-1*01
+      - IGKJ1*01
+      - IGKJ2*01
+      - IGKJ3*01
+      - IGKJ4*01
+      - IGKJ5*01
       - IGKV2-10*01
       - IGKV2-11*01
       - IGKV2-11*02
@@ -3892,6 +3801,15 @@ imgt:
       - IGKV3-18*02
       - IGKV4-1*01
       - IGKV4-15*01
+      - IGLJ1*01
+      - IGLJ2*01
+      - IGLJ3*01
+      - IGLJ4*01
+      - IGLJ5*01
+      - IGLJ6*01
+      - IGLJ7*01
+      - IGLJ8*01
+      - IGLJ9*01
       - IGLV1-100*01
       - IGLV1-103*01
       - IGLV1-104*01
@@ -3913,7 +3831,6 @@ imgt:
       - IGLV1-138*01
       - IGLV1-139*01
       - IGLV1-141*01
-      - IGLV1-143*01
       - IGLV1-144*01
       - IGLV1-146*01
       - IGLV1-147*01
@@ -3922,10 +3839,6 @@ imgt:
       - IGLV1-151*01
       - IGLV1-152*01
       - IGLV1-155*01
-      - IGLV1-157*01
-      - IGLV1-158*01
-      - IGLV1-159*01
-      - IGLV1-160*01
       - IGLV1-162*01
       - IGLV1-37*01
       - IGLV1-41*01
@@ -3939,7 +3852,6 @@ imgt:
       - IGLV1-54*01
       - IGLV1-55*01
       - IGLV1-56*01
-      - IGLV1-57*01
       - IGLV1-58*01
       - IGLV1-63*01
       - IGLV1-66*01
@@ -3961,8 +3873,6 @@ imgt:
       - IGLV1-89*01
       - IGLV1-89-2*01
       - IGLV1-92*01
-      - IGLV1-94*01
-      - IGLV1-96*01
       - IGLV1-97-4*01
       - IGLV1-98*01
       - IGLV2-31*01
@@ -4012,34 +3922,7 @@ imgt:
       - IGLV8-40*01
       - IGLV8-43*01
       - IGLV8-74-1*01
-      - IGLV8-93*01
       - IGLV8-99*01
-      - IGHD1*01
-      - IGHD2*01
-      - IGHD3*01
-      - IGHD4*01
-      - IGHD5*01
-      - IGHD6*01
-      - IGHJ1*01
-      - IGHJ2*01
-      - IGHJ3*01
-      - IGHJ4*01
-      - IGHJ5*01
-      - IGHJ6*01
-      - IGKJ1*01
-      - IGKJ2*01
-      - IGKJ3*01
-      - IGKJ4*01
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ2*01
-      - IGLJ3*01
-      - IGLJ4*01
-      - IGLJ5*01
-      - IGLJ6*01
-      - IGLJ7*01
-      - IGLJ8*01
-      - IGLJ9*01
     hugl18:
       human:
       - IGHV4-59*01
@@ -4126,7 +4009,6 @@ imgt:
       - IGHV1-69*03
       - IGHV1-7*01
       - IGHV1-70*01
-      - IGHV1-71*01
       - IGHV1-71*02
       - IGHV1-72*01
       - IGHV1-72*02
@@ -4304,7 +4186,6 @@ imgt:
       - IGHV2-6-6*01
       - IGHV2-6-7*01
       - IGHV2-6-7*02
-      - IGHV2-6-8*01
       - IGHV2-7*01
       - IGHV2-9*01
       - IGHV2-9*02
@@ -4364,7 +4245,6 @@ imgt:
       - IGHV5-6*01
       - IGHV5-6*02
       - IGHV5-6*03
-      - IGHV5-6-1*01
       - IGHV5-6-2*01
       - IGHV5-6-2*02
       - IGHV5-6-3*01
@@ -4382,7 +4262,6 @@ imgt:
       - IGHV5-9-2*01
       - IGHV5-9-3*01
       - IGHV5-9-4*01
-      - IGHV5-9-5*01
       - IGHV5S12*01
       - IGHV5S21*01
       - IGHV5S24*01
@@ -4403,7 +4282,6 @@ imgt:
       - IGHV6S4*01
       - IGHV7-1*01
       - IGHV7-1*02
-      - IGHV7-1*03
       - IGHV7-2*01
       - IGHV7-3*01
       - IGHV7-3*02
@@ -4411,7 +4289,6 @@ imgt:
       - IGHV7-3*04
       - IGHV7-4*01
       - IGHV7-4*02
-      - IGHV7-4*03
       - IGHV7-4*04
       - IGHV8-10*01
       - IGHV8-11*01
@@ -4468,7 +4345,6 @@ imgt:
       - IGKV10-94*05
       - IGKV10-94*06
       - IGKV10-94*07
-      - IGKV10-94*08
       - IGKV10-95*01
       - IGKV10-96*01
       - IGKV10-96*02
@@ -4530,7 +4406,6 @@ imgt:
       - IGKV4-51*01
       - IGKV4-52*01
       - IGKV4-53*01
-      - IGKV4-54*01
       - IGKV4-55*01
       - IGKV4-56*01
       - IGKV4-57*01
@@ -4671,6 +4546,63 @@ imgt:
       - IGLJ4*01
     human:
       human:
+      - IGHD1-1*01
+      - IGHD1-14*01
+      - IGHD1-20*01
+      - IGHD1-26*01
+      - IGHD1-7*01
+      - IGHD1/OR15-1A*01
+      - IGHD1/OR15-1B*01
+      - IGHD2-15*01
+      - IGHD2-2*01
+      - IGHD2-2*02
+      - IGHD2-2*03
+      - IGHD2-21*01
+      - IGHD2-21*02
+      - IGHD2-8*01
+      - IGHD2-8*02
+      - IGHD2/OR15-2A*01
+      - IGHD2/OR15-2B*01
+      - IGHD3-10*01
+      - IGHD3-10*02
+      - IGHD3-16*01
+      - IGHD3-16*02
+      - IGHD3-22*01
+      - IGHD3-3*01
+      - IGHD3-3*02
+      - IGHD3-9*01
+      - IGHD3/OR15-3A*01
+      - IGHD3/OR15-3B*01
+      - IGHD4-11*01
+      - IGHD4-17*01
+      - IGHD4-23*01
+      - IGHD4-4*01
+      - IGHD4/OR15-4A*01
+      - IGHD4/OR15-4B*01
+      - IGHD5-12*01
+      - IGHD5-18*01
+      - IGHD5-24*01
+      - IGHD5-5*01
+      - IGHD5/OR15-5A*01
+      - IGHD5/OR15-5B*01
+      - IGHD6-13*01
+      - IGHD6-19*01
+      - IGHD6-25*01
+      - IGHD6-6*01
+      - IGHD7-27*01
+      - IGHJ1*01
+      - IGHJ2*01
+      - IGHJ3*01
+      - IGHJ3*02
+      - IGHJ4*01
+      - IGHJ4*02
+      - IGHJ4*03
+      - IGHJ5*01
+      - IGHJ5*02
+      - IGHJ6*01
+      - IGHJ6*02
+      - IGHJ6*03
+      - IGHJ6*04
       - IGHV1-18*01
       - IGHV1-18*02
       - IGHV1-18*03
@@ -4720,7 +4652,6 @@ imgt:
       - IGHV1-69*19
       - IGHV1-69-2*01
       - IGHV1-69-2*02
-      - IGHV1-69D*01
       - IGHV1-8*01
       - IGHV1-8*02
       - IGHV1-8*03
@@ -4772,7 +4703,6 @@ imgt:
       - IGHV2-70*17
       - IGHV2-70*18
       - IGHV2-70*19
-      - IGHV2-70D*04
       - IGHV2-70D*14
       - IGHV2/OR16-23*01
       - IGHV2/OR16-5*01
@@ -4814,7 +4744,6 @@ imgt:
       - IGHV3-23*03
       - IGHV3-23*04
       - IGHV3-23*05
-      - IGHV3-23D*01
       - IGHV3-25*01
       - IGHV3-25*02
       - IGHV3-25*03
@@ -4844,11 +4773,7 @@ imgt:
       - IGHV3-30-22*01
       - IGHV3-30-3*01
       - IGHV3-30-3*02
-      - IGHV3-30-3*03
       - IGHV3-30-33*01
-      - IGHV3-30-42*01
-      - IGHV3-30-5*01
-      - IGHV3-30-5*02
       - IGHV3-30-52*01
       - IGHV3-32*01
       - IGHV3-33*01
@@ -4949,7 +4874,6 @@ imgt:
       - IGHV3/OR16-20*01
       - IGHV3/OR16-6*02
       - IGHV3/OR16-8*01
-      - IGHV3/OR16-8*02
       - IGHV3/OR16-9*01
       - IGHV4-28*01
       - IGHV4-28*02
@@ -5074,6 +4998,15 @@ imgt:
       - IGHV8-51-1*01
       - IGHV8-51-1*02
       - IGHV8-51-1*03
+      - IGKJ1*01
+      - IGKJ2*01
+      - IGKJ2*02
+      - IGKJ2*03
+      - IGKJ2*04
+      - IGKJ3*01
+      - IGKJ4*01
+      - IGKJ4*02
+      - IGKJ5*01
       - IGKV1-12*01
       - IGKV1-12*02
       - IGKV1-13*01
@@ -5107,24 +5040,17 @@ imgt:
       - IGKV1/OR2-108*01
       - IGKV1/OR2-11*01
       - IGKV1/OR2-118*01
-      - IGKV1/OR2-2*01
       - IGKV1/OR2-3*01
-      - IGKV1/OR2-9*01
       - IGKV1/OR22-5*01
       - IGKV1/OR22-5*02
       - IGKV1/OR9-1*01
       - IGKV1/OR9-2*01
       - IGKV1/ORY-1*01
       - IGKV1D-12*01
-      - IGKV1D-12*02
       - IGKV1D-13*01
-      - IGKV1D-13*02
       - IGKV1D-16*01
       - IGKV1D-16*02
       - IGKV1D-17*01
-      - IGKV1D-33*01
-      - IGKV1D-37*01
-      - IGKV1D-39*01
       - IGKV1D-42*01
       - IGKV1D-42*02
       - IGKV1D-43*01
@@ -5149,11 +5075,9 @@ imgt:
       - IGKV2D-26*01
       - IGKV2D-26*02
       - IGKV2D-26*03
-      - IGKV2D-28*01
       - IGKV2D-29*01
       - IGKV2D-29*02
       - IGKV2D-30*01
-      - IGKV2D-40*01
       - IGKV3-11*01
       - IGKV3-11*02
       - IGKV3-15*01
@@ -5173,15 +5097,23 @@ imgt:
       - IGKV3D-15*03
       - IGKV3D-20*01
       - IGKV3D-20*02
-      - IGKV3D-7*01
       - IGKV4-1*01
       - IGKV5-2*01
       - IGKV6-21*01
       - IGKV6-21*02
-      - IGKV6D-21*01
       - IGKV6D-21*02
       - IGKV6D-41*01
       - IGKV7-3*01
+      - IGLJ1*01
+      - IGLJ2*01
+      - IGLJ3*01
+      - IGLJ3*02
+      - IGLJ4*01
+      - IGLJ5*01
+      - IGLJ5*02
+      - IGLJ6*01
+      - IGLJ7*01
+      - IGLJ7*02
       - IGLV1-36*01
       - IGLV1-40*01
       - IGLV1-40*02
@@ -5280,141 +5212,45 @@ imgt:
       - IGLV9-49*01
       - IGLV9-49*02
       - IGLV9-49*03
-      - IGHD1-1*01
-      - IGHD1-14*01
-      - IGHD1-20*01
-      - IGHD1-26*01
-      - IGHD1-7*01
-      - IGHD1/OR15-1a*01
-      - IGHD1/OR15-1b*01
-      - IGHD2-15*01
-      - IGHD2-2*01
-      - IGHD2-2*02
-      - IGHD2-2*03
-      - IGHD2-21*01
-      - IGHD2-21*02
-      - IGHD2-8*01
-      - IGHD2-8*02
-      - IGHD2/OR15-2a*01
-      - IGHD2/OR15-2b*01
-      - IGHD3-10*01
-      - IGHD3-10*02
-      - IGHD3-16*01
-      - IGHD3-16*02
-      - IGHD3-22*01
-      - IGHD3-3*01
-      - IGHD3-3*02
-      - IGHD3-9*01
-      - IGHD3/OR15-3a*01
-      - IGHD3/OR15-3b*01
-      - IGHD4-11*01
-      - IGHD4-17*01
-      - IGHD4-23*01
-      - IGHD4-4*01
-      - IGHD4/OR15-4a*01
-      - IGHD4/OR15-4b*01
-      - IGHD5-12*01
-      - IGHD5-18*01
-      - IGHD5-24*01
-      - IGHD5-5*01
-      - IGHD5/OR15-5a*01
-      - IGHD5/OR15-5b*01
-      - IGHD6-13*01
-      - IGHD6-19*01
-      - IGHD6-25*01
-      - IGHD6-6*01
-      - IGHD7-27*01
-      - IGHJ1*01
-      - IGHJ2*01
-      - IGHJ3*01
-      - IGHJ3*02
-      - IGHJ4*01
-      - IGHJ4*02
-      - IGHJ4*03
-      - IGHJ5*01
-      - IGHJ5*02
-      - IGHJ6*01
-      - IGHJ6*02
-      - IGHJ6*03
-      - IGHJ6*04
-      - IGKJ1*01
-      - IGKJ2*01
-      - IGKJ2*02
-      - IGKJ2*03
-      - IGKJ2*04
-      - IGKJ3*01
-      - IGKJ4*01
-      - IGKJ4*02
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ2*01
-      - IGLJ3*01
-      - IGLJ3*02
-      - IGLJ4*01
-      - IGLJ5*01
-      - IGLJ5*02
-      - IGLJ6*01
-      - IGLJ7*01
-      - IGLJ7*02
     macaque:
       macaque:
       - IGHD1-1*01
-      - IGHD1-14*01
-      - IGHD1-20*01
-      - IGHD1-26*01
-      - IGHD1-32*01
-      - IGHD1-38*01
-      - IGHD1-44*01
-      - IGHD1-44*02
-      - IGHD1-46*01
+      - IGHD1-2*01
+      - IGHD1-3*01
+      - IGHD1-4*01
+      - IGHD1-5*01
+      - IGHD1-6*01
       - IGHD1-7*01
-      - IGHD1-7*02
-      - IGHD2-15*01
+      - IGHD1-8*01
+      - IGHD2-1*01
       - IGHD2-2*01
-      - IGHD2-21*01
-      - IGHD2-27*01
-      - IGHD2-33*01
-      - IGHD2-39*01
-      - IGHD2-39*02
-      - IGHD2-8*01
-      - IGHD3-16*01
-      - IGHD3-22*01
-      - IGHD3-28*01
+      - IGHD2-3*01
+      - IGHD2-4*01
+      - IGHD2-5*01
+      - IGHD2-6*01
+      - IGHD3-1*01
+      - IGHD3-2*01
       - IGHD3-3*01
-      - IGHD3-33*01
-      - IGHD3-34*01
-      - IGHD3-40*01
-      - IGHD3-9*01
-      - IGHD4-11*01
-      - IGHD4-17*01
-      - IGHD4-23*01
-      - IGHD4-29*01
-      - IGHD4-35*01
+      - IGHD3-4*01
+      - IGHD4-1*01
+      - IGHD4-2*01
+      - IGHD4-3*01
       - IGHD4-4*01
-      - IGHD4-41*01
-      - IGHD5-12*01
-      - IGHD5-18*01
-      - IGHD5-24*01
-      - IGHD5-30*01
-      - IGHD5-36*01
-      - IGHD5-36*02
-      - IGHD5-42*01
-      - IGHD5-5*01
-      - IGHD6-13*01
-      - IGHD6-19*01
-      - IGHD6-25*01
-      - IGHD6-31*01
-      - IGHD6-37*01
-      - IGHD6-43*01
+      - IGHD5-1*01
+      - IGHD5-2*01
+      - IGHD5-3*01
+      - IGHD6-1*01
+      - IGHD6-2*01
+      - IGHD6-3*01
+      - IGHD6-4*01
+      - IGHD6-5*01
       - IGHD6-6*01
-      - IGHD7-45*01
+      - IGHD7-1*01
       - IGHJ1*01
-      - IGHJ1*02
       - IGHJ2*01
       - IGHJ3*01
       - IGHJ4*01
       - IGHJ5-1*01
-      - IGHJ5-1*02
       - IGHJ5-2*01
       - IGHJ5-2*02
       - IGHJ6*01
@@ -5576,6 +5412,7 @@ imgt:
       - IGHV7-81*01
       - IGHV7-88*01
       - IGHV7S8*01
+      - IGKJ1*01
       - IGKJ2*01
       - IGKJ3*01
       - IGKJ4*01
@@ -5743,7 +5580,6 @@ imgt:
       - IGLV3S12*01
       - IGLV3S13*01
       - IGLV3S14*01
-      - IGLV3S15*01
       - IGLV3S16*01
       - IGLV3S18*01
       - IGLV3S19*01
@@ -5761,7 +5597,6 @@ imgt:
       - IGLV4-4*01
       - IGLV4S1*01
       - IGLV4S2*01
-      - IGLV4S3*01
       - IGLV4S4*01
       - IGLV5-1*01
       - IGLV5-10*01
@@ -5789,6 +5624,53 @@ imgt:
       - IGLV9-1*01
     mouse:
       mouse:
+      - IGHD1-1*01
+      - IGHD1-1*02
+      - IGHD1-2*01
+      - IGHD1-3*01
+      - IGHD2-1*01
+      - IGHD2-10*01
+      - IGHD2-10*02
+      - IGHD2-11*01
+      - IGHD2-11*02
+      - IGHD2-12*01
+      - IGHD2-13*01
+      - IGHD2-14*01
+      - IGHD2-2*01
+      - IGHD2-3*01
+      - IGHD2-4*01
+      - IGHD2-5*01
+      - IGHD2-6*01
+      - IGHD2-7*01
+      - IGHD2-8*01
+      - IGHD2-9*01
+      - IGHD2-9*02
+      - IGHD3-1*01
+      - IGHD3-2*01
+      - IGHD3-2*02
+      - IGHD3-3*01
+      - IGHD4-1*01
+      - IGHD4-1*02
+      - IGHD5-1*01
+      - IGHD5-2*01
+      - IGHD5-3*01
+      - IGHD5-4*01
+      - IGHD5-5*01
+      - IGHD5-6*01
+      - IGHD6-1*01
+      - IGHD6-1*02
+      - IGHD6-2*01
+      - IGHD6-3*01
+      - IGHD6-4*01
+      - IGHJ1*01
+      - IGHJ1*02
+      - IGHJ1*03
+      - IGHJ2*01
+      - IGHJ2*02
+      - IGHJ2*03
+      - IGHJ3*01
+      - IGHJ3*02
+      - IGHJ4*01
       - IGHV1-11*01
       - IGHV1-12*01
       - IGHV1-13*01
@@ -5869,7 +5751,6 @@ imgt:
       - IGHV1-69*03
       - IGHV1-7*01
       - IGHV1-70*01
-      - IGHV1-71*01
       - IGHV1-71*02
       - IGHV1-72*01
       - IGHV1-72*02
@@ -6047,7 +5928,6 @@ imgt:
       - IGHV2-6-6*01
       - IGHV2-6-7*01
       - IGHV2-6-7*02
-      - IGHV2-6-8*01
       - IGHV2-7*01
       - IGHV2-9*01
       - IGHV2-9*02
@@ -6107,7 +5987,6 @@ imgt:
       - IGHV5-6*01
       - IGHV5-6*02
       - IGHV5-6*03
-      - IGHV5-6-1*01
       - IGHV5-6-2*01
       - IGHV5-6-2*02
       - IGHV5-6-3*01
@@ -6125,7 +6004,6 @@ imgt:
       - IGHV5-9-2*01
       - IGHV5-9-3*01
       - IGHV5-9-4*01
-      - IGHV5-9-5*01
       - IGHV5S12*01
       - IGHV5S21*01
       - IGHV5S24*01
@@ -6146,7 +6024,6 @@ imgt:
       - IGHV6S4*01
       - IGHV7-1*01
       - IGHV7-1*02
-      - IGHV7-1*03
       - IGHV7-2*01
       - IGHV7-3*01
       - IGHV7-3*02
@@ -6154,7 +6031,6 @@ imgt:
       - IGHV7-3*04
       - IGHV7-4*01
       - IGHV7-4*02
-      - IGHV7-4*03
       - IGHV7-4*04
       - IGHV8-10*01
       - IGHV8-11*01
@@ -6192,6 +6068,16 @@ imgt:
       - IGHV9-4*03
       - IGHV9S7*01
       - IGHV9S8*01
+      - IGKJ1*01
+      - IGKJ1*02
+      - IGKJ2*01
+      - IGKJ2*02
+      - IGKJ2*03
+      - IGKJ3*01
+      - IGKJ3*02
+      - IGKJ4*01
+      - IGKJ4*02
+      - IGKJ5*01
       - IGKV1-110*01
       - IGKV1-110*02
       - IGKV1-115*01
@@ -6211,7 +6097,6 @@ imgt:
       - IGKV10-94*05
       - IGKV10-94*06
       - IGKV10-94*07
-      - IGKV10-94*08
       - IGKV10-95*01
       - IGKV10-96*01
       - IGKV10-96*02
@@ -6229,6 +6114,7 @@ imgt:
       - IGKV12-47*01
       - IGKV12-89*01
       - IGKV12-98*01
+      - IGKV12-E*01
       - IGKV13-57-2*01
       - IGKV13-76*01
       - IGKV13-82*01
@@ -6258,6 +6144,7 @@ imgt:
       - IGKV2-112*01
       - IGKV2-112*02
       - IGKV2-137*01
+      - IGKV2-A*01
       - IGKV20-101-2*01
       - IGKV3-1*01
       - IGKV3-10*01
@@ -6273,7 +6160,6 @@ imgt:
       - IGKV4-51*01
       - IGKV4-52*01
       - IGKV4-53*01
-      - IGKV4-54*01
       - IGKV4-55*01
       - IGKV4-56*01
       - IGKV4-57*01
@@ -6317,6 +6203,9 @@ imgt:
       - IGKV6-29*01
       - IGKV6-32*01
       - IGKV6-32*02
+      - IGKV6-B*01
+      - IGKV6-C*01
+      - IGKV6-D*01
       - IGKV7-33*01
       - IGKV8-16*01
       - IGKV8-18*01
@@ -6336,6 +6225,12 @@ imgt:
       - IGKV9-124*01
       - IGKV9-128*01
       - IGKV9-129*01
+      - IGLJ1*01
+      - IGLJ2*01
+      - IGLJ3*01
+      - IGLJ3P*01
+      - IGLJ4*01
+      - IGLJ5*01
       - IGLV1*01
       - IGLV1*02
       - IGLV2*01
@@ -6350,68 +6245,6 @@ imgt:
       - IGLV7*02
       - IGLV8*01
       - IGLV8*02
-      - IGHD1-1*01
-      - IGHD1-1*02
-      - IGHD1-2*01
-      - IGHD1-3*01
-      - IGHD2-1*01
-      - IGHD2-10*01
-      - IGHD2-10*02
-      - IGHD2-11*01
-      - IGHD2-11*02
-      - IGHD2-12*01
-      - IGHD2-13*01
-      - IGHD2-14*01
-      - IGHD2-2*01
-      - IGHD2-3*01
-      - IGHD2-4*01
-      - IGHD2-5*01
-      - IGHD2-6*01
-      - IGHD2-7*01
-      - IGHD2-8*01
-      - IGHD2-9*01
-      - IGHD2-9*02
-      - IGHD3-1*01
-      - IGHD3-2*01
-      - IGHD3-2*02
-      - IGHD3-3*01
-      - IGHD4-1*01
-      - IGHD4-1*02
-      - IGHD5-1*01
-      - IGHD5-2*01
-      - IGHD5-3*01
-      - IGHD5-4*01
-      - IGHD5-5*01
-      - IGHD5-6*01
-      - IGHD6-1*01
-      - IGHD6-1*02
-      - IGHD6-2*01
-      - IGHD6-3*01
-      - IGHD6-4*01
-      - IGHJ1*01
-      - IGHJ1*02
-      - IGHJ1*03
-      - IGHJ2*01
-      - IGHJ2*02
-      - IGHJ2*03
-      - IGHJ3*01
-      - IGHJ3*02
-      - IGHJ4*01
-      - IGKJ1*01
-      - IGKJ1*02
-      - IGKJ2*01
-      - IGKJ2*02
-      - IGKJ2*03
-      - IGKJ3*01
-      - IGKJ3*02
-      - IGKJ4*01
-      - IGKJ4*02
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ2*01
-      - IGLJ3*01
-      - IGLJ3P*01
-      - IGLJ4*01
     rabbit:
       rabbit:
       - IGHD1-1*01
@@ -6432,7 +6265,6 @@ imgt:
       - IGHJ3*02
       - IGHJ4*01
       - IGHJ4*02
-      - IGHJ5*01
       - IGHJ5*02
       - IGHJ6*01
       - IGHJ6*02
@@ -6464,6 +6296,7 @@ imgt:
       - IGHV1S48*01
       - IGHV1S49*01
       - IGHV1S50*01
+      - IGHV1S51*01
       - IGHV1S52*01
       - IGHV1S53*01
       - IGHV1S54*01
@@ -6605,7 +6438,6 @@ imgt:
       - IGLV6S4*01
       - IGLV6S5*01
       - IGLV6S6*01
-      - IGLV6S7*01
     rat:
       rat:
       - IGHD1-1*01
@@ -6828,8 +6660,6 @@ imgt:
       - IGHV5S23*01
       - IGHV5S33*01
       - IGHV5S47*01
-      - IGHV5S54*01
-      - IGHV5S8*01
       - IGHV6-1*01
       - IGHV6-10*01
       - IGHV6-13*01
@@ -7750,18 +7580,45 @@ imgt:
       - IGHD6-4*01
     cat:
       cat:
+      - IGHJ1*01
+      - IGHJ2*01
+      - IGHJ3*01
+      - IGHJ3*02
+      - IGHJ4*01
+      - IGHJ4*02
+      - IGHJ4*03
+      - IGHJ5*01
+      - IGHJ5*02
+      - IGHJ6*01
+      - IGHJ6*02
+      - IGHJ6*03
+      - IGHJ6*04
+      - IGKJ1*01
+      - IGKJ2*01
+      - IGKJ3*01
+      - IGKJ4*01
+      - IGKJ5*01
       - IGKV1-10*01
       - IGKV1-17*01
       - IGKV2-12*01
       - IGKV2-13*01
       - IGKV2-14*01
       - IGKV2-4*01
-      - IGKV2-5*01
       - IGKV2-9*01
       - IGKV4-1*01
       - IGKV6-6*01
       - IGKV8-16*01
       - IGKV8-3*01
+      - IGLJ1*01
+      - IGLJ10*01
+      - IGLJ11*01
+      - IGLJ2*01
+      - IGLJ4*01
+      - IGLJ5*01
+      - IGLJ6*01
+      - IGLJ7*01
+      - IGLJ8*01
+      - IGLJ9*01
       - IGLV1-32*01
       - IGLV1-36*01
       - IGLV1-37*01
@@ -7794,23 +7651,18 @@ imgt:
       - IGLV5-68*01
       - IGLV5-71*01
       - IGLV5-79*01
-      - IGKJ1*01
-      - IGKJ2*01
-      - IGKJ3*01
-      - IGKJ4*01
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ10*01
-      - IGLJ11*01
-      - IGLJ2*01
-      - IGLJ4*01
-      - IGLJ5*01
-      - IGLJ6*01
-      - IGLJ7*01
-      - IGLJ8*01
-      - IGLJ9*01
     dog:
       dog:
+      - IGHD1*01
+      - IGHD2*01
+      - IGHD3*01
+      - IGHD4*01
+      - IGHD6*01
+      - IGHJ2*01
+      - IGHJ3*01
+      - IGHJ4*01
+      - IGHJ5*01
+      - IGHJ6*01
       - IGHV1-30*01
       - IGHV3-10*01
       - IGHV3-13*01
@@ -7846,6 +7698,10 @@ imgt:
       - IGHV3-82*01
       - IGHV3-9*01
       - IGHV4-1*01
+      - IGKJ1*01
+      - IGKJ3*01
+      - IGKJ4*01
+      - IGKJ5*01
       - IGKV2-10*01
       - IGKV2-11*01
       - IGKV2-11*02
@@ -7863,6 +7719,15 @@ imgt:
       - IGKV3-18*01
       - IGKV3-18*02
       - IGKV4-15*01
+      - IGLJ1*01
+      - IGLJ2*01
+      - IGLJ3*01
+      - IGLJ4*01
+      - IGLJ5*01
+      - IGLJ6*01
+      - IGLJ7*01
+      - IGLJ8*01
+      - IGLJ9*01
       - IGLV1-100*01
       - IGLV1-103*01
       - IGLV1-106*01
@@ -7879,16 +7744,12 @@ imgt:
       - IGLV1-150*01
       - IGLV1-151*01
       - IGLV1-155*01
-      - IGLV1-157*01
-      - IGLV1-158*01
-      - IGLV1-159*01
       - IGLV1-162*01
       - IGLV1-44*01
       - IGLV1-46*01
       - IGLV1-48*01
       - IGLV1-49*01
       - IGLV1-55*01
-      - IGLV1-57*01
       - IGLV1-58*01
       - IGLV1-66*01
       - IGLV1-67*01
@@ -7900,8 +7761,6 @@ imgt:
       - IGLV1-84*01
       - IGLV1-87*01
       - IGLV1-92*01
-      - IGLV1-94*01
-      - IGLV1-96*01
       - IGLV1-97-4*01
       - IGLV2-31*01
       - IGLV3-11*01
@@ -7931,31 +7790,7 @@ imgt:
       - IGLV8-161*01
       - IGLV8-36*01
       - IGLV8-39*01
-      - IGLV8-93*01
       - IGLV8-99*01
-      - IGHD1*01
-      - IGHD2*01
-      - IGHD3*01
-      - IGHD4*01
-      - IGHD6*01
-      - IGHJ2*01
-      - IGHJ3*01
-      - IGHJ4*01
-      - IGHJ5*01
-      - IGHJ6*01
-      - IGKJ1*01
-      - IGKJ3*01
-      - IGKJ4*01
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ2*01
-      - IGLJ3*01
-      - IGLJ4*01
-      - IGLJ5*01
-      - IGLJ6*01
-      - IGLJ7*01
-      - IGLJ8*01
-      - IGLJ9*01
     hugl18:
       human:
       - IGHV4-59*01
@@ -8017,7 +7852,6 @@ imgt:
       - IGHV1-69*02
       - IGHV1-69*03
       - IGHV1-7*01
-      - IGHV1-71*01
       - IGHV1-71*02
       - IGHV1-72*01
       - IGHV1-72*02
@@ -8162,7 +7996,6 @@ imgt:
       - IGHV2-6-6*01
       - IGHV2-6-7*01
       - IGHV2-6-7*02
-      - IGHV2-6-8*01
       - IGHV2-7*01
       - IGHV2-9*01
       - IGHV2-9*02
@@ -8214,7 +8047,6 @@ imgt:
       - IGHV5-6*01
       - IGHV5-6*02
       - IGHV5-6*03
-      - IGHV5-6-1*01
       - IGHV5-6-2*01
       - IGHV5-6-2*02
       - IGHV5-6-3*01
@@ -8232,7 +8064,6 @@ imgt:
       - IGHV5-9-2*01
       - IGHV5-9-3*01
       - IGHV5-9-4*01
-      - IGHV5-9-5*01
       - IGHV5S12*01
       - IGHV5S21*01
       - IGHV5S24*01
@@ -8247,14 +8078,12 @@ imgt:
       - IGHV6-7*02
       - IGHV7-1*01
       - IGHV7-1*02
-      - IGHV7-1*03
       - IGHV7-3*01
       - IGHV7-3*02
       - IGHV7-3*03
       - IGHV7-3*04
       - IGHV7-4*01
       - IGHV7-4*02
-      - IGHV7-4*03
       - IGHV7-4*04
       - IGHV8-11*01
       - IGHV8-12*01
@@ -8296,7 +8125,6 @@ imgt:
       - IGKV10-94*05
       - IGKV10-94*06
       - IGKV10-94*07
-      - IGKV10-94*08
       - IGKV10-95*01
       - IGKV10-96*01
       - IGKV10-96*02
@@ -8460,6 +8288,49 @@ imgt:
       - IGLJ3*01
     human:
       human:
+      - IGHD1-1*01
+      - IGHD1-20*01
+      - IGHD1-26*01
+      - IGHD1-7*01
+      - IGHD2-15*01
+      - IGHD2-2*01
+      - IGHD2-2*02
+      - IGHD2-2*03
+      - IGHD2-21*01
+      - IGHD2-21*02
+      - IGHD2-8*01
+      - IGHD2-8*02
+      - IGHD3-10*01
+      - IGHD3-10*02
+      - IGHD3-16*01
+      - IGHD3-16*02
+      - IGHD3-22*01
+      - IGHD3-3*01
+      - IGHD3-3*02
+      - IGHD3-9*01
+      - IGHD4-17*01
+      - IGHD4-4*01
+      - IGHD5-12*01
+      - IGHD5-18*01
+      - IGHD5-5*01
+      - IGHD6-13*01
+      - IGHD6-19*01
+      - IGHD6-25*01
+      - IGHD6-6*01
+      - IGHD7-27*01
+      - IGHJ1*01
+      - IGHJ2*01
+      - IGHJ3*01
+      - IGHJ3*02
+      - IGHJ4*01
+      - IGHJ4*02
+      - IGHJ4*03
+      - IGHJ5*01
+      - IGHJ5*02
+      - IGHJ6*01
+      - IGHJ6*02
+      - IGHJ6*03
+      - IGHJ6*04
       - IGHV1-18*01
       - IGHV1-18*02
       - IGHV1-18*03
@@ -8506,7 +8377,6 @@ imgt:
       - IGHV1-69*19
       - IGHV1-69-2*01
       - IGHV1-69-2*02
-      - IGHV1-69D*01
       - IGHV1-8*01
       - IGHV1-8*02
       - IGHV1-8*03
@@ -8522,8 +8392,13 @@ imgt:
       - IGHV2-5*08
       - IGHV2-5*09
       - IGHV2-70*01
+      - IGHV2-70*02
+      - IGHV2-70*03
       - IGHV2-70*04
       - IGHV2-70*05
+      - IGHV2-70*06
+      - IGHV2-70*07
+      - IGHV2-70*08
       - IGHV2-70*10
       - IGHV2-70*11
       - IGHV2-70*12
@@ -8533,7 +8408,6 @@ imgt:
       - IGHV2-70*17
       - IGHV2-70*18
       - IGHV2-70*19
-      - IGHV2-70D*04
       - IGHV2-70D*14
       - IGHV3-11*01
       - IGHV3-11*03
@@ -8566,7 +8440,6 @@ imgt:
       - IGHV3-23*03
       - IGHV3-23*04
       - IGHV3-23*05
-      - IGHV3-23D*01
       - IGHV3-30*01
       - IGHV3-30*02
       - IGHV3-30*03
@@ -8588,9 +8461,6 @@ imgt:
       - IGHV3-30*19
       - IGHV3-30-3*01
       - IGHV3-30-3*02
-      - IGHV3-30-3*03
-      - IGHV3-30-5*01
-      - IGHV3-30-5*02
       - IGHV3-33*01
       - IGHV3-33*02
       - IGHV3-33*03
@@ -8744,6 +8614,15 @@ imgt:
       - IGHV7-4-1*03
       - IGHV7-4-1*04
       - IGHV7-4-1*05
+      - IGKJ1*01
+      - IGKJ2*01
+      - IGKJ2*02
+      - IGKJ2*03
+      - IGKJ2*04
+      - IGKJ3*01
+      - IGKJ4*01
+      - IGKJ4*02
+      - IGKJ5*01
       - IGKV1-12*01
       - IGKV1-12*02
       - IGKV1-13*02
@@ -8764,14 +8643,10 @@ imgt:
       - IGKV1-9*01
       - IGKV1-NL1*01
       - IGKV1D-12*01
-      - IGKV1D-12*02
       - IGKV1D-13*01
-      - IGKV1D-13*02
       - IGKV1D-16*01
       - IGKV1D-16*02
       - IGKV1D-17*01
-      - IGKV1D-33*01
-      - IGKV1D-39*01
       - IGKV1D-43*01
       - IGKV1D-8*01
       - IGKV1D-8*02
@@ -8787,11 +8662,9 @@ imgt:
       - IGKV2D-26*01
       - IGKV2D-26*02
       - IGKV2D-26*03
-      - IGKV2D-28*01
       - IGKV2D-29*01
       - IGKV2D-29*02
       - IGKV2D-30*01
-      - IGKV2D-40*01
       - IGKV3-11*01
       - IGKV3-11*02
       - IGKV3-15*01
@@ -8803,13 +8676,18 @@ imgt:
       - IGKV3D-15*01
       - IGKV3D-15*03
       - IGKV3D-20*01
-      - IGKV3D-7*01
       - IGKV4-1*01
       - IGKV5-2*01
       - IGKV6-21*01
       - IGKV6-21*02
-      - IGKV6D-21*01
       - IGKV6D-21*02
+      - IGLJ1*01
+      - IGLJ2*01
+      - IGLJ3*01
+      - IGLJ3*02
+      - IGLJ6*01
+      - IGLJ7*01
+      - IGLJ7*02
       - IGLV1-36*01
       - IGLV1-40*01
       - IGLV1-40*02
@@ -8885,118 +8763,36 @@ imgt:
       - IGLV9-49*01
       - IGLV9-49*02
       - IGLV9-49*03
-      - IGHD1-1*01
-      - IGHD1-20*01
-      - IGHD1-26*01
-      - IGHD1-7*01
-      - IGHD2-15*01
-      - IGHD2-2*01
-      - IGHD2-2*02
-      - IGHD2-2*03
-      - IGHD2-21*01
-      - IGHD2-21*02
-      - IGHD2-8*01
-      - IGHD2-8*02
-      - IGHD3-10*01
-      - IGHD3-10*02
-      - IGHD3-16*01
-      - IGHD3-16*02
-      - IGHD3-22*01
-      - IGHD3-3*01
-      - IGHD3-3*02
-      - IGHD3-9*01
-      - IGHD4-17*01
-      - IGHD4-4*01
-      - IGHD5-12*01
-      - IGHD5-18*01
-      - IGHD5-5*01
-      - IGHD6-13*01
-      - IGHD6-19*01
-      - IGHD6-25*01
-      - IGHD6-6*01
-      - IGHD7-27*01
-      - IGHJ1*01
-      - IGHJ2*01
-      - IGHJ3*01
-      - IGHJ3*02
-      - IGHJ4*01
-      - IGHJ4*02
-      - IGHJ4*03
-      - IGHJ5*01
-      - IGHJ5*02
-      - IGHJ6*01
-      - IGHJ6*02
-      - IGHJ6*03
-      - IGHJ6*04
-      - IGKJ1*01
-      - IGKJ2*01
-      - IGKJ2*02
-      - IGKJ2*03
-      - IGKJ2*04
-      - IGKJ3*01
-      - IGKJ4*01
-      - IGKJ4*02
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ2*01
-      - IGLJ3*01
-      - IGLJ3*02
-      - IGLJ6*01
-      - IGLJ7*01
-      - IGLJ7*02
     macaque:
       macaque:
       - IGHD1-1*01
-      - IGHD1-14*01
-      - IGHD1-20*01
-      - IGHD1-32*01
-      - IGHD1-44*01
-      - IGHD1-44*02
-      - IGHD1-46*01
-      - IGHD1-7*01
-      - IGHD1-7*02
-      - IGHD2-15*01
+      - IGHD1-2*01
+      - IGHD1-3*01
+      - IGHD1-4*01
+      - IGHD1-8*01
+      - IGHD2-1*01
       - IGHD2-2*01
-      - IGHD2-21*01
-      - IGHD2-27*01
-      - IGHD2-33*01
-      - IGHD2-39*01
-      - IGHD2-39*02
-      - IGHD2-8*01
-      - IGHD3-16*01
-      - IGHD3-22*01
-      - IGHD3-28*01
+      - IGHD2-3*01
+      - IGHD2-4*01
+      - IGHD2-5*01
+      - IGHD2-6*01
       - IGHD3-3*01
-      - IGHD3-33*01
-      - IGHD3-34*01
-      - IGHD3-40*01
-      - IGHD3-9*01
-      - IGHD4-23*01
-      - IGHD4-29*01
-      - IGHD4-35*01
+      - IGHD3-4*01
+      - IGHD4-2*01
+      - IGHD4-3*01
       - IGHD4-4*01
-      - IGHD4-41*01
-      - IGHD5-12*01
-      - IGHD5-24*01
-      - IGHD5-30*01
-      - IGHD5-36*01
-      - IGHD5-36*02
-      - IGHD5-42*01
-      - IGHD5-5*01
-      - IGHD6-13*01
-      - IGHD6-19*01
-      - IGHD6-25*01
-      - IGHD6-31*01
-      - IGHD6-37*01
-      - IGHD6-43*01
+      - IGHD5-2*01
+      - IGHD6-1*01
+      - IGHD6-2*01
+      - IGHD6-3*01
+      - IGHD6-4*01
+      - IGHD6-5*01
       - IGHD6-6*01
-      - IGHD7-45*01
+      - IGHD7-1*01
       - IGHJ1*01
-      - IGHJ1*02
       - IGHJ3*01
       - IGHJ4*01
       - IGHJ5-1*01
-      - IGHJ5-1*02
       - IGHJ5-2*01
       - IGHJ5-2*02
       - IGHJ6*01
@@ -9119,6 +8915,7 @@ imgt:
       - IGHV6-1*01
       - IGHV7-108*01
       - IGHV7-183*01
+      - IGKJ1*01
       - IGKJ2*01
       - IGKJ3*01
       - IGKJ4*01
@@ -9257,7 +9054,6 @@ imgt:
       - IGLV3S12*01
       - IGLV3S13*01
       - IGLV3S14*01
-      - IGLV3S15*01
       - IGLV3S16*01
       - IGLV3S2*01
       - IGLV3S3*01
@@ -9271,7 +9067,6 @@ imgt:
       - IGLV4-4*01
       - IGLV4S1*01
       - IGLV4S2*01
-      - IGLV4S3*01
       - IGLV4S4*01
       - IGLV5-10*01
       - IGLV5-10*02
@@ -9294,6 +9089,46 @@ imgt:
       - IGLV9-1*01
     mouse:
       mouse:
+      - IGHD1-1*01
+      - IGHD1-1*02
+      - IGHD1-2*01
+      - IGHD1-3*01
+      - IGHD2-1*01
+      - IGHD2-10*01
+      - IGHD2-10*02
+      - IGHD2-11*01
+      - IGHD2-11*02
+      - IGHD2-12*01
+      - IGHD2-13*01
+      - IGHD2-14*01
+      - IGHD2-2*01
+      - IGHD2-3*01
+      - IGHD2-4*01
+      - IGHD2-5*01
+      - IGHD2-6*01
+      - IGHD2-7*01
+      - IGHD2-8*01
+      - IGHD2-9*01
+      - IGHD2-9*02
+      - IGHD3-1*01
+      - IGHD3-2*01
+      - IGHD3-2*02
+      - IGHD3-3*01
+      - IGHD4-1*01
+      - IGHD4-1*02
+      - IGHD6-1*01
+      - IGHD6-1*02
+      - IGHD6-2*01
+      - IGHD6-3*01
+      - IGHD6-4*01
+      - IGHJ1*01
+      - IGHJ1*02
+      - IGHJ1*03
+      - IGHJ2*01
+      - IGHJ2*02
+      - IGHJ2*03
+      - IGHJ3*01
+      - IGHJ4*01
       - IGHV1-11*01
       - IGHV1-12*01
       - IGHV1-15*01
@@ -9349,7 +9184,6 @@ imgt:
       - IGHV1-69*02
       - IGHV1-69*03
       - IGHV1-7*01
-      - IGHV1-71*01
       - IGHV1-71*02
       - IGHV1-72*01
       - IGHV1-72*02
@@ -9494,7 +9328,6 @@ imgt:
       - IGHV2-6-6*01
       - IGHV2-6-7*01
       - IGHV2-6-7*02
-      - IGHV2-6-8*01
       - IGHV2-7*01
       - IGHV2-9*01
       - IGHV2-9*02
@@ -9546,7 +9379,6 @@ imgt:
       - IGHV5-6*01
       - IGHV5-6*02
       - IGHV5-6*03
-      - IGHV5-6-1*01
       - IGHV5-6-2*01
       - IGHV5-6-2*02
       - IGHV5-6-3*01
@@ -9564,7 +9396,6 @@ imgt:
       - IGHV5-9-2*01
       - IGHV5-9-3*01
       - IGHV5-9-4*01
-      - IGHV5-9-5*01
       - IGHV5S12*01
       - IGHV5S21*01
       - IGHV5S24*01
@@ -9579,14 +9410,12 @@ imgt:
       - IGHV6-7*02
       - IGHV7-1*01
       - IGHV7-1*02
-      - IGHV7-1*03
       - IGHV7-3*01
       - IGHV7-3*02
       - IGHV7-3*03
       - IGHV7-3*04
       - IGHV7-4*01
       - IGHV7-4*02
-      - IGHV7-4*03
       - IGHV7-4*04
       - IGHV8-11*01
       - IGHV8-12*01
@@ -9612,6 +9441,14 @@ imgt:
       - IGHV9-4*03
       - IGHV9S7*01
       - IGHV9S8*01
+      - IGKJ1*01
+      - IGKJ1*02
+      - IGKJ2*01
+      - IGKJ2*02
+      - IGKJ2*03
+      - IGKJ4*01
+      - IGKJ4*02
+      - IGKJ5*01
       - IGKV1-110*01
       - IGKV1-110*02
       - IGKV1-117*01
@@ -9628,7 +9465,6 @@ imgt:
       - IGKV10-94*05
       - IGKV10-94*06
       - IGKV10-94*07
-      - IGKV10-94*08
       - IGKV10-95*01
       - IGKV10-96*01
       - IGKV10-96*02
@@ -9642,6 +9478,7 @@ imgt:
       - IGKV12-46*01
       - IGKV12-89*01
       - IGKV12-98*01
+      - IGKV12-E*01
       - IGKV13-84*01
       - IGKV13-85*01
       - IGKV13-85*02
@@ -9663,6 +9500,7 @@ imgt:
       - IGKV2-112*01
       - IGKV2-112*02
       - IGKV2-137*01
+      - IGKV2-A*01
       - IGKV20-101-2*01
       - IGKV3-1*01
       - IGKV3-10*01
@@ -9713,6 +9551,9 @@ imgt:
       - IGKV6-29*01
       - IGKV6-32*01
       - IGKV6-32*02
+      - IGKV6-B*01
+      - IGKV6-C*01
+      - IGKV6-D*01
       - IGKV7-33*01
       - IGKV8-16*01
       - IGKV8-19*01
@@ -9726,6 +9567,9 @@ imgt:
       - IGKV9-120*01
       - IGKV9-123*01
       - IGKV9-124*01
+      - IGLJ1*01
+      - IGLJ2*01
+      - IGLJ3*01
       - IGLV1*01
       - IGLV1*02
       - IGLV2*01
@@ -9740,57 +9584,6 @@ imgt:
       - IGLV7*02
       - IGLV8*01
       - IGLV8*02
-      - IGHD1-1*01
-      - IGHD1-1*02
-      - IGHD1-2*01
-      - IGHD1-3*01
-      - IGHD2-1*01
-      - IGHD2-10*01
-      - IGHD2-10*02
-      - IGHD2-11*01
-      - IGHD2-11*02
-      - IGHD2-12*01
-      - IGHD2-13*01
-      - IGHD2-14*01
-      - IGHD2-2*01
-      - IGHD2-3*01
-      - IGHD2-4*01
-      - IGHD2-5*01
-      - IGHD2-6*01
-      - IGHD2-7*01
-      - IGHD2-8*01
-      - IGHD2-9*01
-      - IGHD2-9*02
-      - IGHD3-1*01
-      - IGHD3-2*01
-      - IGHD3-2*02
-      - IGHD3-3*01
-      - IGHD4-1*01
-      - IGHD4-1*02
-      - IGHD6-1*01
-      - IGHD6-1*02
-      - IGHD6-2*01
-      - IGHD6-3*01
-      - IGHD6-4*01
-      - IGHJ1*01
-      - IGHJ1*02
-      - IGHJ1*03
-      - IGHJ2*01
-      - IGHJ2*02
-      - IGHJ2*03
-      - IGHJ3*01
-      - IGHJ4*01
-      - IGKJ1*01
-      - IGKJ1*02
-      - IGKJ2*01
-      - IGKJ2*02
-      - IGKJ2*03
-      - IGKJ4*01
-      - IGKJ4*02
-      - IGKJ5*01
-      - IGLJ1*01
-      - IGLJ2*01
-      - IGLJ3*01
     rabbit:
       rabbit:
       - IGHD1-1*01
@@ -9810,7 +9603,6 @@ imgt:
       - IGHJ3*02
       - IGHJ4*01
       - IGHJ4*02
-      - IGHJ5*01
       - IGHJ5*02
       - IGHJ6*01
       - IGHJ6*02
@@ -9948,7 +9740,6 @@ imgt:
       - IGLV6S3*01
       - IGLV6S5*01
       - IGLV6S6*01
-      - IGLV6S7*01
     rat:
       rat:
       - IGHD1-1*01
@@ -10035,7 +9826,19 @@ imgt:
       - IGHV2-72*01
       - IGHV2-75*01
       - IGHV2-77*01
+      - IGHV2S1*01
+      - IGHV2S12*01
+      - IGHV2S13*01
+      - IGHV2S18*01
+      - IGHV2S30*01
+      - IGHV2S35*01
+      - IGHV2S54*01
+      - IGHV2S61*01
+      - IGHV2S63*01
       - IGHV2S64*01
+      - IGHV2S75*01
+      - IGHV2S78*01
+      - IGHV2S8*01
       - IGHV3-1*01
       - IGHV3-3*01
       - IGHV3-7*01
@@ -10056,6 +9859,12 @@ imgt:
       - IGHV5-58*01
       - IGHV5-62*01
       - IGHV5-7*01
+      - IGHV5S10*01
+      - IGHV5S11*01
+      - IGHV5S13*01
+      - IGHV5S14*01
+      - IGHV5S23*01
+      - IGHV5S47*01
       - IGHV6-10*01
       - IGHV6-13*01
       - IGHV6-19*01
@@ -10076,9 +9885,11 @@ imgt:
       - IGHV8-27*01
       - IGHV8-28*01
       - IGHV8-31*01
+      - IGHV8S18*01
       - IGHV9-4*01
       - IGHV9-6*01
       - IGHV9-8*01
+      - IGHV9S3*01
       - IGKJ1*01
       - IGKJ2-1*01
       - IGKJ2-2*01
