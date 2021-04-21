@@ -251,7 +251,7 @@ class IgBLASTN:
         self.num_j = 3
         self.outfmt = 19
         self.receptor = "Ig"
-        self.word_size = 11
+        self.word_size = 5
         self.nomenclature = "imgt"
         self.gap_open = 5
         self.gap_extend = 2
