@@ -64,7 +64,7 @@ def make_auxillary_file(database, outdir):
             common_df = common_df[(common_df["imgt.cdr3_end"] != "")]
             common_df.loc[:, "reading_frame"] = common_df["imgt.reading_frame"].astype(int)
             common_df.loc[:, "left_over"] = common_df["imgt.remainder"].astype(int)
-            common_df.loc[:, "end"] = common_df["imgt.cdr3_end"].astype(int)
+            common_df.loc[:, "end"] = common_df["imgt.cdr3_end"].astype(int) - 1
             #     _determine_left_over, axis=1
             # )
             common_df["marker"] = common_df["gene"].str.split("-").str.get(0).str[0:4].str[::-1].str[:2]

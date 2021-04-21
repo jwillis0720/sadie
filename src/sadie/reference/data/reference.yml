@@ -3737,7 +3737,6 @@ imgt:
       - IGHV3-31*01
       - IGHV3-32*01
       - IGHV3-33*01
-      - IGHV3-34*01
       - IGHV3-35*01
       - IGHV3-36*01
       - IGHV3-37*01
@@ -4669,9 +4668,6 @@ imgt:
       - IGHV1/OR15-5*01
       - IGHV1/OR15-5*02
       - IGHV1/OR15-9*01
-      - IGHV1/OR16-22*01
-      - IGHV1/OR16-3*01
-      - IGHV1/OR16-4*01
       - IGHV1/OR21-1*01
       - IGHV2-10*01
       - IGHV2-26*01
@@ -4846,7 +4842,6 @@ imgt:
       - IGHV3-71*03
       - IGHV3-71*04
       - IGHV3-72*01
-      - IGHV3-72*02
       - IGHV3-73*01
       - IGHV3-73*02
       - IGHV3-74*01
@@ -4924,7 +4919,6 @@ imgt:
       - IGHV4-39*01
       - IGHV4-39*02
       - IGHV4-39*03
-      - IGHV4-39*04
       - IGHV4-39*05
       - IGHV4-39*06
       - IGHV4-39*07
@@ -6529,7 +6523,6 @@ imgt:
       - IGHV10-11*01
       - IGHV10-12*01
       - IGHV10-14*01
-      - IGHV10-15*01
       - IGHV10-16*01
       - IGHV10-17*01
       - IGHV10-18*01
@@ -6795,7 +6788,6 @@ imgt:
       - IGKV22S1*01
       - IGKV22S2*01
       - IGKV22S4*01
-      - IGKV22S5*01
       - IGKV22S6*01
       - IGKV22S7*01
       - IGKV22S8*01

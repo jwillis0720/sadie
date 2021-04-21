@@ -108,6 +108,11 @@ def generate_internal_annotaion_file_from_db(database, outpath):
                         "imgt.fwr3_end",
                     ]
                 ].copy()
+                # internal annotations are 0 based indexing
+                # index_df = (index_df.set_index("gene") + 1).fillna(0).astype(int).reset_index()
+                index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
+                # .fillna(0).astype("Int64").replace(0, np.nan).reset_index()
+                index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
                 genes_df = filt_df.copy()
                 scheme = "imgt"
                 internal_annotations_file_path = os.path.join(species_internal_db_path, f"{common}.ndm.{scheme}")
