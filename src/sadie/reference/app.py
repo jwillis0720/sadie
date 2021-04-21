@@ -32,7 +32,7 @@ from ..utility.util import get_verbosity_level, get_project_root
     "--database",
     help="Current database path",
     type=click.Path(resolve_path=True, dir_okay=False, exists=True),
-    default=os.path.join(get_project_root(), "reference/data/ig_database.json.gz"),
+    default=os.path.join(get_project_root(), "reference/data/new_database.json.gz"),
 )
 def make_igblast_reference(verbose, outpath, database):
     """make the igblast reference files
@@ -81,7 +81,7 @@ def make_igblast_reference(verbose, outpath, database):
     "--database",
     type=click.Path(exists=True, dir_okay=True, readable=True, resolve_path=True),
     help="Where is the germline database",
-    default=os.path.join(os.path.dirname(__file__), "data", "ig_database.json.gz"),
+    default=os.path.join(os.path.dirname(__file__), "data", "new_database.json.gz"),
 )
 @click.option(
     "--outpath",
