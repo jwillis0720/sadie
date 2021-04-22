@@ -306,6 +306,28 @@ def test_mutational_analysis():
     assert "mutations_light" in joined_airr_table_with_analysis.columns
 
 
+def test_igl_assignment():
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
+    airr_api = Airr("human")
+    airrtable_heavy = airr_api.run_fasta(integration_file)
+    airrtable_heavy["cellid"] = airrtable_heavy["sequence_id"].str.split("_").str.get(0)
+    airrtable_with_igl = airr_methods.run_igl_assignment(airrtable_heavy)
+    assert "iGL" in airrtable_with_igl.columns
+
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
+    airr_api = Airr("human")
+    airrtable_light = airr_api.run_fasta(integration_file)
+    airrtable_light["cellid"] = airrtable_light["sequence_id"].str.split("_").str.get(0)
+    airrtable_with_igl = airr_methods.run_igl_assignment(airrtable_light)
+    assert "iGL" in airrtable_with_igl.columns
+
+    link_table = airrtable_heavy.merge(airrtable_light, on="cellid", suffixes=["_heavy", "_light"])
+    joined_airr_table = LinkedAirrTable(link_table, key_column="cellid")
+    joined_airr_table_with_analysis = airr_methods.run_igl_assignment(joined_airr_table)
+    assert "iGL_heavy" in joined_airr_table_with_analysis.columns
+    assert "iGL_light" in joined_airr_table_with_analysis.columns
+
+
 def _run_cli(args, tmpfile):
     runner = CliRunner(echo_stdin=True)
     result = runner.invoke(sadie_airr, args)
