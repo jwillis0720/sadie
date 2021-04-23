@@ -125,4 +125,3 @@ def make_genebank_files_from_db(verbose, database, outpath):
 
 if __name__ == "__main__":
     make_igblast_reference()
-    ["IGHV1-NL1*01", "IGHV1-2*03", "IGHV4-4*06", "IGHV1-45*01", "IGHV4-30-4*05", "IGHV4-59*09"]
