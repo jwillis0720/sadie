@@ -39,7 +39,7 @@ def make_auxillary_file(database, outdir):
     """
     Given the imgt file structure object and aux path, make the aux data
     #"""
-    ig_database = json.load(gzip.open(database, "rt"))
+    ig_database = json.load(gzip.open(database, "rt"))["payload"]
     reference_database = YamlRef()
     for database in set(reference_database.yaml.keys()):
         receptor_aux_dir = os.path.join(outdir, f"{database}/aux_db")

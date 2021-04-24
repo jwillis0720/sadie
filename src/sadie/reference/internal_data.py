@@ -51,7 +51,7 @@ def get_filtered_data(database_json, source, segment, subset):
 
 def generate_internal_annotaion_file_from_db(database, outpath):
     logger.debug("Generating from IMGT Internal Database File")
-    ig_database = json.load(gzip.open(database, "rt"))
+    ig_database = json.load(gzip.open(database, "rt"))["payload"]
     reference_database = YamlRef()
 
     # The internal data file structure goes {db_type}/{all|filtered}/Ig/internal_path/{species}/

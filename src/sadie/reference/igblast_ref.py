@@ -79,7 +79,7 @@ def make_igblast_ref_database(database, outdir):
         [description]
     """
     # The blast DB groups by V,D and J
-    ig_database = json.load(gzip.open(database, "rt"))
+    ig_database = json.load(gzip.open(database, "rt"))["payload"]
     reference_database = YamlRef()
 
     for database in reference_database.yaml:
