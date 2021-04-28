@@ -6887,6 +6887,7 @@ imgt:
       human:
       - IGHV1-2*02
       - IGKV1-33*01
+      - IGHJ2*01
       mouse:
       - IGHV6-3*01
       - IGHV6-3*02
@@ -10037,6 +10038,7 @@ imgt:
       human:
       - IGHV1-2*02
       - IGKV1-33*01
+      - IGHJ2*01
       mouse:
       - IGHV6-3*01
       - IGHV6-3*02
