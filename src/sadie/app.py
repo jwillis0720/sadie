@@ -13,7 +13,7 @@ def sadie(ctx):
     pass
 
 
-@sadie.command()
+@sadie.command("airr")
 @click.pass_context
 @click.option(
     "-v",
