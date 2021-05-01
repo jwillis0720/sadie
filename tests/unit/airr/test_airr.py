@@ -69,12 +69,10 @@ def test_airr_init():
 
 
 def test_custom_mice_init():
-    Airr("hugl18", functional="all")
-    Airr("se09", functional="all")
-    Airr("alt", functional="all")
-    Airr("se09")
     Airr("hugl18")
-    Airr("alt")
+    Airr("se09")
+    Airr("se16")
+    Airr("se684")
 
 
 def test_airr_single_sequence():
@@ -90,6 +88,7 @@ def test_airr_single_sequence():
     air_api = Airr("human")
     airr_table = air_api.run_single("PG9", pg9_seq)
     airr_entry = airr_table.iloc[0]
+    seq_id = airr_entry["sequence_id"]
     cdr3_ = airr_entry["cdr3_aa"]
     cdr2_ = airr_entry["cdr2_aa"]
     cdr1_ = airr_entry["cdr1_aa"]
@@ -108,6 +107,7 @@ def test_airr_single_sequence():
     assert cdr1_ == "GFDFSRQG"
     assert cdr2_ == "IKYDGSEK"
     assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
+    assert seq_id == "PG9"
 
     # will def change based on penalties, so be careful
     assert round(v_mutation, 2) == 14.0
@@ -348,8 +348,7 @@ def test_cli(caplog):
     quereies = glob.glob(get_file("fasta_inputs/") + "*")
     species = ["dog", "rat", "human", "mouse", "macaque", "se09"]
     # ft = ["csv", "json"]
-    functions = ["all", "functional"]
-    products = product(species, ["imgt"], functions, quereies)
+    products = product(species, ["imgt"], quereies)
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
@@ -359,9 +358,7 @@ def test_cli(caplog):
                 p_tuple[0],
                 "--db-type",
                 p_tuple[1],
-                "--gene-type",
                 p_tuple[2],
-                p_tuple[3],
                 tmpfile.name,
                 "--skip-mutation",
             ]
@@ -372,9 +369,8 @@ def test_cli(caplog):
 
 def test_cli_custom():
     quereies = glob.glob(get_file("fasta_inputs/") + "*")
-    species = ["cat", "macaque"]
-    functions = ["all", "functional"]
-    products = product(species, ["custom"], functions, quereies)
+    species = ["cat", "macaque", "dog"]
+    products = product(species, ["custom"], quereies)
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
@@ -384,9 +380,7 @@ def test_cli_custom():
                 p_tuple[0],
                 "--db-type",
                 p_tuple[1],
-                "--gene-type",
                 p_tuple[2],
-                p_tuple[3],
                 tmpfile.name,
                 "--skip-mutation",
             ]
@@ -398,8 +392,7 @@ def test_cli_custom():
 def test_cli_scfv():
     quereies = [get_file("fasta_inputs/scfv.fasta.gz")]
     species = ["human"]
-    functions = ["all", "functional"]
-    products = product(species, ["imgt"], functions, quereies)
+    products = product(species, ["imgt"], quereies)
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
             cli_input = [
@@ -408,9 +401,7 @@ def test_cli_scfv():
                 p_tuple[0],
                 "--db-type",
                 p_tuple[1],
-                "--gene-type",
                 p_tuple[2],
-                p_tuple[3],
                 tmpfile.name,
                 "--skip-mutation",
             ]
