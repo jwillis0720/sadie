@@ -144,9 +144,8 @@ class BadGene(Error):
         self.accepted_genes = accepted_genes
 
     def __str__(self):
-        return "Gene {} doesn't exist for {}. Available genes are {}".format(
-            self.entered_gene, self.species, ",".join(self.accepted_genes)
-        )
+        difference = list(set(self.entered_gene).difference(self.accepted_genes))
+        return f"{difference} doesn't exist for {self.species}. Available genes are f{self.accepted_genes}"
 
 
 class AmbiguousGene(Error):
