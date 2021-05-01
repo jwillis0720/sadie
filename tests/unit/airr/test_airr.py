@@ -85,7 +85,7 @@ def test_airr_single_sequence():
         TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
         "\n", ""
     )
-    air_api = Airr("human")
+    air_api = Airr("human", adaptable=False)
     airr_table = air_api.run_single("PG9", pg9_seq)
     airr_entry = airr_table.iloc[0]
     seq_id = airr_entry["sequence_id"]
@@ -140,7 +140,7 @@ def test_airr_single_sequence():
 
 
 def test_run_multiple():
-    airr = Airr("human")
+    airr = Airr("human", adaptable=False)
     pg9_seq = """
     CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
     CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
@@ -159,7 +159,7 @@ def test_run_multiple():
 
 def test_run_multiple_scfv():
     scfv = get_file("fastq_inputs/long_scfv.fastq.gz")
-    airr = Airr("human")
+    airr = Airr("human", adaptable=False)
     list_to_run = list(SeqIO.parse(gzip.open(scfv, "rt"), "fastq"))
     results = airr.run_records(list_to_run, scfv=True)
     assert isinstance(results, LinkedAirrTable)
@@ -175,7 +175,7 @@ def test_vdj_overlap():
         TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
         "\n", ""
     )
-    air_api = Airr("human", allow_vdj_overlap=True)
+    air_api = Airr("human", allow_vdj_overlap=True, adaptable=False)
     air_api.run_single("PG9", pg9_seq)
     assert air_api.igblast.allow_vdj_overlap.value is True
 
@@ -282,6 +282,14 @@ def test_adaptable_penalty():
     assert isinstance(airr_table, pd.DataFrame)
     assert isinstance(airr_table, AirrTable)
     assert isinstance(airr_table, LinkedAirrTable)
+
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
+    air_api = Airr("human", adaptable=True)
+    liable = air_api.run_fasta(integration_file)
+    assert not liable["liable"].any()
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
+    liable = air_api.run_fasta(integration_file)
+    assert not liable["liable"].any()
 
 
 def test_mutational_analysis():
