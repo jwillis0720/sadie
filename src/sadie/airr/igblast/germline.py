@@ -26,7 +26,6 @@ class GermlineData:
         self,
         species: str,
         database: str = "imgt",
-        functional: str = "all",
         receptor: str = "Ig",
     ):
         """
@@ -40,12 +39,12 @@ class GermlineData:
         """
         self.species = species
         self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data/germlines"))
-        self.blast_dir = os.path.join(self.base_dir, f"{database}/{functional}/{receptor}/blastdb/{species}_")
+        self.blast_dir = os.path.join(self.base_dir, f"{database}/{receptor}/blastdb/{species}_")
         self.v_gene_dir = self.blast_dir + "V"
         self.d_gene_dir = self.blast_dir + "D"
         self.j_gene_dir = self.blast_dir + "J"
         self.aux_path = os.path.join(self.base_dir, f"{database}/aux_db/{species}_gl.aux")
-        self.igdata = os.path.join(self.base_dir, f"{database}/{functional}/{receptor}/")
+        self.igdata = os.path.join(self.base_dir, f"{database}/{receptor}/")
 
     @property
     def base_dir(self) -> Path:
@@ -176,8 +175,7 @@ class GermlineData:
         y = YamlRef()
         db_types = []
         for database_type in y.yaml:
-            for functional in y.yaml[database_type]:
-                for common in y.yaml[database_type][functional]:
-                    if (common, database_type, functional) not in db_types:
-                        db_types.append((common, database_type, functional))
+            for common in y.yaml[database_type]:
+                if (common, database_type) not in db_types:
+                    db_types.append((common, database_type))
         return db_types

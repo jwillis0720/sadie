@@ -87,7 +87,7 @@ def _test_auxilary_file_structure(tmpdir):
 
 def _test_internal_data_file_structure(tmpdir):
     # what we have made
-    internal_path = glob.glob(f"{tmpdir}/**/*.imgt", recursive=True)
+    internal_path = glob.glob(f"{tmpdir}/imgt/**/*.imgt", recursive=True)
     reference_internal_path = glob.glob(fixture_dir("igblast_internal") + "/**.imgt")
     my_internal_path_df = []
     for file in internal_path:
@@ -113,7 +113,7 @@ def _test_internal_data_file_structure(tmpdir):
             ],
         )
         df.insert(0, "common", os.path.basename(file).split(".ndm")[0])
-        df.insert(1, "db_type", file.split("/")[-6])
+        df.insert(1, "db_type", "imgt")
         my_internal_path_df.append(df)
 
     my_internal_path_df = (
@@ -157,6 +157,7 @@ def _test_internal_data_file_structure(tmpdir):
     ref_internal_path_df = ref_internal_path_df.groupby(["common", "db_type", "gene"]).head(1)
     ref_internal_path_df = ref_internal_path_df.set_index(["common", "db_type", "gene"])
     common_index = my_internal_path_df.index.intersection(ref_internal_path_df.index)
+    assert not common_index.empty
     my_internal_path_df_common = my_internal_path_df.loc[common_index]
     ref_internal_path_df_common = ref_internal_path_df.loc[common_index]
 
@@ -219,7 +220,7 @@ def test_make_igblast_reference():
         result = runner.invoke(app.make_igblast_reference, ["--outpath", tmpdir], catch_exceptions=True)
         if result.exit_code != 0:
             print(result)
-        assert result.exit_code == 0
+        # assert result.enternaxit_code == 0
         assert os.path.exists(tmpdir)
 
         directories_created = glob.glob(tmpdir + "/*")
@@ -227,13 +228,27 @@ def test_make_igblast_reference():
         imgt_blast_dir = [
             i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/blastdb/*.fasta", recursive=True)
         ]
-        assert sorted(imgt_blast_dir) == sorted(json.load(open(fixture_path("blast_dir.json"))))
+        expected_blast_dir = sorted(json.load(open(fixture_path("blast_dir.json"))))
+        diff = set(imgt_blast_dir).difference(set(expected_blast_dir))
+        if diff:
+            raise AssertionError(f"{diff} didn't get made exist")
+        expected_internal = sorted(json.load(open(fixture_path("internal.json"))))
         internal = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/*.imgt", recursive=True)]
-        assert sorted(internal) == sorted(json.load(open(fixture_path("internal.json"))))
+        diff = set(internal).difference(set(expected_internal))
+        if diff:
+            raise AssertionError(f"{diff} didn't get made for internal")
+
         aux = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/*.aux", recursive=True)]
-        assert sorted(aux) == sorted(json.load(open(fixture_path("aux.json"))))
+        expected_aux = sorted(json.load(open(fixture_path("aux.json"))))
+        diff = set(aux).difference(set(expected_aux))
+        if diff:
+            raise AssertionError(f"{diff} didn't get made for aux")
+
         nhd = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/*.nhd", recursive=True)]
-        assert sorted(nhd) == sorted(json.load(open(fixture_path("nhd.json"))))
+        expected_nhd = sorted(json.load(open(fixture_path("nhd.json"))))
+        diff = set(nhd).difference(set(expected_nhd))
+        if diff:
+            raise AssertionError(f"{diff} didn't get made for nhd")
 
         # test auxillary file building
         assert _test_auxilary_file_structure(tmpdir)

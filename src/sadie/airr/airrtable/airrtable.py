@@ -72,11 +72,12 @@ class AirrTable(pd.DataFrame):
 
     _metadata = ["_suffixes", "_islinked"]
 
-    def __init__(self, data=None, *args, is_linked: bool = False, **kwargs):
+    def __init__(self, data=None, *args, key_column="sequence_id", **kwargs):
         super(AirrTable, self).__init__(data=data, *args, **kwargs)
         if not isinstance(data, pd.core.internals.managers.BlockManager):
-            if not is_linked:
-                self._islinked = is_linked
+            if self.__class__ is AirrTable:
+                self._islinked = False
+                self._key_column = key_column
                 self._suffixes = []
                 self._verify()
 
@@ -91,8 +92,15 @@ class AirrTable(pd.DataFrame):
         return AirrTable
 
     @property
+    def key_column(self):
+        return self._key_column
+
+    @property
     def compliant_cols(self) -> List[str]:
-        return list(set(IGBLAST_AIRR.keys()))
+        compliant_cols = list(set(IGBLAST_AIRR.keys()))
+        if self.key_column not in compliant_cols:
+            compliant_cols += [self.key_column]
+        return compliant_cols
 
     @property
     def non_airr_columns(self) -> pd.Index:
@@ -188,11 +196,17 @@ class AirrTable(pd.DataFrame):
         if missing_columns:
             raise MissingAirrColumns(missing_columns)
 
+        # # if Linked DataFrame, we need the key column that links them
+        # if hasattr(self, "key_column"):
+        #     key_column = self.key_column
+        #     if key_column not in self.columns:
+        #         raise ValueError(f"{key_column} is not in the LinkedAirrTable columns")
+
         # drop any unneeded columns
         self.drop([i for i in self.columns if "Unnamed" in i], axis=1, inplace=True)
 
         # set boolean strings to boolelan types
-        _to_boolean = ["productive", "stop_codon", "rev_comp", "v_frameshift", "complete_vdj"]
+        _to_boolean = ["productive", "vj_in_frame", "stop_codon", "rev_comp", "v_frameshift", "complete_vdj"]
         if self._islinked:
             _to_boolean_link = []
             for x in self._suffixes:
@@ -211,15 +225,6 @@ class AirrTable(pd.DataFrame):
             self["liable"] = self[["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]].apply(
                 self._check_j_gene_liability, axis=1
             )
-
-        # assign locus as a category
-        if self._islinked:
-            for suffix in self._suffixes:
-                self[f"locus{suffix}"] = self[f"locus{suffix}"].astype(
-                    pd.CategoricalDtype(categories=["IGH", "IGL", "IGK"], ordered=True)
-                )
-        else:
-            self["locus"] = self["locus"].astype(pd.CategoricalDtype(categories=["IGH", "IGL", "IGK"], ordered=True))
 
         # get full nt vdj recombination
         vdj_nt_keys = ["fwr1", "cdr1", "fwr2", "cdr2", "fwr3", "cdr3", "fwr4"]
@@ -249,16 +254,20 @@ class AirrTable(pd.DataFrame):
             for suffix in self._suffixes:
                 # Insert the top call for each vdj call but right next to the N_call column using the insert method
                 for call in ["v_call", "d_call", "j_call"]:
+
                     # pure light chain columns won't have a dcall
-                    call += suffix
-                    if call not in self.columns:
+                    if call + suffix not in self.columns:
                         continue
+
+                    new_call = call + f"top{suffix}"
                     # drop the volumn if it's already there, that helps with backwards compatibility
-                    if f"{call}_top" in self.columns:
-                        self.drop(f"{call}_top", inplace=True, axis=1)
+                    if new_call in self.columns:
+                        self.drop(new_call, inplace=True, axis=1)
 
                     # Insert right next to the X_call airr_columns
-                    self.insert(self.columns.get_loc(call), f"{call}_top", self[call].str.split(",").str.get(0))
+                    self.insert(
+                        self.columns.get_loc(call + suffix), new_call, self[call + suffix].str.split(",").str.get(0)
+                    )
 
                 # get mutation frequency rather than identity
                 self.loc[:, f"v_mutation{suffix}"] = self[f"v_identity{suffix}"].apply(lambda x: (100 - x))
@@ -426,57 +435,6 @@ class AirrTable(pd.DataFrame):
             airrtable = _update_align(airrtable, field_1, field_2)
 
         return self.__class__(airrtable)
-
-    @staticmethod
-    def static_correct_indel(
-        airrtable_input: Union["AirrTable", "LinkedAirrTable"]
-    ) -> Union["AirrTable", "LinkedAirrTable"]:
-        _fields = [
-            ("sequence_alignment_aa", "germline_alignment_aa"),
-            ("v_sequence_alignment_aa", "v_germline_alignment_aa"),
-        ]
-        if type(airrtable_input) == LinkedAirrTable:
-            _linked_fields = []
-            for suffix in airrtable_input._suffixes:
-                for field_1, field_2 in _fields:
-                    _linked_fields.append([f"{field_1}{suffix}", f"{field_2}{suffix}"])
-            _fields = _linked_fields
-
-        else:
-            if type(airrtable_input) != AirrTable:
-                raise TypeError(f"{type(airrtable_input)} must be of AirrTable or LinkedAirrTable")
-
-        airrtable = pd.DataFrame(airrtable_input)
-
-        def _get_indel_index(airrtable, field_1: str, field_2: str) -> pd.Index:
-            return airrtable[
-                (airrtable[field_1].str.len() != airrtable[field_2].str.len())
-                & (~airrtable[field_1].isna())
-                & (~airrtable[field_2].isna())
-            ].index
-
-        def _update_align(airrtable: Union[AirrTable, LinkedAirrTable], field_1: str, field_2: str):
-            # get indels in sequence_germline_alignment_aa that were not accounted for in the total alignment
-            indel_indexes = _get_indel_index(airrtable, field_1, field_2)
-            logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid germline alignment")
-            airrtable.loc[:, f"{field_2}_corrected"] = False
-            if not indel_indexes.empty:
-                correction_alignments = airrtable.loc[indel_indexes, :].apply(
-                    lambda x: correct_alignment(x, field_1, field_2), axis=1
-                )
-                # Correction in place
-                airrtable.update(correction_alignments)
-                airrtable.loc[indel_indexes, f"{field_2}_corrected"] = True
-
-            return airrtable
-
-        for field_1, field_2 in _fields:
-            airrtable = _update_align(airrtable, field_1, field_2)
-
-        if type(airrtable_input) == LinkedAirrTable:
-            return LinkedAirrTable(airrtable)
-
-        return AirrTable(airrtable)
 
     @staticmethod
     def parse_row_to_genbank(row: Tuple[int, pd.core.series.Series], suffix="") -> SeqRecord:
@@ -679,22 +637,67 @@ class AirrTable(pd.DataFrame):
             AirrTable object"""
         return AirrTable(pd.read_json(*args, **kwargs))
 
+    def __eq__(self, other) -> bool:
+        """equals method for LinkedDataFrame"""
+        # needs to be cast to dataframe and na needs to be fileld
+        _dataframe = pd.DataFrame(self).fillna("")
+        other_dataframe = pd.DataFrame(other).fillna("")
+        return (_dataframe == other_dataframe).all().all()
+
 
 class LinkedAirrTable(AirrTable):
-    def __init__(self, data=None, *args, **kwargs):
-        super(LinkedAirrTable, self).__init__(data=data, *args, is_linked=True, **kwargs)
+    def __init__(self, data=None, *args, suffixes=["_heavy", "_light"], key_column: str = "sequence_id", **kwargs):
+        super(LinkedAirrTable, self).__init__(data=data, *args, **kwargs)
         if not isinstance(data, pd.core.internals.managers.BlockManager):
-            self._islinked = True
-            self._suffixes = ["_heavy", "_light"]
-            if not self.verified:
-                self._verify()
+            if self.__class__ == LinkedAirrTable:
+                self._islinked = True
+                self._key_column = key_column
+                self._suffixes = suffixes
+                if not self.verified:
+                    self._verify()
+
+    @property
+    def key_column(self) -> str:
+        return self._key_column
+
+    @property
+    def suffixes(self) -> List[str]:
+        if not hasattr(self, "_suffixes"):
+            return []
+        return self._suffixes
+
+    @property
+    def left_suffix(self):
+        return self.suffixes[0]
+
+    @property
+    def right_suffix(self):
+        return self.suffixes[1]
 
     @property
     def compliant_cols(self) -> List[str]:
         _complient_cols = []
+        joined_keys = list(IGBLAST_AIRR.keys())
         for suffix in self._suffixes:
-            _complient_cols += list(map(lambda x: x + suffix if x != "sequence_id" else x, list(IGBLAST_AIRR.keys())))
-        return list(set(_complient_cols))
+            _complient_cols += list(map(lambda x: x + suffix if x != f"{self.key_column}" else x, joined_keys))
+        _complient_cols = list(set(_complient_cols))
+        _complient_cols += [self.key_column]
+        return _complient_cols
+
+    def get_split_table(self) -> Tuple[AirrTable, AirrTable]:
+        left_rows = [i for i in self.columns if self.left_suffix in i]
+        right_rows = [i for i in self.columns if self.right_suffix in i]
+        key_column = self.key_column
+        common_columns = list(self.columns.difference(set(left_rows + right_rows)))
+        if key_column not in common_columns:
+            raise ValueError(f"{key_column} key column not in common columns")
+        left_table = self[common_columns + left_rows]
+        left_airr_columns = list(map(lambda x: x.replace(self._suffixes[0], ""), list(left_table.columns)))
+        left_table.columns = left_airr_columns
+        right_table = self[common_columns + right_rows]
+        right_airr_columns = list(map(lambda x: x.replace(self._suffixes[1], ""), list(right_table.columns)))
+        right_table.columns = right_airr_columns
+        return AirrTable(left_table, key_column=key_column), AirrTable(right_table, key_column=key_column)
 
 
 if __name__ == "__main__":

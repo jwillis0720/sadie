@@ -2,7 +2,7 @@ from typing import Union
 import logging
 
 # third party
-# import pandas as pd
+import pandas as pd
 
 # module/package level
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
@@ -16,7 +16,7 @@ def run_mutational_analysis(
 ) -> Union[AirrTable, LinkedAirrTable]:
     """Run a mutational analysis given a numbering scheme. Returns an AirrTable with added mutational analysis columns
 
-    This method is computationally expensive. So it's a stand alone static method. It will take in an airr table
+    This method is computationally expensive.
 
     Parameters
     ----------
@@ -38,6 +38,15 @@ def run_mutational_analysis(
     if not isinstance(airrtable, AirrTable):
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
+    key = airrtable.key_column
+    if airrtable.__class__ == LinkedAirrTable:
+        # split table into left and right (heavy and light) tables
+        left_table, right_table = airrtable.get_split_table()
+        left_table = run_mutational_analysis(left_table, scheme)
+        right_table = run_mutational_analysis(right_table, scheme)
+        key = airrtable.key_column
+        return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=airrtable.suffixes), key_column=key)
+
     if not airrtable.index.is_monotonic_increasing:
         raise IndexError(f"{airrtable.index} must be monotonic increasing")
 
@@ -45,21 +54,21 @@ def run_mutational_analysis(
     logger.info("Running ANARCI on germline alignment")
     anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"])
     germline_results_anarci = anarci_api.run_dataframe(
-        airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable["sequence_id"]),
-        "sequence_id",
+        airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
+        key,
         "germline_alignment_aa",
     )
     logger.info("Running ANARCI on mature alignment")
     mature_results_anarci = anarci_api.run_dataframe(
-        airrtable["sequence_alignment_aa"].str.replace("-", "").to_frame().join(airrtable["sequence_id"]),
-        "sequence_id",
+        airrtable["sequence_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
+        key,
         "sequence_alignment_aa",
     )
     logger.info("Getting ANARCI on alignment tables")
     sets_of_lists = [
         set(germline_results_anarci["Id"]),
         set(mature_results_anarci["Id"]),
-        set(airrtable["sequence_id"]),
+        set(airrtable[key].astype("str")),
     ]
     sets_of_lists = sorted(sets_of_lists, key=lambda x: len(x))
     common_results = set.intersection(*sets_of_lists)
@@ -101,59 +110,67 @@ def run_mutational_analysis(
 
     mature_results_anarci["mutations"] = mutation_arrays
     return AirrTable(
-        airrtable.merge(
-            mature_results_anarci.rename({"Id": "sequence_id"}, axis=1)[["sequence_id", "scheme", "mutations"]],
-            on="sequence_id",
-        )
+        airrtable.astype({key: "str"}).merge(
+            mature_results_anarci.rename({"Id": key}, axis=1)[[key, "scheme", "mutations"]], on=key
+        ),
+        key_column=key,
     )
 
 
-#     if self.infer:
-#         self._table["vdj_igl"] = self._table.apply(self._get_igl, axis=1)
-#         self._table.loc[self._table[self._table["vdj_igl"].isna()].index, "note"] = "liable"
-#         self._table["igl_mut_aa"] = self._table[["vdj_aa", "vdj_igl"]].apply(self._get_diff, axis=1)
+def _get_igl(row: pd.Series) -> str:
+    """Get infered germline sequences from Airr Row
 
-# def _get_igl(self, row: pd.Series) -> str:
-#     """Get infered germline sequenxe
+    Parameters
+    ----------
+    row : pd.Series
+        A row from the airr table
+    Returns
+    -------
+    str
+        the igl sequecne
+    """
 
-#     Parameters
-#     ----------
-#     row : pd.Series
-#         A row from the airr table
-#     Returns
-#     -------
-#     str
-#         the igl sequecne
-#     """
+    # get germline components
+    v_germline = row.v_germline_alignment_aa
+    full_germline = row.germline_alignment_aa
+    if isinstance(v_germline, float):
+        return
+    cdr3_j_germline = full_germline[len(v_germline) :]
 
-#     # get germline components
-#     v_germline = row.v_germline_alignment_aa
-#     full_germline = row.germline_alignment_aa
-#     if isinstance(v_germline, float):
-#         return
-#     cdr3_j_germline = full_germline[len(v_germline) :]
+    # get mature components
+    v_mature = row.v_sequence_alignment_aa
+    full_mature = row.sequence_alignment_aa
+    cdr3_j_mature = full_mature[len(v_mature) :]
 
-#     # get mature components
-#     v_mature = row.v_sequence_alignment_aa
-#     full_mature = row.sequence_alignment_aa
-#     cdr3_j_mature = full_mature[len(v_mature) :]
+    # if the mature and cdr3 are not the same size
+    # this will happen on non-productive
+    if len(cdr3_j_mature) != len(cdr3_j_germline):
+        logger.debug(f"{row.name} - strange iGL")
+        return
 
-#     # if the mature and cdr3 are not the same size
-#     # this will happen on non-productive
-#     if len(cdr3_j_mature) != len(cdr3_j_germline):
-#         logger.debug(f"{row.name} - strange iGL")
-#         return
+    iGL_cdr3 = ""
+    for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
+        if germline == "X" or germline == "-":
+            iGL_cdr3 += mature
+            continue
+        iGL_cdr3 += germline
 
-#         # # quick aligment
-#         # _alignments = align.globalxs(cdr3_j_mature, cdr3_j_germline, -10, -1)
-#         # cdr3_j_mature, cdr3_j_germline = _alignments[0][0], _alignments[0][1]
+    full_igl = v_germline.replace("-", "") + iGL_cdr3.replace("-", "")
+    return full_igl
 
-#     iGL_cdr3 = ""
-#     for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
-#         if germline == "X" or germline == "-":
-#             iGL_cdr3 += mature
-#             continue
-#         iGL_cdr3 += germline
 
-#     full_igl = v_germline.replace("-", "") + iGL_cdr3.replace("-", "")
-#     return full_igl
+def run_igl_assignment(airrtable: Union[AirrTable, LinkedAirrTable]) -> Union[AirrTable, LinkedAirrTable]:
+    if not isinstance(airrtable, AirrTable):
+        raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
+
+    key = airrtable.key_column
+    if airrtable.__class__ == LinkedAirrTable:
+        # split table into left and right (heavy and light) tables
+        left_table, right_table = airrtable.get_split_table()
+        left_table = run_igl_assignment(left_table)
+        right_table = run_igl_assignment(right_table)
+        key = airrtable.key_column
+        return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=airrtable.suffixes), key_column=key)
+
+    airrtable["iGL"] = airrtable.apply(_get_igl, axis=1)
+    return airrtable

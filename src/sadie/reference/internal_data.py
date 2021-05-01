@@ -1,17 +1,20 @@
 # Std lib
 import os
 import logging
-import gzip
-import json
 
 # Third party
 import pandas as pd
 
 # This module
 from .blast import write_blast_db
-from .yaml import YamlRef
 from ..antibody.exception import BadGene
+from ..reference import get_loaded_database
+from yaml import load as yml_load
 
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
 logger = logging.getLogger(__name__)
 
 
@@ -26,87 +29,81 @@ def make_blast_db_for_internal(df, dboutput):
     write_blast_db(out_fasta, out_db)
 
 
-def get_databases_types(database_json):
-    return list(set(map(lambda x: x["source"], database_json)))
-
-
-def get_species_from_database(database_json):
-    return list(set(map(lambda x: x["common"], database_json)))
-
-
-def get_filtered_data(database_json, source, segment, subset):
-    if subset == "all":
-        function = ["ORF", "F", "P", "I"]
-    elif subset == "functional":
-        function = ["F"]
-    else:
-        raise Exception(f"{subset} not a valide option, ['all', 'funtional']")
+def get_filtered_data(data, segment):
     return list(
         filter(
-            lambda x: x["source"] == source and x["gene_segment"] == segment and x["functional"] in function,
-            database_json,
+            lambda x: x["gene_segment"] == segment,
+            data,
         )
     )
 
 
-def generate_internal_annotaion_file_from_db(database, outpath):
+def generate_internal_annotaion_file_from_db(reference, outpath):
     logger.debug("Generating from IMGT Internal Database File")
-    ig_database = json.load(gzip.open(database, "rt"))
-    reference_database = YamlRef()
+    reference = yml_load(open(reference), Loader=Loader)
+    database = get_loaded_database()
 
-    # The internal data file structure goes {db_type}/{all|filtered}/Ig/internal_path/{species}/
+    # The internal data file structure goes {db_type}/Ig/internal_path/{species}/
     # Interate through species and make
-    for db_type in reference_database.get_reference_types():
-        for subset in reference_database.get_functional_keys(db_type):
-            for common in reference_database.get_species_keys(db_type, subset):
-                species_internal_db_path = os.path.join(outpath, db_type, subset, "Ig", "internal_data", common)
-                logger.debug(f"Found species {common}, using {db_type} database file")
-                if not os.path.exists(species_internal_db_path):
-                    logger.info(f"Creating {species_internal_db_path}")
-                    os.makedirs(species_internal_db_path)
+    for db_type in reference.keys():
+        # db_type eg. cutom, imgt
 
-                filtered_data = get_filtered_data(ig_database, db_type, "V", subset)
-                sub_species_keys = reference_database.get_sub_species(db_type, subset, common)
-                requested_entries = []
-                for sub_species in sub_species_keys:
-                    gene_segments = reference_database.get_gene_segment(db_type, subset, common, sub_species, "V")
-                    request_list = list(
-                        filter(lambda x: x["common"] == sub_species and x["gene"] in gene_segments, filtered_data)
-                    )
-                    if len(request_list) != len(gene_segments):
-                        raise BadGene(
-                            sub_species, gene_segments, list(map(lambda x: (x["common"], x["gene"]), filtered_data))
-                        )
-                    requested_entries += request_list
+        # get a filtered database for V genes
+        filtered_data = get_filtered_data(database[db_type], "V")
 
-                # if len(sub_species_keys) > 1:
-                #     for sub_species in sub_species_keys:
+        for common in reference[db_type]:
+            # species level database
+            common_data = reference[db_type][common]
 
-                # else:
-                #     filtered_json = get_filtered_data(ig_database, db_type, common, "V", subset)
-                #     requested_vs = reference_database.get_gene_segment(db_type, subset, common, common, "V")
+            species_internal_db_path = os.path.join(outpath, db_type, "Ig", "internal_data", common)
+            logger.debug(f"Found species {common}, using {db_type} database file")
+            if not os.path.exists(species_internal_db_path):
+                logger.info(f"Creating {species_internal_db_path}")
+                os.makedirs(species_internal_db_path)
+
+            # maybe we requested a chimeric speicies that has more than one sub species
+            sub_species_keys = common_data.keys()
+
+            # here are the requested entries we are asking to put in our blast database
+            requested_entries = []
+            for sub_species in sub_species_keys:
+                # only get the common species from our database
+                sub_filtered = list(filter(lambda x: x["common"] == sub_species, filtered_data))
+                gene_segments = list(filter(lambda x: x[3] == "V", common_data[sub_species]))
+                request_list = list(filter(lambda x: x["gene"] in gene_segments, sub_filtered))
+                if len(request_list) != len(gene_segments):
+                    accepted_genes = list(map(lambda x: x["gene"], sub_filtered))
+                    raise BadGene(sub_species, gene_segments, accepted_genes)
+                requested_entries += request_list
 
                 # normalize will flatten nested json
                 filt_df = pd.json_normalize(requested_entries)
+
+                if filt_df.empty:
+                    logger.warning(f"{common}:{sub_species} has no V genes in {db_type} database")
+                    continue
+                # if we have hybrid species we shall name them with <species>|gene
                 if len(filt_df["common"].unique()) > 1:
                     filt_df["gene"] = filt_df["common"] + "|" + filt_df["gene"]
 
                 index_df = filt_df[
                     [
                         "gene",
-                        "imgt.fwr1_nt_index_start",
-                        "imgt.fwr1_nt_index_end",
-                        "imgt.cdr1_nt_index_start",
-                        "imgt.cdr1_nt_index_end",
-                        "imgt.fwr2_nt_index_start",
-                        "imgt.fwr2_nt_index_end",
-                        "imgt.cdr2_nt_index_start",
-                        "imgt.cdr2_nt_index_end",
-                        "imgt.fwr3_nt_index_start",
-                        "imgt.fwr3_nt_index_end",
+                        "imgt.fwr1_start",
+                        "imgt.fwr1_end",
+                        "imgt.cdr1_start",
+                        "imgt.cdr1_end",
+                        "imgt.fwr2_start",
+                        "imgt.fwr2_end",
+                        "imgt.cdr2_start",
+                        "imgt.cdr2_end",
+                        "imgt.fwr3_start",
+                        "imgt.fwr3_end",
                     ]
-                ]
-                genes_df = filt_df[["gene", "imgt.v_gene_nt"]].rename({"imgt.v_gene_nt": "sequence"}, axis=1)
+                ].copy()
+                index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
+                index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
+                genes_df = filt_df.copy()
                 scheme = "imgt"
                 internal_annotations_file_path = os.path.join(species_internal_db_path, f"{common}.ndm.{scheme}")
                 if len(filt_df["common"].unique()) > 1:
