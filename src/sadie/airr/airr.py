@@ -73,7 +73,6 @@ class Airr:
         species: str,
         igblast_exe: Union[Path, str] = "",
         adaptable: bool = True,
-        functional: str = "functional",
         database: str = "imgt",
         v_gene_penalty: int = -1,
         d_gene_penalty: int = -1,
@@ -92,8 +91,6 @@ class Airr:
             override sadie package executable has to be in $PATH
         adaptable : bool, optional
             turn on adaptable penalties, by default True
-        functional : str, optional
-            run on functional germline genes or all genes, by default "functional"
         database : str, optional
             run on custom or imgt database, by default "imgt"
         v_gene_penalty : int, optional
@@ -140,17 +137,16 @@ class Airr:
         # Properties that will be passed to germline Data Class.
         # Pass theese as private since germline class will handle setter logic
         self._species = species
-        self._functional = functional
         self._database = database
 
         # Check if this requested dataset is available
         _available_datasets = GermlineData.get_available_datasets()
-        _chosen_datasets = (species.lower(), database.lower(), functional.lower())
+        _chosen_datasets = (species.lower(), database.lower())
         if _chosen_datasets not in _available_datasets:
             raise BadDataSet(_chosen_datasets, _available_datasets)
 
         # set the germline data
-        self.germline_data = GermlineData(self.species, functional=functional, database=database)
+        self.germline_data = GermlineData(self.species, database=database)
 
         # This will set all the igblast params given the Germline Data class whcih validates them
         self.igblast.igdata = self.germline_data.igdata
@@ -293,7 +289,7 @@ class Airr:
         if not isinstance(seq_id, str):
             raise TypeError(f"seq_id must be instance of str, passed {type(seq_id)}")
 
-        records = [SeqRecord(Seq(seq), name=seq_id)]
+        records = [SeqRecord(Seq(seq), id=seq_id, name=seq_id)]
         return self.run_records(records, scfv=scfv)
 
     def run_dataframe(
