@@ -25,6 +25,9 @@
     <a href="https://github.com/pre-commit/pre-commit">
     <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
         alt="pre commit">
+    <a href="https://github.com/pre-commit/pre-commit">
+    <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
+        alr='pypi'>
 </div>
 
 <p align="center" style="color:green">

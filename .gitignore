@@ -17,6 +17,7 @@ dist/
 .installed.cfg
 *.egg
 .pytest_cache
+sadie-*
 
 # Installer logs
 pip-log.txt
