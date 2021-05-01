@@ -7,8 +7,8 @@ from pkg_resources import resource_filename
 
 import pandas as pd
 
-from sadie.airr import AirrTable, Airr, ScfvAirrTable
-from sadie.airr.airrtable import MissingAirrColumns
+from sadie.airr import AirrTable, LinkedAirrTable
+from sadie.airr.exceptions import MissingAirrColumns
 from Bio.SeqRecord import SeqRecord
 
 logger = logging.getLogger()
@@ -24,22 +24,23 @@ def test_airrtable_init():
     # Test we can initllize with staic meathod
     airr_table = AirrTable.read_csv(test_csv)
     assert not airr_table.empty
-    assert sorted(airr_table.non_airr_columns) == [
-        "alignment_correct",
+    non_airr_columns = [
         "d_call_top",
         "d_mutation",
-        "igl_mut_aa",
+        "d_mutation_aa",
         "j_call_top",
         "j_mutation",
+        "j_mutation_aa",
+        "liable",
         "note",
         "species",
         "v_call_top",
         "v_mutation",
         "v_mutation_aa",
         "vdj_aa",
-        "vdj_igl",
         "vdj_nt",
     ]
+    assert sorted(airr_table.non_airr_columns) == non_airr_columns
     # Tes twe can init with a direct pandas call
     airr_table = AirrTable(pd.read_csv(test_csv))
     assert not airr_table.empty
@@ -61,28 +62,44 @@ def test_airrtable_init():
     assert e.value.__str__()
 
 
-# def test_airrtable_reference():
-#     test_file = pd.read_feather("tests/integration/airr/fixtures/catnap_heavy_airrtable.feather")
-#     airr_table = AirrTable(test_file)
-#     referenece_table = airr_table.get_reference_table(buff=0)
-#     assert not referenece_table.empty
-
-
-# def test_mutational_analysis():
-#     test_file = pd.read_feather("tests/integration/airr/fixtures/catnap_heavy_airrtable.feather")
-#     airr_table = AirrTable(test_file)
-#     airr_table_with_mutations = airr_table.add_mutation_analysis()
-#     assert "mutations" in airr_table_with_mutations.columns
-
-#     test_file = pd.read_feather("tests/integration/airr/fixtures/catnap_light_airrtable.feather")
-#     airr_table = AirrTable(test_file)
-#     airr_table_with_mutations = airr_table.add_mutation_analysis()
-#     assert "mutations" in airr_table_with_mutations.columns
+def test_indel_correction():
+    test_csv = fixture_file("airr_tables/dog_igh.csv.gz")
+    # Test we can initllize with staic meathod
+    airr_table = AirrTable.read_csv(test_csv)
+    airr_table_indel = AirrTable.correct_indel(airr_table)
+    assert "germline_alignment_aa_corrected" in airr_table_indel.columns
+    assert "v_germline_alignment_aa_corrected" in airr_table_indel.columns
+    assert isinstance(airr_table_indel, AirrTable)
 
 
 def test_scfv_airrtable():
-    airr_api = Airr("human")
-    scfv_airr_table = airr_api.run_fasta(fixture_file("fasta_inputs/scfv.fasta"), scfv=True)
-    heavy, light = ScfvAirrTable.deconstruct_scfv(scfv_airr_table)
-    assert type(heavy) == AirrTable
-    assert type(light) == AirrTable
+    file_path = fixture_file("airr_tables/linked_airr_table_dummy.csv.gz")
+    dummy_scfv_table = pd.read_csv(file_path, index_col=0)
+    linked_table = LinkedAirrTable(dummy_scfv_table)
+    # test if we can split
+    heavy_table, light_table = linked_table.get_split_table()
+    assert isinstance(heavy_table, AirrTable)
+    assert isinstance(light_table, AirrTable)
+    rebuild_table = LinkedAirrTable(heavy_table.merge(light_table, on="sequence_id", suffixes=["_heavy", "_light"]))
+    assert rebuild_table == rebuild_table
+    assert rebuild_table == linked_table
+
+    heavy_table["cell_id"] = heavy_table["sequence_id"]
+    light_table["cell_id"] = light_table["sequence_id"]
+    with pytest.raises(MissingAirrColumns):
+        LinkedAirrTable(heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]))
+    rebuild_data = LinkedAirrTable(
+        heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]), key_column="cell_id"
+    )
+    heavy_table_split, light_table_split = rebuild_data.get_split_table()
+    assert heavy_table_split.columns.difference(heavy_table.columns).empty
+    assert light_table_split.columns.difference(light_table.columns).empty
+    assert heavy_table == heavy_table_split[heavy_table.columns]
+    assert light_table == light_table_split[light_table.columns]
+    assert rebuild_data.key_column == "cell_id"
+    assert rebuild_data.suffixes == ["_heavy", "_light"]
+
+    rebuild_data = LinkedAirrTable(
+        heavy_table.merge(light_table, on="cell_id", suffixes=["_h", "_l"]), suffixes=["_h", "_l"], key_column="cell_id"
+    )
+    assert rebuild_data.suffixes == ["_h", "_l"]

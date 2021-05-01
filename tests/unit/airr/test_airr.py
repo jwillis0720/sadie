@@ -16,7 +16,8 @@ import pandas as pd
 import pytest
 from click.testing import CliRunner
 from numpy import isnan
-from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, ScfvAirrTable
+from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, LinkedAirrTable
+from sadie.airr import methods as airr_methods
 from sadie.app import airr as sadie_airr
 
 logger = logging.getLogger()
@@ -68,12 +69,10 @@ def test_airr_init():
 
 
 def test_custom_mice_init():
-    Airr("hugl18", functional="all")
-    Airr("se09", functional="all")
-    Airr("alt", functional="all")
-    Airr("se09")
     Airr("hugl18")
-    Airr("alt")
+    Airr("se09")
+    Airr("se16")
+    Airr("se684")
 
 
 def test_airr_single_sequence():
@@ -86,9 +85,10 @@ def test_airr_single_sequence():
         TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
         "\n", ""
     )
-    air_api = Airr("human")
+    air_api = Airr("human", adaptable=False)
     airr_table = air_api.run_single("PG9", pg9_seq)
     airr_entry = airr_table.iloc[0]
+    seq_id = airr_entry["sequence_id"]
     cdr3_ = airr_entry["cdr3_aa"]
     cdr2_ = airr_entry["cdr2_aa"]
     cdr1_ = airr_entry["cdr1_aa"]
@@ -107,11 +107,12 @@ def test_airr_single_sequence():
     assert cdr1_ == "GFDFSRQG"
     assert cdr2_ == "IKYDGSEK"
     assert cdr3_ == "VREAGGPDYRNGYNYYDFYDGYYNYHYMDV"
+    assert seq_id == "PG9"
 
     # will def change based on penalties, so be careful
-    assert v_mutation == 14.0
-    assert d_mutation == 17.875
-    assert j_mutation == 11.3125
+    assert round(v_mutation, 2) == 14.0
+    assert round(d_mutation, 2) == 17.88
+    assert round(j_mutation, 2) == 11.31
     with pytest.raises(TypeError):
         # id must be str
         airr_table = air_api.run_single(9, pg9_seq)
@@ -139,7 +140,7 @@ def test_airr_single_sequence():
 
 
 def test_run_multiple():
-    airr = Airr("human")
+    airr = Airr("human", adaptable=False)
     pg9_seq = """
     CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
     CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
@@ -158,10 +159,25 @@ def test_run_multiple():
 
 def test_run_multiple_scfv():
     scfv = get_file("fastq_inputs/long_scfv.fastq.gz")
-    airr = Airr("human")
+    airr = Airr("human", adaptable=False)
     list_to_run = list(SeqIO.parse(gzip.open(scfv, "rt"), "fastq"))
     results = airr.run_records(list_to_run, scfv=True)
-    assert isinstance(results, ScfvAirrTable)
+    assert isinstance(results, LinkedAirrTable)
+
+
+def test_vdj_overlap():
+    pg9_seq = """
+        CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
+        CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
+        GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
+        AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
+        TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
+        TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
+        "\n", ""
+    )
+    air_api = Airr("human", allow_vdj_overlap=True, adaptable=False)
+    air_api.run_single("PG9", pg9_seq)
+    assert air_api.igblast.allow_vdj_overlap.value is True
 
 
 def test_airr_from_dataframe():
@@ -261,23 +277,63 @@ def test_adaptable_penalty():
               CCGCCAGGCTCCAGGGAANGGGGCTGGAGT"""
     air_api = Airr("human", adaptable=True)
     airr_table = air_api.run_single("scfv", scfv.replace("\n", "").replace(" ", ""), scfv=True)
-    assert airr_table.table.fwr1_aa_heavy.iloc[0] == "EVQLLESGGGLVQPGGSLRLSCAAS"
-    assert airr_table.table.fwr2_aa_heavy.iloc[0] == "MSWVRQAPGXGAGV"
-    assert isinstance(airr_table, ScfvAirrTable)
+    assert airr_table.fwr1_aa_heavy.iloc[0] == "EVQLLESGGGLVQPGGSLRLSCAAS"
+    assert airr_table.fwr2_aa_heavy.iloc[0] == "MSWVRQAPGXGAGV"
+    assert isinstance(airr_table, pd.DataFrame)
+    assert isinstance(airr_table, AirrTable)
+    assert isinstance(airr_table, LinkedAirrTable)
+
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
+    air_api = Airr("human", adaptable=True)
+    liable = air_api.run_fasta(integration_file)
+    assert not liable["liable"].any()
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
+    liable = air_api.run_fasta(integration_file)
+    assert not liable["liable"].any()
 
 
 def test_mutational_analysis():
     integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
     airr_api = Airr("human")
-    airrtable = airr_api.run_fasta(integration_file)
-    kabat_table = Airr.run_mutational_analysis(airrtable, "kabat")
-    assert "mutations" in kabat_table.table.columns
+    airrtable_heavy = airr_api.run_fasta(integration_file)
+    airrtable_heavy["cellid"] = airrtable_heavy["sequence_id"].str.split("_").str.get(0)
+    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_heavy, "kabat")
+    assert "mutations" in airrtable_with_analysis.columns
 
     integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
     airr_api = Airr("human")
-    airrtable = airr_api.run_fasta(integration_file)
-    kabat_table = Airr.run_mutational_analysis(airrtable, "kabat")
-    assert "mutations" in kabat_table.table.columns
+    airrtable_light = airr_api.run_fasta(integration_file)
+    airrtable_light["cellid"] = airrtable_light["sequence_id"].str.split("_").str.get(0)
+    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_light, "kabat")
+    assert "mutations" in airrtable_with_analysis.columns
+    link_table = airrtable_heavy.merge(airrtable_light, on="cellid", suffixes=["_heavy", "_light"])
+
+    joined_airr_table = LinkedAirrTable(link_table, key_column="cellid")
+    joined_airr_table_with_analysis = airr_methods.run_mutational_analysis(joined_airr_table, "kabat")
+    assert "mutations_heavy" in joined_airr_table_with_analysis.columns
+    assert "mutations_light" in joined_airr_table_with_analysis.columns
+
+
+def test_igl_assignment():
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
+    airr_api = Airr("human")
+    airrtable_heavy = airr_api.run_fasta(integration_file)
+    airrtable_heavy["cellid"] = airrtable_heavy["sequence_id"].str.split("_").str.get(0)
+    airrtable_with_igl = airr_methods.run_igl_assignment(airrtable_heavy)
+    assert "iGL" in airrtable_with_igl.columns
+
+    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
+    airr_api = Airr("human")
+    airrtable_light = airr_api.run_fasta(integration_file)
+    airrtable_light["cellid"] = airrtable_light["sequence_id"].str.split("_").str.get(0)
+    airrtable_with_igl = airr_methods.run_igl_assignment(airrtable_light)
+    assert "iGL" in airrtable_with_igl.columns
+
+    link_table = airrtable_heavy.merge(airrtable_light, on="cellid", suffixes=["_heavy", "_light"])
+    joined_airr_table = LinkedAirrTable(link_table, key_column="cellid")
+    joined_airr_table_with_analysis = airr_methods.run_igl_assignment(joined_airr_table)
+    assert "iGL_heavy" in joined_airr_table_with_analysis.columns
+    assert "iGL_light" in joined_airr_table_with_analysis.columns
 
 
 def _run_cli(args, tmpfile):
@@ -300,8 +356,7 @@ def test_cli(caplog):
     quereies = glob.glob(get_file("fasta_inputs/") + "*")
     species = ["dog", "rat", "human", "mouse", "macaque", "se09"]
     # ft = ["csv", "json"]
-    functions = ["all", "functional"]
-    products = product(species, ["imgt"], functions, quereies)
+    products = product(species, ["imgt"], quereies)
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
@@ -311,9 +366,7 @@ def test_cli(caplog):
                 p_tuple[0],
                 "--db-type",
                 p_tuple[1],
-                "--gene-type",
                 p_tuple[2],
-                p_tuple[3],
                 tmpfile.name,
                 "--skip-mutation",
             ]
@@ -324,9 +377,8 @@ def test_cli(caplog):
 
 def test_cli_custom():
     quereies = glob.glob(get_file("fasta_inputs/") + "*")
-    species = ["cat", "macaque"]
-    functions = ["all", "functional"]
-    products = product(species, ["custom"], functions, quereies)
+    species = ["cat", "macaque", "dog"]
+    products = product(species, ["custom"], quereies)
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
@@ -336,9 +388,7 @@ def test_cli_custom():
                 p_tuple[0],
                 "--db-type",
                 p_tuple[1],
-                "--gene-type",
                 p_tuple[2],
-                p_tuple[3],
                 tmpfile.name,
                 "--skip-mutation",
             ]
@@ -350,8 +400,7 @@ def test_cli_custom():
 def test_cli_scfv():
     quereies = [get_file("fasta_inputs/scfv.fasta.gz")]
     species = ["human"]
-    functions = ["all", "functional"]
-    products = product(species, ["imgt"], functions, quereies)
+    products = product(species, ["imgt"], quereies)
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
             cli_input = [
@@ -360,12 +409,18 @@ def test_cli_scfv():
                 p_tuple[0],
                 "--db-type",
                 p_tuple[1],
-                "--gene-type",
                 p_tuple[2],
-                p_tuple[3],
                 tmpfile.name,
                 "--skip-mutation",
             ]
             print(f"CLI input {' '.join(cli_input)}")
             test_success = _run_cli(cli_input, tmpfile)
             assert test_success
+
+
+def test_edge_cases():
+    airr_api = Airr("macaque", database="custom", adaptable=False)
+    airr_api.run_single(
+        "bad_seq",
+        "TCCAGTCCCTGCAGGCCGGGAGGCAGGTGACCTCTGCCTCAGACCCCCACTCCAGACACCAGACAGAGGGGCAGGCCCCCCAGAACCAAAGTGGAGGGACGACCCGTCAAGGACAAACCAGACCAAGGGACACTGAGCCCAGCACGGGAAGGTCCCCAGATAGACCAGGAGGTTTCTGGAGGTGTCTGTGCCACAGTGGGGTATAGCAGCAGATCCGACTACGGTAGCAACTTTTGGGACTACTGGGGCCAGGGAGTCCTGGTCACCGTCTCCTCAGCCTCCACCAAGGGCCCATCGGTCTTCCCCCTGGCGCCCTCCTCCAGGAGCACCTCCGAGAGCACAGCGGCCCTGGGC",
+    )

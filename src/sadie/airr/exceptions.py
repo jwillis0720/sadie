@@ -5,6 +5,20 @@ class Error(Exception):
     """Base class for exceptions in this module."""
 
 
+class MissingAirrColumns(Error):
+    """Exception raised for not finiding the igblast module
+
+    Attributes:
+    """
+
+    def __init__(self, missing_columns):
+        super().__init__()
+        self.missing_columns = missing_columns
+
+    def __str__(self):
+        return "Must have all AIRR columns defined, missing {}".format(self.missing_columns)
+
+
 class EmtpyFileError(Error):
     """Exception raised for a file passed to igblast being empty
 

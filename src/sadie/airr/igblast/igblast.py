@@ -11,7 +11,6 @@ import tempfile
 import warnings
 import semantic_version
 from shutil import which
-from io import StringIO
 
 from pathlib import Path
 from typing import List, Union
@@ -20,9 +19,9 @@ from typing import List, Union
 import pandas as pd
 
 # package/module level
-from ..utility.util import is_tool
-from .constants import IGBLAST_AIRR
-from .exceptions import (
+from sadie.utility.util import is_tool
+from sadie.airr.airrtable.constants import IGBLAST_AIRR
+from sadie.airr.exceptions import (
     BadIgBLASTArgument,
     BadIgBLASTExe,
     BadIgDATA,
@@ -252,7 +251,7 @@ class IgBLASTN:
         self.num_j = 3
         self.outfmt = 19
         self.receptor = "Ig"
-        self.word_size = 11
+        self.word_size = 5
         self.nomenclature = "imgt"
         self.gap_open = 5
         self.gap_extend = 2
@@ -260,7 +259,7 @@ class IgBLASTN:
         self.show_translation = True
         self.extend_5 = True
         self.extend_3 = True
-        self.j_penalty = -1
+        self.j_penalty = -2
         self.v_penalty = -1
         self.d_penalty = -1
         self.allow_vdj_overlap = False
@@ -705,7 +704,7 @@ class IgBLASTN:
 
     @allow_vdj_overlap.setter
     def allow_vdj_overlap(self, allow: bool):
-        if self.j_penalty != -3 and self.d_penalty != -4 and allow:
+        if self.j_penalty.value != -3 and self.d_penalty.value != -4 and allow:
             warnings.warn(
                 f"Allows vdj overlap set but j penalty and d penalty need to be -3 and -4, now are {self.j_penalty}, {self.d_penalty}",
                 UserWarning,
@@ -885,50 +884,6 @@ class IgBLASTN:
             Path(tmpfile.name).unlink()
 
         return df
-
-    def run_single(self, q: str) -> pd.DataFrame:
-        """Run Igblast on a single fasta string. This works by encoding the string and passing it to stdin which IGBLAST accepts
-
-        Parameters
-        ----------
-        q : str
-            A string fasta, ex ">my_file\nATCACA...", It is much easier to use airr.run_single as it will handle this for you
-
-        Returns
-        -------
-        pd.DataFrame
-            A dataframe with the IgBLAST results
-
-        Raises
-        ------
-        BadIgBLASTArgument
-            During precheck if any blast arguments are incorrect
-        IgBLASTRunTimeError
-            Any runtime error for igblast
-        """
-        if not isinstance(q, str):
-            raise BadIgBLASTArgument(type(q), "needs to be instance str")
-        if not q:
-            raise BadIgBLASTArgument(q, "Input query is null, please provide sequence")
-
-        # Same as in run_file, we need IGDATA as an environment vairable, so we can copy and pass to subprocess
-        local_env = os.environ.copy()
-        local_env["IGDATA"] = self.igdata
-
-        # Again, precheck to make sure all file paths are set accordingly
-        self._pre_check()
-
-        # run process
-        process = subprocess.run(self.cmd, env=local_env, input=q.encode("utf-8"), capture_output=True)
-
-        # We are also captureing a single sequence by stdout and decoding
-        stdout = process.stdout.decode("utf-8")
-        string_io = StringIO(stdout)
-        stderr = process.stderr
-        if stderr:
-            raise IgBLASTRunTimeError(stderr)
-        else:
-            return pd.read_csv(string_io, sep="\t")
 
     def __repr__(self):
         return "IgBLAST: env IGDATA={} {}".format(str(self.igdata), " ".join(self.cmd))

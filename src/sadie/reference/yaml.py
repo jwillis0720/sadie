@@ -27,17 +27,7 @@ class YamlRef:
         """
         return set(self.yaml.keys())
 
-    def get_functional_keys(self, reference_type: str) -> list:
-        """Return functional types from reference types ex all or functional
-
-        Returns
-        -------
-        list
-            unique types
-        """
-        return list(self.yaml.get(reference_type).keys())
-
-    def get_species_keys(self, reference_type: str, functional: str) -> list:
+    def get_species_keys(self, reference_type: str) -> list:
         """Return functional types from reference types and functional type
 
         Example
@@ -50,9 +40,9 @@ class YamlRef:
         set
             unique types
         """
-        return list(self.yaml.get(reference_type).get(functional).keys())
+        return list(self.yaml.get(reference_type).keys())
 
-    def get_sub_species(self, reference_type: str, functional: str, species: str) -> list:
+    def get_sub_species(self, reference_type: str, species: str) -> list:
         """
         get sub species keys. For instance for humanized mouse, a sub species will be mouse and human
 
@@ -70,7 +60,7 @@ class YamlRef:
         int
             number of sub species
         """
-        return list(self.yaml.get(reference_type).get(functional).get(species).keys())
+        return list(self.yaml.get(reference_type).get(species).keys())
 
     def get_genes(self, reference_type: str, functional: str, species: str, sub_species: str) -> list:
         """Get the genes associated with these keys
@@ -79,8 +69,6 @@ class YamlRef:
         ----------
         reference_type : str
             ex. imgt
-        functional : str
-            ex. functional
         species : str
             ex. human
         sub_species : str
@@ -96,19 +84,15 @@ class YamlRef:
         object.get_genes('imgt','functional','human','human')
         >>> ['IGHV1-2*01','IGHV1-69*01'....]
         """
-        return self.yaml.get(reference_type).get(functional).get(species).get(sub_species)
+        return self.yaml.get(reference_type).get(species).get(sub_species)
 
-    def get_gene_segment(
-        self, reference_type: str, functional: str, species: str, sub_species: str, gene_segment: str
-    ) -> list:
+    def get_gene_segment(self, reference_type: str, species: str, sub_species: str, gene_segment: str) -> list:
         """Get the genes associated with these keys
 
         Parameters
         ----------
         reference_type : str
             ex. imgt
-        functional : str
-            ex. functional
         species : str
             ex. human
         sub_species : str
@@ -122,12 +106,10 @@ class YamlRef:
 
         Examples
         --------
-        object.get_gene_segment('imgt','functional','human','human','V')
+        object.get_gene_segment('imgt','human','human','V')
         >>> ['IGHV1-2*01','IGHV1-69*01'....]
         """
-        return list(
-            filter(lambda x: x[3] == gene_segment, self.get_genes(reference_type, functional, species, sub_species))
-        )
+        return list(filter(lambda x: x[3] == gene_segment, self.get_genes(reference_type, species, sub_species)))
 
     def __repr__(self):
         return self.yaml.__repr__()

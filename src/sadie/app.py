@@ -13,7 +13,7 @@ def sadie(ctx):
     pass
 
 
-@sadie.command()
+@sadie.command("airr")
 @click.pass_context
 @click.option(
     "-v",
@@ -29,7 +29,6 @@ def sadie(ctx):
     help="Species to annotate",
     default="human",
 )
-@click.option("--gene-type", type=click.Choice(["all", "functional"]), default="all", show_default=True)
 @click.option("--db-type", type=click.Choice(["imgt", "custom"]), default="imgt", show_default=True)
 @click.option(
     "--compress",
@@ -61,10 +60,10 @@ def sadie(ctx):
 @click.argument(
     "output", required=False, type=click.Path(file_okay=True, dir_okay=False, writable=True, resolve_path=True)
 )
-def airr(ctx, verbose, species, gene_type, db_type, compress, skip_mutation, in_format, out_format, input, output):
+def airr(ctx, verbose, species, db_type, compress, skip_mutation, in_format, out_format, input, output):
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
-    airr = Airr(species=species, functional=gene_type, database=db_type)
+    airr = Airr(species=species, database=db_type)
 
     # force this so we don't get an error
     if not output and out_format == "infer":
