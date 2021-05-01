@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from pkg_resources import resource_filename
-from sadie.airr import Airr, AirrTable
+from sadie.airr import Airr
 from sadie.airr.airrtable import constants
 
 
@@ -117,8 +117,6 @@ def make_sadie_comparable(df):
     pd.DataFrame
         returns a pandas dataframe for comparison
     """
-    if isinstance(df, AirrTable):
-        df = df.table
 
     # comparison keys between imgt and sadie
     compare_key = list(constants.IGBLAST_AIRR.keys()) + [
@@ -134,22 +132,6 @@ def make_sadie_comparable(df):
     df = df[compare_key].drop(ignore, axis=1)
     df.loc[:, starts_and_ends] = df[starts_and_ends].astype("Int64")
 
-    # Just get the gene top call IGHV1-2*01 -> IGHV1-2
-    df.insert(
-        df.columns.get_loc("v_call_top"),
-        "v_gene_top",
-        df["v_call_top"].str.split("*").str.get(0),
-    )
-    df.insert(
-        df.columns.get_loc("d_call_top"),
-        "d_gene_top",
-        df["d_call_top"].str.split("*").str.get(0),
-    )
-    df.insert(
-        df.columns.get_loc("j_call_top"),
-        "j_gene_top",
-        df["j_call_top"].str.split("*").str.get(0),
-    )
     return df
 
 
@@ -232,35 +214,22 @@ def make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-@pytest.mark.skip(reason="integration tests will change under this active development")
+# @pytest.mark.skip(reason="integration tests will change under this active development")
 def test_imgt_integration():
     # sadie annotate
-    file = fixture_file("OAS_subsample_good_anarci.fasta")
-    airr_api = Airr(species="human", database="imgt", functional="functional", adaptable=True)
-    airr_api_all = Airr(species="human", database="imgt", functional="all", adaptable=True)
-    sadie_airr_functional = airr_api.run_fasta(file)
-    sadie_comparable_functional = make_sadie_comparable(sadie_airr_functional)
-    # sadie_comparable_functional.to_feather("sadie_compare_functional.feather")
-
-    # all
-    sadie_airr_all = airr_api_all.run_fasta(file)
-    sadie_comparable_all = make_sadie_comparable(sadie_airr_all)
-    # sadie_comparable_all.to_feather("sadie_compare_all.feather")
+    file = fixture_file("OAS_subsample_good_anarci_sub1000.fasta")
+    airr_api = Airr(species="human", database="imgt", adaptable=True)
+    sadie_airr = airr_api.run_fasta(file)
+    sadie_comparable = make_sadie_comparable(sadie_airr)
 
     # imgt airr
     imgt_airr = fixture_file("OAS_airr_from_imgtvquest_fl_anarci_good.tsv.gz")
     imgt_df = pd.read_csv(imgt_airr, delimiter="\t", low_memory=False)
     imgt_comparable = make_imgt_comparable(imgt_df)
-    # imgt_comparable.to_feather("imgt_compare.feather")
 
     #  Make the compare dataframe for functional
-    compare = imgt_comparable[check_these] == sadie_comparable_functional[check_these]
+    compare = imgt_comparable[check_these] == sadie_comparable[check_these]
     integration_comparison = pd.read_csv(fixture_file("comparison_df_imgt_sadie_functional.csv.gz"), index_col=0)
-    pd.testing.assert_frame_equal(compare, integration_comparison)
-
-    #  Make the compare dataframe for all
-    compare = imgt_comparable[check_these] == sadie_comparable_all[check_these]
-    integration_comparison = pd.read_csv(fixture_file("comparison_df_imgt_sadie_all.csv.gz"), index_col=0)
     pd.testing.assert_frame_equal(compare, integration_comparison)
 
 
