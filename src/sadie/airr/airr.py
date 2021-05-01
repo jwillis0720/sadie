@@ -72,7 +72,7 @@ class Airr:
         self,
         species: str,
         igblast_exe: Union[Path, str] = "",
-        adaptable: bool = True,
+        adaptable: bool = False,
         database: str = "imgt",
         v_gene_penalty: int = -1,
         d_gene_penalty: int = -1,
@@ -124,15 +124,26 @@ class Airr:
         self._d_gene_penalty = d_gene_penalty
         self._j_gene_penalty = j_gene_penalty
         self._allow_vdj_overlap = allow_vdj_overlap
+        self.adapt_penalty = adaptable
 
         # if we set allow_vdj, we have to adjust penalties
         if self._allow_vdj_overlap:
+            if self.adapt_penalty:
+                logger.warning("allow vdj overlap will be overwritten by adapt_penalty")
             if self._d_gene_penalty != -4:
                 self._d_gene_penalty = -4
                 logger.warning("Allow V(D)J overlap, d_gene_penalty set to -4")
             if self._j_gene_penalty != -3:
                 self._j_gene_penalty = -3
                 logger.warning("Allow V(D)J overlap, j_gene_penalty set to -3")
+
+        # if we set adapt_penalty
+        if self.adapt_penalty:
+            # start with -1 if adaptable pentalty
+            if self._allow_vdj_overlap:
+                logger.warning("Adaptable pentalty resetting J gene penalty to -1")
+            self._v_gene_penalty = -1
+            self._j_gene_penalty = -1
 
         # Properties that will be passed to germline Data Class.
         # Pass theese as private since germline class will handle setter logic
@@ -167,7 +178,6 @@ class Airr:
         self.igblast.temp_dir = self.temp_directory
 
         # set airr specific attributes
-        self.adapt_penalty = adaptable
         self.correct_indel = correct_indel
         self.liable_seqs = []
 
@@ -184,10 +194,6 @@ class Airr:
         if not isinstance(adapt_penalty, bool):
             raise TypeError(f"Adapt_penalty must be bool, not {type(adapt_penalty)}")
         self._adapt_penalty = adapt_penalty
-
-    @property
-    def functional(self) -> str:
-        return self._functional
 
     @property
     def species(self) -> str:
@@ -450,33 +456,71 @@ class Airr:
             result.insert(2, "species", self.species)
             result = AirrTable(result)
             if result["liable"].any():
-                self._liable_seqs = set(result[result["liable"]].sequence_id)
                 # If we allow adaption,
                 if self.adapt_penalty:
-                    logger.info(f"Relaxing penalities to resolve liabilities for {len(self._liable_seqs)}")
-                    _tmp_v = self.igblast.v_penalty.value
-                    _tmp_j = self.igblast.j_penalty.value
+                    # recurse
+                    for v_penalty in range(-2, -4, -1):
+                        for j_penalty in range(-1, -3, -1):
+                            _start_df = result[result["liable"]].copy().reset_index().astype({"index": str})
+                            if _start_df.empty:
+                                logger.info("Corrected all liabilities")
+                                break
+                            adaptable_api = Airr(
+                                self.species,
+                                igblast_exe=self.executable,
+                                database=self._database,
+                                v_gene_penalty=v_penalty,
+                                d_gene_penalty=self._d_gene_penalty,
+                                j_gene_penalty=j_penalty,
+                                allow_vdj_overlap=False,
+                                correct_indel=self.correct_indel,
+                                temp_directory=self.temp_directory,
+                                adaptable=False,
+                            )
+                            adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
+                            adapt_results = (
+                                adapt_results.rename({"sequence_id": "index"}, axis=1)
+                                .astype({"index": int})
+                                .set_index("index")
+                                .rename({"index": ""})
+                            )
+                            logger.info(
+                                f"{len(adapt_results[~adapt_results['liable']])} corrected with adapting penalties v={v_penalty},j={j_penalty}"
+                            )
+                            if adapt_results[~adapt_results["liable"]].empty:
+                                logger.info("Skipping update...")
+                                continue
+                            result.update(adapt_results[~adapt_results["liable"]])
 
-                    # Set these to adaptable
-                    self.igblast.v_penalty = -2
-                    self.igblast.j_penalty = -1
-
-                    # Set to false so we can call recursive
-                    self.adapt_penalty = False
-                    liable_dataframe = result[result["sequence_id"].isin(self._liable_seqs)]
-
-                    # Will call without adaptive
-                    adaptable_results = self.run_dataframe(liable_dataframe, "sequence_id", "sequence")
-
-                    adaptable_not_liable = adaptable_results[~adaptable_results["liable"]]
-                    logger.info(f"Corrected {len(adaptable_not_liable)} sequences")
-                    airr_table = result.set_index("sequence_id")
-                    airr_table.update(adaptable_not_liable.set_index("sequence_id"))
-                    airr_table = airr_table.reset_index()
-                    self.igblast.v_penalty = _tmp_v
-                    self.igblast.j_penalty = _tmp_j
-                    self.adapt_penalty = True
-                    result = AirrTable(airr_table)
+                    # finally try to correct liabilites with VDJ overlap
+                    _start_df = result[result["liable"]].copy().reset_index().astype({"index": str})
+                    if _start_df.empty:
+                        logger.info("Corrected all liabilities")
+                    else:
+                        adaptable_api = Airr(
+                            self.species,
+                            igblast_exe=self.executable,
+                            database=self._database,
+                            d_gene_penalty=self._d_gene_penalty,
+                            allow_vdj_overlap=True,
+                            correct_indel=self.correct_indel,
+                            temp_directory=self.temp_directory,
+                            adaptable=False,
+                        )
+                        adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
+                        adapt_results = (
+                            adapt_results.rename({"sequence_id": "index"}, axis=1)
+                            .astype({"index": int})
+                            .set_index("index")
+                            .rename({"index": ""})
+                        )
+                        logger.info(
+                            f"{len(adapt_results[~adapt_results['liable']])} corrected with adapting penalties v={v_penalty},j={j_penalty}"
+                        )
+                        if adapt_results[~adapt_results["liable"]].empty:
+                            logger.info("Skipping update...")
+                        else:
+                            result.update(adapt_results[~adapt_results["liable"]])
 
         if self.correct_indel:
             result.correct_indel()
