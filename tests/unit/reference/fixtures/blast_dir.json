@@ -86,5 +86,8 @@
     "/imgt/Ig/blastdb/se684_D.fasta",
     "/imgt/Ig/blastdb/se684_J.fasta",
     "/custom/Ig/blastdb/dog_D.fasta",
-    "/imgt/Ig/blastdb/se16_V.fasta"
+    "/imgt/Ig/blastdb/se16_V.fasta",
+    "/imgt/Ig/blastdb/se0916_D.fasta",
+    "/imgt/Ig/blastdb/se0916_V.fasta",
+    "/imgt/Ig/blastdb/se0916_J.fasta"
 ]
