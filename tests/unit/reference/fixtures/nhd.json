@@ -116,5 +116,9 @@
     "/imgt/Ig/internal_data/se684/se684_V.nhd",
     "/imgt/Ig/blastdb/se16_D.nhd",
     "/imgt/Ig/blastdb/se16_J.nhd",
-    "/imgt/Ig/blastdb/se684_V.nhd"
+    "/imgt/Ig/blastdb/se684_V.nhd",
+    "/imgt/Ig/blastdb/se0916_J.nhd",
+    "/imgt/Ig/blastdb/se0916_V.nhd",
+    "/imgt/Ig/blastdb/se0916_D.nhd",
+    "/imgt/Ig/internal_data/se0916/se0916_V.nhd"
 ]
