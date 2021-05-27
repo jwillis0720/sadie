@@ -27,7 +27,10 @@
         alt="pre commit">
     <a href="https://github.com/pre-commit/pre-commit">
     <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
-        alr='pypi'>
+        alt='pypi'>
+    <a href="https://app.netlify.com/sites/sadie-docs/deploys" >
+    <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
+        alt="Documentation">
 </div>
 
 <p align="center" style="color:green">
