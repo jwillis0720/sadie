@@ -35,3 +35,4 @@ sadie.code-workspace
 local_gene_reference/*
 notebooks/*
 htmlcov*
+site/*
