@@ -4,6 +4,10 @@ site_description: SADIE:Sequencing Analysis and Data library for Immunoinformati
 site_url: http://sadie.jordanrwillis.com/
 theme:
   name: material
+  icon:
+    logo: material/dog
+    # logo: fontawesome/solid/dog
+  favicon: img/favico.png
   palette:
   - scheme: default
     primary: white
