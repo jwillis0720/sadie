@@ -1,7 +1,8 @@
-<h1 align="center">
+<p align="center" style="font-family:verdana;font-size:140%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata library for <b>I</b>mmunoinformatics <b>E</b>xploration</p>
+<h2 align="center">
   <br>
-  <img src="img/Social3.png" alt="SADIE" style="width:100%">
-</h1>
+  <img src="img/Sadie.svg" alt="SADIE" style="width:90%;margin-bottom:30px;">
+</h2>
 
 <div class="flex-container" align="center">
     <!-- <a href="https://github.com/jwillis0720/sadie/commits/master">

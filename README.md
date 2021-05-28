@@ -1,7 +1,8 @@
-<h1 align="center">
+<p align="center" style="font-family:verdana;font-size:300%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata library<br>for <b>I</b>mmunoinformatics <b>E</b>xploration</p>
+<h2 align="center">
   <br>
-  <img src="images/Social3.png" alt="SADIE" style="width:80%">
-</h1>
+  <img src="docs/img/Sadie.svg" alt="SADIE" style="width:90%">
+</h2>
 
 <div class="flex-container" align="center">
     <a href="https://github.com/jwillis0720/sadie/commits/master">
@@ -42,33 +43,51 @@
   <!-- <a href="#support">Support</a> • -->
   <a href="#license">License</a>
 </p>
-
 ## About
 
- SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The goals of the SADIE project is to:
+---
 
-- Provide pre-built command line apps for popular immunoformatics applications.
-- Provide a low level API framework for immunoformatics developers to build higher level tools.
-- Provide testable and reusable library that WORKS!
-- Maintain data formats consistent with standards governed by the [AIRR community](https://docs.airr-community.org/en/stable/#table-of-contents)
+<!-- use a href so you can use _blank to open new tab -->
+**Documentation**: <a href="https://sadie.jordanrwillis.com" target="_blank">https://sadie.jordanrwillis.com</a>
 
-SADIE is billed as a "complete antibody library" because it contains both low, mid and high level functionality for immunoformatics tools and workflows. You can use SADIE as a framework to develop your own tools, use many of the prebuilt contributed tools, or run it in a notebook to enable data exploration. In addition, SADIE aims to port all code to python because relies heavily on the [Pandas](www.pandas.org) library, the workhorse of the data science/machine learning age.
+**Source Code**: <a href="https://github.com/jwillis0720/sadie" target="_blank">https://github.com/jwillis0720/sadie</a>
+
+---
+
+ SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key features the SADIE project are to  to:
+
+* Provide pre-built **command line apps** for popular immunoformatics applications.
+
+* Provide a **low-level API framework** for immunoformatics developers to build higher level tools.
+
+* Provide **testable** and **reusable** library that WORKS!
+
+* Maintain data formats consistent with standards governed by the [**AIRR community**](https://docs.airr-community.org/en/stable/#table-of-contents)
+
+* **Portability** ready to use out the box.
+
+SADIE is billed as a "**complete antibody library**", not because it aims to do everything, but because it aims to meet the needs of all immunoformatics users. SADIE contains both low, mid and high level functionality for immunoformatics tools and workflows. You can use SADIE as a framework to develop your own tools, use many of the prebuilt contributed tools, or run it in a notebook to enable data exploration. In addition, SADIE aims to port all code to python because relies heavily on the [Pandas](https://www.pandas.org) library, the workhorse of the data science/machine learning age.
 
 ## Installation
 
-Installation can be handled with the python package installer `pip`
+---
 
-```
-# Install with pip
-pip install sadie-antibody
+Installation is handled using the python package installer `pip`
 
-
-#Or Install and develop
-pip install -r requirements.txt
-pip install -e .
+```console
+$ pip install sadie-antibody
 ```
 
-## Usage
+
+### Development installation.
+
+Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses pre-commit, linting and the [black](https://github.com/psf/black) to maintain strict, but ultimately readable code.
+
+```console
+$ git clone git@github.com/jwillis0720/sadie.git
+$ pip install -e .[dev]
+```
+## Minimal Usage
 
 SADIE is divided into modules depending on the task.
 
@@ -76,7 +95,7 @@ SADIE is divided into modules depending on the task.
 
 At the heart of every workflow is the need to annotate a nucleotide sequence. This is accomplished using `sadie.airr`.
 
-#### Command line usage
+### Command line usage
 ```
 # annotate antibody sequences only from functional human imgt antibodies
 # sequences will output to a gzipped csv
