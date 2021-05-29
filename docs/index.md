@@ -48,17 +48,17 @@
 
  SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key features the SADIE project are to  to:
 
-* Provide pre-built **command line apps** for popular immunoformatics applications.
+* Provide pre-built **command line apps** for popular immunoinformatics applications.
 
-* Provide a **low-level API framework** for immunoformatics developers to build higher level tools.
+* Provide a **low-level API framework** for immunoinformatics developers to build higher level tools.
 
-* Provide **testable** and **reusable** library that WORKS!
+* Provide a **testable** and **reusable** library that WORKS!
 
 * Maintain data formats consistent with standards governed by the [**AIRR community**](https://docs.airr-community.org/en/stable/#table-of-contents)
 
 * **Portability** ready to use out the box.
 
-SADIE is billed as a "**complete antibody library**", not because it aims to do everything, but because it aims to meet the needs of all immunoformatics users. SADIE contains both low, mid and high level functionality for immunoformatics tools and workflows. You can use SADIE as a framework to develop your own tools, use many of the prebuilt contributed tools, or run it in a notebook to enable data exploration. In addition, SADIE aims to port all code to python because relies heavily on the [Pandas](https://www.pandas.org) library, the workhorse of the data science/machine learning age.
+SADIE is billed as a "**complete antibody library**", not because it aims to do everything, but because it aims to meet the needs of all immunoinformatics users. SADIE contains both low, mid and high level functionality for immunoinformatics tools and workflows. You can use SADIE as a framework to develop your own tools, use many of the prebuilt contributed tools, or run it in a notebook to enable data exploration. In addition, SADIE aims to port all code to python because relies heavily on the [Pandas](https://www.pandas.org) library, the workhorse of the data science/machine learning age.
 
 ## Installation
 
