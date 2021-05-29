@@ -1,4 +1,4 @@
-<p align="center" style="font-family:verdana;font-size:140%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata library for <b>I</b>mmunoinformatics <b>E</b>xploration</p>
+<p align="center" style="font-family:verdana;font-size:140%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</p>
 <h2 align="center">
   <br>
   <img src="img/Sadie.svg" alt="SADIE" style="width:90%;margin-bottom:30px;">
