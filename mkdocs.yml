@@ -1,12 +1,13 @@
 #
 site_name: SADIE
-site_description: SADIE:Sequencing Analysis and Data library for Immunoinformatics Exploration
+site_description: Sequencing Analysis and Data Library for Immunoinformatics Exploration
 site_url: http://sadie.jordanrwillis.com/
 theme:
   name: material
+  custom_dir: docs/overrides
   icon:
     logo: material/dog
-    # logo: fontawesome/solid/dog
+    # logo: fontawesome/solid/do
   favicon: img/favico.png
   palette:
   - scheme: default
@@ -35,6 +36,7 @@ markdown_extensions:
 - admonition
 - codehilite
 - extra
+- meta
 - pymdownx.snippets
 - codehilite
 - pymdownx.superfences:
