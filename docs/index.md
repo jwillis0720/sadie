@@ -1,8 +1,7 @@
-<p align="center" style="font-family:verdana;font-size:140%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</p>
-<h2 align="center">
-  <br>
-  <img src="img/Sadie.svg" alt="SADIE" style="width:90%;margin-bottom:30px;">
-</h2>
+<h2 align="center" style="font-family:verdana;font-size:150%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</h2>
+<div align="center">
+  <img src="img/Sadie-Big.png" alt="SADIE" style="margin:0.5em">
+</div>
 
 <div class="flex-container" align="center">
     <!-- <a href="https://github.com/jwillis0720/sadie/commits/master">
@@ -46,13 +45,15 @@
 
 ---
 
- SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key features the SADIE project are to  to:
+ SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key feautures include:
 
 * Provide pre-built **command line apps** for popular immunoinformatics applications.
 
 * Provide a **low-level API framework** for immunoinformatics developers to build higher level tools.
 
 * Provide a **testable** and **reusable** library that WORKS!
+
+* Provide a **customizable** and **verified** germline reference library.
 
 * Maintain data formats consistent with standards governed by the [**AIRR community**](https://docs.airr-community.org/en/stable/#table-of-contents)
 
@@ -67,6 +68,7 @@ SADIE is billed as a "**complete antibody library**", not because it aims to do 
 Installation is handled using the python package installer `pip`
 
 <div class="termy">
+
 ```console
 $ pip install sadie-antibody
 
@@ -78,9 +80,10 @@ $ pip install sadie-antibody
 ### Development installation.
 
 !!! info
-    Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses pre-commit, linting and the [black](https://github.com/psf/black) to maintain strict, but ultimately readable code.
+    Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
 
 <div class="termy">
+
 ```console
 $ git clone git@github.com/jwillis0720/sadie.git
 $ pip install -e .[dev]
