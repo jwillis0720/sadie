@@ -101,7 +101,7 @@ Annotate antibody sequences only from functional human imgt antibodies to a gzip
 <div class="termy">
 
 ```console
-$ airr -q my_sequecnes.fasta -s human -d imgt
+$ sadie airr -s human -db-type imgt my_sequences.fasta output.csv
 ```
 
 </div>
