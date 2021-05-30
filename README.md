@@ -1,13 +1,13 @@
-<p align="center" style="font-family:verdana;font-size:300%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata library<br>for <b>I</b>mmunoinformatics <b>E</b>xploration</p>
-<h2 align="center">
-  <br>
-  <img src="docs/img/Sadie.svg" alt="SADIE" style="width:90%">
-</h2>
+<!-- <h2 align="center" style="font-family:verdana;font-size:150%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</h2> -->
+<p align="center" style="font-family:verdana;font-size:150%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</p>
+<div align="center">
+  <img src="img/Sadie-Big.png" alt="SADIE" style="margin:0.5em;width:50%">
+</div>
 
 <div class="flex-container" align="center">
-    <a href="https://github.com/jwillis0720/sadie/commits/master">
+    <!-- <a href="https://github.com/jwillis0720/sadie/commits/master">
     <img src="https://img.shields.io/github/commit-activity/y/jwillis0720/sadie?style=flat-square"
-         alt="GitHub commits">
+         alt="GitHub commits"> -->
     <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
     <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
          alt="Linux Build">
@@ -29,20 +29,11 @@
     <a href="https://github.com/pre-commit/pre-commit">
     <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
         alt='pypi'>
-    <a href="https://sadie.jordanrwillis.com" >
+    <a href="https://app.netlify.com/sites/sadie-docs/deploys" >
     <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
         alt="Documentation">
+    </a>
 </div>
-
-<p align="center" style="color:green">
-  <a href="#about">About</a> •
-  <a href="#installation">Installation</a> •
-  <a href="#usage">Usage Quickstart</a> •
-  <!-- <a href="#contributing">Contributing</a> • -->
-  <!-- <a href="#credits">Credits</a> • -->
-  <!-- <a href="#support">Support</a> • -->
-  <a href="#license">License</a>
-</p>
 
 ## About
 
@@ -55,13 +46,15 @@
 
 ---
 
- SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key features the SADIE project are to  to:
+ SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key feautures include:
 
 * Provide pre-built **command line apps** for popular immunoinformatics applications.
 
 * Provide a **low-level API framework** for immunoinformatics developers to build higher level tools.
 
-* Provide **testable** and **reusable** library that WORKS!
+* Provide a **testable** and **reusable** library that WORKS!
+
+* Provide a **customizable** and **verified** germline reference library.
 
 * Maintain data formats consistent with standards governed by the [**AIRR community**](https://docs.airr-community.org/en/stable/#table-of-contents)
 
@@ -75,6 +68,7 @@ SADIE is billed as a "**complete antibody library**", not because it aims to do 
 
 Installation is handled using the python package installer `pip`
 
+
 ```console
 $ pip install sadie-antibody
 ```
@@ -82,30 +76,33 @@ $ pip install sadie-antibody
 
 ### Development installation.
 
-Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses pre-commit, linting and the [black](https://github.com/psf/black) to maintain strict, but ultimately readable code.
+!!! info
+    Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
+
 
 ```console
 $ git clone git@github.com/jwillis0720/sadie.git
 $ pip install -e .[dev]
 ```
-## Minimal Usage
 
-SADIE is divided into modules depending on the task.
 
-### SADIE.AIRR
+## The Littest Usage
 
-At the heart of every workflow is the need to annotate a nucleotide sequence. This is accomplished using `sadie.airr`.
+Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 
-### Command line usage
+### Command Line Usage
+
+Annotate antibody sequences only from functional human imgt antibodies to a gzip output
+
+
+```console
+$ airr -q my_sequecnes.fasta -s human -d imgt
 ```
-# annotate antibody sequences only from functional human imgt antibodies
-# sequences will output to a gzipped csv
-airr -q my_sequecnes.fasta --functional -s human -d imgt -z gzip
-```
 
-#### API
 
-```
+### API
+
+```python
 # define a single sequence
 pg9_seq = """
     CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
