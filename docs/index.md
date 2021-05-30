@@ -71,7 +71,6 @@ Installation is handled using the python package installer `pip`
 
 ```console
 $ pip install sadie-antibody
-
 ---> 100%
 ```
 
@@ -90,3 +89,49 @@ $ pip install -e .[dev]
 ```
 
 </div>
+
+## The Littest Usage
+
+Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
+
+### Command Line Usage
+
+Annotate antibody sequences only from functional human imgt antibodies to a gzip output
+
+<div class="termy">
+
+```console
+$ airr -q my_sequecnes.fasta -s human -d imgt
+```
+
+</div>
+
+### API
+
+```python
+# define a single sequence
+pg9_seq = """
+    CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
+    CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
+    GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
+    AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
+    TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
+    TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
+    "\n", ""
+)
+
+# initialize the api
+air_api = Airr("human")
+
+# run single sequence
+airr_table = air_api.run_single("PG9", pg9_seq)
+
+# or run file
+airr_table = air_api.run_file("myfile.fasta")
+```
+
+## License
+
+[![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
+
+- Copyright © Jordan R. Willis
