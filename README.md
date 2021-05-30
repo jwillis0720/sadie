@@ -1,6 +1,6 @@
 <!-- <h2 align="center" style="font-family:verdana;font-size:150%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</h2> -->
 <h2 align="center" style="font-family:verdana;font-size:150%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</h2>
-<div align="left">
+<div align="center">
   <img src="https://repository-images.githubusercontent.com/313568721/5adf0900-c0d7-11eb-921d-36288bd44b7c" alt="SADIE" style="margin:0.5em;width:50%">
 </div>
 
