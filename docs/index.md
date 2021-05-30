@@ -90,7 +90,7 @@ $ pip install -e .[dev]
 
 </div>
 
-## The Littest Usage
+## The Littlest Usage
 
 Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 
