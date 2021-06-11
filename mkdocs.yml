@@ -27,6 +27,7 @@ repo_name: jwillis0720/sadie
 repo_url: https://github.com/jwillis0720/sadie
 plugins:
 - search
+- git-revision-date
 markdown_extensions:
 - toc:
     permalink: true
