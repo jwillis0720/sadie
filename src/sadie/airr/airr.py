@@ -80,6 +80,7 @@ class Airr:
         allow_vdj_overlap: bool = False,
         correct_indel: bool = True,
         temp_directory: Union[str, Path, None] = None,
+        num_cpus: int = -1,
     ):
         """Airr constructor
 
@@ -166,6 +167,11 @@ class Airr:
         self.igblast.germline_db_j = self.germline_data.j_gene_dir
         self.igblast.aux_path = self.germline_data.aux_path
         self.igblast.organism = self.species
+
+        if num_cpus == -1:
+            self.igblast.num_threads = os.cpu_count()
+        else:
+            self.igblast.num_threads = num_cpus
 
         # setting penalties
         self.igblast.v_penalty = self._v_gene_penalty

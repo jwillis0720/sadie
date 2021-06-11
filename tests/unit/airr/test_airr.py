@@ -138,6 +138,10 @@ def test_airr_single_sequence():
     air_api.run_single("two_heavy", pg9_seq_heavy + pg9_seq_heavy, scfv=True)
     air_api.run_single("two_light", pg9_seq_light + pg9_seq_light, scfv=True)
 
+    # run with 1 cpu
+    air_api = Airr("human", adaptable=False, num_cpus=1)
+    airr_table = air_api.run_single("PG9", pg9_seq)
+
 
 def test_run_multiple():
     airr = Airr("human", adaptable=False)
