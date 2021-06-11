@@ -135,3 +135,5 @@ airr_table = air_api.run_file("myfile.fasta")
 [![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
 
 - Copyright © Jordan R. Willis
+
+Page last revised on: {{ git_revision_date }}
