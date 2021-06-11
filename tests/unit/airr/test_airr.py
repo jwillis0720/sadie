@@ -297,7 +297,11 @@ def test_mutational_analysis():
     airr_api = Airr("human")
     airrtable_heavy = airr_api.run_fasta(integration_file)
     airrtable_heavy["cellid"] = airrtable_heavy["sequence_id"].str.split("_").str.get(0)
-    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_heavy, "kabat")
+    # airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_heavy, "kabat")
+    # assert "mutations" in airrtable_with_analysis.columns
+
+    # see if we can do it with no multiproc
+    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_heavy, "kabat", run_multiproc=False)
     assert "mutations" in airrtable_with_analysis.columns
 
     integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"

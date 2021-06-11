@@ -12,7 +12,7 @@ logger = logging.getLogger("AirrMethod")
 
 
 def run_mutational_analysis(
-    airrtable: Union[AirrTable, LinkedAirrTable], scheme: str
+    airrtable: Union[AirrTable, LinkedAirrTable], scheme: str, run_multiproc=True
 ) -> Union[AirrTable, LinkedAirrTable]:
     """Run a mutational analysis given a numbering scheme. Returns an AirrTable with added mutational analysis columns
 
@@ -42,8 +42,8 @@ def run_mutational_analysis(
     if airrtable.__class__ == LinkedAirrTable:
         # split table into left and right (heavy and light) tables
         left_table, right_table = airrtable.get_split_table()
-        left_table = run_mutational_analysis(left_table, scheme)
-        right_table = run_mutational_analysis(right_table, scheme)
+        left_table = run_mutational_analysis(left_table, scheme, run_multiproc)
+        right_table = run_mutational_analysis(right_table, scheme, run_multiproc)
         key = airrtable.key_column
         return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=airrtable.suffixes), key_column=key)
 
@@ -52,7 +52,7 @@ def run_mutational_analysis(
 
     # create anarci api
     logger.info("Running ANARCI on germline alignment")
-    anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"])
+    anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)
     germline_results_anarci = anarci_api.run_dataframe(
         airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,
