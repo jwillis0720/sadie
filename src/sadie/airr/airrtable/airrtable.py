@@ -256,7 +256,7 @@ class AirrTable(pd.DataFrame):
                 for call in ["v_call", "d_call", "j_call"]:
 
                     # pure light chain columns won't have a dcall
-                    if call + suffix not in self.columns:
+                    if call + suffix == "d_call_light":
                         continue
 
                     new_call = call + f"top{suffix}"
