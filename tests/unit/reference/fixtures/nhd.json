@@ -1,4 +1,8 @@
 [
+    "/imgt/Ig/internal_data/clk/clk_V.nhd",
+    "/imgt/Ig/blastdb/clk_D.nhd",
+    "/imgt/Ig/blastdb/clk_V.nhd",
+    "/imgt/Ig/blastdb/clk_J.nhd",
     "/custom/Ig/blastdb/cat_D.nhd",
     "/custom/Ig/blastdb/cat_J.nhd",
     "/custom/Ig/blastdb/cat_V.nhd",
