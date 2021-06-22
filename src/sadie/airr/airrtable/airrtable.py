@@ -259,7 +259,7 @@ class AirrTable(pd.DataFrame):
                     if call + suffix == "d_call_light":
                         continue
 
-                    new_call = call + f"top{suffix}"
+                    new_call = call + f"_top{suffix}"
                     # drop the volumn if it's already there, that helps with backwards compatibility
                     if new_call in self.columns:
                         self.drop(new_call, inplace=True, axis=1)
