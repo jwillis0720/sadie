@@ -6,6 +6,7 @@ import warnings
 from functools import partial
 from mimetypes import guess_type
 from pathlib import Path
+from typing import Union
 
 import pandas as pd
 
@@ -196,9 +197,86 @@ def correct_alignment(X: pd.Series, field_1: str, field_2: str) -> pd.Series:
         )
     alignment_1_aa_corrected = alignments[0][0]
     alignment_2_aa_corrected = alignments[0][1]
-    return pd.Series(
-        {
-            field_1: alignment_1_aa_corrected,
-            field_2: alignment_2_aa_corrected,
-        }
+    return pd.Series({field_1: alignment_1_aa_corrected, field_2: alignment_2_aa_corrected})
+
+
+def get_consensus_of_paired_end_abi(abi_file_1: Union[str, Path], abi_file_2: Union[str, Path]) -> str:
+    """Get consensus of paired end ABI files. Get base of higher quality read.
+
+    Parameters
+    ----------
+    abi_file_1 : Union[str, Path]
+        Path to first ABI file. Forward read.
+
+    abi_file_2 : [type]
+        Path to second ABI file. Reverse read. Must be reverse compliment of abi_file_1.
+
+    Returns
+    -------
+    str
+        The consensus sequence
+
+    """
+    # get the reads
+    reads_1 = SeqIO.parse(abi_file_1, "abi-trim")
+    reads_2 = SeqIO.parse(abi_file_2, "abi-trim")
+    # get the read
+    read_1 = next(reads_1)
+    read_2 = next(reads_2)
+    # get the read's seq
+    seq_1 = read_1.seq
+    seq_2 = read_2.seq
+    # get the first read's phred
+    phred_1 = read_1.letter_annotations["phred_quality"]
+    phred_2 = read_2.letter_annotations["phred_quality"][::-1]
+
+    # get the alignment of the two seqs with high gap penalties
+    alignments = pairwise2.align.globalms(
+        seq_1,
+        seq_2.reverse_complement(),
+        4,
+        -1,
+        -12,
+        -4,
+        penalize_extend_when_opening=True,
+        penalize_end_gaps=False,
     )
+
+    # get top scoring
+    top_alignment = alignments[0]
+
+    # destructure
+    seq_1_aligned, seq_2_aligned = top_alignment[0], top_alignment[1]
+
+    # set indexes to zero
+    phred_1_indexer, phred_2_indexer = 0, 0
+    consensus_seq = ""
+    for i in range(len(seq_1_aligned)):
+        seq_1_position = seq_1_aligned[i]
+        seq_2_position = seq_2_aligned[i]
+        if seq_1_position == "-":
+            consensus_seq += seq_2_position
+            phred_2_indexer += 1
+        elif seq_2_position == "-":
+            consensus_seq += seq_1_position
+            phred_1_indexer += 1
+        elif seq_1_position == seq_2_position:
+            consensus_seq += seq_1_aligned[i]
+            phred_1_indexer += 1
+            phred_2_indexer += 1
+        elif seq_1_position != seq_2_position:
+            if seq_1_position == "N" and seq_2_position != "N":
+                consensus_seq += seq_2_position
+            elif seq_2_position == "N" and seq_1_position != "N":
+                consensus_seq += seq_1_position
+            else:
+                if phred_1[phred_1_indexer] > phred_2[phred_2_indexer]:
+                    consensus_seq += seq_1_position
+                else:
+                    consensus_seq += seq_2_position
+            phred_1_indexer += 1
+            phred_2_indexer += 1
+
+        else:
+            raise ValueError(f"Should not have reached this block for positon {i}")
+    return consensus_seq
