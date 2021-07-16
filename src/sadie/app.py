@@ -3,6 +3,7 @@ import logging
 import sys
 import click
 from .airr import Airr
+from .airr.methods import run_igl_assignment, run_mutational_analysis
 from .utility.util import get_verbosity_level
 from .utility import SadieIO
 
@@ -38,6 +39,7 @@ def sadie(ctx):
     default="infer",
 )
 @click.option("--skip-mutation", is_flag=True, help="Skip the somewhat time instansive mutational analysis")
+@click.option("--skip-igl", is_flag=True, help="Skip the igl assignment")
 @click.option(
     "--in-format",
     type=click.Choice(["infer", "fasta", "fastq", "ab1"]),
@@ -60,7 +62,7 @@ def sadie(ctx):
 @click.argument(
     "output", required=False, type=click.Path(file_okay=True, dir_okay=False, writable=True, resolve_path=True)
 )
-def airr(ctx, verbose, species, db_type, compress, skip_mutation, in_format, out_format, input, output):
+def airr(ctx, verbose, species, db_type, compress, skip_igl, skip_mutation, in_format, out_format, input, output):
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
     airr = Airr(species=species, database=db_type)
@@ -78,7 +80,10 @@ def airr(ctx, verbose, species, db_type, compress, skip_mutation, in_format, out
         airr_table = airr.run_records(io.get_input_records())
     # now get mutation analysis
     if not skip_mutation:
-        airr_table = Airr.run_mutational_analysis(airr_table, "kabat")
+        airr_table = run_mutational_analysis(airr_table, "kabat")
+
+    if not skip_igl:
+        airr_table = run_igl_assignment(airr_table)
 
     # handle output
     click.echo(f"Writing {len(airr_table)} to output to {io.output} file")
