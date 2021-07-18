@@ -39,8 +39,7 @@ class AirrTable(pd.DataFrame):
     >>> df = pd.read_csv("tests/fixtures/heavy_lev_sample.csv.gz")
     >>> at = AirrTable(df)
 
-    The pandas table is held in the the table attribute
-    >>> at.table.columns
+    >>> at.columns
     >>> ['sequence_id', 'cdr1', 'cdr1_aa', 'cdr1_end', 'cdr1_start', 'cdr2',
         'cdr2_aa', 'cdr2_end', 'cdr2_start', 'cdr3', 'cdr3_aa',
         'cdr3_aa_length', 'cdr3_end', 'cdr3_start', 'complete_vdj',
@@ -171,10 +170,9 @@ class AirrTable(pd.DataFrame):
             for _, row in self.iterrows():
                 f.write(f">{row[id_field]}\n{row[sequence_field]}\n")
 
-    # IO
     def get_genbank(self):
         _genbanks = []
-        # I'm no sure there is a better way to do this other than go through one by one
+        # go through as an iterator
         for row in self.iterrows():
             _genbanks.append(AirrTable.parse_row_to_genbank(row))
         return _genbanks
@@ -196,13 +194,7 @@ class AirrTable(pd.DataFrame):
         if missing_columns:
             raise MissingAirrColumns(missing_columns)
 
-        # # if Linked DataFrame, we need the key column that links them
-        # if hasattr(self, "key_column"):
-        #     key_column = self.key_column
-        #     if key_column not in self.columns:
-        #         raise ValueError(f"{key_column} is not in the LinkedAirrTable columns")
-
-        # drop any unneeded columns
+        # drop any unnamed columns
         self.drop([i for i in self.columns if "Unnamed" in i], axis=1, inplace=True)
 
         # set boolean strings to boolelan types
@@ -428,13 +420,44 @@ class AirrTable(pd.DataFrame):
                 )
                 # Correction in place
                 airrtable.update(correction_alignments)
-                airrtable.loc[indel_indexes, f"{field_2}_corrected"] = True
+            airrtable.loc[indel_indexes, f"{field_2}_corrected"] = True
             return airrtable
 
         for field_1, field_2 in _fields:
             airrtable = _update_align(airrtable, field_1, field_2)
 
         return self.__class__(airrtable)
+
+    @property
+    def germline_alignment_table(self) -> pd.DataFrame:
+        """
+        Return the germline alignment table. This table is a pandas dataframe set with run_mutational_analysis
+        """
+        if not hasattr(self, "_germline_alignment_table"):
+            raise AttributeError(
+                "This AirrTable does not have a germline_alignment_table, set with airrtable.run_mutational_analsis()"
+            )
+        return self._germline_alignment_table
+
+    @germline_alignment_table.setter
+    def germline_alignment_table(self, germline_alignment_table: pd.DataFrame):
+        if not isinstance(germline_alignment_table, pd.DataFrame):
+            raise TypeError("germline_alignment_table must be a pandas.DataFrame")
+        self._germline_alignment_table = germline_alignment_table
+
+    @property
+    def mature_alignment_table(self) -> pd.DataFrame:
+        if not hasattr(self, "_mature_alignment_table"):
+            raise AttributeError(
+                "This AirrTable does not have a mature_alignment_table, set with airrtable.run_mutational_analsis()"
+            )
+        return self._mature_alignment_table
+
+    @mature_alignment_table.setter
+    def mature_alignment_table(self, mature_alignment_table: pd.DataFrame):
+        if not isinstance(mature_alignment_table, pd.DataFrame):
+            raise TypeError("mature_alignment_table must be a pandas.DataFrame")
+        self._mature_alignment_table = mature_alignment_table
 
     @staticmethod
     def parse_row_to_genbank(row: Tuple[int, pd.core.series.Series], suffix="") -> SeqRecord:

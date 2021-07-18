@@ -297,12 +297,11 @@ def test_adaptable_penalty():
 
 
 def test_mutational_analysis():
+    # this should be a fixture
     integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
     airr_api = Airr("human")
     airrtable_heavy = airr_api.run_fasta(integration_file)
     airrtable_heavy["cellid"] = airrtable_heavy["sequence_id"].str.split("_").str.get(0)
-    # airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_heavy, "kabat")
-    # assert "mutations" in airrtable_with_analysis.columns
 
     # see if we can do it with no multiproc
     airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_heavy, "kabat", run_multiproc=False)
@@ -323,6 +322,7 @@ def test_mutational_analysis():
 
 
 def test_igl_assignment():
+    # this should be a fixture
     integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
     airr_api = Airr("human")
     airrtable_heavy = airr_api.run_fasta(integration_file)
@@ -363,10 +363,23 @@ def test_cli(caplog):
     # IMGT DB
     quereies = glob.glob(get_file("fasta_inputs/") + "*")
     species = ["dog", "rat", "human", "mouse", "macaque", "se09"]
-    # ft = ["csv", "json"]
     products = product(species, ["imgt"], quereies)
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
+        # run 1 with mutational analysis
+        cli_input = [
+            "-v",
+            "--species",
+            "human",
+            "--db-type",
+            "imgt",
+            get_file("fasta_inputs/PG9_H_multiple.fasta"),
+            tmpfile.name,
+        ]
+        print(f"CLI input {' '.join(cli_input)}")
+        test_success = _run_cli(cli_input, tmpfile)
+        assert test_success
+
         for p_tuple in products:
             cli_input = [
                 "-v",
