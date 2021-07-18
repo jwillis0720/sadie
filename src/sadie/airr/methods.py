@@ -76,8 +76,10 @@ def run_mutational_analysis(
     logger.info(f"Can run mutational analysis on {len(common_results)} out of {len(airrtable)} results")
     germline_results_anarci = germline_results_anarci.loc[germline_results_anarci["Id"].isin(common_results), :]
     germline_results_anarci_at = germline_results_anarci.get_alignment_table()
+    airrtable.germline_alignment_table = germline_results_anarci_at
     mature_results_anarci = mature_results_anarci.loc[mature_results_anarci["Id"].isin(common_results), :]
     mature_results_anarci_at = mature_results_anarci.get_alignment_table()
+    airrtable.mature_alignment_table = mature_results_anarci_at
     lookup_dataframe = (
         mature_results_anarci_at.drop(["chain_type", "scheme"], axis=1)
         .set_index("Id")
