@@ -6,7 +6,7 @@ import pandas as pd
 import json
 from click.testing import CliRunner
 from pkg_resources import resource_filename
-from sadie.reference import app
+from sadie import app
 
 
 known_aux_exceptions = {
