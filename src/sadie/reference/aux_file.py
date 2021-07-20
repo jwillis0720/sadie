@@ -4,7 +4,6 @@ import logging
 import os
 from pathlib import Path
 
-import pandas as pd
 from sadie.reference import Reference
 
 logger = logging.getLogger(__file__)
