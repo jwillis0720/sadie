@@ -94,13 +94,18 @@ def _test_auxilary_file_structure(tmpdir):
         except AssertionError:
             if index in known_aux_exceptions.keys():
                 print(
-                    index, "is known exception exception", known_aux_exceptions[index], "skipping",
+                    index,
+                    "is known exception exception",
+                    known_aux_exceptions[index],
+                    "skipping",
                 )
                 continue
             else:
                 # raise again since pandas gives way better info
                 pd._testing.assert_series_equal(
-                    igblast_common_index.loc[index], my_aux_common_index.loc[index], obj=index,
+                    igblast_common_index.loc[index],
+                    my_aux_common_index.loc[index],
+                    obj=index,
                 )
     return True
 
@@ -215,7 +220,9 @@ def _test_internal_data_file_structure(tmpdir):
     for index in my_internal_path_df_common.index:
         try:
             pd._testing.assert_series_equal(
-                my_internal_path_df_common.loc[index], ref_internal_path_df_common.loc[index], obj=index,
+                my_internal_path_df_common.loc[index],
+                ref_internal_path_df_common.loc[index],
+                obj=index,
             )
         except AssertionError:
 
@@ -224,7 +231,9 @@ def _test_internal_data_file_structure(tmpdir):
                 continue
             else:
                 pd._testing.assert_series_equal(
-                    my_internal_path_df_common.loc[index], ref_internal_path_df_common.loc[index], obj=index,
+                    my_internal_path_df_common.loc[index],
+                    ref_internal_path_df_common.loc[index],
+                    obj=index,
                 )
     return True
 

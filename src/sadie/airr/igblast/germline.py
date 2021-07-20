@@ -23,7 +23,10 @@ class GermlineData:
     """
 
     def __init__(
-        self, species: str, database: str = "imgt", receptor: str = "Ig",
+        self,
+        species: str,
+        database: str = "imgt",
+        receptor: str = "Ig",
     ):
         """
 

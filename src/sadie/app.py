@@ -25,10 +25,18 @@ def sadie(ctx):
 @sadie.command("airr")
 @click.pass_context
 @click.option(
-    "-v", "--verbose", count=True, default=5, help="Vebosity level, ex. -vvvvv for debug level logging",
+    "-v",
+    "--verbose",
+    count=True,
+    default=5,
+    help="Vebosity level, ex. -vvvvv for debug level logging",
 )
 @click.option(
-    "--species", "-s", type=click.Choice(Airr.get_available_species()), help="Species to annotate", default="human",
+    "--species",
+    "-s",
+    type=click.Choice(Airr.get_available_species()),
+    help="Species to annotate",
+    default="human",
 )
 @click.option("--db-type", type=click.Choice(["imgt", "custom"]), default="imgt", show_default=True)
 @click.option(
@@ -107,7 +115,11 @@ def reference(ctx):
 
 @reference.command("make")
 @click.option(
-    "-v", "--verbose", count=True, default=4, help="Vebosity level, ex. -vvvvv for debug level logging",
+    "-v",
+    "--verbose",
+    count=True,
+    default=4,
+    help="Vebosity level, ex. -vvvvv for debug level logging",
 )
 @click.option(
     "--outpath",
