@@ -3,11 +3,13 @@ import os
 import shutil
 import tempfile
 import pandas as pd
+import pytest
 import json
 from click.testing import CliRunner
 from pkg_resources import resource_filename
 from sadie import app
-
+from sadie.reference import Reference
+from sadie.reference.reference import G3Error
 
 known_aux_exceptions = {
     ("mouse", "imgt", "IGLJ4*01"): "igblast has wrong number of c-term remaining",
@@ -23,6 +25,29 @@ def fixture_dir(dir):
 def fixture_path(dir):
     """Helper method for test execution."""
     return resource_filename(__name__, "fixtures/{}".format(dir))
+
+
+def test_reference_class():
+    """Test reference class."""
+    ref_class = Reference()
+    ref_class.add_gene({"species": "human", "gene": "IGHV1-69*01", "database": "imgt"})
+    ref_class.add_gene({"species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
+    with pytest.raises(G3Error):
+        ref_class.add_gene({"species": "human", "gene": "IGHV111-69*01", "database": "imgt"})
+    assert len(ref_class.get_dataframe()) == 2
+
+
+def test_load_ref_from_df():
+    ref_class = Reference.read_file("tmp_dataframe.csv")
+    assert ref_class.data
+
+
+def test_make_reference_class_from_yaml():
+    """Test reference class."""
+    ref_class = Reference.parse_yaml()
+    assert isinstance(ref_class, Reference)
+    ref_class_data = ref_class.get_dataframe()
+    assert isinstance(ref_class_data, pd.DataFrame)
 
 
 def _test_auxilary_file_structure(tmpdir):
@@ -69,18 +94,13 @@ def _test_auxilary_file_structure(tmpdir):
         except AssertionError:
             if index in known_aux_exceptions.keys():
                 print(
-                    index,
-                    "is known exception exception",
-                    known_aux_exceptions[index],
-                    "skipping",
+                    index, "is known exception exception", known_aux_exceptions[index], "skipping",
                 )
                 continue
             else:
                 # raise again since pandas gives way better info
                 pd._testing.assert_series_equal(
-                    igblast_common_index.loc[index],
-                    my_aux_common_index.loc[index],
-                    obj=index,
+                    igblast_common_index.loc[index], my_aux_common_index.loc[index], obj=index,
                 )
     return True
 
@@ -195,9 +215,7 @@ def _test_internal_data_file_structure(tmpdir):
     for index in my_internal_path_df_common.index:
         try:
             pd._testing.assert_series_equal(
-                my_internal_path_df_common.loc[index],
-                ref_internal_path_df_common.loc[index],
-                obj=index,
+                my_internal_path_df_common.loc[index], ref_internal_path_df_common.loc[index], obj=index,
             )
         except AssertionError:
 
@@ -206,9 +224,7 @@ def _test_internal_data_file_structure(tmpdir):
                 continue
             else:
                 pd._testing.assert_series_equal(
-                    my_internal_path_df_common.loc[index],
-                    ref_internal_path_df_common.loc[index],
-                    obj=index,
+                    my_internal_path_df_common.loc[index], ref_internal_path_df_common.loc[index], obj=index,
                 )
     return True
 

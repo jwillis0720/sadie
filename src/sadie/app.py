@@ -13,11 +13,7 @@ from sadie.utility import SadieIO
 from sadie.utility.util import get_verbosity_level, get_project_root
 
 # reference
-from sadie.reference.internal_data import generate_internal_annotaion_file_from_db
-from sadie.reference.igblast_ref import make_igblast_ref_database
-from sadie.reference.aux_file import make_auxillary_file
-
-# from sadie.reference.genbank import generate_genbank
+from sadie.reference import make_germline_database, Reference
 
 
 @click.group()
@@ -29,18 +25,10 @@ def sadie(ctx):
 @sadie.command("airr")
 @click.pass_context
 @click.option(
-    "-v",
-    "--verbose",
-    count=True,
-    default=5,
-    help="Vebosity level, ex. -vvvvv for debug level logging",
+    "-v", "--verbose", count=True, default=5, help="Vebosity level, ex. -vvvvv for debug level logging",
 )
 @click.option(
-    "--species",
-    "-s",
-    type=click.Choice(Airr.get_available_species()),
-    help="Species to annotate",
-    default="human",
+    "--species", "-s", type=click.Choice(Airr.get_available_species()), help="Species to annotate", default="human",
 )
 @click.option("--db-type", type=click.Choice(["imgt", "custom"]), default="imgt", show_default=True)
 @click.option(
@@ -119,11 +107,7 @@ def reference(ctx):
 
 @reference.command("make")
 @click.option(
-    "-v",
-    "--verbose",
-    count=True,
-    default=4,
-    help="Vebosity level, ex. -vvvvv for debug level logging",
+    "-v", "--verbose", count=True, default=4, help="Vebosity level, ex. -vvvvv for debug level logging",
 )
 @click.option(
     "--outpath",
@@ -158,14 +142,12 @@ def make_igblast_reference(verbose, outpath, reference):
         outpath = os.path.abspath(os.path.dirname(__file__) + "reference/data/germlines")
         click.echo(f"No outpath specified, using {outpath}")
 
-    generate_internal_annotaion_file_from_db(reference, outpath)
-    click.echo(f"Generated Internal Data {outpath}/internal_data")
-    make_igblast_ref_database(reference, outpath)
-    click.echo("Successfully made blast data")
-
-    # Send it to specialized function
-    make_auxillary_file(reference, outpath)
-    click.echo("Successfully made auxillary data")
+    # make reference
+    # reference_object = Reference.read_file("tmp_dataframe.csv")
+    click.echo(f"Getting G3 genes from {reference}")
+    reference_object = Reference.parse_yaml(reference)
+    germline_path = make_germline_database(reference_object, outpath)
+    click.echo(f"Wrote germline database to {germline_path}")
     click.echo("Done!")
 
 

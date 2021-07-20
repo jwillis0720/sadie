@@ -1,21 +1,15 @@
 # Std lib
-import os
 import logging
+import os
+from pathlib import Path
 
 # Third party
-import pandas as pd
+from sadie.reference import Reference
 
 # This module
-from .blast import write_blast_db
-from ..antibody.exception import BadGene
-from ..reference import get_loaded_database
-from yaml import load as yml_load
+from sadie.reference.blast import write_blast_db
 
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("reference")
 
 
 def make_blast_db_for_internal(df, dboutput):
@@ -29,95 +23,74 @@ def make_blast_db_for_internal(df, dboutput):
     write_blast_db(out_fasta, out_db)
 
 
-def get_filtered_data(data, segment):
-    return list(
-        filter(
-            lambda x: x["gene_segment"] == segment,
-            data,
-        )
-    )
-
-
-def generate_internal_annotaion_file_from_db(reference, outpath):
-    logger.debug("Generating from IMGT Internal Database File")
-    reference = yml_load(open(reference), Loader=Loader)
-    database = get_loaded_database()
-
+def make_internal_annotaion_file(reference: Reference, outpath: Path):
+    logger.debug(f"Generating internal annotation file at {outpath}")
     # The internal data file structure goes {db_type}/Ig/internal_path/{species}/
-    # Interate through species and make
-    for db_type in reference.keys():
+
+    database = reference.get_dataframe()
+    for group, group_df in database.groupby("source"):
         # db_type eg. cutom, imgt
 
         # get a filtered database for V genes
-        filtered_data = get_filtered_data(database[db_type], "V")
+        filtered_data = group_df.loc[group_df["gene_segment"] == "V"]
 
-        for common in reference[db_type]:
+        # the species is the actual entity we are using for the annotation, e.g se09 or human
+        for species, species_df in filtered_data.groupby("species"):
             # species level database
-            common_data = reference[db_type][common]
-
-            species_internal_db_path = os.path.join(outpath, db_type, "Ig", "internal_data", common)
-            logger.debug(f"Found species {common}, using {db_type} database file")
+            species_internal_db_path = os.path.join(outpath, group, "Ig", "internal_data", species)
+            logger.debug(f"Found species {species}, using {group} database file")
             if not os.path.exists(species_internal_db_path):
                 logger.info(f"Creating {species_internal_db_path}")
                 os.makedirs(species_internal_db_path)
 
-            # maybe we requested a chimeric speicies that has more than one sub species
-            sub_species_keys = common_data.keys()
+            # maybe we requested a chimeric speicies that has more than one sub species, e.g a mouse model
+            sub_species_keys = species_df["sub_species"].unique()
 
-            # here are the requested entries we are asking to put in our blast database
-            requested_entries = []
-            for sub_species in sub_species_keys:
-                # only get the common species from our database
-                sub_filtered = list(filter(lambda x: x["common"] == sub_species, filtered_data))
-                gene_segments = list(filter(lambda x: x[3] == "V", common_data[sub_species]))
-                request_list = list(filter(lambda x: x["gene"] in gene_segments, sub_filtered))
-                if len(request_list) != len(gene_segments):
-                    accepted_genes = list(map(lambda x: x["gene"], sub_filtered))
-                    raise BadGene(sub_species, gene_segments, accepted_genes)
-                requested_entries += request_list
+            # for sub_species in sub_species_keys:
+            #     # only get the common species from our database
+            #     sub_filtered = species_df.loc[species_df["sub_species"] == sub_species].copy()
 
-                # normalize will flatten nested json
-                filt_df = pd.json_normalize(requested_entries)
+            # if we have hybrid species we shall name them with <species>|gene
+            gene_df = species_df.copy()
+            if len(sub_species_keys) > 1:
+                gene_df["gene"] = gene_df["common"] + "|" + gene_df["gene"]
 
-                if filt_df.empty:
-                    logger.warning(f"{common}:{sub_species} has no V genes in {db_type} database")
-                    continue
-                # if we have hybrid species we shall name them with <species>|gene
-                if len(filt_df["common"].unique()) > 1:
-                    filt_df["gene"] = filt_df["common"] + "|" + filt_df["gene"]
+            index_df = gene_df[
+                [
+                    "gene",
+                    "imgt.fwr1_start",
+                    "imgt.fwr1_end",
+                    "imgt.cdr1_start",
+                    "imgt.cdr1_end",
+                    "imgt.fwr2_start",
+                    "imgt.fwr2_end",
+                    "imgt.cdr2_start",
+                    "imgt.cdr2_end",
+                    "imgt.fwr3_start",
+                    "imgt.fwr3_end",
+                ]
+            ].copy()
 
-                index_df = filt_df[
-                    [
-                        "gene",
-                        "imgt.fwr1_start",
-                        "imgt.fwr1_end",
-                        "imgt.cdr1_start",
-                        "imgt.cdr1_end",
-                        "imgt.fwr2_start",
-                        "imgt.fwr2_end",
-                        "imgt.cdr2_start",
-                        "imgt.cdr2_end",
-                        "imgt.fwr3_start",
-                        "imgt.fwr3_end",
-                    ]
-                ].copy()
-                index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
-                index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
-                genes_df = filt_df.copy()
-                scheme = "imgt"
-                internal_annotations_file_path = os.path.join(species_internal_db_path, f"{common}.ndm.{scheme}")
-                if len(filt_df["common"].unique()) > 1:
-                    segment = [i.split("|")[-1].split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
-                else:
-                    segment = [i.split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
-                index_df["segment"] = segment
-                index_df["weird_buffer"] = 0
-                logger.info("Writing to annotation file {}".format(internal_annotations_file_path))
-                index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
-                logger.info("Wrote to annotation file {}".format(internal_annotations_file_path))
-                # blast reads these suffixes depending on receptor
-                suffix = "V"
-                # suffix = "TV_V"
-                DB_OUTPATH = os.path.join(species_internal_db_path, f"{common}_{suffix}")
-                # Pass the dataframe and write out the blast database
-                make_blast_db_for_internal(genes_df, DB_OUTPATH)
+            # makes everything an integer. sets gene to index so its not affected
+            # add +1 to so we get 1-based indexing
+            index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
+
+            # drop anything where there is an na in the annotation idnex
+            index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
+            scheme = "imgt"
+            internal_annotations_file_path = os.path.join(species_internal_db_path, f"{species}.ndm.{scheme}")
+            if len(sub_species_keys) > 1:
+                segment = [i.split("|")[-1].split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
+            else:
+                segment = [i.split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
+            index_df["segment"] = segment
+            index_df["weird_buffer"] = 0
+            logger.info("Writing to annotation file {}".format(internal_annotations_file_path))
+            index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
+            logger.info("Wrote to annotation file {}".format(internal_annotations_file_path))
+            # blast reads these suffixes depending on receptor
+            suffix = "V"
+            # suffix = "TV_V"
+            DB_OUTPATH = os.path.join(species_internal_db_path, f"{species}_{suffix}")
+            # Pass the dataframe and write out the blast database
+            make_blast_db_for_internal(gene_df, DB_OUTPATH)
