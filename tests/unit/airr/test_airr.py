@@ -19,6 +19,7 @@ from numpy import isnan
 from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, LinkedAirrTable
 from sadie.airr import methods as airr_methods
 from sadie.app import airr as sadie_airr
+from sadie.reference import Reference
 
 logger = logging.getLogger()
 
@@ -342,6 +343,53 @@ def test_igl_assignment():
     joined_airr_table_with_analysis = airr_methods.run_igl_assignment(joined_airr_table)
     assert "iGL_heavy" in joined_airr_table_with_analysis.columns
     assert "iGL_light" in joined_airr_table_with_analysis.columns
+
+
+def test_runtime_referecne():
+    reference = Reference()
+    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
+    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV3-15*01", "database": "imgt"})
+    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
+    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
+    airr_api = Airr(reference, adaptable=True, temp_directory="tmp")
+    pg9_seq = """
+        CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
+        CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
+        GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
+        AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
+        TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
+        TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
+        "\n", ""
+    )
+    airr_table = airr_api.run_single("PG9", pg9_seq)
+    assert airr_table.species.iloc[0] == "custom"
+    assert airr_table.v_call_top.iloc[0] == "IGHV3-15*01"
+    assert airr_table.species.iloc[0] == "custom"
+    t = airr_api.temp_directory
+    del airr_api
+    assert not os.path.exists(t)
+
+    reference = Reference()
+    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
+    reference.add_gene({"species": "custom", "sub_species": "dog", "gene": "IGHV1-15*01", "database": "imgt"})
+    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
+    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
+    airr_api = Airr(reference, adaptable=True, temp_directory="tmp")
+    pg9_seq = """
+        CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
+        CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
+        GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
+        AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
+        TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
+        TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
+        "\n", ""
+    )
+    airr_table = airr_api.run_single("PG9", pg9_seq)
+    assert airr_table.species.iloc[0] == "custom"
+    assert airr_table.v_call_top.iloc[0] == "human|IGHV1-2*01"
+    t = airr_api.temp_directory
+    del airr_api
+    assert not os.path.exists(t)
 
 
 def _run_cli(args, tmpfile):

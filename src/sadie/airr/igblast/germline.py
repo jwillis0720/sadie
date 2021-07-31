@@ -27,6 +27,7 @@ class GermlineData:
         species: str,
         database: str = "imgt",
         receptor: str = "Ig",
+        database_dir: str = None,
     ):
         """
 
@@ -38,7 +39,10 @@ class GermlineData:
             the receptor type, by default "Ig"
         """
         self.species = species
-        self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data/germlines"))
+        if database_dir:
+            self.base_dir = Path(database_dir).absolute()
+        else:
+            self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data/germlines"))
         self.blast_dir = os.path.join(self.base_dir, f"{database}/{receptor}/blastdb/{species}_")
         self.v_gene_dir = self.blast_dir + "V"
         self.d_gene_dir = self.blast_dir + "D"

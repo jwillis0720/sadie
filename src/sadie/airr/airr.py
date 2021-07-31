@@ -24,6 +24,7 @@ from Bio.SeqRecord import SeqRecord
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.airr.igblast import IgBLASTN, GermlineData
 from sadie.airr.exceptions import BadIgBLASTExe, BadDataSet, BadRequstedFileType
+from sadie.reference import Reference, make_germline_database
 
 logger = logging.getLogger("AIRR")
 warnings.filterwarnings("ignore", "Partial codon")
@@ -70,7 +71,7 @@ class Airr:
 
     def __init__(
         self,
-        species: str,
+        species: Union[str, Reference],
         igblast_exe: Union[Path, str] = "",
         adaptable: bool = False,
         database: str = "imgt",
@@ -146,19 +147,50 @@ class Airr:
             self._v_gene_penalty = -1
             self._j_gene_penalty = -1
 
+        # set local instance and igblast temp dir instance
+        if temp_directory:
+            if not os.path.exists(temp_directory):
+                os.makedirs(temp_directory)
+                self._create_temp = True
+        else:
+            temp_directory = tempfile.gettempdir() + "/airr"
+            if not os.path.exists(temp_directory):
+                os.makedirs(temp_directory)
+                self._create_temp = True
+            logger.info(f"Temp dir - {temp_directory}")
+        self.temp_directory = temp_directory
+        self.igblast.temp_dir = self.temp_directory
+
         # Properties that will be passed to germline Data Class.
         # Pass theese as private since germline class will handle setter logic
-        self._species = species
-        self._database = database
+        if isinstance(species, Reference):
+            self._species = "custom"
 
-        # Check if this requested dataset is available
-        _available_datasets = GermlineData.get_available_datasets()
-        _chosen_datasets = (species.lower(), database.lower())
-        if _chosen_datasets not in _available_datasets:
-            raise BadDataSet(_chosen_datasets, _available_datasets)
+            # set custom directory path
+            custom_directory = self.temp_directory + "/custom/"
+            full_out_path = make_germline_database(species, custom_directory)
 
-        # set the germline data
-        self.germline_data = GermlineData(self.species, database=database)
+            # what database type did they pass?
+            database_names = species.get_database_types()
+
+            # only can handle homogoneous data sources at the moment
+            if len(database_names) > 1:
+                raise ValueError(f"Can only pass a single databae type, datbaes: {database_names}")
+
+            # set the germline database
+            self.germline_data = GermlineData("custom", database_names[0], "Ig", full_out_path)
+        else:
+            self._species = species
+            self._database = database
+
+            # Check if this requested dataset is available
+            _available_datasets = GermlineData.get_available_datasets()
+            _chosen_datasets = (species.lower(), database.lower())
+            if _chosen_datasets not in _available_datasets:
+                raise BadDataSet(_chosen_datasets, _available_datasets)
+
+            # set the germline data
+            self.germline_data = GermlineData(self.species, database=database)
 
         # This will set all the igblast params given the Germline Data class whcih validates them
         self.igblast.igdata = self.germline_data.igdata
@@ -178,10 +210,6 @@ class Airr:
         self.igblast.d_penalty = self._d_gene_penalty
         self.igblast.j_penalty = self._j_gene_penalty
         self.igblast.allow_vdj_overlap = self._allow_vdj_overlap
-
-        # set local instance and igblast temp dir instance
-        self.temp_directory = temp_directory
-        self.igblast.temp_dir = self.temp_directory
 
         # set airr specific attributes
         self.correct_indel = correct_indel
@@ -295,7 +323,7 @@ class Airr:
 
         Returns
         -------
-        Union[AirrTable, ]
+        Union[AirrTable, LinkedAirrTable]
             Either a single airrtable for a single chain or an ScFV airrtable
         """
         if not isinstance(seq_id, str):
@@ -638,3 +666,7 @@ class Airr:
 
     def __str__(self):
         return self.__repr__()
+
+    def __del__(self):
+        if self._create_temp:
+            shutil.rmtree(Path(self.temp_directory))

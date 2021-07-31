@@ -428,37 +428,6 @@ class AirrTable(pd.DataFrame):
 
         return self.__class__(airrtable)
 
-    @property
-    def germline_alignment_table(self) -> pd.DataFrame:
-        """
-        Return the germline alignment table. This table is a pandas dataframe set with run_mutational_analysis
-        """
-        if not hasattr(self, "_germline_alignment_table"):
-            raise AttributeError(
-                "This AirrTable does not have a germline_alignment_table, set with airrtable.run_mutational_analsis()"
-            )
-        return self._germline_alignment_table
-
-    @germline_alignment_table.setter
-    def germline_alignment_table(self, germline_alignment_table: pd.DataFrame):
-        if not isinstance(germline_alignment_table, pd.DataFrame):
-            raise TypeError("germline_alignment_table must be a pandas.DataFrame")
-        self._germline_alignment_table = germline_alignment_table
-
-    @property
-    def mature_alignment_table(self) -> pd.DataFrame:
-        if not hasattr(self, "_mature_alignment_table"):
-            raise AttributeError(
-                "This AirrTable does not have a mature_alignment_table, set with airrtable.run_mutational_analsis()"
-            )
-        return self._mature_alignment_table
-
-    @mature_alignment_table.setter
-    def mature_alignment_table(self, mature_alignment_table: pd.DataFrame):
-        if not isinstance(mature_alignment_table, pd.DataFrame):
-            raise TypeError("mature_alignment_table must be a pandas.DataFrame")
-        self._mature_alignment_table = mature_alignment_table
-
     @staticmethod
     def parse_row_to_genbank(row: Tuple[int, pd.core.series.Series], suffix="") -> SeqRecord:
         single_seq = row[1]

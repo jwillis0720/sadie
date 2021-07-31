@@ -158,9 +158,9 @@ class Species(BaseModel):
     @validator("species")
     def check_species(cls, v):
         # pylint: disable=no-self-argument
-        available = list(IMGT_LOOKUP.keys()) + ["clk", "bat64", "hugl18", "se09", "se0916", "se16", "se684"]
+        available = list(IMGT_LOOKUP.keys()) + ["clk", "bat64", "hugl18", "se09", "se0916", "se16", "se684", "custom"]
         if v not in available:
-            raise ValueError(f"{v} not in species list, have {available}")
+            raise ValueError(f"{v} not in species list, have {available}, can use 'custom' for custom dataset")
         return v
 
 
@@ -307,6 +307,10 @@ class Reference:
     def get_dataframe(self) -> pd.DataFrame:
         """Return a pandas dataframe of the reference data"""
         return pd.json_normalize(self.data)
+
+    def get_database_types(self) -> List[str]:
+        """Return a list of the database types in the reference data"""
+        return list(set((map(lambda x: x["source"], self.data))))
 
     @staticmethod
     def parse_yaml(yaml_path: Path = None) -> "Reference":
