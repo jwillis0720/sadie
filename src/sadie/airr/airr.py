@@ -668,5 +668,6 @@ class Airr:
         return self.__repr__()
 
     def __del__(self):
+        pass
         if self._create_temp:
             shutil.rmtree(Path(self.temp_directory))
