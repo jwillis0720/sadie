@@ -351,7 +351,7 @@ def test_runtime_referecne():
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV3-15*01", "database": "imgt"})
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
-    airr_api = Airr(reference, adaptable=True, temp_directory="tmp")
+    airr_api = Airr(reference, adaptable=True)
     pg9_seq = """
         CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
         CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
@@ -374,7 +374,7 @@ def test_runtime_referecne():
     reference.add_gene({"species": "custom", "sub_species": "dog", "gene": "IGHV1-15*01", "database": "imgt"})
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
-    airr_api = Airr(reference, adaptable=True, temp_directory="tmp")
+    airr_api = Airr(reference, adaptable=True)
     pg9_seq = """
         CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
         CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
