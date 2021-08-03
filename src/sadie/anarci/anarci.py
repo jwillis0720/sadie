@@ -70,6 +70,7 @@ class Anarci:
         hmmerpath="",
         threshold=80,
         run_multiproc=True,
+        num_cpus=cpu_count(),
     ):
         """[summary]
 
@@ -106,7 +107,7 @@ class Anarci:
         self.allowed_species = allowed_species
         self.tempdir = tempdir
         self.hmmerpath = hmmerpath
-        self.num_cpus = cpu_count()
+        self.num_cpus = num_cpus
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
         if not self.check_combination(self.scheme, self.region_definition):
@@ -494,7 +495,7 @@ class Anarci:
                 return [list_to_split[i : i + n] for i in range(0, len(list_to_split), n)]
 
             # split sequences into chunks
-            _sequences = chunks(_sequences, min(multiprocessing.cpu_count(), len(_sequences)))
+            _sequences = chunks(_sequences, min(self.num_cpus, len(_sequences)))
             multiproc = multiprocessing.Pool()
             _results = pd.concat(multiproc.map(self._run, _sequences))
         else:
