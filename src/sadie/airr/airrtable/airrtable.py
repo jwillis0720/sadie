@@ -449,16 +449,17 @@ class AirrTable(pd.DataFrame):
         other_v = ""
         other_d = ""
         other_j = ""
-        if not isinstance(v_call, float):
+
+        # v call could be nan or None
+        if not isinstance(v_call, float) and v_call:
             top_v = v_call.split(",")[0]
             other_v = v_call.split(",")[1:]
 
-        if not isinstance(d_call, float):
-            if d_call:
-                top_d = d_call.split(",")[0]
-                other_d = d_call.split(",")[1:]
+        if not isinstance(d_call, float) and d_call:
+            top_d = d_call.split(",")[0]
+            other_d = d_call.split(",")[1:]
 
-        if not isinstance(j_call, float):
+        if not isinstance(j_call, float) and j_call:
             top_j = j_call.split(",")[0]
             other_j = j_call.split(",")[1:]
 

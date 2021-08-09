@@ -35,7 +35,7 @@ def make_auxillary_file(reference: Reference, outpath: Path):
 
             aux_file_species = os.path.join(receptor_aux_dir, f"{species}_gl.aux")
             common_df = species_df[species_df["gene_segment"] == "J"].copy()
-            bad_remainders = common_df[(species_df["imgt.remainder"].isna())]
+            bad_remainders = common_df[(common_df["imgt.remainder"].isna())]
             if not bad_remainders.empty:
                 logger.warning(f"Had to drop {bad_remainders.shape[0]} rows due to bad remainder for {group}-{species}")
                 common_df.drop(bad_remainders.index, inplace=True)

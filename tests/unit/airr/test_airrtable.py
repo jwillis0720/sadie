@@ -1,8 +1,6 @@
 """Unit tests for airrtable."""
 
-import logging
 import pytest
-from pkg_resources import resource_filename
 
 
 import pandas as pd
@@ -11,17 +9,9 @@ from sadie.airr import AirrTable, LinkedAirrTable
 from sadie.airr.exceptions import MissingAirrColumns
 from Bio.SeqRecord import SeqRecord
 
-logger = logging.getLogger()
 
-
-def fixture_file(file):
-    """Helper method for test execution."""
-    return resource_filename(__name__, "fixtures/{}".format(file))
-
-
-def test_airrtable_init():
-    test_csv = fixture_file("airr_tables/dog_igh.csv.gz")
-    # Test we can initllize with staic meathod
+def test_airrtable_init(fixture_setup):
+    test_csv = fixture_setup.get_dog_airrdataframe_file()
     airr_table = AirrTable.read_csv(test_csv)
     assert not airr_table.empty
     non_airr_columns = [
@@ -47,7 +37,7 @@ def test_airrtable_init():
     assert isinstance(airr_table, AirrTable)
 
     # test we can read in json too
-    test_json = fixture_file("airr_tables/heavy_sample.json.gz")
+    test_json = fixture_setup.get_json_as_dataframe()
     airr_table = AirrTable.read_json(test_json)
     assert not airr_table.empty
 
@@ -56,14 +46,14 @@ def test_airrtable_init():
     assert all([isinstance(i, SeqRecord) for i in genbanks])
 
     # I will not accept a busted table sam I am
-    busted_table = fixture_file("airr_tables/busted.csv.gz")
+    busted_table = fixture_setup.get_busted_airrtable()
     with pytest.raises(MissingAirrColumns) as e:
         AirrTable.read_csv(busted_table)
     assert e.value.__str__()
 
 
-def test_indel_correction():
-    test_csv = fixture_file("airr_tables/dog_igh.csv.gz")
+def test_indel_correction(fixture_setup):
+    test_csv = fixture_setup.get_dog_airrdataframe_file()
     # Test we can initllize with staic meathod
     airr_table = AirrTable.read_csv(test_csv)
     airr_table_indel = AirrTable.correct_indel(airr_table)
@@ -72,8 +62,8 @@ def test_indel_correction():
     assert isinstance(airr_table_indel, AirrTable)
 
 
-def test_scfv_airrtable():
-    file_path = fixture_file("airr_tables/linked_airr_table_dummy.csv.gz")
+def test_scfv_airrtable(fixture_setup):
+    file_path = fixture_setup.get_dummy_scfv_table()
     dummy_scfv_table = pd.read_csv(file_path, index_col=0)
     linked_table = LinkedAirrTable(dummy_scfv_table)
     # test if we can split

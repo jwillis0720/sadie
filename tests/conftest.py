@@ -21,8 +21,20 @@ class SadieFixture:
     def get_card(self) -> Path:
         return self.base_datadir / "card.png"
 
+    def get_dummy_scfv_table(self) -> Path:
+        return self.airr_table_inputs / "linked_airr_table_dummy.csv.gz"
+
     def get_dog_airrdataframe_file(self) -> Path:
         return self.airr_table_inputs / "dog_igh.csv.gz"
+
+    def get_json_as_dataframe(self) -> Path:
+        return self.airr_table_inputs / "airrtable.json.gz"
+
+    def get_uncompressed_json_as_df(self) -> Path:
+        return self._get_uncompressed_file(self.get_json_as_dataframe(), "gz")
+
+    def get_busted_airrtable(self) -> Path:
+        return self.airr_table_inputs / "busted.csv.gz"
 
     def get_scfv_fasta(self) -> Path:
         return self.fasta_inputs / "scfv.fasta"
