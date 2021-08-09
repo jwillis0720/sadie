@@ -32,7 +32,7 @@ class Cluster:
             n_jobs (int): The number of jobs to be used for the clustering.
         """
         if not isinstance(airrtable, (AirrTable, LinkedAirrTable)):
-            raise TypeError("airrtable table must be a AirrTable or Linked AirrTable")
+            raise TypeError("airrtable table must be a AirrTable or LinkedAirrTable")
         if groupby is not None:
             diff = set(groupby).difference(set(airrtable.columns))
             if diff:
