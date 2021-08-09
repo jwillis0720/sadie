@@ -597,19 +597,3 @@ class Anarci:
         if _filetype:
             os.unlink(tmpfile.name)
         return _results
-
-
-if __name__ == "__main__":
-    anarci_api = Anarci(scheme="chothia", region_assign="scdr")
-    anarci_api.run_file("tests/integration/airr/fixtures/catnap_aa_heavy.fasta.gz")
-    #     "MySweetAntibody",
-    #     "EVQLLESGGGLVQPGGSLRLSCAASGFTFPVYNMAWVRQAPGKGLEWVSGIAHNGRNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKGHEISRFSRWSSFDYWGQGTLVTVSS",
-    # )
-
-    # pprint(result.segment_table_no_gaps)
-    # anarci_api = Anarci(scheme="kabat", region_assign="scdr")
-    # result = anarci_api.run_single(
-    #     "MySweetAntibody",
-    #     "DIQMTQSPSSLSASVGDRVTITCRPNQNIATYINWYQQKPGKAPKLLIYAASGLQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQHSWEIPYTFGQGTKVEIK",
-    # )
-    # pprint(result.segment_table_no_gaps)
