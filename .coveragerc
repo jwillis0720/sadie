@@ -1,3 +1,4 @@
 [run]
 omit =
     src/sadie/anarci/aa/
+parallel=False

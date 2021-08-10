@@ -36,3 +36,4 @@ notebooks/*
 htmlcov*
 site/*
 images/Sadie.ai
+codecov
