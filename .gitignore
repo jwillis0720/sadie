@@ -23,6 +23,7 @@ dist/
 pip-log.txt
 .vscode
 pibody.code-workspace
+.coverage*
 coverage.xml
 upload_cov.sh
 sadie.code-workspace
