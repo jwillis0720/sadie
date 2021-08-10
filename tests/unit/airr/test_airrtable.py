@@ -63,7 +63,7 @@ def test_indel_correction(fixture_setup):
 
 
 def test_scfv_airrtable(fixture_setup):
-    file_path = fixture_setup.get_dummy_scfv_table()
+    file_path = fixture_setup.get_linked_airrtable()
     dummy_scfv_table = pd.read_csv(file_path, index_col=0)
     linked_table = LinkedAirrTable(dummy_scfv_table)
     # test if we can split
