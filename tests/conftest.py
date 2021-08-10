@@ -2,6 +2,7 @@
 import bz2
 import gzip
 import json
+import glob
 import shutil
 from pathlib import Path
 from typing import List
@@ -230,6 +231,36 @@ class SadieFixture(AirrSequences, AirrTables):
         this is a csv that contains all the reference data in a nice csv dataframe
         """
         return self.reference_data / "reference_object_dataframe.csv.gz"
+
+    def get_aux_files(self) -> List[str]:
+        """get a glob of aux files to make sure generated aux matches"""
+        path = self.reference_data / "igblast_aux"
+        return glob.glob(str(path / "**.aux"))
+
+    def get_internal_files(self) -> List[str]:
+        """get a glob of internal .imgt files to make sure generated internal matches"""
+        path = self.reference_data / "igblast_internal"
+        return glob.glob(str(path / "**.imgt"))
+
+    def get_known_blast_dir_structure(self) -> List:
+        """get a list of names that should be in blast dir ref generation"""
+        path = self.reference_data / "blast_dir.json"
+        return sorted(json.load(open(path)))
+
+    def get_known_internal_dir_structure(self) -> List:
+        """get a list of names that should be in internal dir ref generation"""
+        path = self.reference_data / "internal.json"
+        return sorted(json.load(open(path)))
+
+    def get_known_aux_dir_structure(self) -> List:
+        """get a list of names that should be in aux dir ref generation"""
+        path = self.reference_data / "aux.json"
+        return sorted(json.load(open(path)))
+
+    def get_known_nhd_dir_structure(self) -> List:
+        """get a list of names that should be in nhd (blast format files) dir ref generation"""
+        path = self.reference_data / "nhd.json"
+        return sorted(json.load(open(path)))
 
     def get_card(self) -> Path:
         """get a png file path that has a card image. This is a nonsense file path to test unexpected files"""

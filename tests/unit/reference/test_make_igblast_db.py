@@ -4,9 +4,7 @@ import shutil
 import tempfile
 import pandas as pd
 import pytest
-import json
 from click.testing import CliRunner
-from pkg_resources import resource_filename
 from sadie import app
 from sadie.reference import Reference
 from sadie.reference.reference import G3Error
@@ -17,18 +15,8 @@ known_aux_exceptions = {
 }
 
 
-def fixture_dir(dir):
-    """Helper method for test execution."""
-    return resource_filename(__name__, "fixtures/{}".format(dir))
-
-
-def fixture_path(dir):
-    """Helper method for test execution."""
-    return resource_filename(__name__, "fixtures/{}".format(dir))
-
-
 def test_reference_class():
-    """Test reference class."""
+    """Test if we can JIT reference class."""
     ref_class = Reference()
     ref_class.add_gene({"species": "human", "gene": "IGHV1-69*01", "database": "imgt"})
     ref_class.add_gene({"species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
@@ -50,7 +38,7 @@ def test_make_reference_class_from_yaml():
     assert isinstance(ref_class_data, pd.DataFrame)
 
 
-def _test_auxilary_file_structure(tmpdir):
+def _test_auxilary_file_structure(tmpdir, fixture_setup):
     # Send aux and internal to compare against IGBLAST internal data and aux data
     my_aux = []
     generated_aux_path_files = glob.glob(f"{tmpdir}/*/**/*.aux", recursive=True)
@@ -68,7 +56,7 @@ def _test_auxilary_file_structure(tmpdir):
     my_aux = pd.concat(my_aux).reset_index(drop=True).set_index(["common", "db_type", "gene"])
 
     igblast_aux = []
-    igblast_aux_files = glob.glob(fixture_dir("igblast_aux") + "/**.aux")
+    igblast_aux_files = fixture_setup.get_aux_files()
     for file in igblast_aux_files:
         df = pd.read_csv(
             file,
@@ -110,10 +98,10 @@ def _test_auxilary_file_structure(tmpdir):
     return True
 
 
-def _test_internal_data_file_structure(tmpdir):
+def _test_internal_data_file_structure(tmpdir, fixture_setup):
     # what we have made
     internal_path = glob.glob(f"{tmpdir}/imgt/**/*.imgt", recursive=True)
-    reference_internal_path = glob.glob(fixture_dir("igblast_internal") + "/**.imgt")
+    reference_internal_path = fixture_setup.get_internal_files()
     my_internal_path_df = []
     for file in internal_path:
         df = pd.read_csv(
@@ -238,9 +226,13 @@ def _test_internal_data_file_structure(tmpdir):
     return True
 
 
-def test_make_igblast_reference():
+def test_make_igblast_reference(fixture_setup):
     """Confirm the CLI works as expecte"""
     runner = CliRunner(echo_stdin=True)
+    expected_blast_dir = fixture_setup.get_known_blast_dir_structure()
+    expected_aux = fixture_setup.get_known_aux_dir_structure()
+    expected_internal = fixture_setup.get_known_internal_dir_structure()
+    expected_nhd = fixture_setup.get_known_nhd_dir_structure()
     with tempfile.TemporaryDirectory(suffix="igblast_dir") as tmpdir:
         result = runner.invoke(app.make_igblast_reference, ["--outpath", tmpdir], catch_exceptions=True)
         if result.exit_code != 0:
@@ -253,33 +245,29 @@ def test_make_igblast_reference():
         imgt_blast_dir = [
             i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/blastdb/*.fasta", recursive=True)
         ]
-        expected_blast_dir = sorted(json.load(open(fixture_path("blast_dir.json"))))
         diff = set(imgt_blast_dir).difference(set(expected_blast_dir))
         if diff:
             raise AssertionError(f"{diff} didn't get made exist")
-        expected_internal = sorted(json.load(open(fixture_path("internal.json"))))
         internal = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/*.imgt", recursive=True)]
         diff = set(internal).difference(set(expected_internal))
         if diff:
             raise AssertionError(f"{diff} didn't get made for internal")
 
         aux = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/*.aux", recursive=True)]
-        expected_aux = sorted(json.load(open(fixture_path("aux.json"))))
         diff = set(aux).difference(set(expected_aux))
         if diff:
             raise AssertionError(f"{diff} didn't get made for aux")
 
         nhd = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/*.nhd", recursive=True)]
-        expected_nhd = sorted(json.load(open(fixture_path("nhd.json"))))
         diff = set(nhd).difference(set(expected_nhd))
         if diff:
             raise AssertionError(f"{diff} didn't get made for nhd")
 
         # test auxillary file building
-        assert _test_auxilary_file_structure(tmpdir)
+        assert _test_auxilary_file_structure(tmpdir, fixture_setup)
 
         # test internal dat file
-        assert _test_internal_data_file_structure(tmpdir)
+        assert _test_internal_data_file_structure(tmpdir, fixture_setup)
 
     if os.path.exists(tmpdir):
         shutil.rmtree(tmpdir)
