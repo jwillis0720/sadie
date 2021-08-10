@@ -184,6 +184,11 @@ class AirrSequences:
         """get a single sequence for the testing sequence for testing the weird macaque edge case"""
         return self.single_seqs_json["monkey_edge_case"]
 
+    def get_pe_consensus_seq(self) -> str:
+        """Get the consensus sequence to see if we are getting the best sequecnes from two paired end files"""
+
+        return self.single_seqs_json["consensus_seq"]
+
     def get_abi_files(self) -> List[Path]:
         """Get a list of different abi files for io testing"""
         return list(self.abi_inputs.glob("*ab1"))
@@ -191,6 +196,16 @@ class AirrSequences:
     def get_compressed_abi_files(self, compression) -> List[Path]:
         """Get a list of different compressed abi files for io testing"""
         return [_get_file_compressed(self.tmp_path, abi_file, compression) for abi_file in self.get_abi_files()]
+
+    def get_abi_pe_files(self) -> List[Path]:
+        """Get a list with two paired end abi files that can be used to make a consensus
+
+        Returns:
+            List[Path] -- [fwd_pe path, rev_pe path]
+        """
+        fwd = self.abi_inputs / "fwd_read.ab1"
+        rev = self.abi_inputs / "rev_read.ab1"
+        return [fwd, rev]
 
 
 class AirrTables:
