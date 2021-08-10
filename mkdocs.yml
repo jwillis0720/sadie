@@ -1,7 +1,7 @@
 #
 site_name: "SADIE"
 site_description: "SADIE: Seuqencing Analysis and Data Library for Immunoinformatics Exploration"
-site_url: http://sadie.jordanrwillis.com/
+site_url: https://sadie.jordanrwillis.com/
 og_image: https://repository-images.githubusercontent.com/313568721/5adf0900-c0d7-11eb-921d-36288bd44b7c
 theme:
   name: material
