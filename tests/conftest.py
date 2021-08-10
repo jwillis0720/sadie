@@ -297,9 +297,17 @@ class ReferenceFixtures:
 
 class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures):
     def __init__(self, tmp_path_factory):
-        self.tmp_path = tmp_path_factory.mktemp("sadie_fixture")
-        self.base_datadir = Path("tests/data/fixtures/")
-        super().__init__(self.tmp_path, self.base_datadir)
+        tmp_path = tmp_path_factory.mktemp("sadie_fixture")
+        base_datadir = Path("tests/data/fixtures/")
+
+        # three subclasses need to be initialized this way
+        AirrSequences.__init__(self, tmp_path, base_datadir)
+        AirrTables.__init__(self, tmp_path, base_datadir)
+        ReferenceFixtures.__init__(self, tmp_path, base_datadir)
+
+        # then rest of attributes
+        self.tmp_path = tmp_path
+        self.base_datadir = base_datadir
 
     def get_card(self) -> Path:
         """get a png file path that has a card image. This is a nonsense file path to test unexpected files"""
