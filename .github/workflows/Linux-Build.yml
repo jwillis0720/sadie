@@ -27,6 +27,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
           pip install pytest-cov
+          pip install pytest-xdist
           pip install .
       - name : Cache PIP
         uses: actions/cache@v2
@@ -40,7 +41,7 @@ jobs:
       - name: Test
         run: |
           env
-          pytest -x --cov=sadie --cov-report=xml --cov-report=term tests/unit
+          pytest -n0 -x --cov=sadie --cov-report=xml --cov-report=term tests/unit
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.15
       - name: Integration Testing

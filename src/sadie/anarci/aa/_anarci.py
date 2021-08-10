@@ -889,8 +889,8 @@ def number_sequences_from_alignment(
                     except LongHCDR3Error as e:
                         e.sequence_name = details["query_name"]
                         raise e
-                    except AnarciDecreasing as e:
-                        warnings.warn(f"Skipping {sequences[i][0]}", UserWarning)
+                    except AnarciDecreasing:
+                        warnings.warn(f"Skipping {details['query_name']}", UserWarning)
                         continue
                         # raise e
 

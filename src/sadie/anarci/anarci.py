@@ -574,6 +574,10 @@ class Anarci:
             if file is not fasta
 
         """
+        if isinstance(file, Path):
+            if not file.exists():
+                raise FileExistsError(f"{file} does not exist")
+            file = str(file)
         _filetype = filetype.guess(file)
         if not os.path.exists(file):
             raise FileExistsError(f"{file} not found")
@@ -597,19 +601,3 @@ class Anarci:
         if _filetype:
             os.unlink(tmpfile.name)
         return _results
-
-
-if __name__ == "__main__":
-    anarci_api = Anarci(scheme="chothia", region_assign="scdr")
-    anarci_api.run_file("tests/integration/airr/fixtures/catnap_aa_heavy.fasta.gz")
-    #     "MySweetAntibody",
-    #     "EVQLLESGGGLVQPGGSLRLSCAASGFTFPVYNMAWVRQAPGKGLEWVSGIAHNGRNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKGHEISRFSRWSSFDYWGQGTLVTVSS",
-    # )
-
-    # pprint(result.segment_table_no_gaps)
-    # anarci_api = Anarci(scheme="kabat", region_assign="scdr")
-    # result = anarci_api.run_single(
-    #     "MySweetAntibody",
-    #     "DIQMTQSPSSLSASVGDRVTITCRPNQNIATYINWYQQKPGKAPKLLIYAASGLQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQHSWEIPYTFGQGTKVEIK",
-    # )
-    # pprint(result.segment_table_no_gaps)

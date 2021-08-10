@@ -15,6 +15,7 @@ def fixture_file(file):
     return resource_filename(__name__, "fixtures/{}".format(file))
 
 
+@pytest.mark.filterwarnings("ignore: no germline set")
 def test_antibody_segment():
     """
     Test antibody segment base class, nt or AA

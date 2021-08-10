@@ -1,5 +1,4 @@
 """Unit tests for antibody."""
-import logging
 import os
 import platform
 
@@ -10,25 +9,6 @@ import semantic_version
 # package level
 from sadie import airr
 from sadie.airr.exceptions import BadIgBLASTExe
-
-loger = logging.getLogger()
-
-
-def get_file(file):
-    """Helper method for test execution."""
-    _file = os.path.join(os.path.abspath(os.path.dirname(__file__)), f"fixtures/{file}")
-    if not os.path.exists(_file):
-        raise FileNotFoundError(_file)
-    return _file
-
-
-def assert_df(expected, actual):
-    assert len(expected) == len(actual)
-    for i, j in zip(expected, actual):
-        if isinstance(i, float):
-            assert pytest.approx(i) == pytest.approx(j)
-        else:
-            assert i == j
 
 
 def test_antibody_igblast_setup():
@@ -85,7 +65,7 @@ def test_antibody_igblast_setup():
         airr.igblast.IgBLASTN("ls")
 
 
-def test_antibody_igblast_file_run():
+def test_antibody_igblast_file_run(fixture_setup):
     """
     testing if we can manually run igblast
     """
@@ -103,7 +83,7 @@ def test_antibody_igblast_file_run():
     ig_blast.igdata = os.path.join(germline_ref, "imgt/Ig")
 
     # Grab from fixtures
-    query = get_file("fasta_inputs/PG9_H.fasta")
+    query = fixture_setup.get_pg9_heavy_fasta()
     ig_blast.germline_db_v = os.path.join(db_ref, "human_V")
     ig_blast.germline_db_d = os.path.join(db_ref, "human_D")
     ig_blast.germline_db_j = os.path.join(db_ref, "human_J")
@@ -114,6 +94,6 @@ def test_antibody_igblast_file_run():
     ig_blast.j_penalty = -1
     csv_dataframe = ig_blast.run_file(query).fillna("")
 
-    query = get_file("fasta_inputs/PG9_L.fasta")
+    query = fixture_setup.get_pg9_heavy_fasta()
     csv_dataframe = ig_blast.run_file(query)
     csv_dataframe["d_call"] = csv_dataframe["d_call"].fillna("")

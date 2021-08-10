@@ -12,24 +12,23 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from click.testing import CliRunner
 from pandas.testing import assert_frame_equal
-from pkg_resources import resource_filename
 from sadie.anarci import Anarci, AnarciDuplicateIdError, AnarciResults
 from sadie.anarci.app import run_anarci
 
 logger = logging.getLogger()
 
 
-def get_file(file):
-    """Helper method for test execution."""
-    _file = os.path.join(os.path.abspath(os.path.dirname(__file__)), f"fixtures/{file}")
-    if not os.path.exists(_file):
-        raise FileNotFoundError(_file)
-    return _file
+# def get_file(file):
+#     """Helper method for test execution."""
+#     _file = os.path.join(os.path.abspath(os.path.dirname(__file__)), f"fixtures/{file}")
+#     if not os.path.exists(_file):
+#         raise FileNotFoundError(_file)
+#     return _file
 
 
-def fixture_file(file):
-    """Helper method for test execution."""
-    return resource_filename(__name__, "fixtures/{}".format(file))
+# def fixture_file(file):
+#     """Helper method for test execution."""
+#     return resource_filename(__name__, "fixtures/{}".format(file))
 
 
 def test_long_seq():
@@ -160,9 +159,9 @@ def test_anarci_multi_input():
     assert single_result_2.fwr4_aa_gaps == "FGQGTKLEIK"
 
 
-def test_io():
+def test_io(fixture_setup):
     """Test file io"""
-    main_file = fixture_file("split_files/scfv_heavy_1.fasta")
+    main_file = fixture_setup.get_dog_aa_seqs()
     anarci_api = Anarci(allowed_species=["dog", "cat"])
     results = anarci_api.run_file(main_file)
     assert isinstance(results, AnarciResults)
@@ -258,7 +257,7 @@ def _run_cli(p_tuple):
     with tempfile.NamedTemporaryFile() as tmpfile:
         cli_input = [
             "--query",
-            p_tuple[0],
+            str(p_tuple[0]),
             "-o",
             tmpfile.name,
             "-a",
@@ -290,11 +289,10 @@ def _run_cli(p_tuple):
     return True
 
 
-# @pytest.skip()
-def test_cli():
+def test_cli(fixture_setup):
     """Confirm the CLI works as expecte"""
-    test_file_heavy = get_file("catnap_aa_heavy_sample.fasta")
-    test_file_light = get_file("catnap_aa_light_sample.fasta")
+    test_file_heavy = fixture_setup.get_catnap_heavy_aa()
+    test_file_light = fixture_setup.get_catnap_light_aa()
     species = ["human", "mouse", "rat", "rabbit", "rhesus", "pig", "alpaca", "dog", "cat"]
     species = ",".join(species)
     ft = ["csv", "json", "feather"]
@@ -307,8 +305,8 @@ def test_cli():
     print(results)
 
 
-def test_df():
-    test_file_heavy = get_file("catnap_aa_heavy_sample.fasta")
+def test_df(fixture_setup):
+    test_file_heavy = fixture_setup.get_catnap_heavy_aa()
     df = pd.DataFrame(
         [{"id": x.id, "seq": x.seq, "description": x.description} for x in SeqIO.parse(test_file_heavy, "fasta")]
     )

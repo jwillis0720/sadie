@@ -44,6 +44,7 @@ class Cluster:
         self.linkage = linkage
         self.groupby = groupby
         self.lookup = lookup
+        self.key_column = airrtable.key_column
         if isinstance(self.airrtable, LinkedAirrTable):
             self._type = "linked"
         else:
@@ -105,5 +106,5 @@ class Cluster:
                 cluster_catcher.append(g_df)
             self.airrtable = pd.concat(cluster_catcher)
         if self._type == "unlinked":
-            return AirrTable(self.airrtable)
-        return LinkedAirrTable(self.airrtable)
+            return AirrTable(self.airrtable, key_column=self.key_column)
+        return LinkedAirrTable(self.airrtable, key_column=self.key_column)

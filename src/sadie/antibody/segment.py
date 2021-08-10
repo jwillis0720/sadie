@@ -241,7 +241,7 @@ class AntibodySegment:
 
         """
         if self._alignment == ("", "", "", ""):
-            warnings.warn("No germline set")
+            warnings.warn("No germline set", UserWarning)
             return self._alignment
         # grab germ and target
         _germ, _target = (self.alignment[0], self.alignment[1])
@@ -332,7 +332,8 @@ class AntibodySegmentNT(AntibodySegment):
         str
             amino acid sequence
         """
-        return str(Seq(self._nt).translate())
+        trim = len(self._nt) - (len(self._nt) % 3)
+        return str(Seq(self._nt)[0:trim].translate())
 
     def _validate_nt(self, nt_seq):
         # If its false, let's set it to empty

@@ -1,15 +1,9 @@
 """Unit tests for analysis interface."""
-import glob
-import logging
 import os
 import tempfile
 
-import gzip
 from itertools import product
 
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
-from Bio import SeqIO
 from pathlib import Path
 
 import pandas as pd
@@ -20,16 +14,6 @@ from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, Germlin
 from sadie.airr import methods as airr_methods
 from sadie.app import airr as sadie_airr
 from sadie.reference import Reference
-
-logger = logging.getLogger()
-
-
-def get_file(file):
-    """Helper method for test execution."""
-    _file = os.path.join(os.path.abspath(os.path.dirname(__file__)), f"fixtures/{file}")
-    if not os.path.exists(_file):
-        raise FileNotFoundError(_file)
-    return _file
 
 
 def test_germline_init():
@@ -76,18 +60,12 @@ def test_custom_mice_init():
     Airr("se684")
 
 
-def test_airr_single_sequence():
-    pg9_seq = """
-        CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
-        CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
-        GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
-        AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
-        TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
-        TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
-        "\n", ""
-    )
+def test_airr_single_sequence(fixture_setup):
+    """Test we can run a single sequence"""
+    pg9_heavy_seq = fixture_setup.get_pg9_heavy_sequence().seq.__str__()
+    pg9_light_seq = fixture_setup.get_pg9_light_sequence().seq.__str__()
     air_api = Airr("human", adaptable=False)
-    airr_table = air_api.run_single("PG9", pg9_seq)
+    airr_table = air_api.run_single("PG9", pg9_heavy_seq)
     airr_entry = airr_table.iloc[0]
     seq_id = airr_entry["sequence_id"]
     cdr3_ = airr_entry["cdr3_aa"]
@@ -116,78 +94,49 @@ def test_airr_single_sequence():
     assert round(j_mutation, 2) == 11.31
     with pytest.raises(TypeError):
         # id must be str
-        airr_table = air_api.run_single(9, pg9_seq)
+        airr_table = air_api.run_single(9, pg9_heavy_seq)
 
     # super edge case, two heavy or two light scfv
-    pg9_seq_heavy = """
-    CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
-    CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
-    GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
-    AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
-    TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
-    TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
-        "\n", ""
-    )
-    pg9_seq_light = """
-    CAGTCTGCCCTGACTCAGCCTGCCTCCGTGTCTGGGTCTCCTGGACAGTCGATCACCATCTCCTGCAATGGAACCAGCAA
-    TGATGTTGGTGGCTATGAATCTGTCTCCTGGTACCAACAACATCCCGGCAAAGCCCCCAAAGTCGTGATTTATGATGTCA
-    GTAAACGGCCCTCAGGGGTTTCTAATCGCTTCTCTGGCTCCAAGTCCGGCAACACGGCCTCCCTGACCATCTCTGGGCTC
-    CAGGCTGAGGACGAGGGTGACTATTACTGCAAGTCTCTGACAAGCACGAGACGTCGGGTTTTCGGCACTGGGACCAAGCT
-    GACCGTTCTA""".replace(
-        "\n", ""
-    )
-    air_api.run_single("two_heavy", pg9_seq_heavy + pg9_seq_heavy, scfv=True)
-    air_api.run_single("two_light", pg9_seq_light + pg9_seq_light, scfv=True)
+    air_api.run_single("two_heavy", pg9_heavy_seq + pg9_heavy_seq, scfv=True)
+    air_api.run_single("two_light", pg9_light_seq + pg9_light_seq, scfv=True)
 
     # run with 1 cpu
     air_api = Airr("human", adaptable=False, num_cpus=1)
-    airr_table = air_api.run_single("PG9", pg9_seq)
+    airr_table = air_api.run_single("PG9", pg9_heavy_seq)
 
 
-def test_run_multiple():
+def test_run_multiple(fixture_setup):
+    # Run with seqrecords
     airr = Airr("human", adaptable=False)
-    pg9_seq = """
-    CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
-    CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
-    GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
-    AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
-    TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
-    TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
-        "\n", ""
-    )
-    seq = Seq(pg9_seq)
-    seq_record = SeqRecord(seq=seq)
-    airr.run_records([seq_record, seq_record])
+
+    airr.run_records([fixture_setup.get_pg9_heavy_sequence(), fixture_setup.get_pg9_light_sequence()])
     with pytest.raises(TypeError):
-        airr.run_records(seq_record)
+        airr.run_records(fixture_setup.get_pg9_heavy_sequence())
 
 
-def test_run_multiple_scfv():
-    scfv = get_file("fastq_inputs/long_scfv.fastq.gz")
+def test_scfv(fixture_setup):
     airr = Airr("human", adaptable=False)
-    list_to_run = list(SeqIO.parse(gzip.open(scfv, "rt"), "fastq"))
-    results = airr.run_records(list_to_run, scfv=True)
+    linked = airr.run_records(fixture_setup.get_scfv_sequences(), scfv=True)
+    assert isinstance(linked, LinkedAirrTable)
+
+
+def test_run_multiple_scfv(fixture_setup):
+    """Run on multiple long scfv sequences"""
+    scfv = fixture_setup.get_long_scfv_fastq()
+    airr = Airr("human", adaptable=False)
+    results = airr.run_records(scfv, scfv=True)
     assert isinstance(results, LinkedAirrTable)
 
 
-def test_vdj_overlap():
-    pg9_seq = """
-        CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
-        CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
-        GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
-        AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
-        TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
-        TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
-        "\n", ""
-    )
+def test_vdj_overlap(fixture_setup):
     air_api = Airr("human", allow_vdj_overlap=True, adaptable=False)
-    air_api.run_single("PG9", pg9_seq)
+    air_api.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
     assert air_api.igblast.allow_vdj_overlap.value is True
 
 
-def test_airr_from_dataframe():
+def test_airr_from_dataframe(fixture_setup):
     """Test we can pass a dataframe to runtime"""
-    dog_df = pd.read_csv(get_file("airr_tables/dog_igh.csv.gz"), index_col=0)
+    dog_df = pd.read_csv(fixture_setup.get_dog_airrtable(), index_col=0)
     airr_api = Airr("dog")
     unjoined_df = airr_api.run_dataframe(dog_df, "sequence_id", "sequence")
     assert isinstance(unjoined_df, AirrTable)
@@ -195,23 +144,23 @@ def test_airr_from_dataframe():
     assert isinstance(joined_df, pd.DataFrame)
 
 
-def test_airr_from_file():
+def test_airr_from_file(fixture_setup):
     """Test we can pass a dataframe to runtime"""
-    f = get_file("fasta_inputs/PG9_H_multiple.fasta")
+    f = str(fixture_setup.get_pg9_heavy_multiple_fasta())
     airr_api = Airr("human")
     result = airr_api.run_fasta(f)
     assert isinstance(result, AirrTable)
 
     # see if we can take in paths
-    result = airr_api.run_fasta(Path(f))
+    result = airr_api.run_fasta(f)
     assert isinstance(result, AirrTable)
 
-    f = get_file("card.png")
+    f = fixture_setup.get_card()
     with pytest.raises(BadRequstedFileType) as execinfo:
         airr_api.run_fasta(f)
     assert execinfo.value.__str__()
 
-    f = get_file("fasta_inputs/scfv.fasta")
+    f = fixture_setup.get_scfv_fasta()
     airr_api = Airr("human", temp_directory="a_non_existant_directory")
     airr_api.run_fasta(f, scfv=True)
 
@@ -220,16 +169,8 @@ def test_airr_from_file():
         Path("a_non_existant_directory").rmdir()
 
 
-def test_adaptable_penalty():
-    test_sequence = """
-    GACATCCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACAGAGTCACC
-    ATCACTTGCCAGGCGAGTCAGGACATTAGCAACTATTTAAATTGGTATCAGCAGAAACCA
-    GGGAAAGCCCCTAAGCTCCTGATCTACGATGCATCCAATTTGGAAACAGGGGTCCCATCA
-    AGGTTCAGTGGAAGTGGATCTGGGACAGATTTTACTTTCACCATCAGCAGCCTGCAGCCT
-    GAAGATATTGCAACATATTACTGTCAACAGTATGATAATTTCGGCGGAGGGACCAAGGTG
-    GACATCAAAC""".replace(
-        "\n", ""
-    )
+def test_adaptable_penalty(fixture_setup):
+    test_sequence = fixture_setup.get_adaptable_pentalty_test_seq()
 
     # Check what happens
     air_api = Airr("human", adaptable=False)
@@ -268,106 +209,66 @@ def test_adaptable_penalty():
     assert cdr2_ == "DAS"
     assert cdr3_ == "QQYDN"
 
-    scfv = """GGCGGCCGAGCTCGACATCCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACCGTGTCACCATCACTT
-              GCCGGGGCAAGTCAAATCATTAGCAACTATCTAAACTGGTATCAGCAGAAACCAGGGAAAGCCCCTAAGCTCCTGATCTA
-              TGCTACATCCAATTTGCACAGTGGGGTCCCATCACGCTTCAGTGGCAGTGGATCTGGGACAGATTTCACTCTCACCATCA
-              GCAGTCTGCAACCTGAAGATTTTGCAACTTACTACTGTCAACAGAGTTACAGTTTCCCGCCCACTTTCGGCGGAGGTACC
-              AAGGTGGAGATCAAACGTACGGTTGCCGCTCCTTCTGTATTCATATTTCCGCCCTCCGATGAACAGCTTAAATCGGGCAC
-              TGCTTCGGTAGTCTGCCTTCTGAATAATTTCTATCCCCGCGAGGCCAAGGTGCAATGGAAAGTCGACAATGCACTGCAAA
-              GTGGAAACTCGCAAGAAAGCGTCACCGAACAGGACAGTAAAGATTCCACCTATAGCCTGTCATCGACACTTACCCTGAGT
-              AAGGCTGATTACGAAAAGCACAAGGTTTACGCTTGCGAAGTAACTCACCAGGGCCTCTCAAGCCCTGTTACAAAGTCATT
-              TAACAGAGGGGAATGCTAATTCTAGATAATTATCAAGGAGACAGTCATAATGAAATACCTATTGCCTACGGCAGCCGCTG
-              GATTGTTATTACTCGCTGCCCAACCAGCCATGGCCGAGGTGCAGCTGCTCGAGGTGCAGCTGTTGGAGTCTGGGGGAGGC
-              TTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGACTGACGATCTCATCCTACGCAATGTCATGGGT
-              CCGCCAGGCTCCAGGGAANGGGGCTGGAGT"""
     air_api = Airr("human", adaptable=True)
-    airr_table = air_api.run_single("scfv", scfv.replace("\n", "").replace(" ", ""), scfv=True)
+    airr_table = air_api.run_single("scfv", fixture_setup.get_adaptable_pentalty_test_seq_scfv(), scfv=True)
     assert airr_table.fwr1_aa_heavy.iloc[0] == "EVQLLESGGGLVQPGGSLRLSCAAS"
     assert airr_table.fwr2_aa_heavy.iloc[0] == "MSWVRQAPGXGAGV"
     assert isinstance(airr_table, pd.DataFrame)
     assert isinstance(airr_table, AirrTable)
     assert isinstance(airr_table, LinkedAirrTable)
 
-    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
+
+def test_adaptable_catnap(fixture_setup):
     air_api = Airr("human", adaptable=True)
-    liable = air_api.run_fasta(integration_file)
+    liable = air_api.run_fasta(fixture_setup.get_catnap_heavy_nt())
     assert not liable["liable"].any()
-    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
-    liable = air_api.run_fasta(integration_file)
+    liable = air_api.run_fasta(fixture_setup.get_catnap_light_nt())
     assert not liable["liable"].any()
 
 
-def test_mutational_analysis():
-    # this should be a fixture
-    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
-    airr_api = Airr("human")
-    airrtable_heavy = airr_api.run_fasta(integration_file)
-    airrtable_heavy["cellid"] = airrtable_heavy["sequence_id"].str.split("_").str.get(0)
-
-    # see if we can do it with no multiproc
-    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_heavy, "kabat", run_multiproc=False)
+def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
+    # run on heavy from fixture of airr
+    airrtable_with_analysis = airr_methods.run_mutational_analysis(heavy_catnap_airrtable, "kabat", run_multiproc=False)
     assert "mutations" in airrtable_with_analysis.columns
 
-    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
-    airr_api = Airr("human")
-    airrtable_light = airr_api.run_fasta(integration_file)
-    airrtable_light["cellid"] = airrtable_light["sequence_id"].str.split("_").str.get(0)
-    airrtable_with_analysis = airr_methods.run_mutational_analysis(airrtable_light, "kabat")
+    # run on light
+    airrtable_with_analysis = airr_methods.run_mutational_analysis(light_catnap_airrtable, "kabat")
     assert "mutations" in airrtable_with_analysis.columns
-    link_table = airrtable_heavy.merge(airrtable_light, on="cellid", suffixes=["_heavy", "_light"])
+    link_table = heavy_catnap_airrtable.merge(light_catnap_airrtable, on="cellid", suffixes=["_heavy", "_light"])
 
+    # make sure we can run it on linked airr table
     joined_airr_table = LinkedAirrTable(link_table, key_column="cellid")
     joined_airr_table_with_analysis = airr_methods.run_mutational_analysis(joined_airr_table, "kabat")
     assert "mutations_heavy" in joined_airr_table_with_analysis.columns
     assert "mutations_light" in joined_airr_table_with_analysis.columns
 
 
-def test_igl_assignment():
-    # this should be a fixture
-    integration_file = "tests/integration/airr/fixtures/catnap_nt_heavy.fasta"
-    airr_api = Airr("human")
-    airrtable_heavy = airr_api.run_fasta(integration_file)
-    airrtable_heavy["cellid"] = airrtable_heavy["sequence_id"].str.split("_").str.get(0)
-    airrtable_with_igl = airr_methods.run_igl_assignment(airrtable_heavy)
+def test_igl_assignment(heavy_catnap_airrtable, light_catnap_airrtable):
+    # test if we can assign igl
+    airrtable_with_igl = airr_methods.run_igl_assignment(heavy_catnap_airrtable)
     assert "iGL" in airrtable_with_igl.columns
 
-    integration_file = "tests/integration/airr/fixtures/catnap_nt_light.fasta"
-    airr_api = Airr("human")
-    airrtable_light = airr_api.run_fasta(integration_file)
-    airrtable_light["cellid"] = airrtable_light["sequence_id"].str.split("_").str.get(0)
-    airrtable_with_igl = airr_methods.run_igl_assignment(airrtable_light)
+    airrtable_with_igl = airr_methods.run_igl_assignment(light_catnap_airrtable)
     assert "iGL" in airrtable_with_igl.columns
 
-    link_table = airrtable_heavy.merge(airrtable_light, on="cellid", suffixes=["_heavy", "_light"])
+    link_table = heavy_catnap_airrtable.merge(light_catnap_airrtable, on="cellid", suffixes=["_heavy", "_light"])
     joined_airr_table = LinkedAirrTable(link_table, key_column="cellid")
     joined_airr_table_with_analysis = airr_methods.run_igl_assignment(joined_airr_table)
     assert "iGL_heavy" in joined_airr_table_with_analysis.columns
     assert "iGL_light" in joined_airr_table_with_analysis.columns
 
 
-def test_runtime_referecne():
+def test_runtime_referecne(fixture_setup):
     reference = Reference()
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV3-15*01", "database": "imgt"})
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
     airr_api = Airr(reference, adaptable=True)
-    pg9_seq = """
-        CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
-        CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
-        GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
-        AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
-        TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
-        TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
-        "\n", ""
-    )
-    airr_table = airr_api.run_single("PG9", pg9_seq)
+    airr_table = airr_api.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
     assert airr_table.species.iloc[0] == "custom"
     assert airr_table.v_call_top.iloc[0] == "IGHV3-15*01"
     assert airr_table.species.iloc[0] == "custom"
-    # t = airr_api.temp_directory
-    # del airr_api
-    # assert not os.path.exists(t)
 
     reference = Reference()
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
@@ -375,41 +276,30 @@ def test_runtime_referecne():
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
     airr_api = Airr(reference, adaptable=True)
-    pg9_seq = """
-        CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
-        CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
-        GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
-        AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
-        TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
-        TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
-        "\n", ""
-    )
-    airr_table = airr_api.run_single("PG9", pg9_seq)
+    airr_table = airr_api.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
     assert airr_table.species.iloc[0] == "custom"
     assert airr_table.v_call_top.iloc[0] == "human|IGHV1-2*01"
-    # t = airr_api.temp_directory
-    # del airr_api
-    # assert not os.path.exists(t)
 
 
 def _run_cli(args, tmpfile):
     runner = CliRunner(echo_stdin=True)
     result = runner.invoke(sadie_airr, args)
     if result.exit_code != 0:
-        logger.error(f"Exception - {result.exception.__str__()}")
-        logger.error(f"{args} produces error")
+        print(f"Exception - {result.exception.__str__()}")
+        print(f"{args} produces error")
     assert result.exit_code == 0
     assert os.path.exists(tmpfile.name)
     return True
 
 
-def test_cli(caplog):
+def test_cli(caplog, fixture_setup):
     """Confirm the CLI works as expecte"""
 
     # we need this fixture because... well i don't know
-    # caplog.set_level(20)
+    # https://github.com/pallets/click/issues/824
+    caplog.set_level(200000)
     # IMGT DB
-    quereies = glob.glob(get_file("fasta_inputs/") + "*")
+    quereies = fixture_setup.get_fasta_files()
     species = ["dog", "rat", "human", "mouse", "macaque", "se09"]
     products = product(species, ["imgt"], quereies)
 
@@ -421,7 +311,7 @@ def test_cli(caplog):
             "human",
             "--db-type",
             "imgt",
-            get_file("fasta_inputs/PG9_H_multiple.fasta"),
+            str(fixture_setup.get_pg9_heavy_fasta()),
             tmpfile.name,
         ]
         print(f"CLI input {' '.join(cli_input)}")
@@ -435,7 +325,7 @@ def test_cli(caplog):
                 p_tuple[0],
                 "--db-type",
                 p_tuple[1],
-                p_tuple[2],
+                str(p_tuple[2]),
                 tmpfile.name,
                 "--skip-mutation",
             ]
@@ -444,10 +334,11 @@ def test_cli(caplog):
             assert test_success
 
 
-def test_cli_custom():
-    quereies = glob.glob(get_file("fasta_inputs/") + "*")
+def test_cli_custom(caplog, fixture_setup):
+    queries = fixture_setup.get_fasta_files()
     species = ["cat", "macaque", "dog"]
-    products = product(species, ["custom"], quereies)
+    products = product(species, ["custom"], queries)
+    caplog.set_level(200000)
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
@@ -457,7 +348,7 @@ def test_cli_custom():
                 p_tuple[0],
                 "--db-type",
                 p_tuple[1],
-                p_tuple[2],
+                str(p_tuple[2]),
                 tmpfile.name,
                 "--skip-mutation",
             ]
@@ -466,10 +357,11 @@ def test_cli_custom():
             assert test_success
 
 
-def test_cli_scfv():
-    quereies = [get_file("fasta_inputs/scfv.fasta.gz")]
+def test_cli_scfv(caplog, fixture_setup):
+    queries = str(fixture_setup.get_scfv_fasta())
     species = ["human"]
-    products = product(species, ["imgt"], quereies)
+    caplog.set_level(200000)
+    products = product(species, ["imgt"], [queries])
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         for p_tuple in products:
             cli_input = [
@@ -478,7 +370,7 @@ def test_cli_scfv():
                 p_tuple[0],
                 "--db-type",
                 p_tuple[1],
-                p_tuple[2],
+                str(p_tuple[2]),
                 tmpfile.name,
                 "--skip-mutation",
             ]
@@ -487,9 +379,6 @@ def test_cli_scfv():
             assert test_success
 
 
-def test_edge_cases():
+def test_edge_cases(fixture_setup):
     airr_api = Airr("macaque", database="custom", adaptable=False)
-    airr_api.run_single(
-        "bad_seq",
-        "TCCAGTCCCTGCAGGCCGGGAGGCAGGTGACCTCTGCCTCAGACCCCCACTCCAGACACCAGACAGAGGGGCAGGCCCCCCAGAACCAAAGTGGAGGGACGACCCGTCAAGGACAAACCAGACCAAGGGACACTGAGCCCAGCACGGGAAGGTCCCCAGATAGACCAGGAGGTTTCTGGAGGTGTCTGTGCCACAGTGGGGTATAGCAGCAGATCCGACTACGGTAGCAACTTTTGGGACTACTGGGGCCAGGGAGTCCTGGTCACCGTCTCCTCAGCCTCCACCAAGGGCCCATCGGTCTTCCCCCTGGCGCCCTCCTCCAGGAGCACCTCCGAGAGCACAGCGGCCCTGGGC",
-    )
+    airr_api.run_single("bad_seq", fixture_setup.get_monkey_edge_seq())

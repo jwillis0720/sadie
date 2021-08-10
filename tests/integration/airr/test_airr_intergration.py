@@ -1,21 +1,10 @@
 from distutils.version import StrictVersion
 from math import nan
-from pathlib import Path
 
 import pandas as pd
 
-# import pytest
-from pkg_resources import resource_filename
 from sadie.airr import Airr, AirrTable
 from sadie.airr.airrtable import constants
-
-
-def fixture_file(file):
-    """Helper method for test execution."""
-    _file = Path(resource_filename(__name__, f"fixtures/{file}"))
-    if not _file.exists():
-        raise FileExistsError(f"Fixutre file not found {_file}")
-    return _file
 
 
 def fillna(df, fill_value=""):
@@ -97,7 +86,7 @@ check_these = [
 ]
 
 
-def make_sadie_comparable(df):
+def _make_sadie_comparable(df):
     """Takes sadie df and makes it comparable wiht IMGT
 
     Parameters
@@ -142,7 +131,7 @@ def make_sadie_comparable(df):
     return df
 
 
-def make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
+def _make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
 
     """Takes Hi-Vquest and return a compariable dataframe
 
@@ -221,9 +210,8 @@ def make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# @pytest.mark.skip(reason="integration tests will change under this active development")
-def test_imgt_integration():
-
+def test_imgt_integration(fixture_setup):
+    # 1 of 2 major airr integerations. Checks that we match imgt
     ignore = [
         48,
         67,
@@ -264,20 +252,14 @@ def test_imgt_integration():
         989,
     ]
 
-    # sadie annotate
-    # file = "../../tests/integration/airr/fixtures/OAS_subsample_good_anarci_sub1000.fasta"
-    file = fixture_file("OAS_subsample_good_anarci_sub1000.fasta")
+    file = fixture_setup.get_oas_fasta()
     airr_api = Airr(species="human", database="imgt", adaptable=True)
     sadie_airr = airr_api.run_fasta(file)
-    sadie_comparable = make_sadie_comparable(sadie_airr)[check_these]
+    sadie_comparable = _make_sadie_comparable(sadie_airr)[check_these]
     sadie_comparable = sadie_comparable.drop(pd.Index(ignore))
 
-    # imgt airr
-    imgt_airr = fixture_file("imgt_v_quest_airr.tsv.gz")
-    # imgt_airr = "../../tests/integration/airr/fixtures/imgt_v_quest_airr.tsv.gz"
-
-    imgt_df = pd.read_csv(imgt_airr, low_memory=False)
-    imgt_comparable = make_imgt_comparable(imgt_df)[check_these]
+    imgt_df = pd.read_csv(fixture_setup.get_imgt_airrtable(), low_memory=False)
+    imgt_comparable = _make_imgt_comparable(imgt_df)[check_these]
     imgt_comparable = imgt_comparable.drop(pd.Index(ignore))
     for x in check_these:
         if not (sadie_comparable[x] == imgt_comparable[x]).all():
@@ -287,18 +269,19 @@ def test_imgt_integration():
 
 
 # @pytest.mark.skip(reason="integration tests will change under this active development")
-def test_catnap_integration():
-    heavy_file = fixture_file("catnap_nt_heavy.fasta")
-    light_file = fixture_file("catnap_nt_light.fasta")
+def test_catnap_integration(fixture_setup):
+    # 2 of 2 major integrations. Make sure our catnap calls dont change from last time we ran it
+    heavy_file = fixture_setup.get_catnap_heavy_nt()
+    light_file = fixture_setup.get_catnap_light_nt()
     airr_api = Airr(species="human", database="imgt", adaptable=True)
     catnap_heavy = airr_api.run_fasta(heavy_file)
     catnap_light = airr_api.run_fasta(light_file)
-    light_at = AirrTable(pd.read_feather(fixture_file("catnap_light_airrtable.feather")))
-    heavy_at = AirrTable(pd.read_feather(fixture_file("catnap_heavy_airrtable.feather")))
-    diffs = catnap_light.columns.difference(light_at.columns)
+    heavy_at = AirrTable(pd.read_feather(fixture_setup.get_catnap_heavy_airrtable()))
+    light_at = AirrTable(pd.read_feather(fixture_setup.get_catnap_light_airrtable()))
+    diffs = catnap_light.columns.symmetric_difference(light_at.columns)
     if not diffs.empty:
         raise AssertionError(f"Light table has the following different columns {diffs}")
-    diffs = catnap_heavy.columns.difference(heavy_at.columns)
+    diffs = catnap_heavy.columns.symmetric_difference(heavy_at.columns)
     if not diffs.empty:
         raise AssertionError(f"Heavy table has the following different columns {diffs}")
     pd.testing.assert_frame_equal(light_at, catnap_light, check_dtype=False, rtol=0.5)
