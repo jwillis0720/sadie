@@ -11,7 +11,7 @@ from Bio.SeqRecord import SeqRecord
 
 
 def test_airrtable_init(fixture_setup):
-    test_csv = fixture_setup.get_dog_airrdataframe_file()
+    test_csv = fixture_setup.get_dog_airrtable()
     airr_table = AirrTable.read_csv(test_csv)
     assert not airr_table.empty
     non_airr_columns = [
@@ -53,7 +53,7 @@ def test_airrtable_init(fixture_setup):
 
 
 def test_indel_correction(fixture_setup):
-    test_csv = fixture_setup.get_dog_airrdataframe_file()
+    test_csv = fixture_setup.get_dog_airrtable()
     # Test we can initllize with staic meathod
     airr_table = AirrTable.read_csv(test_csv)
     airr_table_indel = AirrTable.correct_indel(airr_table)

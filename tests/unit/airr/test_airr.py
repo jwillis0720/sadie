@@ -136,7 +136,7 @@ def test_vdj_overlap(fixture_setup):
 
 def test_airr_from_dataframe(fixture_setup):
     """Test we can pass a dataframe to runtime"""
-    dog_df = pd.read_csv(fixture_setup.get_dog_airrdataframe_file(), index_col=0)
+    dog_df = pd.read_csv(fixture_setup.get_dog_airrtable(), index_col=0)
     airr_api = Airr("dog")
     unjoined_df = airr_api.run_dataframe(dog_df, "sequence_id", "sequence")
     assert isinstance(unjoined_df, AirrTable)
