@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import pytest
@@ -7,35 +6,27 @@ from sadie.utility import SadieIO
 from sadie.utility.exception import IOInferError
 
 
-def get_file(file):
-    """Helper method for test execution."""
-    _file = os.path.join(os.path.abspath(os.path.dirname(__file__)), f"fixtures/{file}")
-    if not os.path.exists(_file):
-        raise FileNotFoundError(_file)
-    return _file
+def test_io_static_methods(fixture_setup):
+    assert SadieIO.guess_input_compression(fixture_setup.get_multiple_fastq_compressed("gz")) == "gz"
+    assert SadieIO.guess_input_compression(fixture_setup.get_multiple_fastq()) is None
+    assert SadieIO.guess_input_compression(fixture_setup.get_multiple_fastq_compressed("bz2")) == "bz2"
+    assert SadieIO.guess_input_compression(fixture_setup.fastq_inputs) == "directory"
 
+    assert SadieIO.guess_sequence_file_type(fixture_setup.get_pg9_heavy_multiple_fasta()) == "fasta"
+    assert SadieIO.guess_sequence_file_type(fixture_setup.get_multiple_fastq_compressed("gz")) == "fastq"
+    assert SadieIO.guess_sequence_file_type(fixture_setup.get_abi_files()[0]) == "abi"
 
-def test_io_static_methods():
-    assert SadieIO.guess_input_compression(get_file("multiple.fastq.gz")) == "gz"
-    assert SadieIO.guess_input_compression(get_file("multiple.fastq")) is None
-    assert SadieIO.guess_input_compression(get_file("multiple.fastq.bz2")) == "bz2"
-    assert SadieIO.guess_input_compression(get_file("fastq_folder")) == "directory"
-
-    assert SadieIO.guess_sequence_file_type(get_file("multiple.fasta")) == "fasta"
-    assert SadieIO.guess_sequence_file_type(get_file("multiple.fastq.gz")) == "fastq"
-    assert SadieIO.guess_sequence_file_type(get_file("ab1_files/file1.ab1")) == "abi"
-
-    _dict = SadieIO.get_file_type_dict(get_file("fastq_folder"))
+    _dict = SadieIO.get_file_type_dict(fixture_setup.fastq_inputs)
     assert isinstance(_dict, dict)
     assert all([x == "fastq" for x in _dict.values()])
 
     with pytest.raises(TypeError):
-        SadieIO.get_file_type_dict(get_file("multiple.fasta"))
+        SadieIO.get_file_type_dict(fixture_setup.get_pg9_heavy_multiple_fasta())
 
 
-def test_io_single_files():
+def test_io_single_files(fixture_setup):
     # infer filetypes of non compressed
-    input_file = get_file("multiple.fasta")
+    input_file = fixture_setup.get_pg9_heavy_multiple_fasta()
     io = SadieIO(input_file, out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
@@ -43,7 +34,7 @@ def test_io_single_files():
     assert io.input_file_type == "fasta"
     assert not io.isdir
 
-    input_file = get_file("multiple.fastq")
+    input_file = fixture_setup.get_multiple_fastq()
     io = SadieIO(input_file, out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
@@ -51,7 +42,7 @@ def test_io_single_files():
     assert io.input_file_type == "fastq"
     assert not io.isdir
 
-    input_file = get_file("ab1_files/file1.ab1")
+    input_file = fixture_setup.get_abi_files()[0]
     io = SadieIO(input_file, out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
@@ -60,7 +51,7 @@ def test_io_single_files():
     assert not io.isdir
 
     # infer filetypes of non compressed
-    input_file = get_file("multiple.fasta.gz")
+    input_file = fixture_setup.get_pg9_heavy_fasta_compressed("gz")
     io = SadieIO(input_file, out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
@@ -68,7 +59,7 @@ def test_io_single_files():
     assert io.input_file_type == "fasta"
     assert not io.isdir
 
-    input_file = get_file("multiple.fastq.gz")
+    input_file = fixture_setup.get_multiple_fastq_compressed("gz")
     io = SadieIO(input_file, out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
@@ -76,7 +67,7 @@ def test_io_single_files():
     assert io.input_file_type == "fastq"
     assert not io.isdir
 
-    input_file = get_file("ab1_files/file1.ab1.gz")
+    input_file = fixture_setup.get_compressed_abi_files("gz")[0]
     io = SadieIO(input_file, out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
@@ -85,9 +76,9 @@ def test_io_single_files():
     assert not io.isdir
 
 
-def test_io_folders():
+def test_io_folders(fixture_setup):
     # infer filetypes of non compressed
-    input_file = get_file("fasta_folder")
+    input_file = fixture_setup.fasta_inputs
     io = SadieIO(input_file, output_path="test.csv", out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
@@ -96,7 +87,7 @@ def test_io_folders():
     assert io.isdir
     assert all([isinstance(i, SeqRecord) for i in io.get_input_records()])
 
-    input_file = get_file("fastq_folder")
+    input_file = fixture_setup.fastq_inputs
     io = SadieIO(input_file, output_path="test.csv", out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
@@ -105,7 +96,7 @@ def test_io_folders():
     assert io.isdir
     assert all([isinstance(i, SeqRecord) for i in io.get_input_records()])
 
-    input_file = get_file("ab1_files")
+    input_file = fixture_setup.abi_inputs
     io = SadieIO(input_file, output_path="test.csv", out_format="csv")
     assert io.input == Path(input_file)
     assert io.infer_input
@@ -115,10 +106,9 @@ def test_io_folders():
     assert all([isinstance(i, SeqRecord) for i in io.get_input_records()])
 
 
-def test_output(tmpdir):
+def test_output(tmpdir, fixture_setup):
     # uses tmpdir pytest fixture
-    input_file = get_file("ab1_files/file1.ab1.gz")
-
+    input_file = fixture_setup.get_compressed_abi_files("gz")[-1]
     # case 1 no output path is set, but infer is set by default
     with pytest.raises(IOInferError):
         io_output = SadieIO(input_file)

@@ -53,6 +53,7 @@ class AirrSequences:
         self.fasta_inputs = self.base_datadir / "fasta_inputs/"
         self.fastq_inputs = self.base_datadir / "fastq_inputs/"
         self.airr_table_inputs = self.base_datadir / "airr_tables/"
+        self.abi_inputs = self.base_datadir / "ab1_files/"
         self.single_seqs_json = json.load(open(self.base_datadir / "single-sequences.json"))
 
     def get_pg9_heavy_fasta(self) -> Path:
@@ -131,6 +132,13 @@ class AirrSequences:
             SeqIO.parse(_get_uncompressed_file(self.tmp_path, self.fastq_inputs / "long_scfv.fastq.gz", "gz"), "fastq")
         )
 
+    def get_multiple_fastq(self) -> Path:
+        """get back a fastq file path that is uncompressed"""
+        return self.fastq_inputs / "multiple.fastq"
+
+    def get_multiple_fastq_compressed(self, compression: str) -> Path:
+        return _get_file_compressed(self.tmp_path, self.get_multiple_fastq(), compression)
+
     def get_catnap_heavy_nt(self) -> Path:
         """get a file path for the catnap heavy nt file"""
         return self.fasta_inputs / "catnap_nt_heavy.fasta"
@@ -175,6 +183,14 @@ class AirrSequences:
     def get_monkey_edge_seq(self) -> str:
         """get a single sequence for the testing sequence for testing the weird macaque edge case"""
         return self.single_seqs_json["monkey_edge_case"]
+
+    def get_abi_files(self) -> List[Path]:
+        """Get a list of different abi files for io testing"""
+        return list(self.abi_inputs.glob("*ab1"))
+
+    def get_compressed_abi_files(self, compression) -> List[Path]:
+        """Get a list of different compressed abi files for io testing"""
+        return [_get_file_compressed(self.tmp_path, abi_file, compression) for abi_file in self.get_abi_files()]
 
 
 class AirrTables:
