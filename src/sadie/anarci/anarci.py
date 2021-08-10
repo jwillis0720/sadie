@@ -574,6 +574,10 @@ class Anarci:
             if file is not fasta
 
         """
+        if isinstance(file, Path):
+            if not file.exists():
+                raise FileExistsError(f"{file} does not exist")
+            file = str(file)
         _filetype = filetype.guess(file)
         if not os.path.exists(file):
             raise FileExistsError(f"{file} not found")

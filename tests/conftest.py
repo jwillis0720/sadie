@@ -16,7 +16,11 @@ class SadieFixture:
         self.fasta_inputs = self.base_datadir / "fasta_inputs/"
         self.fastq_inputs = self.base_datadir / "fastq_inputs/"
         self.airr_table_inputs = self.base_datadir / "airr_tables/"
+        self.reference_data = self.base_datadir / "reference/"
         self.tmp_path = tmp_path_factory.mktemp("sadie_fixture")
+
+    def get_reference_dataset_csv(self) -> Path:
+        return self.reference_data / "reference_object_dataframe.csv.gz"
 
     def get_card(self) -> Path:
         return self.base_datadir / "card.png"
@@ -69,6 +73,14 @@ class SadieFixture:
     def get_pg9_light_fasta_compressed(self, compression) -> Path:
         return self._get_file_compressed(self.get_pg9_light_fasta(), compression)
 
+    def get_dog_aa_seqs(self) -> Path:
+        "A file containing random canine AA sequences"
+        return self.fasta_inputs / "random_dog_contigs_aa.fasta"
+
+    def get_oas_fasta(self) -> Path:
+        """Get a random 1000 subsample of the OAS data set."""
+        return self.fasta_inputs / "OAS_subsample_1000.fasta"
+
     def get_fasta_files(self) -> List[Path]:
         return [
             self.get_scfv_fasta(),
@@ -109,6 +121,21 @@ class SadieFixture:
 
     def get_catnap_light_nt(self) -> Path:
         return self.fasta_inputs / "catnap_nt_light.fasta"
+
+    def get_catnap_heavy_aa(self) -> Path:
+        return self.fasta_inputs / "catnap_aa_heavy_sample.fasta"
+
+    def get_catnap_light_aa(self) -> Path:
+        return self.fasta_inputs / "catnap_aa_light_sample.fasta"
+
+    def get_catnap_heavy_airrtable(self) -> Path:
+        return self.airr_table_inputs / "catnap_heavy_airrtable.feather"
+
+    def get_catnap_light_airrtable(self) -> Path:
+        return self.airr_table_inputs / "catnap_light_airrtable.feather"
+
+    def get_imgt_airrtable(self) -> Path:
+        return self.airr_table_inputs / "imgt_v_quest_airr.tsv.gz"
 
     def get_monkey_edge_seq(self) -> str:
         return "TCCAGTCCCTGCAGGCCGGGAGGCAGGTGACCTCTGCCTCAGACCCCCACTCCAGACACCAGACAGAGGGGCAGGCCCCCCAGAACCAAAGTGGAGGGACGACCCGTCAAGGACAAACCAGACCAAGGGACACTGAGCCCAGCACGGGAAGGTCCCCAGATAGACCAGGAGGTTTCTGGAGGTGTCTGTGCCACAGTGGGGTATAGCAGCAGATCCGACTACGGTAGCAACTTTTGGGACTACTGGGGCCAGGGAGTCCTGGTCACCGTCTCCTCAGCCTCCACCAAGGGCCCATCGGTCTTCCCCCTGGCGCCCTCCTCCAGGAGCACCTCCGAGAGCACAGCGGCCCTGGGC"

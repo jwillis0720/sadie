@@ -37,8 +37,8 @@ def test_reference_class():
     assert len(ref_class.get_dataframe()) == 2
 
 
-def test_load_ref_from_df():
-    ref_class = Reference.read_file("tmp_dataframe.csv")
+def test_load_ref_from_df(fixture_setup):
+    ref_class = Reference.read_file(fixture_setup.get_reference_dataset_csv())
     assert ref_class.data
 
 
