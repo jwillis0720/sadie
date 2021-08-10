@@ -218,12 +218,13 @@ class AirrTables:
         return self.airr_table_inputs / "imgt_v_quest_airr.tsv.gz"
 
 
-class SadieFixture(AirrSequences, AirrTables):
-    def __init__(self, tmp_path_factory):
-        self.tmp_path = tmp_path_factory.mktemp("sadie_fixture")
-        self.base_datadir = Path("tests/data/fixtures/")
+class ReferenceFixtures:
+    """A class for organization of reference related fixtures"""
+
+    def __init__(self, tmp_path: Path, base_datadir: Path):
+        self.base_datadir = base_datadir
+        self.tmp_path = tmp_path
         self.reference_data = self.base_datadir / "reference/"
-        super().__init__(self.tmp_path, self.base_datadir)
 
     def get_reference_dataset_csv(self) -> Path:
         """
@@ -261,6 +262,13 @@ class SadieFixture(AirrSequences, AirrTables):
         """get a list of names that should be in nhd (blast format files) dir ref generation"""
         path = self.reference_data / "nhd.json"
         return sorted(json.load(open(path)))
+
+
+class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures):
+    def __init__(self, tmp_path_factory):
+        self.tmp_path = tmp_path_factory.mktemp("sadie_fixture")
+        self.base_datadir = Path("tests/data/fixtures/")
+        super().__init__(self.tmp_path, self.base_datadir)
 
     def get_card(self) -> Path:
         """get a png file path that has a card image. This is a nonsense file path to test unexpected files"""
