@@ -15,6 +15,10 @@ import warnings
 from .exception import SadieIOError, IOInferError
 
 
+class NoExtensionNameWarning(UserWarning):
+    pass
+
+
 class SadieIO:
     def __init__(self, input_path: Path, output_path=None, in_format="infer", out_format="infer", compressed="infer"):
         """Constructor for SadieIO to aid in input output operations
@@ -114,7 +118,7 @@ class SadieIO:
                 if self.infered_output_compression not in self._accepted_output_compression_suffix:
                     warnings.warn(
                         f"{self.infered_output_compression} not in {self._accepted_output_compression_suffix}, not compressing",
-                        UserWarning,
+                        NoExtensionNameWarning,
                     )
 
                 if self.output_compressed in ["gz", "bz2"] or self.infered_output_compression in ["gz", "bz2"]:
