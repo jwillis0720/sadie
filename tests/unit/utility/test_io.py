@@ -108,7 +108,7 @@ def test_io_folders(fixture_setup):
 
 def test_output(tmpdir, fixture_setup):
     # uses tmpdir pytest fixture
-    input_file = fixture_setup.get_compressed_abi_files("gz")[-1]
+    input_file = sorted(fixture_setup.get_compressed_abi_files("gz"))[0]
     # case 1 no output path is set, but infer is set by default
     with pytest.raises(IOInferError):
         io_output = SadieIO(input_file)
