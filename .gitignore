@@ -33,3 +33,4 @@ notebooks/*
 site/*
 images/Sadie.ai
 coverage/reports/html
+coverage/reports/xml/coverage.xml
