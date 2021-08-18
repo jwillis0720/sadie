@@ -238,3 +238,4 @@ def test_df(fixture_setup):
     anarci_obj = Anarci()
     anarci_results = anarci_obj.run_dataframe(df, "id", "seq")
     assert isinstance(anarci_results, (AnarciResults, pd.DataFrame))
+    print("ehllo")
