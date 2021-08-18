@@ -35,5 +35,4 @@ notebooks/*
 htmlcov*
 site/*
 images/Sadie.ai
-coverage/reports/*
-coverage/reports/xml/coverage.xml
+coverage/reports/html

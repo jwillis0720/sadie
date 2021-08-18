@@ -1,10 +1,14 @@
+import tempfile
+import os
 from distutils.version import StrictVersion
+from itertools import product
 from math import nan
 
 import pandas as pd
-
+from click.testing import CliRunner
 from sadie.airr import Airr, AirrTable
 from sadie.airr.airrtable import constants
+from sadie.app import airr as sadie_airr
 
 
 def fillna(df, fill_value=""):
@@ -286,3 +290,106 @@ def test_catnap_integration(fixture_setup):
         raise AssertionError(f"Heavy table has the following different columns {diffs}")
     pd.testing.assert_frame_equal(light_at, catnap_light, check_dtype=False, rtol=0.5)
     pd.testing.assert_frame_equal(heavy_at, catnap_heavy, check_dtype=False, rtol=0.5)
+
+
+def _run_cli(args, tmpfile):
+    runner = CliRunner(echo_stdin=True)
+    result = runner.invoke(sadie_airr, args)
+    if result.exit_code != 0:
+        print(f"Exception - {result.exception.__str__()}")
+        print(f"{args} produces error")
+    assert result.exit_code == 0
+    assert os.path.exists(tmpfile.name)
+    return True
+
+
+def test_cli(caplog, fixture_setup):
+    """Confirm the CLI works as expecte"""
+
+    # we need this fixture because... well i don't know
+    # https://github.com/pallets/click/issues/824
+    caplog.set_level(200000)
+    # IMGT DB
+    quereies = fixture_setup.get_fasta_files()
+    species = ["dog", "rat", "human", "mouse", "macaque", "se09"]
+    products = product(species, ["imgt"], quereies)
+
+    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
+        # run 1 with mutational analysis
+        cli_input = [
+            "-v",
+            "--species",
+            "human",
+            "--db-type",
+            "imgt",
+            str(fixture_setup.get_pg9_heavy_fasta()),
+            tmpfile.name,
+        ]
+        print(f"CLI input {' '.join(cli_input)}")
+        test_success = _run_cli(cli_input, tmpfile)
+        assert test_success
+
+        for p_tuple in products:
+            cli_input = [
+                "-v",
+                "--species",
+                p_tuple[0],
+                "--db-type",
+                p_tuple[1],
+                str(p_tuple[2]),
+                tmpfile.name,
+                "--skip-mutation",
+            ]
+            print(f"CLI input {' '.join(cli_input)}")
+            test_success = _run_cli(cli_input, tmpfile)
+            assert test_success
+
+
+def test_cli_custom(caplog, fixture_setup):
+    queries = fixture_setup.get_fasta_files()
+    species = ["cat", "macaque", "dog"]
+    products = product(species, ["custom"], queries)
+    caplog.set_level(200000)
+
+    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
+        for p_tuple in products:
+            cli_input = [
+                "-v",
+                "--species",
+                p_tuple[0],
+                "--db-type",
+                p_tuple[1],
+                str(p_tuple[2]),
+                tmpfile.name,
+                "--skip-mutation",
+            ]
+            print(f"CLI input {' '.join(cli_input)}")
+            test_success = _run_cli(cli_input, tmpfile)
+            assert test_success
+
+
+def test_cli_scfv(caplog, fixture_setup):
+    queries = str(fixture_setup.get_scfv_fasta())
+    species = ["human"]
+    caplog.set_level(200000)
+    products = product(species, ["imgt"], [queries])
+    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
+        for p_tuple in products:
+            cli_input = [
+                "-v",
+                "--species",
+                p_tuple[0],
+                "--db-type",
+                p_tuple[1],
+                str(p_tuple[2]),
+                tmpfile.name,
+                "--skip-mutation",
+            ]
+            print(f"CLI input {' '.join(cli_input)}")
+            test_success = _run_cli(cli_input, tmpfile)
+            assert test_success
+
+
+def test_edge_cases(fixture_setup):
+    airr_api = Airr("macaque", database="custom", adaptable=False)
+    airr_api.run_single("bad_seq", fixture_setup.get_monkey_edge_seq())

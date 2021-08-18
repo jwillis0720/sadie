@@ -1,22 +1,18 @@
 """Unit tests for analysis interface."""
 import os
 import platform
-import tempfile
-from itertools import product
 from pathlib import Path
 
 import pandas as pd
 import pytest
 import semantic_version
 from Bio.SeqRecord import SeqRecord
-from click.testing import CliRunner
 from numpy import isnan
 from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, LinkedAirrTable
 from sadie.airr import __file__ as sadie_airr_file
 from sadie.airr import exceptions as airr_exceptions
 from sadie.airr import igblast
 from sadie.airr import methods as airr_methods
-from sadie.app import airr as sadie_airr
 from sadie.reference import Reference
 
 
@@ -457,106 +453,3 @@ def test_scfv_airrtable(fixture_setup):
         heavy_table.merge(light_table, on="cell_id", suffixes=["_h", "_l"]), suffixes=["_h", "_l"], key_column="cell_id"
     )
     assert rebuild_data.suffixes == ["_h", "_l"]
-
-
-def _run_cli(args, tmpfile):
-    runner = CliRunner(echo_stdin=True)
-    result = runner.invoke(sadie_airr, args)
-    if result.exit_code != 0:
-        print(f"Exception - {result.exception.__str__()}")
-        print(f"{args} produces error")
-    assert result.exit_code == 0
-    assert os.path.exists(tmpfile.name)
-    return True
-
-
-def test_cli(caplog, fixture_setup):
-    """Confirm the CLI works as expecte"""
-
-    # we need this fixture because... well i don't know
-    # https://github.com/pallets/click/issues/824
-    caplog.set_level(200000)
-    # IMGT DB
-    quereies = fixture_setup.get_fasta_files()
-    species = ["dog", "rat", "human", "mouse", "macaque", "se09"]
-    products = product(species, ["imgt"], quereies)
-
-    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
-        # run 1 with mutational analysis
-        cli_input = [
-            "-v",
-            "--species",
-            "human",
-            "--db-type",
-            "imgt",
-            str(fixture_setup.get_pg9_heavy_fasta()),
-            tmpfile.name,
-        ]
-        print(f"CLI input {' '.join(cli_input)}")
-        test_success = _run_cli(cli_input, tmpfile)
-        assert test_success
-
-        for p_tuple in products:
-            cli_input = [
-                "-v",
-                "--species",
-                p_tuple[0],
-                "--db-type",
-                p_tuple[1],
-                str(p_tuple[2]),
-                tmpfile.name,
-                "--skip-mutation",
-            ]
-            print(f"CLI input {' '.join(cli_input)}")
-            test_success = _run_cli(cli_input, tmpfile)
-            assert test_success
-
-
-def test_cli_custom(caplog, fixture_setup):
-    queries = fixture_setup.get_fasta_files()
-    species = ["cat", "macaque", "dog"]
-    products = product(species, ["custom"], queries)
-    caplog.set_level(200000)
-
-    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
-        for p_tuple in products:
-            cli_input = [
-                "-v",
-                "--species",
-                p_tuple[0],
-                "--db-type",
-                p_tuple[1],
-                str(p_tuple[2]),
-                tmpfile.name,
-                "--skip-mutation",
-            ]
-            print(f"CLI input {' '.join(cli_input)}")
-            test_success = _run_cli(cli_input, tmpfile)
-            assert test_success
-
-
-def test_cli_scfv(caplog, fixture_setup):
-    queries = str(fixture_setup.get_scfv_fasta())
-    species = ["human"]
-    caplog.set_level(200000)
-    products = product(species, ["imgt"], [queries])
-    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
-        for p_tuple in products:
-            cli_input = [
-                "-v",
-                "--species",
-                p_tuple[0],
-                "--db-type",
-                p_tuple[1],
-                str(p_tuple[2]),
-                tmpfile.name,
-                "--skip-mutation",
-            ]
-            print(f"CLI input {' '.join(cli_input)}")
-            test_success = _run_cli(cli_input, tmpfile)
-            assert test_success
-
-
-def test_edge_cases(fixture_setup):
-    airr_api = Airr("macaque", database="custom", adaptable=False)
-    airr_api.run_single("bad_seq", fixture_setup.get_monkey_edge_seq())
