@@ -17,9 +17,7 @@ dist/
 .installed.cfg
 *.egg
 .pytest_cache
-# sadie-*
 
-# Installer logs
 pip-log.txt
 .vscode
 pibody.code-workspace
@@ -32,7 +30,6 @@ sadie.code-workspace
 .ipynb_checkpoints**
 local_gene_reference/*
 notebooks/*
-htmlcov*
 site/*
 images/Sadie.ai
 coverage/reports/html
