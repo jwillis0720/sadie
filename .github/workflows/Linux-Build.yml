@@ -41,7 +41,7 @@ jobs:
       - name: Test
         run: |
           env
-          pytest -x --cov=sadie --cov-report=xml --cov-report=html --cov-report=term tests/unit
+          pytest -x --cov=src/sadie --cov-report=xml --cov-report=html --cov-report=term tests/unit
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
