@@ -49,7 +49,6 @@ jobs:
           directory: ./coverage/reports/xml/
           flags: unittests
           name: codecov-umbrella
-          path_to_write_report: ./coverage/codecov_report.txt
           verbose: true
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
