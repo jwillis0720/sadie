@@ -2,3 +2,9 @@
 omit =
     src/sadie/anarci/aa/
 parallel=False
+
+[html]
+directory = coverage/reports/html/
+
+[xml]
+output = coverage/reports/xml/coverage.xml

@@ -43,7 +43,11 @@ jobs:
           env
           pytest -n0 -x --cov=sadie --cov-report=xml --cov-report=term tests/unit
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.15
-      - name: Integration Testing
-        run: |
-          pytest -v tests/integration --disable-warnings
+        uses: codecov/codecov-action@v2
+        with:
+          env_vars: OS,PYTHON
+          directory: ./coverage/reports/xml/
+          flags: unittests
+          name: codecov-umbrella
+          path_to_write_report: ./coverage/codecov_report.txt
+          verbose: true
