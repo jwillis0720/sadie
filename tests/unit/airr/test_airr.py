@@ -1,19 +1,112 @@
 """Unit tests for analysis interface."""
 import os
+import platform
 import tempfile
-
 from itertools import product
-
 from pathlib import Path
 
 import pandas as pd
 import pytest
+import semantic_version
+from Bio.SeqRecord import SeqRecord
 from click.testing import CliRunner
 from numpy import isnan
 from sadie.airr import Airr, AirrTable, BadDataSet, BadRequstedFileType, GermlineData, LinkedAirrTable
+from sadie.airr import __file__ as sadie_airr_file
+from sadie.airr import exceptions as airr_exceptions
+from sadie.airr import igblast
 from sadie.airr import methods as airr_methods
 from sadie.app import airr as sadie_airr
 from sadie.reference import Reference
+
+
+def test_antibody_igblast_setup():
+    """
+    testing if we can manually setup IgBlast databases
+    """
+
+    system = platform.system().lower()
+    executable = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{system}/igblastn")
+
+    ig_blast = igblast.IgBLASTN(executable)
+    assert ig_blast.version == semantic_version.Version("1.17.1")
+    germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
+    assert os.path.exists(germline_ref)
+
+    # Set data
+    for species in ["human", "mouse", "rat", "dog"]:
+        db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
+        internal_ref = os.path.join(germline_ref, "imgt/Ig/")
+        aux_ref = os.path.join(germline_ref, "imgt/aux_db/")
+        assert os.path.exists(db_ref)
+        ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(species))
+        ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(species))
+        ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(species))
+
+        aux_ref = os.path.join(aux_ref, f"{species}_gl.aux")
+        ig_blast.aux_path = aux_ref
+        ig_blast.organism = species
+        ig_blast.igdata = internal_ref
+        ig_blast._pre_check()
+    assert os.path.exists(germline_ref)
+
+    # bad germeline ref
+    germline_ref = "reference/germlines/"
+
+    # Set data
+    with pytest.raises(airr_exceptions.BadIgDATA):
+        ig_blast.igdata = germline_ref
+        ig_blast._pre_check()
+    for species in ["human", "mouse", "rat", "dog"]:
+        db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
+        internal_ref = os.path.join(germline_ref, "imgt/Ig/")
+        aux_ref = os.path.join(germline_ref, "imgt/aux_db/")
+        with pytest.raises(airr_exceptions.BadIgBLASTArgument):
+            ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(species))
+        with pytest.warns(UserWarning):
+            ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(species))
+        with pytest.raises(airr_exceptions.BadIgBLASTArgument):
+            ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(species))
+        with pytest.raises(airr_exceptions.BadIgBLASTArgument):
+            ig_blast.aux_path = aux_ref
+
+    with pytest.raises(airr_exceptions.BadIgBLASTExe):
+        # pass an executable that is not igblast
+        igblast.IgBLASTN("ls")
+
+
+def test_antibody_igblast_file_run(fixture_setup):
+    """
+    testing if we can manually run igblast
+    """
+
+    # this should be fixture
+    system = platform.system().lower()
+    executable = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{system}/igblastn")
+
+    ig_blast = igblast.IgBLASTN(executable)
+    germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
+    db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
+    aux_path = os.path.join(germline_ref, "imgt/aux_db/")
+
+    # Set data
+    ig_blast.igdata = os.path.join(germline_ref, "imgt/Ig")
+
+    # Grab from fixtures
+    query = fixture_setup.get_pg9_heavy_fasta()
+    ig_blast.germline_db_v = os.path.join(db_ref, "human_V")
+    ig_blast.germline_db_d = os.path.join(db_ref, "human_D")
+    ig_blast.germline_db_j = os.path.join(db_ref, "human_J")
+    ig_blast.aux_path = os.path.join(aux_path, "human_gl.aux")
+    ig_blast.organism = "human"
+    ig_blast._pre_check()
+    # have to make this -1 to get a more specifc j gene match
+    ig_blast.j_penalty = -1
+    csv_dataframe = ig_blast.run_file(query).fillna("")
+
+    query = fixture_setup.get_pg9_heavy_fasta()
+    csv_dataframe = ig_blast.run_file(query)
+    csv_dataframe["d_call"] = csv_dataframe["d_call"].fillna("")
 
 
 def test_germline_init():
@@ -36,7 +129,7 @@ def test_germline_init():
 
 
 def test_airr_init():
-    # show each of these can run
+    """Test if we can init airr"""
     for species in ["human", "mouse", "rat", "dog"]:
         air_api = Airr(species)
         air_api.get_available_datasets()
@@ -279,6 +372,91 @@ def test_runtime_referecne(fixture_setup):
     airr_table = airr_api.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
     assert airr_table.species.iloc[0] == "custom"
     assert airr_table.v_call_top.iloc[0] == "human|IGHV1-2*01"
+
+
+def test_airrtable_init(fixture_setup):
+    test_csv = fixture_setup.get_dog_airrtable()
+    airr_table = AirrTable.read_csv(test_csv)
+    assert not airr_table.empty
+    non_airr_columns = [
+        "d_call_top",
+        "d_mutation",
+        "d_mutation_aa",
+        "j_call_top",
+        "j_mutation",
+        "j_mutation_aa",
+        "liable",
+        "note",
+        "species",
+        "v_call_top",
+        "v_mutation",
+        "v_mutation_aa",
+        "vdj_aa",
+        "vdj_nt",
+    ]
+    assert sorted(airr_table.non_airr_columns) == non_airr_columns
+    # Tes twe can init with a direct pandas call
+    airr_table = AirrTable(pd.read_csv(test_csv))
+    assert not airr_table.empty
+    assert isinstance(airr_table, AirrTable)
+
+    # test we can read in json too
+    test_json = fixture_setup.get_json_as_dataframe()
+    airr_table = AirrTable.read_json(test_json)
+    assert not airr_table.empty
+
+    # gen bank
+    genbanks = airr_table.get_genbank()
+    assert all([isinstance(i, SeqRecord) for i in genbanks])
+
+    # I will not accept a busted table sam I am
+    busted_table = fixture_setup.get_busted_airrtable()
+    with pytest.raises(airr_exceptions.MissingAirrColumns) as e:
+        AirrTable.read_csv(busted_table)
+    assert e.value.__str__()
+
+
+def test_indel_correction(fixture_setup):
+    test_csv = fixture_setup.get_dog_airrtable()
+    # Test we can initllize with staic meathod
+    airr_table = AirrTable.read_csv(test_csv)
+    airr_table_indel = AirrTable.correct_indel(airr_table)
+    assert "germline_alignment_aa_corrected" in airr_table_indel.columns
+    assert "v_germline_alignment_aa_corrected" in airr_table_indel.columns
+    assert isinstance(airr_table_indel, AirrTable)
+
+
+def test_scfv_airrtable(fixture_setup):
+    file_path = fixture_setup.get_linked_airrtable()
+    dummy_scfv_table = pd.read_csv(file_path, index_col=0)
+    linked_table = LinkedAirrTable(dummy_scfv_table)
+    # test if we can split
+    heavy_table, light_table = linked_table.get_split_table()
+    assert isinstance(heavy_table, AirrTable)
+    assert isinstance(light_table, AirrTable)
+    rebuild_table = LinkedAirrTable(heavy_table.merge(light_table, on="sequence_id", suffixes=["_heavy", "_light"]))
+    assert rebuild_table == rebuild_table
+    assert rebuild_table == linked_table
+
+    heavy_table["cell_id"] = heavy_table["sequence_id"]
+    light_table["cell_id"] = light_table["sequence_id"]
+    with pytest.raises(airr_exceptions.MissingAirrColumns):
+        LinkedAirrTable(heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]))
+    rebuild_data = LinkedAirrTable(
+        heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]), key_column="cell_id"
+    )
+    heavy_table_split, light_table_split = rebuild_data.get_split_table()
+    assert heavy_table_split.columns.difference(heavy_table.columns).empty
+    assert light_table_split.columns.difference(light_table.columns).empty
+    assert heavy_table == heavy_table_split[heavy_table.columns]
+    assert light_table == light_table_split[light_table.columns]
+    assert rebuild_data.key_column == "cell_id"
+    assert rebuild_data.suffixes == ["_heavy", "_light"]
+
+    rebuild_data = LinkedAirrTable(
+        heavy_table.merge(light_table, on="cell_id", suffixes=["_h", "_l"]), suffixes=["_h", "_l"], key_column="cell_id"
+    )
+    assert rebuild_data.suffixes == ["_h", "_l"]
 
 
 def _run_cli(args, tmpfile):

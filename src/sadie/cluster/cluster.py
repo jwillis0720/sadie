@@ -22,14 +22,20 @@ class Cluster:
     ):
         """Initialize the clustering class.
 
-        Args:
-            data (pandas.DataFrame): The data to be clustered.
-            n_clusters (int): The number of clusters to be formed.
-            linkage (str): The linkage algorithm to be used.
-            affinity (str): The affinity algorithm to be used.
-            metric (str): The distance metric to be used.
-            metric_params (dict): The parameters for the distance metric.
-            n_jobs (int): The number of jobs to be used for the clustering.
+        Arguments
+        ---------
+        airrtable (AirrTable, LinkedAirrTable): The airrtable to cluster.
+        linkage (str): The linkage method to use. Default is complete. default is complete.
+        groupby (str): The linkage method to use. Default is complete. default is complete.
+
+        Raises
+        ------
+        TypeError
+            No airrtable was provided.
+        ValueError
+            groupby columns must be in the airrtable.
+        ValueError
+            lookup columns must be in the airrtable
         """
         if not isinstance(airrtable, (AirrTable, LinkedAirrTable)):
             raise TypeError("airrtable table must be a AirrTable or LinkedAirrTable")
@@ -68,6 +74,10 @@ class Cluster:
 
         This method clusters the data using the specified linkage and affinity
         methods.
+
+        Arguments
+        ---------
+            distance_threshold (int): The maximum distance between two points to be. Default is 3.
         """
         if self.groupby is None:
             distance_df = self._get_distance_df(self.airrtable)
