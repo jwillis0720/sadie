@@ -17,14 +17,11 @@ dist/
 .installed.cfg
 *.egg
 .pytest_cache
-# sadie-*
 
-# Installer logs
 pip-log.txt
 .vscode
 pibody.code-workspace
 .coverage*
-coverage.xml
 upload_cov.sh
 sadie.code-workspace
 *._.DS_Store
@@ -33,7 +30,7 @@ sadie.code-workspace
 .ipynb_checkpoints**
 local_gene_reference/*
 notebooks/*
-htmlcov*
 site/*
 images/Sadie.ai
-codecov
+coverage/reports/html
+coverage/reports/xml/coverage.xml

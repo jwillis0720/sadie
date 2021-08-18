@@ -1243,7 +1243,7 @@ def run_anarci(seq, ncpu=1, **kwargs):
     if ncpu > 1:
         pool = Pool(ncpu)
         results = pool.map_async(anarci_partial, grouper(chunksize, sequences)).get()
-        pool.close()
+        pool.join()
     else:
         results = list(map(anarci_partial, grouper(chunksize, sequences)))
 

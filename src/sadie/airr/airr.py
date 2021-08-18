@@ -132,6 +132,7 @@ class Airr:
         if self._allow_vdj_overlap:
             if self.adapt_penalty:
                 logger.warning("allow vdj overlap will be overwritten by adapt_penalty")
+                warnings.warn("allow vdj overlap will be overwritten by adapt_penalty", UserWarning)
             if self._d_gene_penalty != -4:
                 self._d_gene_penalty = -4
                 logger.warning("Allow V(D)J overlap, d_gene_penalty set to -4")
@@ -142,8 +143,9 @@ class Airr:
         # if we set adapt_penalty
         if self.adapt_penalty:
             # start with -1 if adaptable pentalty
-            if self._allow_vdj_overlap:
+            if self._allow_vdj_overlap and self._j_gene_penalty != -1:
                 logger.warning("Adaptable pentalty resetting J gene penalty to -1")
+                warnings.warn("Adaptable penalty resetting J gene penalty to -1", UserWarning)
             self._v_gene_penalty = -1
             self._j_gene_penalty = -1
 
@@ -666,12 +668,3 @@ class Airr:
 
     def __str__(self):
         return self.__repr__()
-
-    def __del__(self):
-        # ass
-        pass
-        # try:
-        #     if self._create_temp:
-        #         shutil.rmtree(Path(self.temp_directory))
-        # except FileNotFoundError:
-        #     pass

@@ -494,10 +494,16 @@ class Anarci:
             def chunks(list_to_split, n):
                 return [list_to_split[i : i + n] for i in range(0, len(list_to_split), n)]
 
-            # split sequences into chunks
-            _sequences = chunks(_sequences, min(self.num_cpus, len(_sequences)))
-            multiproc = multiprocessing.Pool()
-            _results = pd.concat(multiproc.map(self._run, _sequences))
+            try:
+                # split sequences into chunks
+                _sequences = chunks(_sequences, min(self.num_cpus, len(_sequences)))
+                multiproc = multiprocessing.Pool()
+                _results = pd.concat(multiproc.map(self._run, _sequences))
+
+            # cleans up the pool
+            finally:
+                multiproc.close()
+                multiproc.join()
         else:
             _results = self._run(_sequences)
         return _results

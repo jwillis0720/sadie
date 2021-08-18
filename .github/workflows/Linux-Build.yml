@@ -27,7 +27,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
           pip install pytest-cov
-          pip install pytest-xdist
           pip install .
       - name : Cache PIP
         uses: actions/cache@v2
@@ -41,9 +40,24 @@ jobs:
       - name: Test
         run: |
           env
-          pytest -n0 -x --cov=sadie --cov-report=xml --cov-report=term tests/unit
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.15
-      - name: Integration Testing
-        run: |
-          pytest -v tests/integration --disable-warnings
+          pytest -x --cov=sadie --cov-report=xml --cov-report=html --cov-report=term tests/unit
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report
+          path: ./coverage
+
+  upload-to-codecov:
+      needs: [build-test]
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Download artifacts
+          uses: actions/download-artifact@v2
+        - name: Upload to Codecov
+          uses: codecov/codecov-action@v2
+          with:
+            directory: ./coverage/reports/xml/
+            name: codecov-umbrella
+            verbose: true
