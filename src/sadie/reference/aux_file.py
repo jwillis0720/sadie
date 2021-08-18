@@ -20,6 +20,8 @@ def make_auxillary_file(reference: Reference, outpath: Path):
     Given the imgt file structure object and aux path, make the aux data
     """
     database = reference.get_dataframe()
+    if database[database.label == "J-REGION"].empty:
+        raise ValueError("No J-REGION found in reference object...make sure to add J def")
     for group, group_df in database.groupby("source"):
         receptor_aux_dir = os.path.join(outpath, f"{group}/aux_db")
 

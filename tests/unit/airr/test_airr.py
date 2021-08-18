@@ -1,6 +1,7 @@
 """Unit tests for analysis interface."""
 import os
 import platform
+import shutil
 from pathlib import Path
 
 import pandas as pd
@@ -73,7 +74,7 @@ def test_antibody_igblast_setup():
 
 def test_antibody_igblast_file_run(fixture_setup):
     """
-    testing if we can manually run igblast
+    testing if we can manually run igblast withou airr abstraction
     """
 
     # this should be fixture
@@ -124,7 +125,7 @@ def test_germline_init():
         gd.d_gene_dir = "/non/existant/path"
 
 
-def test_airr_init():
+def test_airr_init(tmpdir):
     """Test if we can init airr"""
     for species in ["human", "mouse", "rat", "dog"]:
         air_api = Airr(species)
@@ -136,13 +137,14 @@ def test_airr_init():
     assert execinfo.value.__str__()
 
     # have an already created directory
-    air_api = Airr("human", temp_directory="a_new_tempfile")
-    os.rmdir("a_new_tempfile")
-
+    temporary_directory = tmpdir / "temp_output"
+    air_api = Airr("human", temp_directory=str(temporary_directory))
+    shutil.rmtree(temporary_directory)
     assert air_api.__repr__() == air_api.__str__()
 
 
 def test_custom_mice_init():
+    """Test we can initialize custom Mice"""
     Airr("hugl18")
     Airr("se09")
     Airr("se16")
@@ -150,7 +152,7 @@ def test_custom_mice_init():
 
 
 def test_airr_single_sequence(fixture_setup):
-    """Test we can run a single sequence"""
+    """Test we can run a single sequence."""
     pg9_heavy_seq = fixture_setup.get_pg9_heavy_sequence().seq.__str__()
     pg9_light_seq = fixture_setup.get_pg9_light_sequence().seq.__str__()
     air_api = Airr("human", adaptable=False)
@@ -195,7 +197,7 @@ def test_airr_single_sequence(fixture_setup):
 
 
 def test_run_multiple(fixture_setup):
-    # Run with seqrecords
+    """Test we can run with seq records biopython instances"""
     airr = Airr("human", adaptable=False)
 
     airr.run_records([fixture_setup.get_pg9_heavy_sequence(), fixture_setup.get_pg9_light_sequence()])
@@ -204,23 +206,16 @@ def test_run_multiple(fixture_setup):
 
 
 def test_scfv(fixture_setup):
+    """Run on short scfv sequence"""
     airr = Airr("human", adaptable=False)
     linked = airr.run_records(fixture_setup.get_scfv_sequences(), scfv=True)
     assert isinstance(linked, LinkedAirrTable)
 
-
-def test_run_multiple_scfv(fixture_setup):
     """Run on multiple long scfv sequences"""
     scfv = fixture_setup.get_long_scfv_fastq()
     airr = Airr("human", adaptable=False)
     results = airr.run_records(scfv, scfv=True)
     assert isinstance(results, LinkedAirrTable)
-
-
-def test_vdj_overlap(fixture_setup):
-    air_api = Airr("human", allow_vdj_overlap=True, adaptable=False)
-    air_api.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
-    assert air_api.igblast.allow_vdj_overlap.value is True
 
 
 def test_airr_from_dataframe(fixture_setup):
@@ -258,7 +253,19 @@ def test_airr_from_file(fixture_setup):
         Path("a_non_existant_directory").rmdir()
 
 
+def test_vdj_overlap(fixture_setup):
+    """Test if we can allow vdj_overlap"""
+    air_api = Airr("human", allow_vdj_overlap=True, adaptable=False)
+    air_api.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
+    assert air_api.igblast.allow_vdj_overlap.value is True
+
+    #  make sure a warning is thrown if we have both adapt penalty and vdj overlap
+    with pytest.warns(UserWarning):
+        air_api = Airr("human", allow_vdj_overlap=True, adaptable=True)
+
+
 def test_adaptable_penalty(fixture_setup):
+    """Test we can run adapatable pentalty methods"""
     test_sequence = fixture_setup.get_adaptable_pentalty_test_seq()
 
     # Check what happens
@@ -316,6 +323,8 @@ def test_adaptable_catnap(fixture_setup):
 
 
 def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
+    """Test we can run mutational analysis post hoc method"""
+
     # run on heavy from fixture of airr
     airrtable_with_analysis = airr_methods.run_mutational_analysis(heavy_catnap_airrtable, "kabat", run_multiproc=False)
     assert "mutations" in airrtable_with_analysis.columns
@@ -333,7 +342,7 @@ def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
 
 
 def test_igl_assignment(heavy_catnap_airrtable, light_catnap_airrtable):
-    # test if we can assign igl
+    """test if we can assign igl through method analysis"""
     airrtable_with_igl = airr_methods.run_igl_assignment(heavy_catnap_airrtable)
     assert "iGL" in airrtable_with_igl.columns
 
@@ -348,6 +357,20 @@ def test_igl_assignment(heavy_catnap_airrtable, light_catnap_airrtable):
 
 
 def test_runtime_referecne(fixture_setup):
+    """Test JIT reference generation"""
+    reference = Reference()
+    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
+    reference.add_gene({"species": "custom", "sub_species": "macaque", "gene": "IGHV1-105*01", "database": "custom"})
+
+    # make sure we add a J gene
+    with pytest.raises(ValueError):
+        airr_api = Airr(reference, adaptable=True)
+    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
+
+    # make sure that we don't accept heterogenous database types
+    with pytest.raises(ValueError):
+        airr_api = Airr(reference, adaptable=True)
+
     reference = Reference()
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV3-15*01", "database": "imgt"})
