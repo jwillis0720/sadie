@@ -42,15 +42,23 @@ jobs:
         run: |
           env
           pytest -n0 -x --cov=sadie --cov-report=xml --cov-report=term tests/unit
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          directory: ./coverage/reports/xml/
-          flags: unittests
-          name: codecov-umbrella
-          verbose: true
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage-report
           path: ./coverage
+
+  upload-to-codecov:
+      needs: [build-test]
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Download artifacts
+          uses: actions/download-artifact@v2
+        - name: Upload to Codecov
+          uses: codecov/codecov-action@v2
+          with:
+            directory: ./coverage/reports/xml/
+            name: codecov-umbrella
+            verbose: true
