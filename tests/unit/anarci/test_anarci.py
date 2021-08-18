@@ -1,34 +1,12 @@
-import glob
-import logging
-import os
 import tempfile
-from itertools import product
-from pathlib import Path
 
 import pandas as pd
 import pytest
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from click.testing import CliRunner
 from pandas.testing import assert_frame_equal
 from sadie.anarci import Anarci, AnarciDuplicateIdError, AnarciResults
-from sadie.anarci.app import run_anarci
-
-logger = logging.getLogger()
-
-
-# def get_file(file):
-#     """Helper method for test execution."""
-#     _file = os.path.join(os.path.abspath(os.path.dirname(__file__)), f"fixtures/{file}")
-#     if not os.path.exists(_file):
-#         raise FileNotFoundError(_file)
-#     return _file
-
-
-# def fixture_file(file):
-#     """Helper method for test execution."""
-#     return resource_filename(__name__, "fixtures/{}".format(file))
 
 
 def test_long_seq():
@@ -250,59 +228,6 @@ def test_duplicated_seq():
     ]
     with pytest.raises(AnarciDuplicateIdError):
         anarci_api.run_multiple(seq_records)
-
-
-# cli helper
-def _run_cli(p_tuple):
-    with tempfile.NamedTemporaryFile() as tmpfile:
-        cli_input = [
-            "--query",
-            str(p_tuple[0]),
-            "-o",
-            tmpfile.name,
-            "-a",
-            p_tuple[1],
-            "-f",
-            p_tuple[2],
-            "-s",
-            p_tuple[3],
-            "-r",
-            p_tuple[4],
-            "-vvvvv",
-        ]
-        if not Anarci.check_combination(p_tuple[3], p_tuple[4]):
-            logger.info(f"skipping {p_tuple[4]}-{p_tuple[3]}")
-            return True
-
-        logger.info(f"CLI input {' '.join(cli_input)}")
-        runner = CliRunner()
-        result = runner.invoke(run_anarci, cli_input)
-        if result.exit_code != 0:
-            logger.info(f"!!!STDERR {result}")
-
-        assert result.exit_code == 0
-
-        # anarci appends reults and alignment so glob
-        out_file = Path(tmpfile.name).stem + "*"
-    for f in glob.glob(out_file):
-        os.remove(f)
-    return True
-
-
-def test_cli(fixture_setup):
-    """Confirm the CLI works as expecte"""
-    test_file_heavy = fixture_setup.get_catnap_heavy_aa()
-    test_file_light = fixture_setup.get_catnap_light_aa()
-    species = ["human", "mouse", "rat", "rabbit", "rhesus", "pig", "alpaca", "dog", "cat"]
-    species = ",".join(species)
-    ft = ["csv", "json", "feather"]
-    schemes = ["imgt", "kabat", "chothia"]
-    regions = ["imgt", "kabat", "chothia", "abm", "contact", "scdr"]
-    products = product([test_file_heavy, test_file_light], [species], ft, schemes, regions)
-
-    # pool = Pool()
-    results = list(map(_run_cli, products))
-    print(results)
 
 
 def test_df(fixture_setup):
