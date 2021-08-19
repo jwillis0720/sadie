@@ -155,7 +155,10 @@ class Airr:
                 os.makedirs(temp_directory)
                 self._create_temp = True
         else:
-            temp_directory = tempfile.gettempdir() + "/airr"
+            if "TMPDIR" in os.environ:
+                temp_directory = Path(os.environ["TMPDIR"])
+            else:
+                temp_directory = tempfile.gettempdir() + "/airr"
             if not os.path.exists(temp_directory):
                 os.makedirs(temp_directory)
                 self._create_temp = True

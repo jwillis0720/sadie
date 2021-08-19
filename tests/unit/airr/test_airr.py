@@ -125,8 +125,9 @@ def test_germline_init():
         gd.d_gene_dir = "/non/existant/path"
 
 
-def test_airr_init(tmpdir):
+def test_airr_init(tmpdir, monkeypatch):
     """Test if we can init airr"""
+    monkeypatch.setenv("TMPDIR", str(tmpdir / "monkeyairr"))
     for species in ["human", "mouse", "rat", "dog"]:
         air_api = Airr(species)
         air_api.get_available_datasets()
@@ -143,6 +144,7 @@ def test_airr_init(tmpdir):
     assert air_api.__repr__() == air_api.__str__()
 
     # odd settings produce coverage
+    monkeypatch.delenv("TMPDIR")
     air_api = Airr("human", allow_vdj_overlap=True, d_gene_penalty=-1, j_gene_penalty=-1)
 
 
