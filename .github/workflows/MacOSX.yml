@@ -43,7 +43,7 @@ jobs:
           pytest -x -n 2 -v tests/unit
       - name: Integration Testing
         run: |
-          pytest -x -n 2 -v tests/integration
+          pytest -x -n0 -v tests/integration
       - name: Install Twine/Wheel
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
