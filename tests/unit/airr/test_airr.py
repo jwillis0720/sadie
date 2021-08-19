@@ -142,6 +142,9 @@ def test_airr_init(tmpdir):
     shutil.rmtree(temporary_directory)
     assert air_api.__repr__() == air_api.__str__()
 
+    # odd settings produce coverage
+    air_api = Airr("human", allow_vdj_overlap=True, d_gene_penalty=-1, j_gene_penalty=-1)
+
 
 def test_custom_mice_init():
     """Test we can initialize custom Mice"""
