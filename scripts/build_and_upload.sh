@@ -1,3 +1,4 @@
+#!/usr/bin/sh
 pip install .
 pip install wheel twine setuptools
 rm -rf dist/*
