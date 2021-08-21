@@ -149,20 +149,14 @@ class Airr:
             self._v_gene_penalty = -1
             self._j_gene_penalty = -1
 
-        # set local instance and igblast temp dir instance
-        if temp_directory:
-            if not os.path.exists(temp_directory):
-                os.makedirs(temp_directory)
-                self._create_temp = True
-        else:
+        # set temp_directory so it will never be None
+        if not temp_directory:
             if "TMPDIR" in os.environ:
                 temp_directory = Path(os.environ["TMPDIR"])
             else:
-                temp_directory = tempfile.gettempdir() + "/airr"
-            if not os.path.exists(temp_directory):
-                os.makedirs(temp_directory)
-                self._create_temp = True
-            logger.info(f"Temp dir - {temp_directory}")
+                temp_directory = Path(tempfile.gettempdir()) / "airr/"
+
+        # set igblast temp after instance temp
         self.temp_directory = temp_directory
         self.igblast.temp_dir = self.temp_directory
 
@@ -172,7 +166,7 @@ class Airr:
             self._species = "custom"
 
             # set custom directory path
-            custom_directory = self.temp_directory + "/custom/"
+            custom_directory = self.temp_directory / "custom/"
             full_out_path = make_germline_database(species, custom_directory)
 
             # what database type did they pass?
@@ -239,20 +233,24 @@ class Airr:
         return self._species
 
     @property
-    def temp_directory(self) -> Union[None, str, Path]:
+    def temp_directory(self) -> Path:
         return self._temp_directory
 
     @temp_directory.setter
-    def temp_directory(self, temp_directory: Union[None, str, Path]):
+    def temp_directory(self, temp_directory: Union[str, Path]):
+        if not isinstance(temp_directory, (str, Path)):
+            raise TypeError(f"temp_directory must be str or Path, not {type(temp_directory)}")
+
         # if we set the temp diretory, we need to create it
-        if temp_directory:
-            if not os.path.exists(temp_directory):
-                os.makedirs(temp_directory)
-            self._temp_directory = temp_directory
-        # if not, the tempfile class houses where the users system defaults to store temporary stuff
-        else:
-            self._temp_directory = tempfile.gettempdir()
-            logger.info(f"Temp dir - {self._temp_directory}")
+        if not os.path.exists(temp_directory):
+            os.makedirs(temp_directory)
+            self._create_temp = True
+            logger.info(f"Temp dir - {temp_directory}")
+
+        self._temp_directory = Path(temp_directory)
+        # check for write access
+        if not os.access(str(self._temp_directory), os.W_OK):
+            raise IOError(f"Temp directory {self._temp_directory} is not writable")
 
     @property
     def igblast(self) -> IgBLASTN:

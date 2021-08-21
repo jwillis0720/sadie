@@ -339,6 +339,8 @@ class IgBLASTN:
         if isinstance(data, str):
             data = Path(data)
         self._temp_dir = data.absolute()
+        if not os.access(self._temp_dir, os.W_OK):
+            raise IOError(self._temp_dir, "Unable to write to temp dir")
 
     @property
     def igdata(self) -> Path:

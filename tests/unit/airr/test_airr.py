@@ -146,6 +146,16 @@ def test_airr_init(tmpdir, monkeypatch):
     # odd settings produce coverage
     monkeypatch.delenv("TMPDIR")
     air_api = Airr("human", allow_vdj_overlap=True, d_gene_penalty=-1, j_gene_penalty=-1)
+    with pytest.raises(TypeError):
+        air_api.adapt_penalty = "robot"
+
+    # test a temp file that is not a directory
+    with pytest.raises(TypeError):
+        air_api = Airr("human", temp_directory=30)
+
+    # test a non writeable file
+    with pytest.raises(IOError):
+        air_api = Airr("human", temp_directory="/usr/bin")
 
 
 def test_custom_mice_init():
