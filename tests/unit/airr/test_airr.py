@@ -378,6 +378,9 @@ def test_adaptable_correction(fixture_setup):
     # correct 30 of them
     assert not (liable_corrected["liable"]).any()
 
+    liable_mix = air_api.run_fasta(fixture_setup.get_OAS_liable_file())
+    assert liable_mix["liable"].value_counts().to_dict() == {True: 30, False: 24}
+
 
 def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
     """Test we can run mutational analysis post hoc method"""

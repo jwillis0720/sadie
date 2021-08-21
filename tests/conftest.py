@@ -182,7 +182,12 @@ class AirrSequences:
         return self.single_seqs_json["adaptible_pentalty_test_seq_scfv"]
 
     def get_OAS_correctable_pentalty_file(self) -> Path:
+        "Get a file containing correctable sequences from OAS"
         return self.fasta_inputs / "OAS_correctable_liable.fasta"
+
+    def get_OAS_liable_file(self) -> Path:
+        "Get liable sequences from OAS that when adapt is turned off" ""
+        return self.fasta_inputs / "OAS_liable.fasta"
 
     def get_monkey_edge_seq(self) -> str:
         """get a single sequence for the testing sequence for testing the weird macaque edge case"""
