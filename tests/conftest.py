@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List
 
 import pytest
+import pandas as pd
 from Bio import SeqIO
 from sadie.airr import Airr
 from sadie.airr.airrtable import AirrTable
@@ -180,6 +181,9 @@ class AirrSequences:
         """get a single scfv sequence for the testing sequence for adaptable pentalties"""
         return self.single_seqs_json["adaptible_pentalty_test_seq_scfv"]
 
+    def get_OAS_correctable_pentalty_file(self) -> Path:
+        return self.fasta_inputs / "OAS_correctable_liable.fasta"
+
     def get_monkey_edge_seq(self) -> str:
         """get a single sequence for the testing sequence for testing the weird macaque edge case"""
         return self.single_seqs_json["monkey_edge_case"]
@@ -219,6 +223,16 @@ class AirrTables:
     def get_dog_airrtable(self) -> Path:
         """get a file path for the dog airr table csv.gzjj"""
         return self.airr_table_inputs / "dog_igh.csv.gz"
+
+    def get_dog_airrtable_with_missing_sequences(self) -> pd.DataFrame:
+        """get a dataframe with missing seqeunces as nan that will throw errror"""
+        dog_df = pd.read_csv(self.get_dog_airrtable(), index_col=0)
+        dog_1 = dog_df.copy()
+        dog_2 = dog_df.copy()
+        dog_2.drop(["sequence", "sequence_id"], axis=1, inplace=True)
+        dog_2 = dog_2.reset_index().rename({"index": "sequence_id"}, axis=1)
+        double_dog = pd.concat([dog_1, dog_2])
+        return double_dog
 
     def get_linked_airrtable(self) -> Path:
         """get file path to a linked airrtable for spliting and reassembling"""
@@ -321,7 +335,7 @@ def fixture_setup(tmp_path_factory):
 
 @pytest.fixture(scope="session", autouse=False)
 def heavy_catnap_airrtable(fixture_setup) -> AirrTable:
-    """ A permanant fixture of the catnap heavy airr table run through adaptable airrtable"""
+    """A permanant fixture of the catnap heavy airr table run through adaptable airrtable"""
     airr_api = Airr("human", adaptable=True)
     airrtable_heavy = airr_api.run_fasta(fixture_setup.get_catnap_heavy_nt())
     airrtable_heavy["cellid"] = airrtable_heavy["sequence_id"].str.split("_").str.get(0)
@@ -330,7 +344,7 @@ def heavy_catnap_airrtable(fixture_setup) -> AirrTable:
 
 @pytest.fixture(scope="session", autouse=False)
 def light_catnap_airrtable(fixture_setup) -> AirrTable:
-    """ A permanant fixture of the catnap light airr table run through adaptable airrtable"""
+    """A permanant fixture of the catnap light airr table run through adaptable airrtable"""
     airr_api = Airr("human", adaptable=True)
     airrtable_light = airr_api.run_fasta(fixture_setup.get_catnap_light_nt())
     airrtable_light["cellid"] = airrtable_light["sequence_id"].str.split("_").str.get(0)

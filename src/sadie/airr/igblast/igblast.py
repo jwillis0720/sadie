@@ -10,7 +10,6 @@ import subprocess
 import tempfile
 import warnings
 import semantic_version
-from shutil import which
 
 from pathlib import Path
 from typing import List, Union
@@ -316,12 +315,7 @@ class IgBLASTN:
     def executable(self, exe: Path):
         if isinstance(exe, str):
             exe = Path(exe)
-        full_exe_path = which(exe)
-        if not full_exe_path:
-            raise BadIgBLASTExe(exe, f"{exe} must exist")
-        if not os.access(full_exe_path, os.X_OK):
-            raise BadIgBLASTExe(exe, f"{full_exe_path} must be executable")
-        self._executable = Path(exe)
+        self._executable = exe
 
     @property
     def temp_dir(self) -> Path:

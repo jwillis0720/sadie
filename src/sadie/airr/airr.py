@@ -117,8 +117,22 @@ class Airr:
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
 
-        # the setter handles all the logic behind choosign the correct executables
-        self.executable = igblast_exe
+        # check for package executable, then path igblastn in path
+        if not igblast_exe:
+            try:
+                self.executable = self._get_package_igblast_exe()
+            except BadIgBLASTExe:
+                logger.error(f"Could not find igblast executable {igblast_exe}, searching path")
+                try:
+                    self.executable = shutil.which("igblastn")
+                except BadIgBLASTExe as e:
+                    logger.error(f"package igblast and path igblast not working: {os.environ['PATH']}")
+                    raise e
+            logger.debug(f"Using igblastn from {self.executable}")
+        else:
+            self.executable = Path(igblast_exe)
+
+        # give executable to IgBLASTN
         self.igblast = IgBLASTN(self.executable)
 
         # Properties of airr that will be shared with IgBlast class
@@ -274,45 +288,22 @@ class Airr:
         return self._executable
 
     @executable.setter
-    def executable(self, path: Path):
-        _executable = "igblastn"
-        # if the user wants us to find the executable
+    def executable(self, path: Union[Path, str]):
+        # none can be passed if which(igblastn) returns None
         if not path:
-            system = platform.system().lower()
-            igblastn_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                f"bin/{system}/{_executable}",
-            )
-            # check if its
-            if os.path.exists(igblastn_path):
-                # check if it's executable
-                if shutil.which(igblastn_path):
-                    igblastn_path = shutil.which(igblastn_path)
-                else:
-                    # If it's not check the access
-                    _access = os.access(igblastn_path, os.X_OK)
-                    raise BadIgBLASTExe(igblastn_path, f"is, this executable? Executable-{_access}")
-            else:  # The package igblastn is not working
-                logger.warning(
-                    f"Can't find igblast executable in {igblastn_path}, with system {system} within package {__package__}. Trying to find system installed hmmer"
-                )
-                igblastn_path = shutil.which(_executable)
-                if not igblastn_path:
-                    raise BadIgBLASTExe(
-                        igblastn_path,
-                        f"Can't find igblastn in package {__package__} or in path {os.environ['PATH']}",
-                    )
-        else:  # User specifed custome path
-            logger.debug(f"User passed custom igblastn {path}")
-            igblastn_path = shutil.which(path)
-            if igblastn_path:
-                self._executable = igblastn_path
-            else:
-                _access = os.access(igblastn_path, os.X_OK)
-                raise BadIgBLASTExe(
-                    igblastn_path, f"Custom igblastn path is not executable {igblastn_path}, {_access} "
-                )
-        self._executable = igblastn_path
+            raise BadIgBLASTExe(path, "No igblastn found")
+        if isinstance(path, str):
+            path = Path(path)
+        if not path.exists():
+            raise BadIgBLASTExe(path, "Exe does not exist")
+
+        # finally check that it's executable
+        _access = os.access(path, os.X_OK)
+        if not _access:
+            raise BadIgBLASTExe(path, f"is, this executable? Executable-{_access}")
+
+        # set path as executable
+        self._executable = path
 
     def run_single(self, seq_id: str, seq: str, scfv=False) -> Union[AirrTable, LinkedAirrTable]:
         """Run a single string sequence
@@ -373,7 +364,7 @@ class Airr:
             raise TypeError(f"{dataframe} must be instance of pd.DataFrame")
 
         if dataframe[seq_id_field].duplicated().any():
-            raise TypeError(
+            raise ValueError(
                 f"{dataframe[dataframe[seq_id_field].duplicated()][seq_id_field]} is duplicated. Nees to be unique"
             )
 
@@ -468,7 +459,7 @@ class Airr:
             # cast to str
             file = str(file)
 
-        if not Path(file).exists:
+        if not Path(file).exists():
             raise FileNotFoundError(file)
 
         # make sure it's fasta - this will consume the generator but blast has its own fasta parser
@@ -492,6 +483,9 @@ class Airr:
             logger.info(f"Ran blast on  {file}")
             result.insert(2, "species", self.species)
             result = AirrTable(result)
+            result["v_penalty"] = self._v_gene_penalty
+            result["d_penalty"] = self._d_gene_penalty
+            result["j_penalty"] = self._j_gene_penalty
             if result["liable"].any():
                 # If we allow adaption,
                 if self.adapt_penalty:
@@ -554,9 +548,7 @@ class Airr:
                         logger.info(
                             f"{len(adapt_results[~adapt_results['liable']])} corrected with adapting penalties v={v_penalty},j={j_penalty}"
                         )
-                        if adapt_results[~adapt_results["liable"]].empty:
-                            logger.info("Skipping update...")
-                        else:
+                        if not adapt_results[~adapt_results["liable"]].empty:
                             result.update(adapt_results[~adapt_results["liable"]])
 
         if self.correct_indel:
@@ -648,6 +640,17 @@ class Airr:
         linked_table = _heavy_airr.merge(_light_airr, suffixes=["_heavy", "_light"], on="sequence_id")
         linked_table = LinkedAirrTable(linked_table)
         return linked_table
+
+    def _get_package_igblast_exe(self) -> Path:
+        """Get package igblastn"""
+
+        # this patch allows us to mock a non-existant igblast that is not in package
+        if "IGBLASTN_MONEKY_PATCH" in os.environ:
+            executable = os.environ["IGBLASTN_MONEKY_PATCH"]
+        else:
+            executable = "igblastn"
+        system = platform.system().lower()
+        return Path(os.path.dirname(os.path.abspath(__file__))) / "bin" / system / executable
 
     @staticmethod
     def get_available_datasets() -> list:

@@ -69,7 +69,7 @@ def test_antibody_igblast_setup():
 
     with pytest.raises(airr_exceptions.BadIgBLASTExe):
         # pass an executable that is not igblast
-        igblast.IgBLASTN("ls")
+        igblast.IgBLASTN("find")
 
 
 def test_antibody_igblast_file_run(fixture_setup):
@@ -131,6 +131,7 @@ def test_airr_init(tmpdir, monkeypatch):
     for species in ["human", "mouse", "rat", "dog"]:
         air_api = Airr(species)
         air_api.get_available_datasets()
+        air_api.get_available_species()
         assert isinstance(air_api, Airr)
     # show we can catch bad species inputs
     with pytest.raises(BadDataSet) as execinfo:
@@ -156,6 +157,25 @@ def test_airr_init(tmpdir, monkeypatch):
     # test a non writeable file
     with pytest.raises(IOError):
         air_api = Airr("human", temp_directory="/usr/bin")
+
+    # test air init with bad igblastn executable.
+    # this mocks that igblastn was not shipped in the repo and to search along path
+    monkeypatch.setenv("IGBLASTN_MONEKY_PATCH", "blastp")
+    with pytest.raises(airr_exceptions.BadIgBLASTExe):
+        air_api = Airr("human")
+    with pytest.raises(airr_exceptions.BadIgBLASTExe):
+        air_api = Airr("human", igblast_exe="robot")
+
+    monkeypatch.delenv("IGBLASTN_MONEKY_PATCH")
+    air_api = Airr("human")
+
+    # coverage for string and executable not being an executable file
+    with pytest.raises(airr_exceptions.BadIgBLASTExe):
+        air_api.executable = __file__
+
+    # has to be IgBlastN class
+    with pytest.raises(TypeError):
+        air_api.igblast = str
 
 
 def test_custom_mice_init():
@@ -242,6 +262,16 @@ def test_airr_from_dataframe(fixture_setup):
     joined_df = airr_api.run_dataframe(dog_df, "sequence_id", "sequence", return_join=True)
     assert isinstance(joined_df, pd.DataFrame)
 
+    with pytest.raises(TypeError):
+        airr_api.run_dataframe(fixture_setup.get_oas_fasta(), "sequence_id", "sequence")
+
+    double_dog = pd.concat([dog_df, dog_df])
+    with pytest.raises(ValueError):
+        airr_api.run_dataframe(double_dog, "sequence_id", "sequence")
+
+    with pytest.raises(ValueError):
+        airr_api.run_dataframe(fixture_setup.get_dog_airrtable_with_missing_sequences(), "sequence_id", "sequence")
+
 
 def test_airr_from_file(fixture_setup):
     """Test we can pass a dataframe to runtime"""
@@ -266,6 +296,11 @@ def test_airr_from_file(fixture_setup):
     # cleanup just in case test fails
     if Path("a_non_existant_directory").exists():
         Path("a_non_existant_directory").rmdir()
+
+    # more coverage
+    airr_api = Airr("human")
+    with pytest.raises(FileNotFoundError):
+        airr_api.run_fasta("a_non_existant_directory/a_non_existant_file.fasta")
 
 
 def test_vdj_overlap(fixture_setup):
@@ -329,12 +364,19 @@ def test_adaptable_penalty(fixture_setup):
     assert isinstance(airr_table, LinkedAirrTable)
 
 
-def test_adaptable_catnap(fixture_setup):
+def test_adaptable_correction(fixture_setup):
+    air_api = Airr("human", adaptable=False)
+
+    # these sequences are liable.
+    liable = air_api.run_fasta(fixture_setup.get_OAS_correctable_pentalty_file())
+    assert (liable["v_penalty"] == -1).all()
+    assert (liable["d_penalty"] == -1).all()
+    assert (liable["j_penalty"] == -2).all()
+
     air_api = Airr("human", adaptable=True)
-    liable = air_api.run_fasta(fixture_setup.get_catnap_heavy_nt())
-    assert not liable["liable"].any()
-    liable = air_api.run_fasta(fixture_setup.get_catnap_light_nt())
-    assert not liable["liable"].any()
+    liable_corrected = air_api.run_dataframe(liable, "sequence_id", "sequence")
+    # correct 30 of them
+    assert not (liable_corrected["liable"]).any()
 
 
 def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
