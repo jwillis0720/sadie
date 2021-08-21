@@ -1,4 +1,4 @@
-__version__ = "0.3.13"
+__version__ = "0.3.14"
 
 from .airr import Airr, BadDataSet, BadRequstedFileType, GermlineData
 from .airrtable import AirrTable, LinkedAirrTable
