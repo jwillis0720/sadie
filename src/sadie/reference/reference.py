@@ -6,7 +6,6 @@ from urllib.parse import quote as url_quote
 import pandas as pd
 import requests
 from pydantic import BaseModel, validator
-from sadie.reference.settings import IMGT_LOOKUP
 from yaml import load
 
 try:
@@ -154,14 +153,6 @@ class YamlRef:
 
 class Species(BaseModel):
     species: str
-
-    @validator("species")
-    def check_species(cls, v):
-        # pylint: disable=no-self-argument
-        available = list(IMGT_LOOKUP.keys()) + ["clk", "bat64", "hugl18", "se09", "se0916", "se16", "sa684", "custom"]
-        if v not in available:
-            raise ValueError(f"{v} not in species list, have {available}, can use 'custom' for custom dataset")
-        return v
 
 
 class GeneEntry(BaseModel):
