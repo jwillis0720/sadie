@@ -158,7 +158,7 @@ class Species(BaseModel):
     @validator("species")
     def check_species(cls, v):
         # pylint: disable=no-self-argument
-        available = list(IMGT_LOOKUP.keys()) + ["clk", "bat64", "hugl18", "se09", "se0916", "se16", "se684", "custom"]
+        available = list(IMGT_LOOKUP.keys()) + ["clk", "bat64", "hugl18", "se09", "se0916", "se16", "sa684"]
         if v not in available:
             raise ValueError(f"{v} not in species list, have {available}, can use 'custom' for custom dataset")
         return v
