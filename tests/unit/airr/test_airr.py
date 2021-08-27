@@ -183,7 +183,7 @@ def test_custom_mice_init():
     Airr("hugl18")
     Airr("se09")
     Airr("se16")
-    Airr("se684")
+    Airr("sa684")
 
 
 def test_airr_single_sequence(fixture_setup):

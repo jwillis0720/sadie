@@ -155,8 +155,9 @@ def make_igblast_reference(verbose, outpath, reference):
         click.echo(f"No outpath specified, using {outpath}")
 
     # make reference
-    # reference_object = Reference.read_file("tmp_dataframe.csv")
     click.echo(f"Getting G3 genes from {reference}")
+
+    # read in yaml file with all statric reference data
     reference_object = Reference.parse_yaml(reference)
     germline_path = make_germline_database(reference_object, outpath)
     click.echo(f"Wrote germline database to {germline_path}")

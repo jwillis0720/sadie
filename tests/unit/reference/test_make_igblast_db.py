@@ -237,7 +237,7 @@ def test_make_igblast_reference(fixture_setup):
         result = runner.invoke(app.make_igblast_reference, ["--outpath", tmpdir], catch_exceptions=True)
         if result.exit_code != 0:
             print(result)
-        # assert result.enternaxit_code == 0
+            assert result.exit_code == 0
         assert os.path.exists(tmpdir)
 
         directories_created = glob.glob(tmpdir + "/*")
@@ -245,23 +245,38 @@ def test_make_igblast_reference(fixture_setup):
         imgt_blast_dir = [
             i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/blastdb/*.fasta", recursive=True)
         ]
-        diff = set(imgt_blast_dir).difference(set(expected_blast_dir))
-        if diff:
-            raise AssertionError(f"{diff} didn't get made exist")
+        made_diff = set(imgt_blast_dir).difference(set(expected_blast_dir))
+        expected_diff = set(expected_blast_dir).difference(set(imgt_blast_dir))
+        if made_diff or expected_diff:
+            if made_diff:
+                raise AssertionError(f"We made a blast dbs {sorted(made_diff)} that was not expected")
+            if expected_diff:
+                raise AssertionError(f"We expected a blast db entri {sorted(expected_diff)} that was not made")
         internal = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/*.imgt", recursive=True)]
-        diff = set(internal).difference(set(expected_internal))
-        if diff:
-            raise AssertionError(f"{diff} didn't get made for internal")
-
+        made_diff = set(internal).difference(set(expected_internal))
+        expected_diff = set(expected_internal).difference(set(internal))
+        if made_diff or expected_diff:
+            if made_diff:
+                raise AssertionError(f"We made a internal dbs {sorted(made_diff)} that was not expected")
+            if expected_diff:
+                raise AssertionError(f"We expected a internal db entri {sorted(expected_diff)} that was not made")
         aux = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/*.aux", recursive=True)]
-        diff = set(aux).difference(set(expected_aux))
-        if diff:
-            raise AssertionError(f"{diff} didn't get made for aux")
+        made_diff = set(aux).difference(set(expected_aux))
+        expected_diff = set(expected_aux).difference(set(aux))
+        if made_diff or expected_diff:
+            if made_diff:
+                raise AssertionError(f"We made a aux structure {sorted(made_diff)} that was not expected")
+            if expected_diff:
+                raise AssertionError(f"We expected aux_structure entri {sorted(expected_diff)} that was not made")
 
         nhd = [i.split(os.path.basename(tmpdir))[-1] for i in glob.glob(f"{tmpdir}/**/*.nhd", recursive=True)]
-        diff = set(nhd).difference(set(expected_nhd))
-        if diff:
-            raise AssertionError(f"{diff} didn't get made for nhd")
+        made_diff = set(nhd).difference(set(expected_nhd))
+        expected_diff = set(expected_nhd).difference(set(nhd))
+        if made_diff or expected_diff:
+            if made_diff:
+                raise AssertionError(f"We made a nhd structure {sorted(made_diff)} that was not expected")
+            if expected_diff:
+                raise AssertionError(f"We expected nhd entri {sorted(expected_diff)} that was not made")
 
         # test auxillary file building
         assert _test_auxilary_file_structure(tmpdir, fixture_setup)
