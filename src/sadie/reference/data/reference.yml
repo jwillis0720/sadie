@@ -1,7 +1,7 @@
 imgt:
   se6156:
     human:
-    - IGHJ6*01
+    - IGHJ6*03
     - IGHD3-3*01
     mouse:
     - IGHV1-11*01
@@ -627,7 +627,7 @@ imgt:
     - IGLJ5*01
   sa684:
     human:
-    - IGHJ6*01
+    - IGHJ6*03
     - IGHD3-3*01
     mouse:
     - IGHV1-11*01
