@@ -127,10 +127,7 @@ class Cluster:
             distance_threshold (int): The maximum distance between two points to be. Default is 3.
         """
         if self.groupby is None:
-            if not self.distance_df:
-                self.distance_df = self._get_distance_df(self.airrtable)
-            else:
-                logger.info("Using cached distance matrix")
+            self.distance_df = self._get_distance_df(self.airrtable)
             model = AgglomerativeClustering(
                 linkage=self.linkage, affinity="precomputed", distance_threshold=distance_threshold, n_clusters=None
             )
@@ -141,10 +138,7 @@ class Cluster:
         else:
             cluster_catcher = []
             for g, g_df in self.airrtable.groupby(self.groupby):
-                if not self.distance_df:
-                    self.distance_df = self._get_distance_df(g_df)
-                else:
-                    logger.info("Using cached distance matrix")
+                self.distance_df = self._get_distance_df(g_df)
                 # Calculate the linkage matrix
                 model = AgglomerativeClustering(
                     linkage=self.linkage,
