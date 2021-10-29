@@ -1,21 +1,43 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v4.0.1
     hooks:
     -   id: check-yaml
         args: ['--unsafe']
     -   id: end-of-file-fixer
+    -   id: check-added-large-files
+        args: ['--maxkb=1000']
+    -   id: check-json
+    -   id: check-yaml
+    -   id: check-shebang-scripts-are-executable
+    -   id: detect-private-key
+    -   id: fix-encoding-pragma
     -   id: trailing-whitespace
         exclude: docs/img/
 -   repo: https://github.com/psf/black
-    rev: 20.8b1
+    rev: 21.9b0
     hooks:
     -   id: black
         args: ["-l","120"]
 -   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.0
+    rev: 3.9.2
     hooks:
     -   id: flake8
         exclude: (^src/sadie/anarci/aa/|notebooks/)
         additional_dependencies: [flake8-bugbear]
         args: ["--ignore=W503,E501,E203,B006,B008"]
+-   repo: https://github.com/asottile/setup-cfg-fmt
+    rev: v1.18.0
+    hooks:
+    -   id: setup-cfg-fmt
+# -   repo: https://github.com/pycqa/isort
+#     rev: 5.8.0
+#     hooks:
+#       - id: isort
+#         name: isort (python)
+#       - id: isort
+#         name: isort (cython)
+#         types: [cython]
+#       - id: isort
+#         name: isort (pyi)
+#         types: [pyi]

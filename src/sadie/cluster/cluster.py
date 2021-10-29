@@ -1,12 +1,14 @@
+# -*- coding: utf-8 -*-
+import logging
+from typing import Union
+
+import numpy as np
 import pandas as pd
+from Levenshtein._levenshtein import distance as lev_distance
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
-from Levenshtein._levenshtein import distance as lev_distance
-from sadie.airr import AirrTable, LinkedAirrTable
-from typing import Union
-import numpy as np
-import logging
 
+from sadie.airr import AirrTable, LinkedAirrTable
 
 logger = logging.getLogger("Cluster")
 

@@ -1,6 +1,8 @@
-from sadie.cluster import Cluster
-from sadie.airr import AirrTable, LinkedAirrTable
+# -*- coding: utf-8 -*-
 import pandas as pd
+
+from sadie.airr import AirrTable, LinkedAirrTable
+from sadie.cluster import Cluster
 
 
 def test_cluster(heavy_catnap_airrtable, light_catnap_airrtable):

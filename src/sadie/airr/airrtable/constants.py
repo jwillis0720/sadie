@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 IGBLAST_AIRR = {
     "sequence_id": "object",
     "sequence": "object",

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from sadie.utility.util import get_consensus_of_paired_end_abi
 
 

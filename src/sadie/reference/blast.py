@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 import logging
 import os
 import platform
-import subprocess
 import shutil
+import subprocess
 
 
 def write_blast_db(filename, output_db):

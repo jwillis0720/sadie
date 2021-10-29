@@ -1,5 +1,6 @@
-from Levenshtein import distance
+# -*- coding: utf-8 -*-
 import pandas as pd
+from Levenshtein import distance
 
 
 def compute_lev(x, y):

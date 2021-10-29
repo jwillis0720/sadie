@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #    ANARCI - Antibody Numbering and Antigen Receptor ClassIfication
 #    Copyright (C) 2016 Oxford Protein Informatics Group (OPIG)
 #

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Low level module for IgBLAST api calls
 
 You probably only want to interact with this module through airr as the database files are extremely tricky to get right
@@ -9,26 +10,25 @@ import os
 import subprocess
 import tempfile
 import warnings
-import semantic_version
-
 from pathlib import Path
 from typing import List, Union
 
 # Third party
 import pandas as pd
+import semantic_version
 
-# package/module level
-from sadie.utility.util import is_tool
 from sadie.airr.airrtable.constants import IGBLAST_AIRR
 from sadie.airr.exceptions import (
     BadIgBLASTArgument,
     BadIgBLASTExe,
     BadIgDATA,
-    MissingIgBLASTArgument,
     EmtpyFileError,
     IgBLASTRunTimeError,
+    MissingIgBLASTArgument,
 )
 
+# package/module level
+from sadie.utility.util import is_tool
 
 # get logger in global scope
 logger = logging.getLogger("IgBLAST")

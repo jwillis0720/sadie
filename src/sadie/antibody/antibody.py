@@ -1,14 +1,9 @@
+# -*- coding: utf-8 -*-
 import json
-from .chain import (
-    HeavyChainAA,
-    KappaChainAA,
-    LambdaChainAA,
-    HeavyChainNT,
-    KappaChainNT,
-    LambdaChainNT,
-)
-from .exception import HeavyChainException, LightChainException
 from typing import Union
+
+from .chain import HeavyChainAA, HeavyChainNT, KappaChainAA, KappaChainNT, LambdaChainAA, LambdaChainNT
+from .exception import HeavyChainException, LightChainException
 
 
 class AntibodyAA:

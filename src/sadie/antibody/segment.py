@@ -1,23 +1,18 @@
+# -*- coding: utf-8 -*-
 """A collection of base classes for higher level antibody objects"""
 import re
 import warnings
 
+from Bio.Align import MultipleSeqAlignment
+from Bio.pairwise2 import align
 
 # Third Party
 from Bio.Seq import Seq
-from Bio.pairwise2 import align
 from Bio.SeqRecord import SeqRecord
-from Bio.Align import MultipleSeqAlignment
 from numpy import isnan
 
 # Lib Level
-from .exception import (
-    BadAASequenceError,
-    BadAASequenceWarning,
-    BadNTSequenceError,
-    BadNTSequenceWarning,
-)
-
+from .exception import BadAASequenceError, BadAASequenceWarning, BadNTSequenceError, BadNTSequenceWarning
 from .utility import format_alignment
 
 # Common amino acids

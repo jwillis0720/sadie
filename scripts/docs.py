@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
 # import mkdocs.commands.build
 # import mkdocs.commands.serve
 # import mkdocs.config
 # import mkdocs.utils
-import typer
-from pathlib import Path
 import re
+from pathlib import Path
+
+import typer
 
 app = typer.Typer()
 

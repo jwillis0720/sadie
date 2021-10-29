@@ -1,10 +1,12 @@
-from Bio.Align import MultipleSeqAlignment
+# -*- coding: utf-8 -*-
 import bz2
 import gzip
 import os
-from mimetypes import guess_type
 from functools import partial
+from mimetypes import guess_type
+
 from Bio import SeqIO as so
+from Bio.Align import MultipleSeqAlignment
 
 
 def getVerbosityLevel(verbosity_count):

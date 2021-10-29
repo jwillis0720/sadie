@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """SADIE Airr module"""
 # Std library
 import itertools
@@ -11,7 +12,6 @@ from pathlib import Path
 from types import GeneratorType
 from typing import Generator, List, Union
 
-
 # third party
 import pandas as pd
 from Bio import SeqIO
@@ -19,11 +19,10 @@ from Bio.Seq import Seq
 from Bio.SeqIO.Interfaces import SequenceIterator
 from Bio.SeqRecord import SeqRecord
 
-
 # package/module level
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
-from sadie.airr.igblast import IgBLASTN, GermlineData
-from sadie.airr.exceptions import BadIgBLASTExe, BadDataSet, BadRequstedFileType
+from sadie.airr.exceptions import BadDataSet, BadIgBLASTExe, BadRequstedFileType
+from sadie.airr.igblast import GermlineData, IgBLASTN
 from sadie.reference import Reference, make_germline_database
 
 logger = logging.getLogger("AIRR")

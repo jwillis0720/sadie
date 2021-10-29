@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #    ANARCI - Antibody Numbering and Antigen Receptor ClassIfication
 #    Copyright (C) 2016 Oxford Protein Informatics Group (OPIG)
 #
@@ -50,26 +51,28 @@ Notes:
 
 """
 
+import gzip
+import logging
+import math
 import os
 import sys
 import tempfile
-import gzip
-import math
-import logging
-from numpy import nan
+import warnings
 from functools import partial
-from textwrap import wrap
-from subprocess import Popen, PIPE
 from itertools import groupby, islice
 from multiprocessing import Pool
+from subprocess import PIPE, Popen
+from textwrap import wrap
+
 import pandas as pd
-import warnings
 from Bio.SearchIO.HmmerIO import Hmmer3TextParser as HMMERParser
+from numpy import nan
+
+from ...antibody.exception import AnarciDecreasing, LongHCDR3Error
+from ._germlines import all_germlines
 
 # Import from the schemes submodule
 from ._schemes import *
-from ._germlines import all_germlines
-from ...antibody.exception import LongHCDR3Error, AnarciDecreasing
 
 all_species = list(all_germlines["V"]["H"].keys())
 logger = logging.getLogger("ANARCI")

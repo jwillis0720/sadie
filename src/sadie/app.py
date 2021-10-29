@@ -1,19 +1,21 @@
+# -*- coding: utf-8 -*-
 """This is our main entry point"""
 import logging
-import sys
 import os
+import sys
+
 import click
 
 # airr
 from sadie.airr import Airr
 from sadie.airr.methods import run_igl_assignment, run_mutational_analysis
 
+# reference
+from sadie.reference import Reference, make_germline_database
+
 # utility
 from sadie.utility import SadieIO
-from sadie.utility.util import get_verbosity_level, get_project_root
-
-# reference
-from sadie.reference import make_germline_database, Reference
+from sadie.utility.util import get_project_root, get_verbosity_level
 
 
 @click.group()

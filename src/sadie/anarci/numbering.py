@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # define numbering scheme, then chain, then region def
 scheme_numbering = {
     "imgt": {

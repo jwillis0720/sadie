@@ -1,5 +1,6 @@
-from typing import Union
+# -*- coding: utf-8 -*-
 import logging
+from typing import Union
 
 # third party
 import pandas as pd

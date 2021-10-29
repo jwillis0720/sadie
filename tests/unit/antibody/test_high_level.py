@@ -1,6 +1,7 @@
-from sadie import antibody
+# -*- coding: utf-8 -*-
 import tempfile
 
+from sadie import antibody
 
 kappa_chain_nt = antibody.KappaChainNT(
     fwr1_nt="GACATCCAAATGACACATTCGCCTTCATTGCTGAGTGCGTCTGTGGGTGACCGCGTCAGTCTGAACTGCAAGGCCTCC",

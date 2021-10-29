@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 RECEPTORS = ["IG", "TR"]
 IMGT_DEF_nt = {
     "FW1": {"start": 1, "end": 78},

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Auxillary level function interfaces"""
 
 import logging

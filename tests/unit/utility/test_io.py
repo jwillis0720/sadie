@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from pathlib import Path
 
 import pytest
 from Bio.SeqIO import SeqRecord
+
 from sadie.utility import SadieIO
 from sadie.utility.exception import IOInferError
 

@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
 import glob
 import os
 import shutil
 import tempfile
+
 import pandas as pd
 import pytest
 from click.testing import CliRunner
+
 from sadie import app
 from sadie.reference import Reference
 from sadie.reference.reference import G3Error

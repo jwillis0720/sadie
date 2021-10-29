@@ -1,11 +1,13 @@
-import tempfile
+# -*- coding: utf-8 -*-
 import os
+import tempfile
 from distutils.version import StrictVersion
 from itertools import product
 from math import nan
 
 import pandas as pd
 from click.testing import CliRunner
+
 from sadie.airr import Airr, AirrTable
 from sadie.airr.airrtable import constants
 from sadie.app import airr as sadie_airr

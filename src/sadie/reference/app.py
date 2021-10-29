@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # # pylint: disable=no-value-for-parameter
 # """ Applicaiton for generating annotation references for antibodies"""
 

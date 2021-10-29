@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ANARCI_RESULTS = {
     "Id": "object",
     "domain_no": "int16",

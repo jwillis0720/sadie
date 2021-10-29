@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """The ANARCI Abstraction to make it usuable"""
 
 # Std library
@@ -5,38 +6,28 @@ import bz2
 import gzip
 import logging
 import multiprocessing
-import filetype
 import os
+import platform
 import shutil
 import tempfile
-import platform
-
 import warnings
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import List, Tuple, Union, Generator
+from typing import Generator, List, Tuple, Union
+
+import filetype
+import pandas as pd
 
 # third party
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
-import pandas as pd
+from Bio.SeqRecord import SeqRecord
 
-from .aa._anarci import (
-    check_for_j,
-    parsed_output,
-    number_sequences_from_alignment,
-    run_hmmer,
-)
-from .exception import (
-    AnarciDuplicateIdError,
-    BadAnarciArgument,
-    BadRequstedFileType,
-    HmmerExecutionError,
-)
-from .result import AnarciResults
+from .aa._anarci import check_for_j, number_sequences_from_alignment, parsed_output, run_hmmer
 from .constants import ANARCI_RESULTS
+from .exception import AnarciDuplicateIdError, BadAnarciArgument, BadRequstedFileType, HmmerExecutionError
 from .numbering import scheme_numbering
+from .result import AnarciResults
 
 logger = logging.getLogger("ANARCI")
 

@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 """The setup script."""
 import sys
+
 from setuptools import setup
 from setuptools.command.test import test
-
 
 # From https://stackoverflow.com/questions/45150304/how-to-force-a-python-wheel-to-be-platform-specific-when-building-it
 # Tell bdsit wheel to be platform specific even though we arent compiling extensions

@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
 import os
 import warnings
 from pathlib import Path
 
+from sadie.airr.igblast.igblast import ensure_prefix_to
+
 # package/module level
 from sadie.reference.reference import YamlRef
-from sadie.airr.igblast.igblast import ensure_prefix_to
 
 
 class GermlineData:

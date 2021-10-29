@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import logging
-import pandas as pd
 from ast import literal_eval
+
+import pandas as pd
 
 from .constants import ANARCI_RESULTS
 from .numbering import scheme_numbering

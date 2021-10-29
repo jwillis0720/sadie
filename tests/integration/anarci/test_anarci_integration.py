@@ -1,13 +1,15 @@
-import logging
+# -*- coding: utf-8 -*-
 import glob
+import logging
 import os
 import tempfile
 from itertools import product
 from pathlib import Path
 
 from click.testing import CliRunner
-from sadie.anarci.app import run_anarci
+
 from sadie.anarci import Anarci
+from sadie.anarci.app import run_anarci
 
 logger = logging.getLogger()
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import tempfile
 
 import pandas as pd
@@ -6,6 +7,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pandas.testing import assert_frame_equal
+
 from sadie.anarci import Anarci, AnarciDuplicateIdError, AnarciResults
 
 

@@ -1,22 +1,23 @@
+# -*- coding: utf-8 -*-
 """The AirrTable module"""
 # std lib
 import logging
-from pathlib import Path
-from typing import Tuple, List, Union
 import warnings
+from pathlib import Path
+from pprint import pformat
+from typing import List, Tuple, Union
 
 # third party
 import pandas as pd
+from Bio import SeqIO, SeqRecord
 from Levenshtein._levenshtein import distance
 from numpy import nan
-from Bio import SeqRecord, SeqIO
 
 # module/package
 from sadie.airr.airrtable.constants import IGBLAST_AIRR
 from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
 from sadie.airr.exceptions import MissingAirrColumns
 from sadie.utility.util import correct_alignment
-from pprint import pformat
 
 logger = logging.getLogger("AIRRTable")
 

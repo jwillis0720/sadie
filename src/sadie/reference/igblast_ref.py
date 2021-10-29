@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import logging
 import os
 from pathlib import Path
@@ -6,6 +7,7 @@ from typing import List
 # third party
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+
 from sadie.reference import Reference
 
 # module

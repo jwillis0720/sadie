@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
 __version__ = "0.3.18"
-from sadie.reference.reference import Reference
-from sadie.reference.internal_data import make_internal_annotaion_file
-from sadie.reference.igblast_ref import make_igblast_ref_database
-from sadie.reference.aux_file import make_auxillary_file
-from pathlib import Path
 import logging
+from pathlib import Path
+
+from sadie.reference.aux_file import make_auxillary_file
+from sadie.reference.igblast_ref import make_igblast_ref_database
+from sadie.reference.internal_data import make_internal_annotaion_file
+from sadie.reference.reference import Reference
 
 logger = logging.getLogger("reference")
 

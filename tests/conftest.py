@@ -1,15 +1,17 @@
+# -*- coding: utf-8 -*-
 """Pytest conftest with all the fixture classes"""
 import bz2
+import glob
 import gzip
 import json
-import glob
 import shutil
 from pathlib import Path
 from typing import List
 
-import pytest
 import pandas as pd
+import pytest
 from Bio import SeqIO
+
 from sadie.airr import Airr
 from sadie.airr.airrtable import AirrTable
 

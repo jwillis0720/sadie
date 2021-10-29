@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Unit tests for antibody objects"""
 
 import logging
@@ -5,8 +6,8 @@ import tempfile
 
 from pkg_resources import resource_filename
 
-from sadie.antibody import segment
 from sadie import antibody
+from sadie.antibody import segment
 
 logger = logging.getLogger()
 

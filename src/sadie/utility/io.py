@@ -1,18 +1,21 @@
-from pathlib import Path
-from Bio import SeqIO
-from Bio.SeqIO.FastaIO import FastaIterator
-from Bio.SeqIO.QualityIO import FastqPhredIterator
-from Bio.SeqIO.AbiIO import AbiIterator
-from io import TextIOWrapper
-from filetype import guess
-from typing import Union
-from pprint import pformat
+# -*- coding: utf-8 -*-
+import bz2
 import glob
 import gzip
-import bz2
 import itertools
 import warnings
-from .exception import SadieIOError, IOInferError
+from io import TextIOWrapper
+from pathlib import Path
+from pprint import pformat
+from typing import Union
+
+from Bio import SeqIO
+from Bio.SeqIO.AbiIO import AbiIterator
+from Bio.SeqIO.FastaIO import FastaIterator
+from Bio.SeqIO.QualityIO import FastqPhredIterator
+from filetype import guess
+
+from .exception import IOInferError, SadieIOError
 
 
 class NoExtensionNameWarning(UserWarning):

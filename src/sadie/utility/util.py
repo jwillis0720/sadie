@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 import bz2
 import gzip
-import os
 import logging
+import os
 import warnings
 from functools import partial
 from mimetypes import guess_type
@@ -12,8 +13,8 @@ import pandas as pd
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
+    from Bio import SeqIO, pairwise2
     from Bio.SubsMat import MatrixInfo as matlist
-    from Bio import pairwise2, SeqIO
 
 blosum_matrix = matlist.blosum62
 logger = logging.getLogger("Utilility")

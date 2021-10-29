@@ -1,8 +1,9 @@
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
+# -*- coding: utf-8 -*-
 import datetime
-from Bio.SeqFeature import FeatureLocation, SeqFeature
 
+from Bio.Seq import Seq
+from Bio.SeqFeature import FeatureLocation, SeqFeature
+from Bio.SeqRecord import SeqRecord
 
 # Qualifier Dictionary
 example_qualifiers_dict = {
