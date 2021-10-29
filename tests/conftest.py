@@ -267,6 +267,18 @@ class AirrTables:
         """get a file path for the OAS sequences ran through IMGT Hi-V"""
         return self.airr_table_inputs / "imgt_v_quest_airr.tsv.gz"
 
+    def get_catnap_heavy_with_mutational_analysis(self) -> Path:
+        """get the heavy catnap airrtable that has precomputed mutational analysis"""
+        return self.airr_table_inputs / "heavy_airrtable_with_mutational.feather"
+
+    def get_catnap_light_with_mutational_analysis(self) -> Path:
+        """get the light catnap airrtable that has precomputed mutational analysis"""
+        return self.airr_table_inputs / "light_airrtable_with_mutational.feather"
+
+    def get_catnap_joined_with_mutational_analysis(self) -> Path:
+        """get the joined catnap airrtable that has precomputed mutational analysis"""
+        return self.airr_table_inputs / "joined_airrtable_with_mutational.feather"
+
 
 class ReferenceFixtures:
     """A class for organization of reference related fixtures"""
