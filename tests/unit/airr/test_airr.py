@@ -386,12 +386,14 @@ def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
     """Test we can run mutational analysis post hoc method"""
 
     # run on heavy from fixture of airr
-    airrtable_with_analysis = airr_methods.run_mutational_analysis(heavy_catnap_airrtable, "kabat", run_multiproc=False)
-    assert "mutations" in airrtable_with_analysis.columns
+    heavy_airrtable_with_analysis = airr_methods.run_mutational_analysis(
+        heavy_catnap_airrtable, "kabat", run_multiproc=False
+    )
+    assert "mutations" in heavy_airrtable_with_analysis.columns
 
     # run on light
-    airrtable_with_analysis = airr_methods.run_mutational_analysis(light_catnap_airrtable, "kabat")
-    assert "mutations" in airrtable_with_analysis.columns
+    light_airrtable_with_analysis = airr_methods.run_mutational_analysis(light_catnap_airrtable, "kabat")
+    assert "mutations" in light_airrtable_with_analysis.columns
     link_table = heavy_catnap_airrtable.merge(light_catnap_airrtable, on="cellid", suffixes=["_heavy", "_light"])
 
     # make sure we can run it on linked airr table
@@ -399,6 +401,7 @@ def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
     joined_airr_table_with_analysis = airr_methods.run_mutational_analysis(joined_airr_table, "kabat")
     assert "mutations_heavy" in joined_airr_table_with_analysis.columns
     assert "mutations_light" in joined_airr_table_with_analysis.columns
+    return heavy_airrtable_with_analysis, light_airrtable_with_analysis, joined_airr_table_with_analysis
 
 
 def test_igl_assignment(heavy_catnap_airrtable, light_catnap_airrtable):

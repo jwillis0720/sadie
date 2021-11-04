@@ -1,5 +1,6 @@
 from sadie.cluster import Cluster
 from sadie.airr import AirrTable, LinkedAirrTable
+import pandas as pd
 
 
 def test_cluster(heavy_catnap_airrtable, light_catnap_airrtable):
@@ -13,7 +14,6 @@ def test_cluster(heavy_catnap_airrtable, light_catnap_airrtable):
         heavy_catnap_airrtable.merge(light_catnap_airrtable, on="cellid", suffixes=["_heavy", "_light"]),
         key_column="cellid",
     )
-
     cluster = Cluster(
         linked,
         groupby=["v_call_top_heavy", "v_call_top_light"],
@@ -22,3 +22,22 @@ def test_cluster(heavy_catnap_airrtable, light_catnap_airrtable):
     cluster_df_linked = cluster.cluster(10)
     assert isinstance(cluster_df_linked, LinkedAirrTable)
     assert "cluster" in cluster_df_linked.columns
+
+
+def test_cluster_with_somatic_pad(fixture_setup):
+    light_airrtable = AirrTable(pd.read_feather(fixture_setup.get_catnap_light_with_mutational_analysis()))
+    cluster_api = Cluster(light_airrtable, pad_somatic=True)
+    cluster_df_with_pad = cluster_api.cluster(5)
+    heavy_airrtable = AirrTable(pd.read_feather(fixture_setup.get_catnap_heavy_with_mutational_analysis()))
+    cluster_api = Cluster(heavy_airrtable, pad_somatic=True)
+    cluster_df_with_pad = cluster_api.cluster(5)
+
+    joined_airrtable = LinkedAirrTable(
+        pd.read_feather(fixture_setup.get_catnap_joined_with_mutational_analysis()), key_column="cellid"
+    )
+    cluster_api = Cluster(joined_airrtable, pad_somatic=True)
+    cluster_df_with_pad = cluster_api.cluster(5)
+    assert len(cluster_df_with_pad[cluster_df_with_pad["cellid"].str.startswith("CH0")]["cluster"].unique()) == 1
+    # cluster_df_with_pad.merge(
+    # cluster_df_ithout[["cellid", "cluster"]], on="cellid", suffixes=["_with_pad", "_without_pad"]
+    # ).to_excel("cluster.xlsx")
