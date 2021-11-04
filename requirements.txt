@@ -5,4 +5,5 @@ pymdown-extensions>=7.0
 mkdocs-material-extensions>=1.0
 markdown_include
 mkdocs-redirects
+mkdocs-material
 mkdocs-git-revision-date-plugin
