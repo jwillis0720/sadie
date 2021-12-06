@@ -1,4 +1,4 @@
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 from sadie.reference.reference import Reference
 from sadie.reference.internal_data import make_internal_annotaion_file
 from sadie.reference.igblast_ref import make_igblast_ref_database

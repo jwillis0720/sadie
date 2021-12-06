@@ -79,6 +79,7 @@ class Cluster:
         self.lookup = lookup
         self.key_column = airrtable.key_column
         self.distance_df = None
+        self.model = None
         self.pad_somatic = pad_somatic
         if isinstance(self.airrtable, LinkedAirrTable):
             self._type = "linked"
@@ -132,7 +133,7 @@ class Cluster:
                 linkage=self.linkage, affinity="precomputed", distance_threshold=distance_threshold, n_clusters=None
             )
             model.fit(self.distance_df)
-
+            self.model = model
             # Create the data frame
             self.airrtable["cluster"] = model.labels_
         else:
