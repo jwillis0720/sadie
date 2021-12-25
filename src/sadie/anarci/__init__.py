@@ -1,4 +1,4 @@
-__version__ = "0.4.3"
+__version__ = "0.4.4"
 from .anarci import Anarci, AnarciDuplicateIdError
 from .result import AnarciResults
 

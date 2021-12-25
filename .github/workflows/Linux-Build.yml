@@ -1,6 +1,6 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-name: Build and Test
+name: Linux Build and Test
 on:
   push:
     tags:
@@ -16,9 +16,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: [3.7,3.8,3.9]
-    env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -56,13 +53,3 @@ jobs:
           directory: ./coverage/reports/xml
           name: codecov-umbrella
           verbose: true
-      - name: Install Twine and Build Wheel
-        # if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-         pip install wheel twine setuptools
-         python setup.py sdist bdist_wheel --universal
-      - name: Publish distribution to PyPi
-        # if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          twine upload --repository pypi dist/*
-          twine upload --repository testpypi dist/*.tar.gz
