@@ -8,7 +8,6 @@ theme:
   custom_dir: docs/overrides
   icon:
     logo: material/dog
-    # logo: fontawesome/solid/do
   favicon: img/favico.png
   palette:
   - scheme: default
@@ -23,36 +22,52 @@ theme:
     toggle:
       icon: material/weather-sunny
       name: Switch to light mode
+  features: # look for feature flag in documentation
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - search.share
+    - navigation.tracking
+    - navigation.tabs.sticky
+  icon:
+    repo: fontawesome/brands/github-alt
 repo_name: jwillis0720/sadie
 repo_url: https://github.com/jwillis0720/sadie
-plugins:
-- search
-- git-revision-date
-markdown_extensions:
-- toc:
-    permalink: true
-- markdown.extensions.codehilite:
-    guess_lang: false
-- markdown_include.include:
-    base_path: docs
-- admonition
-- codehilite
-- extra
-- meta
-- pymdownx.snippets
-- codehilite
-- pymdownx.superfences:
-    custom_fences:
-    - name: mermaid
-      class: mermaid
-      format: !!python/name:pymdownx.superfences.fence_div_format ''
-- pymdownx.tabbed
-nav:
-- SADIE: index.md
+plugins: #  look for plugins tag in material markdown documentation
+  - search
+markdown_extensions: #
+  - admonition # https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown/#admonition
+  - toc: # https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown/#table-of-contents
+      permalink: true
+  - pymdownx.highlight: #https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown-extensions/#highlight
+      linenums: true
+      use_pygments: true
+  - pymdownx.superfences:  #https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown-extensions/#superfences
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.inlinehilite
+  - mdx_include: # pip install mdx-include
+      base_path: docs/
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+nav: # this is how we layout the documents
+  - SADIE: index.md
 extra_css:
-- css/termynal.css
-- css/custom.css
+  - css/termynal.css
+  - css/custom.css
 extra_javascript:
-- https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js
-- js/termynal.js
-- js/custom.js
+  - https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js
+  - js/termynal.js
+  - js/custom.js
+extra:
+  social:
+  - icon: fontawesome/brands/linkedin
+    link: https://www.linkedin.com/in/jwillis0720
+  - icon: fontawesome/brands/github-alt
+    link: https://github.com/jwillis0720/sadie
