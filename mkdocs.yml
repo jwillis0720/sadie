@@ -58,6 +58,13 @@ markdown_extensions: #
 
 nav: # this is how we layout the documents
   - SADIE: index.md
+  - Reference Database: reference.md
+  - AIRR Sequence Annotation:
+    - Annotating: annotation.md
+    - Advanced Annotation Methods: advanced_annotation.md
+  - Sequence Numbering: numbering.md
+  - BCR/TCR Objects: models.md
+  - Clustering: clustering.md
 extra_css:
   - css/termynal.css
   - css/custom.css

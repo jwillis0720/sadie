@@ -83,6 +83,8 @@ $ pip install sadie-antibody
 
 <div class="termy">
 
+A development installation is available by running the following command:
+
 ```console
 $ git clone git@github.com/jwillis0720/sadie.git
 $ pip install -e .[dev]
@@ -96,7 +98,7 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 
 ### Command Line Usage
 
-<!-- get these iconds through icon search https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/#search -->
+<!-- get these icons through icon search https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/#search -->
 === ":material-console-line: Command Line Usage"
     Annotate antibody sequences only from functional human imgt antibodies to a gzip output
 
