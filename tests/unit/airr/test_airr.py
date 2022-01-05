@@ -215,9 +215,9 @@ def test_airr_single_sequence(fixture_setup):
     assert seq_id == "PG9"
 
     # will def change based on penalties, so be careful
-    assert round(v_mutation, 2) == 14.0
-    assert round(d_mutation, 2) == 17.88
-    assert round(j_mutation, 2) == 11.31
+    assert round(v_mutation, 2) == 13.99
+    assert round(d_mutation, 2) == 17.86
+    assert round(j_mutation, 2) == 11.32
     with pytest.raises(TypeError):
         # id must be str
         airr_table = air_api.run_single(9, pg9_heavy_seq)
@@ -255,7 +255,7 @@ def test_scfv(fixture_setup):
 
 def test_airr_from_dataframe(fixture_setup):
     """Test we can pass a dataframe to runtime"""
-    dog_df = pd.read_csv(fixture_setup.get_dog_airrtable(), index_col=0)
+    dog_df = pd.read_csv(fixture_setup.get_dog_airrtable(), sep="\t")
     airr_api = Airr("dog")
     unjoined_df = airr_api.run_dataframe(dog_df, "sequence_id", "sequence")
     assert isinstance(unjoined_df, AirrTable)
@@ -274,7 +274,7 @@ def test_airr_from_dataframe(fixture_setup):
 
 
 def test_airr_from_file(fixture_setup):
-    """Test we can pass a dataframe to runtime"""
+    """Test we can pass a fasta file to runtime"""
     f = str(fixture_setup.get_pg9_heavy_multiple_fasta())
     airr_api = Airr("human")
     result = airr_api.run_fasta(f)
@@ -457,8 +457,8 @@ def test_runtime_referecne(fixture_setup):
 
 
 def test_airrtable_init(fixture_setup):
-    test_csv = fixture_setup.get_dog_airrtable()
-    airr_table = AirrTable.read_csv(test_csv)
+    test_tsv = fixture_setup.get_dog_airrtable()
+    airr_table = AirrTable.read_airr(test_tsv)
     assert not airr_table.empty
     non_airr_columns = [
         "d_call_top",
@@ -478,13 +478,13 @@ def test_airrtable_init(fixture_setup):
     ]
     assert sorted(airr_table.non_airr_columns) == non_airr_columns
     # Tes twe can init with a direct pandas call
-    airr_table = AirrTable(pd.read_csv(test_csv))
+    airr_table = AirrTable(pd.read_csv(test_tsv, sep="\t"))
     assert not airr_table.empty
     assert isinstance(airr_table, AirrTable)
 
     # test we can read in json too
     test_json = fixture_setup.get_json_as_dataframe()
-    airr_table = AirrTable.read_json(test_json)
+    airr_table = AirrTable(pd.read_json(test_json, orient="records"))
     assert not airr_table.empty
 
     # gen bank
@@ -494,14 +494,14 @@ def test_airrtable_init(fixture_setup):
     # I will not accept a busted table sam I am
     busted_table = fixture_setup.get_busted_airrtable()
     with pytest.raises(airr_exceptions.MissingAirrColumns) as e:
-        AirrTable.read_csv(busted_table)
+        AirrTable.read_airr(busted_table)
     assert e.value.__str__()
 
 
 def test_indel_correction(fixture_setup):
     test_csv = fixture_setup.get_dog_airrtable()
     # Test we can initllize with staic meathod
-    airr_table = AirrTable.read_csv(test_csv)
+    airr_table = AirrTable.read_airr(test_csv)
     airr_table_indel = AirrTable.correct_indel(airr_table)
     assert "germline_alignment_aa_corrected" in airr_table_indel.columns
     assert "v_germline_alignment_aa_corrected" in airr_table_indel.columns
@@ -539,3 +539,23 @@ def test_scfv_airrtable(fixture_setup):
         heavy_table.merge(light_table, on="cell_id", suffixes=["_h", "_l"]), suffixes=["_h", "_l"], key_column="cell_id"
     )
     assert rebuild_data.suffixes == ["_h", "_l"]
+
+
+def test_write_and_check_airr(fixture_setup):
+    """Check that the offical airr can validate our airr tables"""
+    catnap_heavy = fixture_setup.get_catnap_heavy_nt()
+    output_file = fixture_setup.tmp_path / Path("test_write_and_check_airr.tsv")
+    airr_api = Airr("human")
+    airr_table = airr_api.run_fasta(catnap_heavy)
+    assert isinstance(airr_table, AirrTable)
+    airr_table.to_airr(output_file)
+    import airr
+
+    # the official airr package will validate
+    d = airr.load_rearrangement(output_file, debug=True, validate=True)
+    assert isinstance(d, pd.DataFrame)
+
+    # if we drop a requried field, the official airr module should cause a validation error
+    d.drop("sequence_id", axis=1).to_csv(output_file, sep="\t")
+    with pytest.raises(airr.schema.ValidationError):
+        airr.load_rearrangement(output_file, debug=True, validate=True)

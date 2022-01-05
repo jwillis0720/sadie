@@ -66,7 +66,7 @@ class AirrTable(pd.DataFrame):
         'v_support', 'vj_in_frame', 'chain', 'species'],
 
     Can also use static methods
-    >>> at = AirrTable.read_csv("tests/fixtures/kappa_lev_sample.csv.gz")
+    >>> at = AirrTable.read_airr("tests/fixtures/kappa_lev_sample.tsv.gz")
     """
 
     _metadata = ["_suffixes", "_islinked"]
@@ -105,7 +105,8 @@ class AirrTable(pd.DataFrame):
     def non_airr_columns(self) -> pd.Index:
         """Get an column index of non airr complient columns.
 
-        These are columns that were probably joined on the airr dataframe
+        These are columns that were probably joined on the airr dataframe, or can be just
+        extra fields added to the airr dataframe
 
 
         Returns
@@ -155,7 +156,7 @@ class AirrTable(pd.DataFrame):
         ]
 
     def write_fasta(self, id_field: str, sequence_field: str, file_out: Path):
-        """given an id field and sequence field, write out dataframe to fasata
+        """given an id field and sequence field, write out dataframe to fasta
 
         Parameters
         ----------
@@ -190,6 +191,7 @@ class AirrTable(pd.DataFrame):
         SeqIO.write(_records, filename, "genbank")
 
     def _verify(self):
+        # if there is any missing columns
         missing_columns = set(self.compliant_cols).difference(self.columns)
         if missing_columns:
             raise MissingAirrColumns(missing_columns)
@@ -211,7 +213,6 @@ class AirrTable(pd.DataFrame):
         if self._islinked:
             for suffix in self._suffixes:
                 local_suffix = list(map(lambda x: x + suffix, liability_keys))
-
                 self[f"liable{suffix}"] = self[local_suffix].apply(self._check_j_gene_liability, axis=1)
         else:
             self["liable"] = self[["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]].apply(
@@ -329,6 +330,21 @@ class AirrTable(pd.DataFrame):
                 )
                 .astype(bool)
             )
+
+    def _unset_boolean(self, columns: List[str]) -> pd.DataFrame:
+        """Change 'False' and 'True' boolean dataframe values to 'F' and 'T' strings"""
+        # don't want to change object level df
+        _copy_df = self.copy()
+        for column in columns:
+            _copy_df[column] = (
+                _copy_df[column]
+                .map(
+                    {True: "T", False: "F"},
+                    na_action="ignore",
+                )
+                .astype(str)
+            )
+        return _copy_df
 
     def _check_j_gene_liability(self, X: pd.Series) -> bool:
         """
@@ -610,25 +626,30 @@ class AirrTable(pd.DataFrame):
             gb.add_feature(feature)
         return gb.record
 
+    def to_airr(self, file_name: str) -> None:
+        """Output AIRR object to AIRR complient file
+
+        Parameters
+        ----------
+        file_name : str
+            File name to output to, must end with .tsv or tsv.gz, tsv.bz which will be compressed
+        """
+        reverse_to_boolean = ["productive", "vj_in_frame", "stop_codon", "rev_comp", "v_frameshift", "complete_vdj"]
+        suffixes = Path(file_name).suffixes
+        if len(suffixes) > 1 and suffixes[0] != ".tsv":
+            raise ValueError("File name must end with .tsv or .tsv.gz or .tsv.bz")
+        elif suffixes[0] != ".tsv":
+            raise ValueError("File name must end with .tsv or .tsv.gz or .tsv.bz")
+        self._unset_boolean(reverse_to_boolean).to_csv(file_name, sep="\t")
+
     @staticmethod
-    def read_csv(file: str) -> "AirrTable":
-        """Read a csv file and return an airrtable object
-
-        Returns
-        -------
-        AirrTable
-            AirrTable object"""
-        return AirrTable(pd.read_csv(file))
-
-    @staticmethod
-    def read_json(*args, **kwargs):
-        """Read a json file and return an airrtable object
-
-        Returns
-        -------
-        AirrTable
-            AirrTable object"""
-        return AirrTable(pd.read_json(*args, **kwargs))
+    def read_airr(file_name: Union[str, Path]) -> "AirrTable":
+        at = pd.read_csv(file_name, sep="\t")
+        if at.index.is_monotonic_increasing:
+            at = AirrTable(at)
+        else:
+            at = AirrTable(at.reset_index())
+        return at
 
     def __eq__(self, other) -> bool:
         """equals method for LinkedDataFrame"""
