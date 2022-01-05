@@ -1,7 +1,7 @@
 
 #AIRR Annotation
 
-Annotation is the bedrock of all immunoformatics workflows. It is the process of identifying CDRs/frameworks, levels of somatic mutation, locus use, productive rearragements, and other features that describe the B cell receptor or T cell recptor (BCR/TCR). In the descritiption of a BCR/TCR, how can we use the data file output from one data pipeline can be compared to another? In other words, what if the description of a reperotire has different fields and datatypes that describe a repertoire or even a single BCR/TCR? Fear not! [The AIRR community to the rescue](https://docs.airr-community.org/en/stable/)!
+Annotation is the bedrock of all immunoformatics workflows. It is the process of identifying CDRs/frameworks, levels of somatic mutation, locus use, productive rearragements, and other features that describe the B cell receptor or T cell recptor (BCR/TCR). In the description of a BCR/TCR, how can we use the data file output from one data pipeline can be compared to another? In other words, what if the description of a reperotire has different fields and datatypes that describe a repertoire or even a single BCR/TCR? Fear not! [The AIRR community to the rescue](https://docs.airr-community.org/en/stable/)!
 
 ---
 
@@ -45,6 +45,11 @@ This `.tsv` file is a [Rearrangement Schema compliant AIRR table](https://docs.a
 
 While the `.tsv` AIRR table is the recognized standard for AIRR, you can also output for any other formats that [pandas supports](https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html).
 
-```Python hl_lines="13 16-17"
+
+```Python hl_lines="13 16 19 22 25 28"
 {!docs_src/annotation/tutorial003.py!}
 ```
+!!! attention
+    Because `AirrTable` is a subclass of `pandas.DataFrame`, you can use any pandas IO methods to write to a file of your choosing. However, it must be noted that these are not official [Rearrangement Schema compliant AIRR tables](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#file-format-specification). They may only be read in by software that reads those file types or be read back in by **SADIE** and probably will not work in other software that supports the AIRR standard. But, these file formats are extremely useful for much larger files.
+
+### Reading Files
