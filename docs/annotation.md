@@ -43,7 +43,7 @@ This `.tsv` file is a [Rearrangement Schema compliant AIRR table](https://docs.a
 
 #### Other Output Formats
 
-While the `.tsv` AIRR table is the recognized standard for AIRR, you can also output for any other formats that [pandas supports](https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html).
+While the `.tsv` AIRR table is the recognized standard for AIRR, you can also output to any other formats that [pandas supports](https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html).
 
 
 ```Python hl_lines="13 16 19 22 25 28"
@@ -53,3 +53,28 @@ While the `.tsv` AIRR table is the recognized standard for AIRR, you can also ou
     Because `AirrTable` is a subclass of `pandas.DataFrame`, you can use any pandas IO methods to write to a file of your choosing. However, it must be noted that these are not official [Rearrangement Schema compliant AIRR tables](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#file-format-specification). They may only be read in by software that reads those file types or be read back in by **SADIE** and probably will not work in other software that supports the AIRR standard. But, these file formats are extremely useful for much larger files.
 
 ### Reading Files
+
+
+To read in an AIRR file we have to create an `AirrTable` object.
+#### Reading an AIRR.tsv
+
+You can read official AIRR.tsv using the `AirrTable.from_airr()` method or with pandas and casting to an `AirrTable` object.
+
+```Python hl_lines="5 9"
+{!docs_src/annotation/tutorial004.py!}
+```
+
+Outputs:
+```output
+<class 'sadie.airr.airrtable.airrtable.AirrTable'> True
+<class 'sadie.airr.airrtable.airrtable.AirrTable'> True
+True # The airr tables are equall
+```
+
+#### Reading other file formats
+
+Any other file formats that are readable by [pandas IO](https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html) can be read in by passing them to AirrTable.
+
+```Python hl_lines="5 9"
+{!docs_src/annotation/tutorial005.py!}
+```

@@ -559,3 +559,15 @@ def test_write_and_check_airr(fixture_setup):
     d.drop("sequence_id", axis=1).to_csv(output_file, sep="\t")
     with pytest.raises(airr.schema.ValidationError):
         airr.load_rearrangement(output_file, debug=True, validate=True)
+
+
+def test_write_and_json():
+    from sadie.airr import AirrTable
+    import pandas as pd
+
+    a = pd.read_json("./docs/docs_src/annotation/PG9 AIRR.json", orient="records", convert_axes=True)
+    b = pd.read_csv("./docs/docs_src/annotation/PG9 AIRR.csv", index_col=0)
+    c = AirrTable(a)
+    d = AirrTable(b)
+    print(c["np2"])
+    print(d["np2"])
