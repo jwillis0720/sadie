@@ -139,7 +139,9 @@ class Cluster:
         else:
             cluster_catcher = []
             for g, g_df in self.airrtable.groupby(self.groupby):
-                self.distance_df = self._get_distance_df(g_df)
+                # sub_df = g_df
+                sub_df = g_df.copy()
+                self.distance_df = self._get_distance_df(sub_df)
                 # Calculate the linkage matrix
                 model = AgglomerativeClustering(
                     linkage=self.linkage,
@@ -147,7 +149,7 @@ class Cluster:
                     distance_threshold=distance_threshold,
                     n_clusters=None,
                 )
-                if len(g_df) == 1:
+                if len(sub_df) == 1:
                     _labels = [0]
                 else:
                     model.fit(self.distance_df)
@@ -160,8 +162,8 @@ class Cluster:
                     labels = list(map(lambda x: f"{_sub_labels}_{str(x)}", _labels))
                 else:
                     raise ValueError("groupby must be a string or a list/tuple of strings")
-                g_df["cluster"] = labels
-                cluster_catcher.append(g_df)
+                sub_df["cluster"] = labels
+                cluster_catcher.append(sub_df)
             self.airrtable = pd.concat(cluster_catcher)
         if self._type == "unlinked":
             return AirrTable(self.airrtable, key_column=self.key_column)

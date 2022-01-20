@@ -83,6 +83,8 @@ $ pip install sadie-antibody
 
 <div class="termy">
 
+A development installation is available by running the following command:
+
 ```console
 $ git clone git@github.com/jwillis0720/sadie.git
 $ pip install -e .[dev]
@@ -96,21 +98,28 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 
 ### Command Line Usage
 
-Annotate antibody sequences only from functional human imgt antibodies to a gzip output
+<!-- get these icons through icon search https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/#search -->
+=== ":material-console-line: Command Line Usage"
+    Annotate antibody sequences only from functional human imgt antibodies to a gzip output
 
-<div class="termy">
+    <div class="termy">
 
-```console
-$ sadie airr -s human -db-type imgt my_sequences.fasta output.csv
-```
+    ```console
+    $ sadie airr -s human -db-type imgt my_sequences.fasta output.csv
+    ```
 
-</div>
+    </div>
 
-### API
 
-```python
-# define a single sequence
-pg9_seq = """
+=== " :material-api: Python"
+    Use the SADIE library to annotate seqeuences
+
+    ``` python
+
+    from sadie.airr import Airr
+
+    # define a single sequence
+    pg9_seq = """
     CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
     CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
     GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
@@ -118,17 +127,14 @@ pg9_seq = """
     TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
     TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
     "\n", ""
-)
+    )
 
-# initialize the api
-air_api = Airr("human")
+    # initialize the api
+    air_api = Airr("human") # define the species
 
-# run single sequence
-airr_table = air_api.run_single("PG9", pg9_seq)
-
-# or run file
-airr_table = air_api.run_file("myfile.fasta")
-```
+    # run single sequence
+    airr_table = air_api.run_single("PG9", pg9_seq)
+    ```
 
 ## License
 

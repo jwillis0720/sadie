@@ -226,12 +226,12 @@ class AirrTables:
         self.airr_table_inputs = self.base_datadir / "airr_tables/"
 
     def get_dog_airrtable(self) -> Path:
-        """get a file path for the dog airr table csv.gzjj"""
-        return self.airr_table_inputs / "dog_igh.csv.gz"
+        """get a file path for the dog airr table .tsv.gz"""
+        return self.airr_table_inputs / "dog_igh.tsv.gz"
 
     def get_dog_airrtable_with_missing_sequences(self) -> pd.DataFrame:
         """get a dataframe with missing seqeunces as nan that will throw errror"""
-        dog_df = pd.read_csv(self.get_dog_airrtable(), index_col=0)
+        dog_df = AirrTable.read_airr(self.get_dog_airrtable())
         dog_1 = dog_df.copy()
         dog_2 = dog_df.copy()
         dog_2.drop(["sequence", "sequence_id"], axis=1, inplace=True)
@@ -252,8 +252,8 @@ class AirrTables:
         return _get_uncompressed_file(self.tmp_path, self.get_json_as_dataframe(), "gz")
 
     def get_busted_airrtable(self) -> Path:
-        """get a file path for the airr table that is in csv. contains missing airrtables"""
-        return self.airr_table_inputs / "busted.csv.gz"
+        """get a file path for the airr table that is in tsv. contains missing airrtables"""
+        return self.airr_table_inputs / "busted.tsv.gz"
 
     def get_catnap_heavy_airrtable(self) -> Path:
         """get a file path for the CATNAP heavy airr table results. should match fasta input"""

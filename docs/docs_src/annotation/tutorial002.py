@@ -1,0 +1,17 @@
+from sadie.airr import Airr
+
+# define a single sequence
+pg9_seq = "CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGTCCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGTGGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCCAGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATTTTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTATTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC"
+
+# setup API object
+airr_api = Airr("human")
+
+# run sequence and return airr table with sequence_id and sequence
+airr_table = airr_api.run_single("PG9", pg9_seq).fillna("")
+
+# write airr table to tsv or tsv.gz/bz
+airr_table.to_airr("PG9 AIRR.tsv")
+
+# compress your airr table into a bzip or gzip filecxx
+airr_table.to_airr("PG9 AIRR.tsv.gz")
+airr_table.to_airr("PG9 AIRR.tsv.bz2")

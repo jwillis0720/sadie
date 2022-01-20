@@ -166,5 +166,6 @@ def make_igblast_reference(verbose, outpath, reference):
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
+    sadie()
     # airr()
-    make_igblast_reference()
+    # make_igblast_reference()
