@@ -1,4 +1,5 @@
 __version__ = "0.4.5"
+from sadie.reference.blast import write_blast_db
 from sadie.reference.reference import Reference
 from sadie.reference.internal_data import make_internal_annotaion_file
 from sadie.reference.igblast_ref import make_igblast_ref_database
@@ -48,4 +49,4 @@ def make_germline_database(reference: Reference, output_path: Path) -> Path:
     return output_path
 
 
-__all__ = ["Reference"]
+__all__ = ["Reference", "write_blast_db"]
