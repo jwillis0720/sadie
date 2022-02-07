@@ -20,17 +20,17 @@ def write_blast_db(filename: str, output_db: str) -> None:
         Exception: If makeblastdb fails for any reason
     """
     logger = logging.getLogger(__name__)
-    
+
     # Validate Blast makeblastdb executable
     system = platform.system().lower()
     make_blast_db_exe = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/makeblastdb")
     if not shutil.which(make_blast_db_exe):
         raise Exception(f"Make Blast DB {make_blast_db_exe} cant be found or is not executable")
-    
+
     # Validate inpath fasta file and outpath directory
     filename = pathing(filename)  # make sure file exists
     output_db = pathing(output_db, new=True, overwrite=True)  # makes sure parent directory exists
-    
+
     # Blast does not allow spaces in the path; need to use a temp file/dir
     with tempfile.NamedTemporaryFile(suffix=filename.suffix) as tmp_filename_obj:
         with tempfile.NamedTemporaryFile(suffix=None) as tmp_output_db_obj:
@@ -64,7 +64,7 @@ def write_blast_db(filename: str, output_db: str) -> None:
                 raise Exception(stderr)
             # We use the tmp file not as an actual output but to guarantee a unqiue prefix
             logger.info(f"Copying {tmp_output_db}.* to {output_db}")
-            for tmpfile in tmp_output_db.parent.glob(f"{tmp_output_db.name}.*"):                
+            for tmpfile in tmp_output_db.parent.glob(f"{tmp_output_db.name}.*"):
                 logger.info(f"Copying {tmpfile} to {output_db.with_suffix(tmpfile.suffix)}")
                 shutil.copy(tmpfile, output_db.with_suffix(tmpfile.suffix))
                 tmpfile.unlink()  # we use the tmp file name only as a reference
