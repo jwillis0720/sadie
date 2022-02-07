@@ -13,7 +13,7 @@ from sadie.utility import SadieIO
 from sadie.utility.util import get_verbosity_level, get_project_root
 
 # reference
-from sadie.reference import make_germline_database, Reference
+from sadie.reference import make_germline_database, Reference, write_blast_db
 
 
 @click.group()
@@ -162,6 +162,32 @@ def make_igblast_reference(verbose, outpath, reference):
     germline_path = make_germline_database(reference_object, outpath)
     click.echo(f"Wrote germline database to {germline_path}")
     click.echo("Done!")
+
+
+@reference.command("makeblastdb")
+@click.option(
+    "-v",
+    "--verbose",
+    count=True,
+    default=4,
+    help="Vebosity level, ex. -vvvvv for debug level logging",
+)
+@click.option(
+    "--inpath",
+    "-i",
+    help="Input path to Fasta file",
+    type=click.Path(exists=True),
+)
+@click.option(
+    "--outpath",
+    "-o",
+    help="Output path to generate blast_db, internal_data and auxillary files",
+    type=click.Path(resolve_path=True, dir_okay=True, writable=True),
+)
+def write_single_blast_db(verbose, inpath, outpath):
+    numeric_level = get_verbosity_level(verbose)
+    logging.basicConfig(level=numeric_level)
+    write_blast_db(inpath, outpath)
 
 
 if __name__ == "__main__":
