@@ -28,8 +28,8 @@ def write_blast_db(filename: str, output_db: str) -> None:
         raise Exception(f"Make Blast DB {make_blast_db_exe} cant be found or is not executable")
     
     # Validate inpath fasta file and outpath directory
-    filename = pathing(filename)
-    output_db = pathing(output_db, new=True, overwrite=True)
+    filename = pathing(filename)  # make sure file exists
+    output_db = pathing(output_db, new=True, overwrite=True)  # makes sure parent directory exists
     
     # Blast does not allow spaces in the path; need to use a temp file/dir
     with tempfile.NamedTemporaryFile(suffix=filename.suffix) as tmp_filename_obj:
