@@ -8,15 +8,10 @@ import pandas as pd
 import requests
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from yaml import load
 
 from .blast import write_blast_db
 from .models import GeneEntries, GeneEntry
-
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
+from .yaml import YamlRef
 
 # reference logger
 logger = logging.getLogger("reference")
@@ -26,6 +21,20 @@ _endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
 
 
 def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
+    """Conveinence function to write out a fasta file
+
+    Parameters
+    ----------
+    sequences : List[SeqRecord]
+        List of SeqRecord objects from Biopython
+    outpath : Path
+        Path to write fasta to
+
+    Returns
+    -------
+    Path
+        The fully qualified path
+    """
     logger = logging.getLogger(__file__)
     output_fasta = outpath + ".fasta"
     logger.debug("output fasta {}".format(output_fasta))
@@ -49,10 +58,39 @@ def get_species_from_database(database_json) -> List[str]:
     return list(set(map(lambda x: x["common"], database_json)))
 
 
-def _determine_left_over(X):
-    nt = X[0]
-    reading_frame = X[1]
-    return len(nt[reading_frame:]) % 3
+def get_database(source: str) -> List[Dict]:
+    """Get the all entries of either the IMGT or Custom databases. This function calls on the G3 API
+
+    Parameters
+    ----------
+    source : str
+        Either 'imgt' or 'custom'
+
+    Returns
+    -------
+    list: List of dictionaries where each dictionary is a gene entry
+
+    Raises
+    ------
+    ValueError
+        if source is not 'imgt' or 'custom'
+    """
+    if source not in ["custom", "imgt"]:
+        raise ValueError("Invalid database source, needs to be 'custom' or 'imt'")
+    response = requests.get(f"{_endpoint}/genes?source={source}&limit=-1")
+    logger.info(f"{source} database response: {response.status_code}")
+    return response.json()
+
+
+def get_loaded_database() -> dict:
+    """Get G3 database , wrapped in this function so we don't call on response when module is loaded
+
+    Returns
+    -------
+    dict
+        Dictionary of G3 database. custom or imgt
+    """
+    return {"custom": get_database("custom"), "imgt": get_database("imgt")}
 
 
 class Error(Exception):
@@ -68,130 +106,6 @@ class G3Error(Exception):
 
     def __str__(self):
         return f"{self.message}"
-
-
-class YamlRef:
-    def __init__(self, filepath: Union[None, Path, str] = None):
-        if not filepath:
-            self.ref_path = Path(__file__).parent.joinpath("data/reference.yml")
-        else:
-            self.ref_path = filepath
-
-        self.yaml = load(open(self.ref_path), Loader=Loader)
-
-    def get_database_types(self) -> set:
-        """Return database types in current yaml
-
-        Example
-        -------
-        yaml.get_reference_types()
-        >>> {'imgt','custom'}
-
-        Returns
-        -------
-        set
-            unique types
-        """
-        return set(self.yaml.keys())
-
-    def get_species_keys(self, reference_type: str) -> list:
-        """Return functional types from reference types and functional type
-
-        Example
-        -------
-        yaml.get_species_keys('imgt','functional')
-        >>> {'alpaca','cat','dog'...}
-
-        Returns
-        -------
-        set
-            unique types
-        """
-        return list(self.yaml.get(reference_type).keys())
-
-    def get_sub_species(self, reference_type: str, species: str) -> list:
-        """
-        get sub species keys. For instance for humanized mouse, a sub species will be mouse and human
-
-        Parameters
-        ----------
-        reference_type : str
-            ex. imgt
-        functional : str
-            ex. all
-        species : str
-            cat
-
-        Returns
-        -------
-        int
-            number of sub species
-        """
-        return list(self.yaml.get(reference_type).get(species).keys())
-
-    def get_genes(self, reference_type: str, species: str, sub_species: str) -> list:
-        """Get the genes associated with these keys
-
-        Parameters
-        ----------
-        reference_type : str
-            ex. imgt
-        species : str
-            ex. human
-        sub_species : str
-            ex. human
-
-        Returns
-        -------
-        list
-            list of genes
-
-        Examples
-        --------
-        object.get_genes('imgt'','human','human')
-        >>> ['IGHV1-2*01','IGHV1-69*01'....]
-        """
-        return self.yaml.get(reference_type).get(species).get(sub_species)
-
-    def get_gene_segment(self, reference_type: str, species: str, sub_species: str, gene_segment: str) -> list:
-        """Get the genes associated with these keys
-
-        Parameters
-        ----------
-        reference_type : str
-            ex. imgt
-        species : str
-            ex. human
-        sub_species : str
-            ex. human
-        gene_segment: str
-            ex. V
-        Returns
-        -------
-        list
-            list of genes of the gene segment
-
-        Examples
-        --------
-        object.get_gene_segment('imgt','human','human','V')
-        >>> ['IGHV1-2*01','IGHV1-69*01'....]
-        """
-        return list(filter(lambda x: x[3] == gene_segment, self.get_genes(reference_type, species, sub_species)))
-
-    def __repr__(self):
-        return self.yaml.__repr__()
-
-    def __iter__(self):
-        """Iter method will step through the yaml file"""
-        for database in self.yaml:
-            for species in self.yaml[database]:
-                for sub_species in self.yaml[database][species]:
-                    yield {
-                        "database": database,
-                        "species": species,
-                        "sub_species": sub_species,
-                        "gene": self.yaml[database][species][sub_species],
-                    }
 
 
 class Reference:
@@ -499,38 +413,3 @@ class Reference:
                 DB_OUTPATH = os.path.join(species_internal_db_path, f"{species}_{suffix}")
                 # Pass the dataframe and write out the blast database
                 self._make_blast_db_for_internal(gene_df, DB_OUTPATH)
-
-
-def get_database(source: str) -> List[Dict]:
-    """Get the all entries of either the IMGT or Custom databases. This function calls on the G3 API
-
-    Parameters
-    ----------
-    source : str
-        Either 'imgt' or 'custom'
-
-    Returns
-    -------
-    list: List of dictionaries where each dictionary is a gene entry
-
-    Raises
-    ------
-    ValueError
-        if source is not 'imgt' or 'custom'
-    """
-    if source not in ["custom", "imgt"]:
-        raise ValueError("Invalid database source, needs to be 'custom' or 'imt'")
-    response = requests.get(f"https://g3.jordanrwillis.com/api/v1/genes?source={source}&limit=-1")
-    logger.info(f"{source} database response: {response.status_code}")
-    return response.json()
-
-
-def get_loaded_database() -> dict:
-    """Get G3 database , wrapped in this function so we don't call on response when module is loaded
-
-    Returns
-    -------
-    dict
-        Dictionary of G3 database. custom or imgt
-    """
-    return {"custom": get_database("custom"), "imgt": get_database("imgt")}
