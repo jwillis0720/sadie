@@ -1,28 +1,41 @@
 import logging
 import os
 import platform
-import subprocess
 import shutil
+import subprocess
+from pathlib import Path
+from typing import Union
+
+logger = logging.getLogger(__name__)
 
 
-def write_blast_db(filename, output_db):
-    """Take Input Fasta File
+def write_blast_db(filename: Union[Path, str], output_db: Union[Path, str], make_blast_db_bin: Union[Path, str] = None):
+    """Write input fasta to a blast database
 
-    Arguments:
-        filename {str} -- the input fasta file
-        output_db {str} -- the output path
+    Parameters
+    ----------
+    filename : Union[Path, str]
+        The fasta file
+    output_db : Union[Path, str]
+        The output blast database path
+    make_blast_db_bin : Union[Path, str], optional
+        if there is a custom makeblastdb binary to use
 
-    Raises:
-        Exception: If makeblastdb fails for any reason
+    Raises
+    ------
+    ValueError
+        If makeblastdb is not found
+    Exception
     """
-    logger = logging.getLogger(__name__)
+
     system = platform.system().lower()
-    make_blast_db_exe = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/makeblastdb")
-    if not shutil.which(make_blast_db_exe):
-        raise Exception(f"Make Blast DB {make_blast_db_exe} cant be found or is not executable")
+    if not make_blast_db_bin:
+        make_blast_db_bin = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/makeblastdb")
+    if not shutil.which(make_blast_db_bin):
+        raise ValueError(f"Make Blast DB {make_blast_db_bin} cant be found or is not executable")
     make_blast_db = subprocess.run(
         [
-            make_blast_db_exe,
+            make_blast_db_bin,
             "-dbtype",
             "nucl",
             "-hash_index",
@@ -37,7 +50,8 @@ def write_blast_db(filename, output_db):
     )
     stdout = make_blast_db.stdout.decode("utf-8")
     stderr = make_blast_db.stderr.decode("utf-8")
-    logger.debug((stdout))
+    logger.info(stdout)
     if make_blast_db.returncode:
-        logger.critical("Problem with {}".format(filename))
-        raise Exception(stderr)
+        logger.error("Problem with {}".format(filename))
+        logger.error(stderr)
+        raise RuntimeError(stderr)

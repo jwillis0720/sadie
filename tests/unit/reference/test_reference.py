@@ -1,11 +1,13 @@
 import glob
 import os
+from pydantic import ValidationError
 import pandas as pd
 import pytest
 from click.testing import CliRunner
 from sadie import app
 from sadie.reference import Reference
 from sadie.reference.reference import G3Error
+from sadie.reference.models import GeneEntry, GeneEntries
 
 known_aux_exceptions = {
     ("mouse", "imgt", "IGLJ4*01"): "igblast has wrong number of c-term remaining",
@@ -282,3 +284,40 @@ def test_make_igblast_reference(fixture_setup, tmpdir_factory):
 
     # test internal dat file
     assert _test_internal_data_file_structure(tmpdir, fixture_setup)
+
+
+def test_missing_makeblast_df(tmpdir, fixture_setup):
+    """Test the makeblast_df function with a missing blastdb"""
+    fasta = fixture_setup.get_catnap_light_nt()
+    bogus_file = fixture_setup.get_card()
+    from sadie.reference.blast import write_blast_db
+
+    with pytest.raises(ValueError):
+        write_blast_db(fasta, os.path.join(tmpdir, "missing.fasta"), "some_bogus_makeblastdb")
+    with pytest.raises(RuntimeError):
+        write_blast_db(bogus_file, os.path.join(tmpdir, "missing.fasta"))
+
+
+def test_check_models(tmpdir, fixture_setup):
+    """Coverage for all models"""
+    entry = {"species": "human", "sub_species": "human", "gene": "IGHV3-10*01", "database": "custom"}
+    GeneEntry(**entry)
+    entry = {"species": "human", "gene": "IGHV3-10*01", "database": "custom"}
+    GeneEntry(**entry)
+    with pytest.raises(ValidationError):
+        # Bad third postion
+        entry = {"species": "human", "gene": "IGHZ3-10*01", "database": "custom"}
+        GeneEntry(**entry)
+    with pytest.raises(ValidationError):
+        # Bad database
+        entry = {"species": "human", "gene": "IGHZ3-10*01", "database": "jordan_personal_stash"}
+        GeneEntry(**entry)
+
+    with pytest.raises(ValidationError):
+        # Bad third postion
+        entry = {"species": "human", "gene": ["IGHZ3-10*01", "IGHZ3-20*02"], "database": "custom"}
+        GeneEntries(**entry)
+    with pytest.raises(ValidationError):
+        # Bad database
+        entry = {"species": "human", "gene": ["IGHV3-10*01", "IGHV3-20*02"], "database": "jordan_personal_stash"}
+        GeneEntries(**entry)

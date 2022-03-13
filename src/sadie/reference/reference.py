@@ -41,11 +41,11 @@ def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
     return output_fasta
 
 
-def _get_databases_types(database_json) -> List[str]:
+def get_databases_types(database_json) -> List[str]:
     return list(set(map(lambda x: x["source"], database_json)))
 
 
-def _get_species_from_database(database_json) -> List[str]:
+def get_species_from_database(database_json) -> List[str]:
     return list(set(map(lambda x: x["common"], database_json)))
 
 
@@ -182,6 +182,7 @@ class YamlRef:
         return self.yaml.__repr__()
 
     def __iter__(self):
+        """Iter method will step through the yaml file"""
         for database in self.yaml:
             for species in self.yaml[database]:
                 for sub_species in self.yaml[database][species]:
