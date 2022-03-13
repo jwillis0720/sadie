@@ -24,6 +24,7 @@ def test_reference_class():
 
 
 def test_load_ref_from_df(fixture_setup):
+    """Test if we can statically load a reference csv"""
     ref_class = Reference.read_file(fixture_setup.get_reference_dataset_csv())
     assert ref_class.data
 

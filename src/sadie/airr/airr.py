@@ -24,7 +24,7 @@ from Bio.SeqRecord import SeqRecord
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.airr.igblast import IgBLASTN, GermlineData
 from sadie.airr.exceptions import BadIgBLASTExe, BadDataSet, BadRequstedFileType
-from sadie.reference import Reference, make_germline_database
+from sadie.reference import Reference
 
 logger = logging.getLogger("AIRR")
 warnings.filterwarnings("ignore", "Partial codon")
@@ -181,7 +181,7 @@ class Airr:
 
             # set custom directory path
             custom_directory = self.temp_directory / "custom/"
-            full_out_path = make_germline_database(species, custom_directory)
+            full_out_path = species.make_airr_database(custom_directory)
 
             # what database type did they pass?
             database_names = species.get_database_types()

@@ -1,12 +1,17 @@
 import logging
+import os
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Union
 from urllib.parse import quote as url_quote
 
 import pandas as pd
 import requests
-from pydantic import BaseModel, validator
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 from yaml import load
+
+from .blast import write_blast_db
+from .models import GeneEntries, GeneEntry
 
 try:
     from yaml import CLoader as Loader
@@ -15,6 +20,39 @@ except ImportError:
 
 # reference logger
 logger = logging.getLogger("reference")
+
+# G3 API Endpoint
+_endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
+
+
+def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
+    logger = logging.getLogger(__file__)
+    output_fasta = outpath + ".fasta"
+    logger.debug("output fasta {}".format(output_fasta))
+
+    # Im sure this will come back to haunt me, but if, we've seen the name, save that
+    seen_short_names = []
+    with open(output_fasta, "w") as f:
+        for sequence in sequences:
+            name = sequence.name
+            seq = str(sequence.seq).replace(".", "")
+            f.write(">{}\n{}\n".format(name, seq))
+            seen_short_names.append(name)
+    return output_fasta
+
+
+def _get_databases_types(database_json) -> List[str]:
+    return list(set(map(lambda x: x["source"], database_json)))
+
+
+def _get_species_from_database(database_json) -> List[str]:
+    return list(set(map(lambda x: x["common"], database_json)))
+
+
+def _determine_left_over(X):
+    nt = X[0]
+    reading_frame = X[1]
+    return len(nt[reading_frame:]) % 3
 
 
 class Error(Exception):
@@ -33,8 +71,7 @@ class G3Error(Exception):
 
 
 class YamlRef:
-    def __init__(self, filepath=None):
-
+    def __init__(self, filepath: Union[None, Path, str] = None):
         if not filepath:
             self.ref_path = Path(__file__).parent.joinpath("data/reference.yml")
         else:
@@ -42,8 +79,13 @@ class YamlRef:
 
         self.yaml = load(open(self.ref_path), Loader=Loader)
 
-    def get_reference_types(self) -> set:
-        """Return reference type. ex imgt or custom
+    def get_database_types(self) -> set:
+        """Return database types in current yaml
+
+        Example
+        -------
+        yaml.get_reference_types()
+        >>> {'imgt','custom'}
 
         Returns
         -------
@@ -151,86 +193,12 @@ class YamlRef:
                     }
 
 
-class Species(BaseModel):
-    species: str
-
-
-class GeneEntry(BaseModel):
-    """V,D or J Gene Entry with validation"""
-
-    sub_species: Optional[str]
-    species: str
-    gene: str
-    database: str
-
-    @validator("sub_species")
-    def check_sub_species(cls, v):
-        # pylint: disable=no-self-argument
-        return Species(**{"species": v}).species
-
-    @validator("species")
-    def check_species(cls, v, values):
-        # pylint: disable=no-self-argument
-        if values["sub_species"] is None:
-            values["sub_species"] = Species(**{"species": v}).species
-        return Species(**{"species": v}).species
-
-    @validator("gene")
-    def check_vgene(cls, v, values):
-        # pylint: disable=no-self-argument
-        if v[3] not in ["V", "D", "J"]:
-            raise ValueError(f"gene must contain V,D or J at 3rd index, current have {v[3]} in {v} ")
-        return v
-
-    @validator("database")
-    def check_database(cls, v):
-        # pylint: disable=no-self-argument
-        if v not in ["imgt", "custom"]:
-            raise ValueError(f"{v} is not a valid database, chocies are 'imgt' or 'custom'")
-        return v
-
-
-class GeneEntries(BaseModel):
-    """V,D or J Gene Entry with validation"""
-
-    sub_species: Optional[str]
-    species: str
-    gene: List[str]
-    database: str
-
-    @validator("sub_species")
-    def check_sub_species(cls, v):
-        # pylint: disable=no-self-argument
-        return Species(**{"species": v}).species
-
-    @validator("species")
-    def check_species(cls, v, values):
-        # pylint: disable=no-self-argument
-        if values["sub_species"] is None:
-            values["sub_species"] = Species(**{"species": v}).species
-        return Species(**{"species": v}).species
-
-    @validator("gene", each_item=True)
-    def check_vgene(cls, v, values):
-        # pylint: disable=no-self-argument
-        if v[3] not in ["V", "D", "J"]:
-            raise ValueError(f"gene must contain V,D or J at 3rd index, current have {v[3]} in {v} ")
-        return v
-
-    @validator("database")
-    def check_database(cls, v):
-        # pylint: disable=no-self-argument
-        if v not in ["imgt", "custom"]:
-            raise ValueError(f"{v} is not a valid database, chocies are 'imgt' or 'custom'")
-        return v
-
-
 class Reference:
-    """Factory class to generate reference data objects"""
+    """Reference class to generate reference data objects. These are useful for annotation purposes"""
 
     def __init__(self):
         self.data = []
-        self.endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
+        self.endpoint = _endpoint
 
     def add_gene(self, gene: dict):
         """Add a single gene to the reference data
@@ -339,8 +307,216 @@ class Reference:
             raise ValueError(f"{type} is not a valid file type")
         return ref
 
+    def make_airr_database(self, output_path: Path) -> Path:
+        """
+        Make the igblast database, the internal database and the output database needed by igblast. On success
+        return a path to the output database.
 
-def get_database(source: str) -> list:
+        Parameters
+        ----------
+        reference : Reference
+            The reference object
+        output_path : Path
+            A path to dump the igblast reference structure
+
+        Returns
+        -------
+        Path
+            On success return path of dumped database file
+        """ """
+        Make the igblast database in an output path from the reference object
+
+        Parameters
+        ----------
+        reference : Reference
+            The reference object
+        output_path : Path
+            A path to dump the igblast reference structure
+
+        Returns
+        -------
+        Path
+            On success return path of dumped database file
+        """
+        if not self.data:
+            raise ValueError("Reference data is empty")
+        if isinstance(output_path, str):
+            output_path = Path(output_path)
+        self._make_internal_annotaion_file(output_path)
+        logger.info(f"Generated Internal Data {output_path}/internal_data")
+        self._make_igblast_ref_database(output_path)
+        logger.info(f"Generated Blast Data {output_path}/blast")
+        self._make_auxillary_file(output_path)
+        logger.info(f"Generated Aux Data {output_path}/aux_db")
+        return output_path
+
+    def _make_igblast_ref_database(self, outpath: Union[Path, str]):
+        # The blast DB groups by V,D and J
+        logger.debug("Generating from IMGT Internal Database File")
+        database = self.get_dataframe()
+        for group, group_df in database.groupby("source"):
+            for species, species_df in group_df.groupby("species"):
+                receptor_blast_dir = os.path.join(outpath, f"{group}/Ig/blastdb/")
+                sub_species_keys = species_df["sub_species"].unique()
+                if not os.path.exists(receptor_blast_dir):
+                    os.makedirs(receptor_blast_dir)
+                for segment, segment_df in species_df.groupby("gene_segment"):
+                    if len(sub_species_keys) > 1:
+                        chimera = True
+                    else:
+                        chimera = False
+
+                    out_segment = os.path.join(receptor_blast_dir, f"{species}_{segment}")
+                    if chimera:
+                        seqs = segment_df.apply(
+                            lambda x: SeqRecord(Seq(str(x["sequence"])), name=x["sub_species"] + "|" + x["gene"]),
+                            axis=1,
+                        ).to_list()
+                    else:
+                        seqs = segment_df.apply(
+                            lambda x: SeqRecord(Seq(str(x["sequence"])), name=x["gene"]), axis=1
+                        ).to_list()
+                    # returns a full fasta path
+                    fasta_file = _write_out_fasta(seqs, out_segment)
+                    write_blast_db(fasta_file, fasta_file.split(".fasta")[0])
+                    logger.info(f"Wrote blast for {fasta_file}")
+
+    def _make_auxillary_file(self, outpath: Path):
+        """
+        Given the imgt file structure object and aux path, make the aux data
+        """
+        database = self.get_dataframe()
+        if database[database.label == "J-REGION"].empty:
+            raise ValueError("No J-REGION found in reference object...make sure to add J def")
+        for group, group_df in database.groupby("source"):
+            receptor_aux_dir = os.path.join(outpath, f"{group}/aux_db")
+
+            if not os.path.exists(receptor_aux_dir):
+                logger.info(f"Creating {receptor_aux_dir}")
+                os.makedirs(receptor_aux_dir)
+            for species, species_df in group_df.groupby("species"):
+                sub_species_keys = species_df["sub_species"].unique()
+                if len(sub_species_keys) > 1:
+                    chimera = True
+                else:
+                    chimera = False
+
+                aux_file_species = os.path.join(receptor_aux_dir, f"{species}_gl.aux")
+                common_df = species_df[species_df["gene_segment"] == "J"].copy()
+                bad_remainders = common_df[(common_df["imgt.remainder"].isna())]
+                if not bad_remainders.empty:
+                    logger.warning(
+                        f"Had to drop {bad_remainders.shape[0]} rows due to bad remainder for {group}-{species}"
+                    )
+                    common_df.drop(bad_remainders.index, inplace=True)
+                common_df = common_df[(common_df["imgt.cdr3_end"] != "")]
+                common_df.loc[:, "reading_frame"] = common_df["imgt.reading_frame"].astype(int)
+                common_df.loc[:, "left_over"] = common_df["imgt.remainder"].astype(int)
+                common_df.loc[:, "end"] = common_df["imgt.cdr3_end"].astype(int) - 1
+                common_df["marker"] = common_df["gene"].str.split("-").str.get(0).str[0:4].str[::-1].str[:2]
+                if chimera:
+                    common_df["gene"] = common_df["common"] + "|" + common_df["gene"]
+                common_df[["gene", "reading_frame", "marker", "end", "left_over"]].to_csv(
+                    aux_file_species, sep="\t", header=None, index=False
+                )
+                logger.info(f"Wrote aux to {aux_file_species}")
+
+    def _make_blast_db_for_internal(self, df, dboutput):
+        """Make a blast database from dataframe"""
+        out_fasta = dboutput + ".fasta"
+        logger.debug("Writing fasta to {}".format(out_fasta))
+        with open(out_fasta, "w") as f:
+            for id_, seq in zip(df["gene"], df["sequence"]):
+                f.write(">{}\n{}\n".format(id_, seq))
+        out_db = out_fasta.split(".fasta")[0]
+        write_blast_db(out_fasta, out_db)
+
+    def _make_internal_annotaion_file(self, outpath: Path):
+        logger.debug(f"Generating internal annotation file at {outpath}")
+        # The internal data file structure goes {db_type}/Ig/internal_path/{species}/
+
+        database = self.get_dataframe()
+        for group, group_df in database.groupby("source"):
+            # db_type eg. cutom, imgt
+
+            # get a filtered database for V genes
+            filtered_data = group_df.loc[group_df["gene_segment"] == "V"]
+
+            # the species is the actual entity we are using for the annotation, e.g se09 or human
+            for species, species_df in filtered_data.groupby("species"):
+                # species level database
+                species_internal_db_path = os.path.join(outpath, group, "Ig", "internal_data", species)
+                logger.debug(f"Found species {species}, using {group} database file")
+                if not os.path.exists(species_internal_db_path):
+                    logger.info(f"Creating {species_internal_db_path}")
+                    os.makedirs(species_internal_db_path)
+
+                # maybe we requested a chimeric speicies that has more than one sub species, e.g a mouse model
+                sub_species_keys = species_df["sub_species"].unique()
+
+                # if we have hybrid species we shall name them with <species>|gene
+                gene_df = species_df.copy()
+                if len(sub_species_keys) > 1:
+                    gene_df["gene"] = gene_df["common"] + "|" + gene_df["gene"]
+
+                index_df = gene_df[
+                    [
+                        "gene",
+                        "imgt.fwr1_start",
+                        "imgt.fwr1_end",
+                        "imgt.cdr1_start",
+                        "imgt.cdr1_end",
+                        "imgt.fwr2_start",
+                        "imgt.fwr2_end",
+                        "imgt.cdr2_start",
+                        "imgt.cdr2_end",
+                        "imgt.fwr3_start",
+                        "imgt.fwr3_end",
+                    ]
+                ].copy()
+
+                # makes everything an integer. sets gene to index so its not affected
+                # add +1 to so we get 1-based indexing
+                index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
+
+                # drop anything where there is an na in the annotation idnex
+                index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
+                scheme = "imgt"
+                internal_annotations_file_path = os.path.join(species_internal_db_path, f"{species}.ndm.{scheme}")
+                if len(sub_species_keys) > 1:
+                    segment = [i.split("|")[-1].split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
+                else:
+                    segment = [i.split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
+                index_df["segment"] = segment
+                index_df["weird_buffer"] = 0
+                logger.info("Writing to annotation file {}".format(internal_annotations_file_path))
+                index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
+                logger.info("Wrote to annotation file {}".format(internal_annotations_file_path))
+                # blast reads these suffixes depending on receptor
+                suffix = "V"
+                # suffix = "TV_V"
+                DB_OUTPATH = os.path.join(species_internal_db_path, f"{species}_{suffix}")
+                # Pass the dataframe and write out the blast database
+                self._make_blast_db_for_internal(gene_df, DB_OUTPATH)
+
+
+def get_database(source: str) -> List[Dict]:
+    """Get the all entries of either the IMGT or Custom databases. This function calls on the G3 API
+
+    Parameters
+    ----------
+    source : str
+        Either 'imgt' or 'custom'
+
+    Returns
+    -------
+    list: List of dictionaries where each dictionary is a gene entry
+
+    Raises
+    ------
+    ValueError
+        if source is not 'imgt' or 'custom'
+    """
     if source not in ["custom", "imgt"]:
         raise ValueError("Invalid database source, needs to be 'custom' or 'imt'")
     response = requests.get(f"https://g3.jordanrwillis.com/api/v1/genes?source={source}&limit=-1")
