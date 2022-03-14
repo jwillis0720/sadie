@@ -6,8 +6,9 @@ import pytest
 from click.testing import CliRunner
 from sadie import app
 from sadie.reference import Reference
-from sadie.reference.reference import G3Error
+from sadie.reference.reference import G3Error, get_database, get_loaded_database, get_species_from_database
 from sadie.reference.models import GeneEntry, GeneEntries
+from sadie.reference.yaml import YamlRef
 
 known_aux_exceptions = {
     ("mouse", "imgt", "IGLJ4*01"): "igblast has wrong number of c-term remaining",
@@ -286,6 +287,22 @@ def test_make_igblast_reference(fixture_setup, tmpdir_factory):
     assert _test_internal_data_file_structure(tmpdir, fixture_setup)
 
 
+def test_reference_functions(tmpdir, fixture_setup):
+    """Test functions that interact directly G3"""
+    with pytest.raises(G3Error):
+        try:
+            get_database("blah")
+        except G3Error as e:
+            # for coverage
+            e.__str__()
+            raise e
+    both_databases = get_loaded_database()
+    imgt_database_json_species = get_species_from_database(both_databases["imgt"])
+    custom_database_json_species = get_species_from_database(both_databases["custom"])
+    assert imgt_database_json_species
+    assert custom_database_json_species
+
+
 def test_missing_makeblast_df(tmpdir, fixture_setup):
     """Test the makeblast_df function with a missing blastdb"""
     fasta = fixture_setup.get_catnap_light_nt()
@@ -299,7 +316,7 @@ def test_missing_makeblast_df(tmpdir, fixture_setup):
 
 
 def test_check_models(tmpdir, fixture_setup):
-    """Coverage for all models"""
+    """Coverage for all models including validations exceptions for bonehead entries"""
     entry = {"species": "human", "sub_species": "human", "gene": "IGHV3-10*01", "database": "custom"}
     GeneEntry(**entry)
     entry = {"species": "human", "gene": "IGHV3-10*01", "database": "custom"}
@@ -321,3 +338,50 @@ def test_check_models(tmpdir, fixture_setup):
         # Bad database
         entry = {"species": "human", "gene": ["IGHV3-10*01", "IGHV3-20*02"], "database": "jordan_personal_stash"}
         GeneEntries(**entry)
+
+
+def test_yaml(tmpdir, fixture_setup):
+    """Test yaml module"""
+    yaml = YamlRef()
+    assert yaml.get_database_types() == {"imgt", "custom"}
+    imgt_keys = [
+        "se6156",
+        "sa684",
+        "bat64",
+        "clk",
+        "dog",
+        "hugl18",
+        "human",
+        "macaque",
+        "mouse",
+        "rabbit",
+        "rat",
+        "se09",
+        "se0916",
+        "se16",
+    ]
+    custom_keys = ["cat", "dog", "macaque"]
+    assert yaml.get_species_keys("imgt") == imgt_keys
+    assert yaml.get_species_keys("custom") == custom_keys
+
+    for key in imgt_keys:
+        sub_key = yaml.get_sub_species("imgt", key)
+        assert sub_key
+        for sub in sub_key:
+            genes = yaml.get_genes("imgt", key, sub)
+            yaml.get_gene_segment("imgt", key, sub, "V")
+            yaml.get_gene_segment("imgt", key, sub, "D")
+            yaml.get_gene_segment("imgt", key, sub, "J")
+            if not genes:
+                raise ValueError(f"{key} {sub_key} {genes}")
+    for key in custom_keys:
+        sub_key = yaml.get_sub_species("custom", key)
+        assert sub_key
+        for sub in sub_key:
+            genes = yaml.get_genes("custom", key, sub)
+            yaml.get_gene_segment("custom", key, sub, "V")
+            yaml.get_gene_segment("custom", key, sub, "D")
+            yaml.get_gene_segment("custom", key, sub, "J")
+            if not genes:
+                raise ValueError(f"{key} {sub_key} {genes}")
+    assert yaml.__repr__()

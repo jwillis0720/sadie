@@ -20,6 +20,21 @@ logger = logging.getLogger("reference")
 _endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
 
 
+class Error(Exception):
+    pass
+
+
+class G3Error(Exception):
+    """Exception for G3"""
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f"{self.message}"
+
+
 def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
     """Conveinence function to write out a fasta file
 
@@ -50,15 +65,22 @@ def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
     return output_fasta
 
 
-def get_databases_types(database_json) -> List[str]:
-    return list(set(map(lambda x: x["source"], database_json)))
+def get_species_from_database(database_json: List[Dict]) -> List[str]:
+    """Get a list of available species from the G3 database
 
-
-def get_species_from_database(database_json) -> List[str]:
+    Parameters
+    ----------
+    database_json : List[Dict]
+        The G3 database response json. See get_database()
+    Returns
+    -------
+    List[str]
+        List of species
+    """
     return list(set(map(lambda x: x["common"], database_json)))
 
 
-def get_database(source: str) -> List[Dict]:
+def get_database(source: str, custom_endpoint: Union[str, None] = None) -> List[Dict]:
     """Get the all entries of either the IMGT or Custom databases. This function calls on the G3 API
 
     Parameters
@@ -75,10 +97,16 @@ def get_database(source: str) -> List[Dict]:
     ValueError
         if source is not 'imgt' or 'custom'
     """
-    if source not in ["custom", "imgt"]:
-        raise ValueError("Invalid database source, needs to be 'custom' or 'imt'")
-    response = requests.get(f"{_endpoint}/genes?source={source}&limit=-1")
-    logger.info(f"{source} database response: {response.status_code}")
+    if not custom_endpoint:
+        # if a local endpoint for testint
+        custom_endpoint = _endpoint
+    request_str = f"{custom_endpoint}?source={source}&limit=-1"
+    response = requests.get(request_str)
+    if response.status_code != 200:
+        # probably put something besides imgt or custom here
+        error_log = f"Error loading database: {response.status_code}, {response.text}"
+        logger.error(error_log)
+        raise G3Error(error_log)
     return response.json()
 
 
@@ -91,21 +119,6 @@ def get_loaded_database() -> dict:
         Dictionary of G3 database. custom or imgt
     """
     return {"custom": get_database("custom"), "imgt": get_database("imgt")}
-
-
-class Error(Exception):
-    pass
-
-
-class G3Error(Exception):
-    """Exception for G3"""
-
-    def __init__(self, message: str) -> None:
-        self.message = message
-        super().__init__(self.message)
-
-    def __str__(self):
-        return f"{self.message}"
 
 
 class Reference:
