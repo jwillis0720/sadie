@@ -29,6 +29,8 @@ def write_blast_db(filename: Union[Path, str], output_db: Union[Path, str], make
     """
 
     system = platform.system().lower()
+    if isinstance(filename, str):
+        filename = Path(filename)
     if not make_blast_db_bin:
         make_blast_db_bin = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/makeblastdb")
     if not shutil.which(make_blast_db_bin):

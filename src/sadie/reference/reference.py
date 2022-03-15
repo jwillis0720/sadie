@@ -1,7 +1,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple, Union
 from urllib.parse import quote as url_quote
 
 import pandas as pd
@@ -20,19 +20,12 @@ logger = logging.getLogger("reference")
 _endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
 
 
-class Error(Exception):
-    pass
-
-
 class G3Error(Exception):
-    """Exception for G3"""
+    """Exception for G3 - helps with being specific"""
 
     def __init__(self, message: str) -> None:
         self.message = message
         super().__init__(self.message)
-
-    def __str__(self):
-        return f"{self.message}"
 
 
 def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
@@ -51,17 +44,16 @@ def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
         The fully qualified path
     """
     logger = logging.getLogger(__file__)
+    if isinstance(outpath, Path):
+        outpath = str(outpath)
     output_fasta = outpath + ".fasta"
     logger.debug("output fasta {}".format(output_fasta))
 
-    # Im sure this will come back to haunt me, but if, we've seen the name, save that
-    seen_short_names = []
     with open(output_fasta, "w") as f:
         for sequence in sequences:
             name = sequence.name
             seq = str(sequence.seq).replace(".", "")
-            f.write(">{}\n{}\n".format(name, seq))
-            seen_short_names.append(name)
+            f.write(f">{name}\n{seq}\n")
     return output_fasta
 
 
@@ -122,11 +114,28 @@ def get_loaded_database() -> dict:
 
 
 class Reference:
-    """Reference class to generate reference data objects. These are useful for annotation purposes"""
+    """Reference class to handle reference databases for  sadie.airr and sadie.anarci"""
 
-    def __init__(self):
+    def __init__(self, endpoint: str = _endpoint):
+        """Initialize the reference object
+
+        Parameters
+        ----------
+        endpoint : str, optional
+           The endpoint API address to get the data. Defaults to the G3 API.
+        """
         self.data = []
-        self.endpoint = _endpoint
+        self.endpoint = endpoint
+
+    @property
+    def endpoint(self):
+        return self._endpoint
+
+    @endpoint.setter
+    def endpoint(self, endpoint: str):
+        if requests.get(_endpoint).status_code != 200:
+            raise G3Error(f"{_endpoint} is not a valid G3 API endpoint or is down")
+        self._endpoint = endpoint
 
     def add_gene(self, gene: dict):
         """Add a single gene to the reference data
@@ -138,18 +147,156 @@ class Reference:
 
         Examples
         --------
-        Reference.add_gene({"species": "human", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
+        reference_object = Refrence()
+        refrence_object.add_gene({"species": "human", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
         """
+
+        # make gene model
         gene_valid = GeneEntry(**gene)
 
         # add dictionaries to list from G3
         self.data.append(self._get_gene(gene_valid))
 
-    def add_genes(self, genes: dict):
+    def add_genes(self, genes: List[Dict]):
+        """Add a List of genes to the reference data object
+
+        Parameters
+        ----------
+        genes : List[Dict]
+            _description_
+        """
         genes_valid = GeneEntries(**genes)
         self.data += self._get_genes(genes_valid)
 
-    def _g3_get(self, query):
+    def get_dataframe(self) -> pd.DataFrame:
+        """Return a pandas dataframe of the reference data"""
+        return pd.json_normalize(self.data)
+
+    def get_database_types(self) -> List[str]:
+        """Return a list of the database types in the reference data"""
+        return list(set((map(lambda x: x["source"], self.data))))
+
+    @staticmethod
+    def parse_yaml(yaml_path: Path = None) -> "Reference":
+        """Parse a yaml file into a reference file object
+
+        Parameters
+        ----------
+        yaml_path : Path to yaml file
+
+        Returns
+        -------
+        Reference - Reference Object
+        """
+        yaml_object = YamlRef(yaml_path)
+        ref = Reference()
+
+        # yaml iterator returns a list of genes for every species
+        for genes_entry in yaml_object:
+            logger.info(f"{genes_entry['database']}-{genes_entry['species']} quering from G3 gateway")
+            ref.add_genes(genes_entry)
+        return ref
+
+    @staticmethod
+    def read_file(path: Union[Path, str], type="csv") -> "Reference":
+        """Read file into a reference object
+
+        Parameters
+        ----------
+        path : Union[Path,str]
+            path to out file
+
+        Examples
+        --------
+        # read csv
+        reference = Reference.read_file("/path/to/file.csv") # can also be file.csv.gz
+
+        # read json
+        reference = Reference.read_file("/path/to/file.json") # can also be file.json.gz
+
+        # read feather
+        reference = Reference.read_file("/path/to/file.feather") # can also be file.feather
+
+        Returns
+        -------
+        Reference - Reference Object
+
+        Raises
+        ------
+        ValueError
+            if a csv, json or feather is not passed
+        """
+        ref = Reference()
+        if type == "csv":
+            _data = pd.read_csv(path, index_col=0).to_dict(orient="records")
+        elif type == "json":
+            _data = pd.json(path).to_dict(orient="records")
+        elif type == "feather":
+            _data = pd.read_feather(path).to_dict(orient="records")
+        else:
+            raise ValueError(f"{type} is not a valid file type")
+        ref.data = _data
+        return ref
+
+    def make_airr_database(self, output_path: Path) -> Path:
+        """
+        Make the igblastn database, internal database and auxilary database needed by igblast. On success
+        return a path to the output database.
+
+        Parameters
+        ----------
+        output_path : Path
+            A path directory to output the database structure
+
+        Returns
+        -------
+        Path
+            On success return path of dumped database file.
+
+        Examples
+        --------
+        ref_class = Reference()
+        ref_class.add_gene({"species": "human", "gene": "IGHV1-69*01", "database": "imgt"})
+        ref_class.add_gene({"species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
+        ref_class.to_airr_database("/path/to/output/")
+        """
+        if not self.data:
+            # If empty make a reference from the yaml from object and call G3
+            logger.warning("Reference data is empty - Generating from yaml")
+            self.data = self.parse_yaml().data.copy()
+        if isinstance(output_path, str):
+            output_path = Path(output_path)
+        # dataframe to internal annotation structure
+        self._make_internal_annotaion_file(output_path)
+        logger.info(f"Generated Internal Data {output_path}/internal_data")
+        # dataframe to igblast annotation structure
+        self._make_igblast_ref_database(output_path)
+        logger.info(f"Generated Blast Data {output_path}/blast")
+        # dataframe to igblast aux structure
+        self._make_auxillary_file(output_path)
+        logger.info(f"Generated Aux Data {output_path}/aux_db")
+        return output_path
+
+    def _g3_get(self, query: str) -> Tuple[int, Dict]:
+        """Use the G3 Restful API
+
+        Parameters
+        ----------
+        query : str
+            query string - ig. https://g3.jordanrwillis.com/api/v1/genes?source=imgt&common=human&gene=IGHV1-69%2A01
+
+        Returns
+        -------
+        Tuple[int, Dict]
+            status code and response
+
+        Raises
+        ------
+        G3Error
+            if the response is 404 and we can't find the gene
+        G3Error
+            Any other response code that is not 200
+        """
         response = requests.get(query)
         if response.status_code != 200:
             if response.status_code == 404:
@@ -158,20 +305,64 @@ class Reference:
         return response.status_code, response.json()
 
     def _get_gene(self, gene: GeneEntry) -> dict:
+        """Get a single gene from the G3 Restful API using a GeneEntry Model
+
+        Parameters
+        ----------
+        gene : GeneEntry
+            The GeneEntry model
+
+        Returns
+        -------
+        dict
+            Json -> Dict response
+
+        Raises
+        ------
+        ValueError
+            If gene is not a GeneEntry model
+        G3Error
+            If more than one gene is found, i.e the list is longer than 1. Use _get_genes for more than 1.
+        """
         if not isinstance(gene, GeneEntry):
             raise ValueError(f"{gene} is not GeneEntry")
+
+        # change weird characters to url characters
         gene_url = url_quote(gene.gene)
         query = f"{self.endpoint}?source={gene.database}&common={gene.sub_species}&gene={gene_url}"
+
+        # use G3 get to return response and json
         status_code, response_json = self._g3_get(query)
         logger.debug(f"{gene.database}:{gene.species}:{gene.gene} database response: {status_code}")
+
+        # if the respnse is longer than 1, we have returned more than one gene
         if len(response_json) > 1:
             raise G3Error(f"{gene.database}:{gene.species}:{gene.gene} found more than one result")
+
+        # put the species in sub species in because they are not a part of G3.
         response_json[0]["sub_species"] = gene.sub_species
         response_json[0]["species"] = gene.species
         return response_json[0]
 
     def _get_genes(self, genes: GeneEntries) -> List[dict]:
-        """Get multiple genes in one api call from G3 using GeneEntries Model"""
+        """Get a list of genes from entries model. Similar to _get_gene but for multiple genes
+
+        Parameters
+        ----------
+        genes : GeneEntries
+            The GeneEntries model object.
+
+        Returns
+        -------
+        List[dict]
+            A list of Json-> Dict responses from G3
+
+
+        Raises
+        ------
+        ValueError
+            If genes is not  GeneEntries model
+        """
         if not isinstance(genes, GeneEntries):
             raise ValueError(f"{genes} is not GeneEntries")
 
@@ -191,104 +382,31 @@ class Reference:
         filtered_json = list(filter(lambda x: x["gene"] in genes.gene, response_json))
         return filtered_json
 
-    def get_dataframe(self) -> pd.DataFrame:
-        """Return a pandas dataframe of the reference data"""
-        return pd.json_normalize(self.data)
-
-    def get_database_types(self) -> List[str]:
-        """Return a list of the database types in the reference data"""
-        return list(set((map(lambda x: x["source"], self.data))))
-
-    @staticmethod
-    def parse_yaml(yaml_path: Path = None) -> "Reference":
-        """Parse a yaml file into a reference file object
+    def _make_igblast_ref_database(self, outpath: Union[Path, str]) -> None:
+        """Generate the IgBlast reference database from the reference object
 
         Parameters
         ----------
-        yaml_path : Path to yaml file
+        outpath : Union[Path, str]
+            The output path to. example -> path/to/output.
+            Then the database will dump to path/to/output/{custom,imgt}/{Ig,TCR}/blastdb
         """
-        yaml_object = YamlRef(yaml_path)
-        ref = Reference()
-
-        # yaml iterator returns a list of genes for every species
-        for genes_entry in yaml_object:
-            logger.info(f"{genes_entry['database']}-{genes_entry['species']} quering from G3 gateway")
-            ref.add_genes(genes_entry)
-        return ref
-
-    @staticmethod
-    def read_file(path: Path, type="csv") -> "Reference":
-        """Read file into a reference object
-
-        Parameters
-        ----------
-        path : Path to file
-        """
-        ref = Reference()
-        if type == "csv":
-            ref.data = pd.read_csv(path, index_col=0).to_dict(orient="records")
-        elif type == "json":
-            ref.data = pd.json(path).to_dict(orient="records")
-        elif type == "feather":
-            ref.data = pd.read_feather(path).to_dict(orient="records")
-        else:
-            raise ValueError(f"{type} is not a valid file type")
-        return ref
-
-    def make_airr_database(self, output_path: Path) -> Path:
-        """
-        Make the igblast database, the internal database and the output database needed by igblast. On success
-        return a path to the output database.
-
-        Parameters
-        ----------
-        reference : Reference
-            The reference object
-        output_path : Path
-            A path to dump the igblast reference structure
-
-        Returns
-        -------
-        Path
-            On success return path of dumped database file
-        """ """
-        Make the igblast database in an output path from the reference object
-
-        Parameters
-        ----------
-        reference : Reference
-            The reference object
-        output_path : Path
-            A path to dump the igblast reference structure
-
-        Returns
-        -------
-        Path
-            On success return path of dumped database file
-        """
-        if not self.data:
-            raise ValueError("Reference data is empty")
-        if isinstance(output_path, str):
-            output_path = Path(output_path)
-        self._make_internal_annotaion_file(output_path)
-        logger.info(f"Generated Internal Data {output_path}/internal_data")
-        self._make_igblast_ref_database(output_path)
-        logger.info(f"Generated Blast Data {output_path}/blast")
-        self._make_auxillary_file(output_path)
-        logger.info(f"Generated Aux Data {output_path}/aux_db")
-        return output_path
-
-    def _make_igblast_ref_database(self, outpath: Union[Path, str]):
         # The blast DB groups by V,D and J
         logger.debug("Generating from IMGT Internal Database File")
+
+        # get the database as a dataframe
         database = self.get_dataframe()
+
+        # first source, i.e. imgt, custom
         for group, group_df in database.groupby("source"):
+            # second group is species, i.e. human, mouse
             for species, species_df in group_df.groupby("species"):
                 receptor_blast_dir = os.path.join(outpath, f"{group}/Ig/blastdb/")
                 sub_species_keys = species_df["sub_species"].unique()
                 if not os.path.exists(receptor_blast_dir):
                     os.makedirs(receptor_blast_dir)
                 for segment, segment_df in species_df.groupby("gene_segment"):
+                    chimera = False
                     if len(sub_species_keys) > 1:
                         chimera = True
                     else:
@@ -296,6 +414,7 @@ class Reference:
 
                     out_segment = os.path.join(receptor_blast_dir, f"{species}_{segment}")
                     if chimera:
+                        # if chimera, join species and sub species with '|'
                         seqs = segment_df.apply(
                             lambda x: SeqRecord(Seq(str(x["sequence"])), name=x["sub_species"] + "|" + x["gene"]),
                             axis=1,
@@ -304,18 +423,35 @@ class Reference:
                         seqs = segment_df.apply(
                             lambda x: SeqRecord(Seq(str(x["sequence"])), name=x["gene"]), axis=1
                         ).to_list()
-                    # returns a full fasta path
+
+                    # write this to a fasta file
                     fasta_file = _write_out_fasta(seqs, out_segment)
+
+                    # Convert fasta file to blast db
                     write_blast_db(fasta_file, fasta_file.split(".fasta")[0])
                     logger.info(f"Wrote blast for {fasta_file}")
 
     def _make_auxillary_file(self, outpath: Path):
+        """Generate the auxillary file for the IgBlast reference database
+
+        Parameters
+        ----------
+        outpath : Path
+            The output path to. example -> path/to/output.
+            Then the database will dump to path/to/output/{custom,imgt}/aux_db/{species}.aux
+
+        Raises
+        ------
+        ValueError
+            if the J region hasn't been added to the database, we refuse to make the aux file
         """
-        Given the imgt file structure object and aux path, make the aux data
-        """
+
+        # get dataframe
         database = self.get_dataframe()
         if database[database.label == "J-REGION"].empty:
             raise ValueError("No J-REGION found in reference object...make sure to add J def")
+
+        # group by source
         for group, group_df in database.groupby("source"):
             receptor_aux_dir = os.path.join(outpath, f"{group}/aux_db")
 
@@ -387,6 +523,7 @@ class Reference:
                 if len(sub_species_keys) > 1:
                     gene_df["gene"] = gene_df["common"] + "|" + gene_df["gene"]
 
+                # subselect and order
                 index_df = gene_df[
                     [
                         "gene",
@@ -423,6 +560,6 @@ class Reference:
                 # blast reads these suffixes depending on receptor
                 suffix = "V"
                 # suffix = "TV_V"
-                DB_OUTPATH = os.path.join(species_internal_db_path, f"{species}_{suffix}")
+                db_outpath = os.path.join(species_internal_db_path, f"{species}_{suffix}")
                 # Pass the dataframe and write out the blast database
-                self._make_blast_db_for_internal(gene_df, DB_OUTPATH)
+                self._make_blast_db_for_internal(gene_df, db_outpath)
