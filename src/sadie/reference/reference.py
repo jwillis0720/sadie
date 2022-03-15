@@ -133,8 +133,8 @@ class Reference:
 
     @endpoint.setter
     def endpoint(self, endpoint: str):
-        if requests.get(_endpoint).status_code != 200:
-            raise G3Error(f"{_endpoint} is not a valid G3 API endpoint or is down")
+        if requests.get(endpoint).status_code != 200:
+            raise G3Error(f"{endpoint} is not a valid G3 API endpoint or is down")
         self._endpoint = endpoint
 
     def add_gene(self, gene: dict):
@@ -230,7 +230,7 @@ class Reference:
         if type == "csv":
             _data = pd.read_csv(path, index_col=0).to_dict(orient="records")
         elif type == "json":
-            _data = pd.json(path).to_dict(orient="records")
+            _data = pd.read_json(path, orient="records")
         elif type == "feather":
             _data = pd.read_feather(path).to_dict(orient="records")
         else:
@@ -299,8 +299,6 @@ class Reference:
         """
         response = requests.get(query)
         if response.status_code != 200:
-            if response.status_code == 404:
-                raise G3Error(f"{response.url} not found in G3")
             raise G3Error(f"{response.url} error G3 database response: {response.status_code}\n{response.text}")
         return response.status_code, response.json()
 
@@ -329,17 +327,16 @@ class Reference:
 
         # change weird characters to url characters
         gene_url = url_quote(gene.gene)
+
+        # we should never have more than one match thanks to the index
         query = f"{self.endpoint}?source={gene.database}&common={gene.sub_species}&gene={gene_url}"
 
         # use G3 get to return response and json
         status_code, response_json = self._g3_get(query)
         logger.debug(f"{gene.database}:{gene.species}:{gene.gene} database response: {status_code}")
 
-        # if the respnse is longer than 1, we have returned more than one gene
-        if len(response_json) > 1:
-            raise G3Error(f"{gene.database}:{gene.species}:{gene.gene} found more than one result")
-
         # put the species in sub species in because they are not a part of G3.
+        logger.debug(f"have {len(response_json)} genes")
         response_json[0]["sub_species"] = gene.sub_species
         response_json[0]["species"] = gene.species
         return response_json[0]

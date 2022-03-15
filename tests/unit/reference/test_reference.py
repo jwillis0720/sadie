@@ -10,6 +10,9 @@ from sadie.reference import Reference
 from sadie.reference.reference import G3Error, get_database, get_loaded_database, get_species_from_database
 from sadie.reference.models import GeneEntry, GeneEntries
 from sadie.reference.yaml import YamlRef
+from sadie.reference.reference import _write_out_fasta
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 
 
 def _test_internal_data_file_structure(tmpdir, fixture_setup):
@@ -204,10 +207,11 @@ def test_reference_class(tmpdir_factory):
     ref_class.make_airr_database(output)
 
 
-def test_private_methods():
-    query = "https://g3.jordanrwillis.com/api/v1/genes?source=imgt&common=human&gene=IGHV1-69%2A01"
-    print(query)
-    pass
+def test_private_methods(tmpdir_factory):
+    # query = "https://g3.jordanrwillis.com/api/v1/genes?source=imgt&common=human&gene=IGHV1-69%2A01"
+    seq = "AAAAA"
+    file = Path(tmpdir_factory.mktemp("test_private_methods") + "/test.fasta")
+    _write_out_fasta([SeqRecord(Seq(seq), id="test", name="test")], file)
 
 
 def test_creation_from_empty_reference(tmpdir_factory):
@@ -217,10 +221,20 @@ def test_creation_from_empty_reference(tmpdir_factory):
     ref_class.make_airr_database(Path(tmpdir))
 
 
-def test_load_ref_from_df(fixture_setup):
+def test_load_ref_from_df(fixture_setup, tmpdir_factory):
     """Test if we can statically load a reference csv"""
     ref_class = Reference.read_file(fixture_setup.get_reference_dataset_csv())
     assert ref_class.data
+    outpath = tmpdir_factory.mktemp("test_load_ref_from_df")
+    outfile = pd.read_csv(fixture_setup.get_reference_dataset_csv(), index_col=0)
+    outfile.to_csv(outpath + "/test.csv")
+    outfile.to_feather(outpath + "/test.feather")
+    outfile.to_json(outpath + "/test.json", orient="records")
+    ref_class = Reference.read_file(outpath + "/test.json", type="json")
+    ref_class = Reference.read_file(outpath + "/test.csv")
+    ref_class = Reference.read_file(outpath + "/test.feather", type="feather")
+    with pytest.raises(ValueError):
+        ref_class = Reference.read_file(outpath + "/test.feather", type="oinga")
 
 
 def test_make_reference_class_from_yaml():
@@ -339,6 +353,7 @@ def test_missing_makeblast_df(tmpdir, fixture_setup):
 
 def test_check_models(tmpdir, fixture_setup):
     """Coverage for all models including validations exceptions for bonehead entries"""
+    ref = Reference()
     entry = {"species": "human", "sub_species": "human", "gene": "IGHV3-10*01", "database": "custom"}
     GeneEntry(**entry)
     entry = {"species": "human", "gene": "IGHV3-10*01", "database": "custom"}
@@ -360,6 +375,13 @@ def test_check_models(tmpdir, fixture_setup):
         # Bad database
         entry = {"species": "human", "gene": ["IGHV3-10*01", "IGHV3-20*02"], "database": "jordan_personal_stash"}
         GeneEntries(**entry)
+
+    with pytest.raises(ValueError):
+        ref._get_gene(GeneEntries)
+    with pytest.raises(ValueError):
+        ref._get_genes(GeneEntry)
+    entry = {"species": "mouse", "sub_species": "mouse", "gene": "IGHV2-6-3*01", "database": "imgt"}
+    ref._get_gene(GeneEntry(**entry))
 
 
 def test_yaml(tmpdir, fixture_setup):
@@ -407,3 +429,9 @@ def test_yaml(tmpdir, fixture_setup):
             if not genes:
                 raise ValueError(f"{key} {sub_key} {genes}")
     assert yaml.__repr__()
+
+
+def test_G3_errors():
+    """Test G3 errors"""
+    with pytest.raises(G3Error):
+        Reference(endpoint="https://mock.codes/202")
