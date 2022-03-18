@@ -45,7 +45,7 @@ def _test_internal_data_file_structure(tmpdir, fixture_setup):
             ],
         )
         df.insert(0, "common", os.path.basename(file).split(".ndm")[0])
-        df.insert(1, "db_type", "imgt")
+        df.insert(1, "db_type", "imgt")  # pylint: disable=maybe-no-member
         my_internal_path_df.append(df)
 
     my_internal_path_df = (
@@ -84,7 +84,7 @@ def _test_internal_data_file_structure(tmpdir, fixture_setup):
         if common_name == "rhesus_monkey":
             common_name = "macaque"
         df.insert(0, "common", common_name)
-        df.insert(1, "db_type", "imgt")
+        df.insert(1, "db_type", "imgt")  # pylint: disable=maybe-no-member
         ref_internal_path_df.append(df)
 
     ref_internal_path_df = pd.concat(ref_internal_path_df).reset_index(drop=True)
@@ -135,7 +135,7 @@ def _test_auxilary_file_structure(tmpdir, fixture_setup):
             names=["gene", "reading_frame", "segment", "cdr3_end", "left_over"],
         )
         df.insert(0, "common", os.path.basename(file).split("_")[0])
-        df.insert(1, "db_type", file.split("/")[-3])
+        df.insert(1, "db_type", file.split("/")[-3])  # pylint: disable=maybe-no-member
         my_aux.append(df)
 
     # make the aux file structure into a dataframe
@@ -156,7 +156,7 @@ def _test_auxilary_file_structure(tmpdir, fixture_setup):
             names=["gene", "reading_frame", "segment", "cdr3_end", "left_over"],
         )
         df.insert(0, "common", os.path.basename(file).split("_")[0])
-        df.insert(1, "db_type", "imgt")
+        df.insert(1, "db_type", "imgt")  # pylint: disable=maybe-no-member
         igblast_aux.append(df)
 
     # here is what we should get
@@ -228,8 +228,8 @@ def test_load_ref_from_df(fixture_setup, tmpdir_factory):
     outpath = tmpdir_factory.mktemp("test_load_ref_from_df")
     outfile = pd.read_csv(fixture_setup.get_reference_dataset_csv(), index_col=0)
     outfile.to_csv(outpath + "/test.csv")
-    outfile.to_feather(outpath + "/test.feather")
-    outfile.to_json(outpath + "/test.json", orient="records")
+    outfile.to_feather(outpath + "/test.feather")  # pylint: disable=maybe-no-member
+    outfile.to_json(outpath + "/test.json", orient="records")  # pylint: disable=maybe-no-member
     ref_class = Reference.read_file(outpath + "/test.json", type="json")
     ref_class = Reference.read_file(outpath + "/test.csv")
     ref_class = Reference.read_file(outpath + "/test.feather", type="feather")
