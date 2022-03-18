@@ -13,7 +13,7 @@ from sadie.utility import SadieIO
 from sadie.utility.util import get_verbosity_level, get_project_root
 
 # reference
-from sadie.reference import make_germline_database, Reference
+from sadie.reference import Reference
 
 
 @click.group()
@@ -159,7 +159,7 @@ def make_igblast_reference(verbose, outpath, reference):
 
     # read in yaml file with all statric reference data
     reference_object = Reference.parse_yaml(reference)
-    germline_path = make_germline_database(reference_object, outpath)
+    germline_path = reference_object.make_airr_database(outpath)
     click.echo(f"Wrote germline database to {germline_path}")
     click.echo("Done!")
 
