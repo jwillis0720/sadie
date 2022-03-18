@@ -437,7 +437,8 @@ class AirrTable(pd.DataFrame):
                 # Correction in place
                 airrtable.update(correction_alignments)
             airrtable.loc[indel_indexes, f"{field_2}_corrected"] = True
-            return airrtable
+            # @Todo. For some reason, this next line creates a seg fault in pandas >= 1.4 when called from pytest
+            return pd.DataFrame(airrtable)
 
         for field_1, field_2 in _fields:
             airrtable = _update_align(airrtable, field_1, field_2)

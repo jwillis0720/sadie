@@ -5,7 +5,7 @@ import json
 import glob
 import shutil
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 import pytest
 import pandas as pd
@@ -324,6 +324,46 @@ class ReferenceFixtures:
         """get a list of names that should be in nhd (blast format files) dir ref generation"""
         path = self.reference_data / "nhd.json"
         return sorted(json.load(open(path)))
+
+    def get_aux_exceptions(self) -> Dict:
+        """get a dict of aux files that are known exceptions"""
+        return {
+            ("mouse", "imgt", "IGLJ4*01"): "igblast has wrong number of c-term remaining",
+            ("rabbit", "imgt", "IGHJ3*02"): "igblast has wrong reading frame",
+        }
+
+    def get_internal_db_excetions(self) -> List[List]:
+        """get a list of known exceptions from IMGT"""
+        return [
+            ["rat", "imgt", "IGHV1S62*01"],
+            ["rat", "imgt", "IGHV2S1*01"],
+            ["rat", "imgt", "IGHV2S12*01"],
+            ["rat", "imgt", "IGHV2S13*01"],
+            ["rat", "imgt", "IGHV2S18*01"],
+            ["rat", "imgt", "IGHV2S30*01"],
+            ["rat", "imgt", "IGHV2S35*01"],
+            ["rat", "imgt", "IGHV2S54*01"],
+            ["rat", "imgt", "IGHV2S61*01"],
+            ["rat", "imgt", "IGHV2S63*01"],
+            ["rat", "imgt", "IGHV2S75*01"],
+            ["rat", "imgt", "IGHV2S78*01"],
+            ["rat", "imgt", "IGHV2S8*01"],
+            ["rat", "imgt", "IGHV5S10*01"],
+            ["rat", "imgt", "IGHV5S11*01"],
+            ["rat", "imgt", "IGHV5S13*01"],
+            ["rat", "imgt", "IGHV5S14*01"],
+            ["rat", "imgt", "IGHV5S23*01"],
+            ["rat", "imgt", "IGHV5S47*01"],
+            ["rat", "imgt", "IGHV5S54*01"],
+            ["rat", "imgt", "IGHV5S8*01"],
+            ["rat", "imgt", "IGHV8S18*01"],
+            ["rat", "imgt", "IGHV9S3*01"],
+            ["human", "imgt", "IGHV2-70*02"],
+            ["human", "imgt", "IGHV2-70*03"],
+            ["human", "imgt", "IGHV2-70*06"],
+            ["human", "imgt", "IGHV2-70*07"],
+            ["human", "imgt", "IGHV2-70*08"],
+        ]
 
 
 class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures):

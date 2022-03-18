@@ -419,7 +419,7 @@ def test_igl_assignment(heavy_catnap_airrtable, light_catnap_airrtable):
     assert "iGL_light" in joined_airr_table_with_analysis.columns
 
 
-def test_runtime_referecne(fixture_setup):
+def test_runtime_reference(fixture_setup):
     """Test JIT reference generation"""
     reference = Reference()
     reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
