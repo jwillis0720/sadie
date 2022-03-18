@@ -114,26 +114,8 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 === " :material-api: Python"
     Use the SADIE library to annotate seqeuences
 
-    ``` python
-
-    from sadie.airr import Airr
-
-    # define a single sequence
-    pg9_seq = """
-    CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
-    CCGGATTCGACTTCAGTAGACAAGGCATGCACTGGGTCCGCCAGGCTCCAGGCCAGGGGCTGGAGTGGGT
-    GGCATTTATTAAATATGATGGAAGTGAGAAATATCATGCTGACTCCGTATGGGGCCGACTCAGCATCTCC
-    AGAGACAATTCCAAGGATACGCTTTATCTCCAAATGAATAGCCTGAGAGTCGAGGACACGGCTACATATT
-    TTTGTGTGAGAGAGGCTGGTGGGCCCGACTACCGTAATGGGTACAACTATTACGATTTCTATGATGGTTA
-    TTATAACTACCACTATATGGACGTCTGGGGCAAAGGGACCACGGTCACCGTCTCGAGC""".replace(
-    "\n", ""
-    )
-
-    # initialize the api
-    air_api = Airr("human") # define the species
-
-    # run single sequence
-    airr_table = air_api.run_single("PG9", pg9_seq)
+    ```Python
+    {!> docs_src/annotation/tutorial002.py!}
     ```
 
 ## License
