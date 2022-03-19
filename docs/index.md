@@ -122,6 +122,6 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 
 [![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
 
-- Copyright © Jordan R. Willis
+- Copyright © Jordan R. Willis and Troy Sincomb
 
 <!-- Page last revised on: {{ git_revision_date }} -->

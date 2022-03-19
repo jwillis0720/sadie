@@ -145,4 +145,4 @@ or we can use the YAML file as a template to add more genes
 
     You can't mix and match databases. A custom and IMGT can't be mixed.
 
-- Copyright © Jordan R. Willis
+- Copyright © Jordan R. Willis and Troy Sincomb
