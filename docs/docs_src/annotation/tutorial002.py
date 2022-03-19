@@ -1,3 +1,4 @@
+# import the SADIE Airr module
 from sadie.airr import Airr
 
 # define a single sequence

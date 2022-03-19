@@ -1,4 +1,7 @@
+# use Airr module
 from sadie.airr import Airr
+
+# import pandas for dataframe handling
 import pandas as pd
 
 # define a single sequence
