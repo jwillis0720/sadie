@@ -1,79 +1,148 @@
-# Reference Database
+# Reference Module
 
-Annotation is the bedrock of all immunoformatics workflows. It is the process of identifying CDRs/frameworks, levels of somatic mutation, locus use, productive rearragements, and other features that describe the B cell receptor or T cell recptor (BCR/TCR). In the description of a BCR/TCR, how can we use the data file output from one data pipeline can be compared to another? In other words, what if the description of a reperotire has different fields and datatypes that describe a repertoire or even a single BCR/TCR? Fear not! [The AIRR community to the rescue](https://docs.airr-community.org/en/stable/)!
+The SADIE reference module abstracts the underlying reference data used by the [AIRR](annotation.md) and [Numbering](numbering.md) module. Both of these modules use external database files. Their organization (particularly by AIRR which ports [IGBlast](https://www.ncbi.nlm.nih.gov/igblast/)) can be extremely complicated. Making new reference database is a tedious and time consuming task. This module provides a simple interface for making your own reference databases.
 
----
+!!! Abstract "Builtin reference"
+    SADIE ships with a reference database that contains the most common species along with functional genes. The average user will not need to use this module as the the database is comprehensive. You can see each entry by looking either directly at the paths used `src/sadie/airr/data/` for AIRR and `src/sadie/anarci/data` for the renumbering module. Another convienitent way to look at the reference database is to view the [reference.yml](https://github.com/jwillis0720/sadie/blob/master/src/sadie/reference/data/reference.yml). More on how that file is structured will be [provided](#the-reference-yaml).
 
-"_AIRR Data Representations are versioned specifications that consist of a file format and a well-defined schema[...] The schema defines the data model, field names, data types, and encodings for AIRR standard objects. Strict typing enables interoperability and data sharing between different AIRR-seq analysis tools and repositories[...]_"
+## Germline Gene Gateway
 
-<a href='https://docs.airr-community.org/en/stable/datarep/overview.html'><div style="text-align: right; margin-right: 10%;"> The AIRR Standards 1.3 documentation </div></a>
+New germline gene segments are being discovered at a rapid pace. To meet the needs of this changing landscape, SADIE gets all of the gemrline gene info from a programmatic API called the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This API is hosted as free service. It consists of gemrline genes from [IMGT](www.imgt.org) as well as custom genes that have been annotated and cataloged by programs such as [IGDiscover](http://docs.igdiscover.se/en/stable/). To explore the API, go to the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This API is RESTful and conforms to the [OpenAPI 3.0](https://swagger.io/specification/) specification.
 
----
+### Examples of how to use the G3 API
 
-SADIE leverages the AIRR to provide a standardized data representation for BCRs. You can read all the fields and values in the AIRR Rearrangment shema standard [here](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#fields)
+The following examples shows how to pull genes programmatically usinng the command line utilities `curl`, `wget` and the `requests` library in python. It will fetch the first 5 V-Gene segments in IMGT notation.
 
-## Single Sequence Annotation
+=== ":material-console-line: curl"
+
+    <div class="termy">
+
+    ```console
+    $ curl -X 'GET' 'https://g3.jordanrwillis.com/api/v1/genes?source=imgt&segment=V&common=human&limit=5' -H 'accept: application/json' -o 'human_v.json'
+    ```
+    </div>
+
+=== ":material-console-line: wget"
+
+    <div class="termy">
+    ```console
+    $ wget 'https://g3.jordanrwillis.com/api/v1/genes?source=imgt&segment=V&common=human&limit=5' -O human_v.json
+    ```
+    </div>
+
+=== " :material-api: Python"
+
+    ```Python
+    {!> docs_src/reference/tutorial001.py!}
+    ```
+
+
+The output will be a JSON file containing the V-Gene segment and all relevant information needed by SADIE to write out databases needed by the AIRR and Numbering modules.
+
+??? example "human_v.json"
+
+    <div id='json_block_div'>
+    ```json
+        {!> docs_src/reference/human_v.json!}
+    ```
+    </div>
+
+!!! Tip "G3 API"
+
+    The G3 API can be explored live through the documentation. To do so, go to the [G3 API Documentation](https://g3.jordanrwillis.com/docs/). It is a clean non-redudant dataset that can be used for any project programatically. To learn more, [explore the source code](https://github.com/jwillis0720/g3). SADIE abstracts most of the connections with G3 so you should not have to interact with the API directly.
+
+## Generating AIRR Reference Database
+
+=== ":material-console-line: Command Line Usage"
+
+    <div class="termy">
+
+    ```console
+    $ {!> docs_src/reference/tutorial002.bash!}
+    ```
+
+    </div>
+
+=== " :material-api: Python"
+
+    ```Python
+    {!> docs_src/reference/tutorial002.py!}
+    ```
+
+## The reference YAML
+
+The reference YAML file is a simple YAML file that takes the following structure.
+
+```yaml
+database:
+    species:
+        sub-species:
+            -gene1
+            -gene2
+        sub-species2:
+            -gene3
+            -gene4
+```
+
+
+| Field      | Description                          | Example
+| ----------- | ------------------------------------ | --------
+| `database`       | :material-check:     The database that the gene comes from  | `IMGT` or `custom`
+| `species`       | :material-check: The name of the species that will be used in the annotation table | `human`, `mouse`
+| `sub-species`    | :material-check:     A gene from another species that maybe knocked-in the species | `human`
+| `gene`    | :material-check:     The full gene name | `IGHV3-23*01`
+
+!!! Info "Why are is there a sub-species?"
+
+    Most of the time the sub-species and species will be the same thing. i.e.
+
+    ```yaml
+    imgt:
+        human:
+            human:
+                -IGHV3-23*01
+                -IGHD3-3*01
+                -IGHJ6*01
+    ```
+
+    However, sometimes you maybe working with chimeric models where a transgene is knocked into a model species. Consider the HuGL mouse models from [Deli et al. (2020)](https://pubmed.ncbi.nlm.nih.gov/32873644/)
+
+    ```yaml
+    imgt:
+        hugl18:
+            human:
+            - IGHV4-59*01
+            - IGHD3-3*01
+            - IGHJ3*02
+            mouse:
+            - IGHV1-11*01
+            - IGHV1-12*01
+            - IGHV1-13*01
+            - IGHV1-14*01
+        ...
+    ```
+
+    The HuGL18 model will have the full mouse background and three gene segments knocked-in from a human.
+
+Again, a full list of databases, species and genes can be found by exploring the [G3 API](https://g3.jordanrwillis.com/docs#/G3/find_genes_api_v1_genes_get), click the `Try it out` button.
+
+
+## Generating AIRR database with Reference Class
+
+Rather than generate a pre-configured database, SADIE can also generate a reference file on the fly. This is useful for procedural analsysis where you are generating cusom genes for multiple species.
 
 ```Python
-{!docs_src/annotation/tutorial001.py!}
-
+{!> docs_src/reference/tutorial003.py!}
 ```
 
-The output will contain `<class 'sadie.airr.airrtable.airrtable.AirrTable'>` and shows that the output is an instance of the `AirrTable` class.
+or we can use the YAML file as a template to add more genes
 
-!!! info
-    Running an AIRR method generates an AIRR table object. The AIRR table is a subclass of a [pandas dataframe](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html) and thus can be used by any pandas method. Pandas is the workhorse of the SADIE library so we highly encourage some rudimentary knowledge of pandas to get maximize SAIDIE functionality.
-
-### Writing Files
-
-#### AIRR Rearrangment File
-
-To output an AIRR file, we can use the `AirrTable.to_airr()` method.
-
-```Python hl_lines="13 16-17"
-{!docs_src/annotation/tutorial002.py!}
+```Python
+{!> docs_src/reference/tutorial004.py!}
 ```
 
-The tsv file `PG9 AIRR.tsv` generated will be a tabular datafile that will resemble the following:
+!!! Warning
 
-{!docs_output/annotation/tutorial001.md!}
+    You can't mix and match databases. A custom and IMGT can't be mixed.
 
-This `.tsv` file is a [Rearrangement Schema compliant AIRR table](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#file-format-specification). These files have a certain specification, including a `.tsv` file suffix. Since they are AIRR compliant, they can be used by other [AIRR compliant software.](https://docs.airr-community.org/en/stable/resources/rearrangement_support.html). For instance, we could use the output `.tsv ` in any module in the [immcantation portal](https://immcantation.readthedocs.io/en/stable/).
-
-#### Other Output Formats
-
-While the `.tsv` AIRR table is the recognized standard for AIRR, you can also output to any other formats that [pandas supports](https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html).
-
-
-```Python hl_lines="13 16 19 22 25 28"
-{!docs_src/annotation/tutorial003.py!}
-```
-!!! attention
-    Because `AirrTable` is a subclass of `pandas.DataFrame`, you can use any pandas IO methods to write to a file of your choosing. However, it must be noted that these are not official [Rearrangement Schema compliant AIRR tables](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#file-format-specification). They may only be read in by software that reads those file types or be read back in by **SADIE** and probably will not work in other software that supports the AIRR standard. But, these file formats are extremely useful for much larger files.
-
-### Reading Files
-
-
-To read in an AIRR file we have to create an `AirrTable` object.
-#### Reading an AIRR.tsv
-
-You can read official AIRR.tsv using the `AirrTable.from_airr()` method or with pandas and casting to an `AirrTable` object.
-
-```Python hl_lines="5 9"
-{!docs_src/annotation/tutorial004.py!}
-```
-
-Outputs:
-```output
-<class 'sadie.airr.airrtable.airrtable.AirrTable'> True
-<class 'sadie.airr.airrtable.airrtable.AirrTable'> True
-True # The airr tables are equall
-```
-
-#### Reading other file formats
-
-Any other file formats that are readable by [pandas IO](https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html) can be read in by passing them to AirrTable.
-
-```Python hl_lines="5 9"
-{!docs_src/annotation/tutorial005.py!}
-```
+- Copyright © Jordan R. Willis

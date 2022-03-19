@@ -52,6 +52,7 @@ markdown_extensions: #
       base_path: docs/
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.details
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg

@@ -124,4 +124,4 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 
 - Copyright © Jordan R. Willis
 
-Page last revised on: {{ git_revision_date }}
+<!-- Page last revised on: {{ git_revision_date }} -->
