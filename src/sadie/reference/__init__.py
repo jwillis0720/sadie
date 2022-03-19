@@ -1,5 +1,5 @@
 __version__ = "0.4.5"
-from sadie.reference.reference import Reference
+from sadie.reference.reference import Reference, G3Error
 from sadie.reference.settings import (
     RECEPTORS,
     IMGT_DEF_nt,
@@ -21,7 +21,7 @@ __all__ = [
     "IMGT_DEF_nt",
     "IMGT_GB_LOOKUP",
     "IMGT_LOOKUP",
-    "IMGT_LOOKUP_REV",
+    "G3Error",
     "BLAST_CONVENTION",
     "J_SEGMENTS",
     "MOTIF_LOOKUP",
