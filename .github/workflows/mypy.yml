@@ -1,0 +1,16 @@
+name: Static Type Check
+on:
+ push:
+  branches: [ 'mypy' ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - run: pip install mypy==0.941
+      - run: sh ./scripts/check_mypy.sh
