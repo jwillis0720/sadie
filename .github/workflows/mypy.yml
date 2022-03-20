@@ -3,7 +3,7 @@ on:
  push:
   branches: [ 'mypy' ]
 jobs:
-  build:
+  check_static:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

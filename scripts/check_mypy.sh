@@ -1,2 +1,2 @@
 cd src/
-mypy -p sadie
+mypy --verbose --config-file ../setup.cfg -p sadie
