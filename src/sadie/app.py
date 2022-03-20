@@ -1,5 +1,6 @@
 """This is our main entry point"""
 import logging
+from pathlib import Path
 import sys
 import os
 import click
@@ -18,7 +19,7 @@ from sadie.reference import Reference
 
 @click.group()
 @click.pass_context
-def sadie(ctx):
+def sadie(ctx: click.Context) -> None:
     pass
 
 
@@ -70,15 +71,27 @@ def sadie(ctx):
 @click.argument(
     "output", required=False, type=click.Path(file_okay=True, dir_okay=False, writable=True, resolve_path=True)
 )
-def airr(ctx, verbose, species, db_type, compress, skip_igl, skip_mutation, in_format, out_format, input, output):
+def airr(
+    ctx: click.Context,
+    verbose: int,
+    species: str,
+    db_type: str,
+    compress: str,
+    skip_igl: bool,
+    skip_mutation: bool,
+    in_format: str,
+    out_format: str,
+    input_path: Path,
+    output_path: Path,
+) -> None:
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
     airr = Airr(species=species, database=db_type)
 
     # force this so we don't get an error
-    if not output and out_format == "infer":
+    if not output_path and out_format == "infer":
         out_format = "csv"
-    io = SadieIO(input, output, in_format, out_format, compress)
+    io = SadieIO(input_path, output_path, in_format, out_format, compress)
 
     # airr file handling
     # only having a fasta file uncompressed allow calling directly on run_fasta
@@ -100,16 +113,18 @@ def airr(ctx, verbose, species, db_type, compress, skip_igl, skip_mutation, in_f
     elif io.infered_output_format == "tsv":
         airr_table.to_csv(io.output, sep="\t")
     elif io.infered_output_format == "feather":
-        airr_table.to_feather(io.output)
+        airr_table.to_feather(io.output)  # pyright: reportUnknownMemberType=false
+        # PyLance doesn't like *kwargs with no type
     elif io.infered_output_format == "json":
-        airr_table.to_json(io.output)
+        airr_table.to_json(io.output)  # pyright: reportUnknownMemberType=false
+        # PyLance doesn't like *kwargs with no type - pyright ignores work file widex
     else:
         sys.stdout.write(airr_table.to_csv(sep="\t"))
 
 
 @sadie.group()
 @click.pass_context
-def reference(ctx):
+def reference(ctx: click.Context) -> None:
     pass
 
 
@@ -137,7 +152,7 @@ def reference(ctx):
     default=os.path.join(os.path.dirname(__file__), "reference/data/reference.yml"),
     show_default=True,
 )
-def make_igblast_reference(verbose, outpath, reference):
+def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None:
     """make the igblast reference files
 
     This script will make the imgt reference files used by igblast or airr, including internal data, the blast
@@ -151,7 +166,7 @@ def make_igblast_reference(verbose, outpath, reference):
     click.echo(f"reference path {reference}")
 
     if not outpath:
-        outpath = os.path.abspath(os.path.dirname(__file__) + "reference/data/germlines")
+        outpath = Path(__file__).parent.joinpath("reference/data/germlines").resolve()
         click.echo(f"No outpath specified, using {outpath}")
 
     # make reference
@@ -167,5 +182,3 @@ def make_igblast_reference(verbose, outpath, reference):
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
     sadie()
-    # airr()
-    # make_igblast_reference()

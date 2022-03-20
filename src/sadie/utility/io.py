@@ -74,7 +74,7 @@ class SadieIO:
         self.output = output_path
 
     @property
-    def output(self) -> Union[Path, None]:
+    def output(self) -> Union[Path, str]:
         return self._output
 
     @output.setter
@@ -220,7 +220,7 @@ class SadieIO:
             ]
         )
 
-    def get_input_records(self) -> Union[FastaIterator, FastqPhredIterator, AbiIterator, itertools.chain]:
+    def get_input_records(self) -> Union[FastaIterator, FastqPhredIterator, AbiIterator]:
         if not self.isdir:
             if self.input_file_type == "fasta":
                 return SeqIO.parse(SadieIO.get_file_buffer(self.input, self.input_compressed), "fasta")
