@@ -31,7 +31,7 @@
     <a href="https://github.com/pre-commit/pre-commit">
     <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
         alt='pypi'>
-    <a href="https://sadie.jordanrwillis.com/docs" >
+    <a href="https://sadie.jordanrwillis.com" >
     <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
         alt="Documentation">
     </a>
