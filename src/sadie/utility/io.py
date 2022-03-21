@@ -5,7 +5,8 @@ from Bio.SeqIO.QualityIO import FastqPhredIterator
 from Bio.SeqIO.AbiIO import AbiIterator
 from io import TextIOWrapper
 from filetype import guess
-from typing import Union
+from filetype.types.archive import Bz2, Gz
+from typing import Dict, Union
 from pprint import pformat
 import glob
 import gzip
@@ -20,14 +21,21 @@ class NoExtensionNameWarning(UserWarning):
 
 
 class SadieIO:
-    def __init__(self, input_path: Path, output_path=None, in_format="infer", out_format="infer", compressed="infer"):
+    def __init__(
+        self,
+        input_path: Path,
+        output_path: Union[str, Path, None] = None,
+        in_format: str = "infer",
+        out_format: str = "infer",
+        compressed: str = "infer",
+    ):
         """Constructor for SadieIO to aid in input output operations
 
         Parameters
         ----------
         input_path : Path
             The input Path
-        output_path : Tuple[Path,None], default=None
+        output_path : Union[Path,None], default=None
             The output Path, can be inferred from input if none
         in_format : str , default='infer'
             an explict input format, can infer, ex: 'fasta','fastq','abi'
@@ -74,11 +82,12 @@ class SadieIO:
         self.output = output_path
 
     @property
-    def output(self) -> Union[Path, str]:
+    def output(self) -> Union[Path, str, None]:
+        # can be string because stdout
         return self._output
 
     @output.setter
-    def output(self, output_path: Union[Path, str, None]):
+    def output(self, output_path: Union[Path, str, None]) -> Union[Path, str, None]:
         if self.output_format == "stdout" and output_path:
             raise SadieIOError(f"output format explicitly specified as stdout with an output path {output_path} set")
 
@@ -101,9 +110,6 @@ class SadieIO:
         else:
             if isinstance(output_path, str):
                 output_path = Path(output_path)
-            if not isinstance(output_path, Path):
-                raise TypeError(f"{output_path} must be str or Path")
-
             if self.output_format == "infer":
                 # we are inferring the format
                 self.infered_output_format = output_path.suffixes[0].lstrip(".")
@@ -139,7 +145,7 @@ class SadieIO:
                     output_path = output_path.with_suffix(".gz")
 
                 elif self.output_compressed == "bz2":
-                    self._output = self._output.with_suffix(".bz2")
+                    output_path = output_path.with_suffix(".bz2")
             self._output = output_path
 
     @property
@@ -242,7 +248,7 @@ class SadieIO:
                 return self._get_parse("abi", "rb")
 
     @staticmethod
-    def get_file_type_dict(directory_path: Union[Path, str]) -> dict:
+    def get_file_type_dict(directory_path: Union[Path, str]) -> Dict[str, str]:
         """[summary]
 
         Parameters
@@ -381,7 +387,7 @@ class SadieIO:
             ValueError(f"can't determine file type of {file}")
 
     @staticmethod
-    def guess_input_compression(input_path: str) -> Union[str, None]:
+    def guess_input_compression(input_path: Union[str, Path]) -> Union[str, None]:
         """Guess if input compressed
 
         Parameters
@@ -398,11 +404,13 @@ class SadieIO:
             return "directory"
 
         # filetype needs string
-        _filetype = guess(str(input_path))
+        _filetype: Union[Bz2, Gz, None] = guess(str(input_path))
         if not _filetype:
             return None
-        if _filetype.extension in ["gz", "bz2"]:
-            return _filetype.extension
+        if isinstance(_filetype, Gz):
+            return "gz"
+        elif isinstance(_filetype, Bz2):
+            return "bz2"
         raise ValueError(f"can't determine compression of {input_path}")
 
     def __repr__(self):
