@@ -9,6 +9,7 @@ from typing import Dict, List
 
 import pytest
 import pandas as pd
+import lzma
 from Bio import SeqIO
 from sadie.airr import Airr
 from sadie.airr.airrtable import AirrTable
@@ -23,6 +24,8 @@ def _get_file_compressed(tmp_path: Path, uncompressed_file: Path, compression: s
             fn = bz2.open(return_path, "wb")
         elif compression == "gz":
             fn = gzip.open(return_path, "wb")
+        elif compression == "xz":
+            fn = lzma.open(return_path, "wb")
         with fn as f_out:
             shutil.copyfileobj(f_in, f_out)
     return return_path
@@ -383,6 +386,10 @@ class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures):
     def get_card(self) -> Path:
         """get a png file path that has a card image. This is a nonsense file path to test unexpected files"""
         return self.base_datadir / "card.png"
+
+    def get_phy_file(self) -> Path:
+        """get a phylip sequence file which i guess should be unsupported by utilities IO"""
+        return self.base_datadir / "usupported.phy"
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -1,429 +1,439 @@
 from pathlib import Path
-from Bio import SeqIO
-from Bio.SeqIO.FastaIO import FastaIterator
-from Bio.SeqIO.QualityIO import FastqPhredIterator
-from Bio.SeqIO.AbiIO import AbiIterator
-from io import TextIOWrapper
 from filetype import guess
-from filetype.types.archive import Bz2, Gz
-from typing import Dict, Union
-from pprint import pformat
-import glob
+from filetype.types.base import Type
+from filetype.types.archive import Gz, Bz2
 import gzip
 import bz2
-import itertools
-import warnings
-from .exception import SadieIOError, IOInferError
+from typing import IO, TextIO, Union, Any
+
+from Bio import SeqIO
+
+# from Bio.SeqIO.FastaIO import FastaIterator
+# from Bio.SeqIO.QualityIO import FastqPhredIterator
+# from Bio.SeqIO.AbiIO import AbiIterator
+# from io import BufferedReader, FileIO, TextIOWrapper
+# from .exception import SadieIOError, IOInferError
 
 
 class NoExtensionNameWarning(UserWarning):
     pass
 
 
-class SadieIO:
-    def __init__(
-        self,
-        input_path: Path,
-        output_path: Union[str, Path, None] = None,
-        in_format: str = "infer",
-        out_format: str = "infer",
-        compressed: str = "infer",
-    ):
-        """Constructor for SadieIO to aid in input output operations
+def guess_input_compression(input_path: Union[str, Path]) -> Union[str, None]:
+    """Given a path, guess if it's compressed gz,bz2 or directory.
+    If not compressed returned None
 
-        Parameters
-        ----------
-        input_path : Path
-            The input Path
-        output_path : Union[Path,None], default=None
-            The output Path, can be inferred from input if none
-        in_format : str , default='infer'
-            an explict input format, can infer, ex: 'fasta','fastq','abi'
-        out_format : str, default='infer'
-            an explicit ouptut format
-        compressed : str, defualt=None
-            the compression type of the output, "infer","gz","bz2"
-        """
-        # input path
-        self.input = input_path
+    Parameters
+    ----------
+    input_path : str
+        input is compressed
 
-        # we assume input is not a directorys
-        self._isdir = False
+    Returns
+    -------
+    Union[str,None]
+        returns gz, bz2 or None
 
-        # check if input is a directory:
-        if self.input.is_dir():
-            self._isdir = True
-            self.all_files_in_dir = self.get_file_type_dict(self.input)
+    Raises
+    ------
+    NotImplementedError
+        If the file type compression is unsupported
+    """
 
-        # check if input is compressed - gzip or bzip2
-        self.input_compressed = self.guess_input_compression(self.input)
+    # check if directory first
+    if Path(input_path).is_dir():
+        return "directory"
 
-        # check if input format was specified
-        self.infer_input = False
-        if in_format == "infer":
-            self.infer_input = True
+    # if not directory, check if it's bz2 or gz2 archive
+    _filetype: Union[Type, None] = guess(str(input_path))
+    if not _filetype:
+        return None
+    extension: str = _filetype.extension
+    if isinstance(_filetype, (Gz, Bz2)):
+        return extension
+    else:
+        raise NotImplementedError(f"filetype {extension} not supproted")
 
-        # infer input
-        if self.infer_input:
-            self.input_file_type = self.guess_sequence_file_type(self.input)
-        # input type was set by user
-        else:
-            self.input_file_type = in_format
 
-        # output format must set before output
-        self._accepted_output_format = ["infer", "json", "csv", "tsv", "feather", "stdout"]
-        self._accepted_output_format_suffix = ["json", "csv", "tsv", "feather"]
-        self._accepted_output_compression = ["gz", "bz2", "infer"]
-        self._accepted_output_compression_suffix = ["gz", "bz2"]
-        self.output_format = out_format
-        self.infered_output_format = None
-        self.output_compressed = compressed
-        self.infered_output_compression = None
-        self.output = output_path
+def get_file_buffer(file: Path, compression: Union[str, None] = None, mode: str = "rt") -> Union[TextIO, IO[Any]]:
+    """Open a file with the correct file buffer
 
-    @property
-    def output(self) -> Union[Path, str, None]:
-        # can be string because stdout
-        return self._output
+    Parameters
+    ----------
+    file : Path
+        file path
+    compression : str
+        compression type, 'bz2', 'gz', None
 
-    @output.setter
-    def output(self, output_path: Union[Path, str, None]) -> Union[Path, str, None]:
-        if self.output_format == "stdout" and output_path:
-            raise SadieIOError(f"output format explicitly specified as stdout with an output path {output_path} set")
+    Returns
+    -------
+    TextIO
+        Usually a TextIOWrapper
 
-        # no output was set
-        if not output_path:
-            if self.output_format == "infer":
-                raise IOInferError("Output format infer was set but no output name was given.")
-            elif self.output_format == "stdout":
-                self._output = "stdout"
-            else:
-                # add appropriate handle
-                if self.isdir:
-                    raise ValueError("If a directory is input, you have to specify an output name")
-                output_path = self._get_name_without_suffix(self.input)
-                suffix = f".{self.output_format}"
-                if self.output_compressed in ["gz", "bz2"]:
-                    suffix += f".{self.output_compressed}"
-                self._output = output_path.with_suffix(suffix)
-        # output was set
-        else:
-            if isinstance(output_path, str):
-                output_path = Path(output_path)
-            if self.output_format == "infer":
-                # we are inferring the format
-                self.infered_output_format = output_path.suffixes[0].lstrip(".")
-                if self.infered_output_format not in self._accepted_output_format_suffix:
-                    raise ValueError(
-                        f"{output_path} must have one of these suffixes {self._accepted_output_format_suffix}"
-                    )
-                suffix = f".{self.infered_output_format}"
+    Raises
+    ------
+    TypeError
+        Can't determine file type
+    """
+    # get file buffer for compression
+    if compression is None:
+        return open(file, mode)
+    elif compression == "gz":
+        return gzip.open(file, "rt")
+    elif compression == "bz2":
+        return bz2.open(file, "rt")
+    else:
+        raise TypeError(f"{file} can't determine file encoding")
 
-                self.infered_output_compression = output_path.suffixes[-1].lstrip(".")
-                # don't fail an inferred compression but warn
-                if self.infered_output_compression not in self._accepted_output_compression_suffix:
-                    warnings.warn(
-                        f"{self.infered_output_compression} not in {self._accepted_output_compression_suffix}, not compressing",
-                        NoExtensionNameWarning,
-                    )
 
-                if self.output_compressed in ["gz", "bz2"] or self.infered_output_compression in ["gz", "bz2"]:
-                    suffix += f".{self.output_compressed}"
-                self._output = output_path.with_suffix(suffix)
+def get_sequence_file_type(file: Union[str, Path]) -> str:
+    """Get file type of file
 
-            else:
-                # we will not get a stdout
-                # output is set and output format is set. We can check if they are expected to match
-                inferred_format = output_path.suffixes[0].lstrip(".")
-                if inferred_format != self.output_format:
-                    raise ValueError(f"{inferred_format} of {output_path} does not match selected {self.output_format}")
+    Parameters
+    ----------
+    file : Path
+        A file type
 
-                self.infered_output_format = self.output_format
+    Returns
+    -------
+    str
+        the sequence file type, either 'abi','fasta' or 'fastq'
+    Raises
+    ------
+    TypeError
+        Can't determine filetype
+    """
+    file = Path(file)
+    compression_extension = guess_input_compression(file)
 
-                # get compression
-                if self.output_compressed == "gz":
-                    output_path = output_path.with_suffix(".gz")
+    # The parse will consume the buffer so have to open it every time
+    try:
+        file_buffer = get_file_buffer(file, compression_extension)
+        SeqIO.parse(file_buffer, "fasta").__next__()
+        return "fasta"
+    except (StopIteration, ValueError):
+        pass
 
-                elif self.output_compressed == "bz2":
-                    output_path = output_path.with_suffix(".bz2")
-            self._output = output_path
+    try:
+        file_buffer = get_file_buffer(file, compression_extension)
+        SeqIO.parse(file_buffer, "fastq").__next__()
+        return "fastq"
+    except (StopIteration, ValueError):
+        pass
+    try:
+        file_buffer = get_file_buffer(file, compression_extension, "rb")
+        SeqIO.parse(file_buffer, "abi").__next__()
+        return "abi"
+    except (StopIteration, ValueError, OSError):
+        raise ValueError(f"can't determine sequence file type of {file}")
 
-    @property
-    def output_compressed(self) -> Union[None, str]:
-        return self._output_compressed
 
-    @output_compressed.setter
-    def output_compressed(self, compressed: str):
-        # if no output set and infer compressed
-        if compressed not in self._accepted_output_compression:
-            raise TypeError(f"{compressed} must be of {self._accepted_output_compression}")
-        self._output_compressed = compressed
+# # class SadieInput:
+# #     def __init__(
+# #         self,
+# #         input_path: Union[Path, str],
+# #         output_path: Union[str, Path, None] = None,
+# #         in_format: str = "infer",
+# #         compressed: str = "infer",
+# #     ):
+# #         """Constructor for SadieIO to aid in input output operations
 
-    @property
-    def output_format(self) -> str:
-        return self._output_format
+# #         Parameters
+# #         ----------
+# #         input_path : Path
+# #             The input Path
+# #         output_path : Union[Path,None], default=None
+# #             The output Path, can be inferred from input if none
+# #         in_format : str , default='infer'
+# #             an explict input format, can infer, ex: 'fasta','fastq','abi'
+# #         out_format : str, default='infer'
+# #             an explicit ouptut format
+# #         compressed : str, defualt=None
+# #             the compression type of the output, "infer","gz","bz2"
+# #         """
+# #         # input path
+# #         self.input = input_path
 
-    @output_format.setter
-    def output_format(self, output_format: str):
-        if output_format not in self._accepted_output_format:
-            raise TypeError(f"{output_format} must be in {self._accepted_output_format}")
-        self._output_format = output_format
+# #         # we assume input is not a directorys
+# #         self._isdir = False
 
-    @property
-    def input(self) -> Path:
-        return self._input
+# #         # check if input is a directory:
+# #         if self.input.is_dir():
+# #             self._isdir = True
+# #             self.all_files_in_dir = self.get_file_type_dict(self.input)
 
-    @input.setter
-    def input(self, input_path: Union[str, Path]):
-        if isinstance(input_path, str):
-            input_path = Path(input_path)
-        if not isinstance(input_path, Path):
-            raise TypeError(f"{input_path} needs to be str or path")
-        if not input_path.exists:
-            raise FileNotFoundError(f"{input_path} not found")
-        self._input = input_path
+# #         # check if input is compressed - gzip or bzip2
+# #         self.input_compressed = self.guess_input_compression(self.input)
 
-    @property
-    def isdir(self):
-        return self._isdir
+# #         # check if input format was specified
+# #         self.infer_input = False
+# #         if in_format == "infer":
+# #             self.infer_input = True
 
-    @property
-    def input_compressed(self):
-        return self._input_compressed
+# #         # infer input
+# #         if self.infer_input:
+# #             self.input_file_type = self.guess_sequence_file_type(self.input)
+# #         # input type was set by user
+# #         else:
+# #             self.input_file_type = in_format
 
-    @input_compressed.setter
-    def input_compressed(self, compressed_format: str):
-        if compressed_format not in ["bz2", "gz", "directory", None]:
-            raise TypeError(f"{compressed_format} needs to be bz2, gz or None")
-        self._input_compressed = compressed_format
+# #         # output format must set before output
+# #         self._accepted_output_format = ["infer", "json", "csv", "tsv", "feather", "stdout"]
+# #         self._accepted_output_format_suffix = ["json", "csv", "tsv", "feather"]
+# #         self._accepted_output_compression = ["gz", "bz2", "infer"]
+# #         self._accepted_output_compression_suffix = ["gz", "bz2"]
+# #         self.output_format = out_format
+# #         self.infered_output_format = None
+# #         self.output_compressed = compressed
+# #         self.infered_output_compression = None
+# #         self.output = output_path
 
-    @property
-    def input_file_type(self) -> str:
-        return self._input_file_type
+# #     @property
+# #     def input(self) -> Path:
+# #         return self._input
 
-    @input_file_type.setter
-    def input_file_type(self, input_file: str):
-        if input_file not in ["fasta", "abi", "fastq"]:
-            raise NameError(f"{input_file} needs to be fasta,abi,fastq")
-        self._input_file_type = input_file
+# #     @input.setter
+# #     def input(self, input_path: Union[str, Path]):
+# #         if isinstance(input_path, str):
+# #             input_path = Path(input_path)
+# #         if not isinstance(input_path, Path):
+# #             raise TypeError(f"{input_path} needs to be str or path")
+# #         if not input_path.exists:
+# #             raise FileNotFoundError(f"{input_path} not found")
+# #         self._input = input_path
 
-    def _get_name_without_suffix(self, path: Union[str, Path]) -> Path:
-        if isinstance(path, str):
-            path = Path(path)
-        if not isinstance(path, Path):
-            raise TypeError(f"{path} must be str or Path")
+# #     @property
+# #     def isdir(self):
+# #         return self._isdir
 
-        # recursive strip suffix
-        for _ in range(len(path.suffixes)):
-            path = Path(path.stem)
-        return path
+# #     @property
+# #     def input_compressed(self):
+# #         return self._input_compressed
 
-    def _get_parse(self, format, mode="rt"):
-        return itertools.chain(
-            *[
-                SeqIO.parse(SadieIO.get_file_buffer(x, self.guess_input_compression(x), mode), format)
-                for x in self.all_files_in_dir
-            ]
-        )
+# #     @input_compressed.setter
+# #     def input_compressed(self, compressed_format: str):
+# #         if compressed_format not in ["bz2", "gz", "directory", None]:
+# #             raise TypeError(f"{compressed_format} needs to be bz2, gz or None")
+# #         self._input_compressed = compressed_format
 
-    def get_input_records(self) -> Union[FastaIterator, FastqPhredIterator, AbiIterator]:
-        if not self.isdir:
-            if self.input_file_type == "fasta":
-                return SeqIO.parse(SadieIO.get_file_buffer(self.input, self.input_compressed), "fasta")
-            if self.input_file_type == "fastq":
-                return SeqIO.parse(SadieIO.get_file_buffer(self.input, self.input_compressed), "fastq")
-            if self.input_file_type == "abi":
-                # A single instnace
-                return SeqIO.parse(SadieIO.get_file_buffer(self.input, self.input_compressed), "abi")
-            raise TypeError(f"Requested bad file type {self.input}")
-        else:
+# #     @property
+# #     def input_file_type(self) -> str:
+# #         return self._input_file_type
 
-            # these are directories which will chain together iterators
-            if self.input_file_type == "fasta":
-                return self._get_parse("fasta")
-            if self.input_file_type == "fastq":
-                return self._get_parse("fastq")
-            if self.input_file_type == "abi":
-                # has to be in rb
-                return self._get_parse("abi", "rb")
+# #     @input_file_type.setter
+# #     def input_file_type(self, input_file: str):
+# #         if input_file not in ["fasta", "abi", "fastq"]:
+# #             raise NameError(f"{input_file} needs to be fasta,abi,fastq")
+# #         self._input_file_type = input_file
 
-    @staticmethod
-    def get_file_type_dict(directory_path: Union[Path, str]) -> Dict[str, str]:
-        """[summary]
+# #     def _get_name_without_suffix(self, path: Union[str, Path]) -> Path:
+# #         if isinstance(path, str):
+# #             path = Path(path)
+# #         if not isinstance(path, Path):
+# #             raise TypeError(f"{path} must be str or Path")
 
-        Parameters
-        ----------
-        directory_path : Union[Path, str]
-            [description]
+# #         # recursive strip suffix
+# #         for _ in range(len(path.suffixes)):
+# #             path = Path(path.stem)
+# #         return path
 
-        Returns
-        -------
-        dict
-            [description]
+# #     def _get_parse(self, format, mode="rt"):
+# #         return itertools.chain(
+# #             *[
+# #                 SeqIO.parse(SadieIO.get_file_buffer(x, self.guess_input_compression(x), mode), format)
+# #                 for x in self.all_files_in_dir
+# #             ]
+# #         )
 
-        Raises
-        ------
-        TypeError
-            [description]
-        """
-        if isinstance(directory_path, str):
-            directory_path = Path(directory_path)
-        if not isinstance(directory_path, Path):
-            raise TypeError(f"{directory_path} must be of type str or Path not {type(directory_path)}")
-        if not directory_path.is_dir():
-            raise TypeError(f"{directory_path} must be directory")
-        if not directory_path.exists:
-            return FileNotFoundError(f"{directory_path} does not exist")
-        glob_files = glob.glob(str(directory_path) + "/*")
-        glob_files = list(filter(lambda x: Path(x).stem != "Icon\r", list(glob_files)))
-        return {file: SadieIO.get_file_type(file, SadieIO.guess_input_compression(file)) for file in glob_files}
+# #     def get_input_records(self) -> Union[FastaIterator, FastqPhredIterator, AbiIterator]:
+# #         if not self.isdir:
+# #             if self.input_file_type == "fasta":
+# #                 return SeqIO.parse(SadieIO.get_file_buffer(self.input, self.input_compressed), "fasta")
+# #             if self.input_file_type == "fastq":
+# #                 return SeqIO.parse(SadieIO.get_file_buffer(self.input, self.input_compressed), "fastq")
+# #             if self.input_file_type == "abi":
+# #                 # A single instnace
+# #                 return SeqIO.parse(SadieIO.get_file_buffer(self.input, self.input_compressed), "abi")
+# #             raise TypeError(f"Requested bad file type {self.input}")
+# #         else:
 
-    @staticmethod
-    def guess_sequence_file_type(input_path: Union[Path, str]) -> str:
-        """Guess Sequence File type.
+# #             # these are directories which will chain together iterators
+# #             if self.input_file_type == "fasta":
+# #                 return self._get_parse("fasta")
+# #             if self.input_file_type == "fastq":
+# #                 return self._get_parse("fastq")
+# #             if self.input_file_type == "abi":
+# #                 # has to be in rb
+# #                 return self._get_parse("abi", "rb")
 
-        Returns
-        -------
-        filetype: str
-            fasta, fastq or abi file format
+# #     @staticmethod
+# #     def get_file_type_dict(directory_path: Union[Path, str]) -> Dict[str, str]:
+# #         """[summary]
 
-        Raises
-        ------
-        NotImplementedError
-            If a direcotry is passed as input and it contains heterogenous file types, we can not yet parse heterogenous file types
-        """
+# #         Parameters
+# #         ----------
+# #         directory_path : Union[Path, str]
+# #             [description]
 
-        if isinstance(input_path, str):
-            input_path = Path(input_path)
-        if not isinstance(input_path, Path):
-            raise TypeError(f"{input_path} is needs to be str of path or Path")
+# #         Returns
+# #         -------
+# #         dict
+# #             [description]
 
-        if not input_path.is_dir():
-            return SadieIO.get_file_type(input_path, SadieIO.guess_input_compression(input_path))
+# #         Raises
+# #         ------
+# #         TypeError
+# #             [description]
+# #         """
+# #         if isinstance(directory_path, str):
+# #             directory_path = Path(directory_path)
+# #         if not isinstance(directory_path, Path):
+# #             raise TypeError(f"{directory_path} must be of type str or Path not {type(directory_path)}")
+# #         if not directory_path.is_dir():
+# #             raise TypeError(f"{directory_path} must be directory")
+# #         if not directory_path.exists:
+# #             return FileNotFoundError(f"{directory_path} does not exist")
+# #         glob_files = glob.glob(str(directory_path) + "/*")
+# #         glob_files = list(filter(lambda x: Path(x).stem != "Icon\r", list(glob_files)))
+# #         return {file: SadieIO.get_file_type(file, SadieIO.guess_input_compression(file)) for file in glob_files}
 
-        # if dir
-        else:
-            _all_files_in_dir = SadieIO.get_file_type_dict(input_path)
-            if len(set(_all_files_in_dir.values())) != 1:
-                raise NotImplementedError(
-                    pformat(f"all files in {input_path} directory are not of the same type {_all_files_in_dir}")
-                )
-            else:
-                return list(_all_files_in_dir.values())[0]
+# #     @staticmethod
+# #     def guess_sequence_file_type(input_path: Union[Path, str]) -> str:
+# #         """Guess Sequence File type.
 
-    @staticmethod
-    def get_file_buffer(file: Path, compression: str, mode="rt") -> Union[TextIOWrapper, gzip.GzipFile, bz2.BZ2File]:
-        """Get an open file buffer
+# #         Returns
+# #         -------
+# #         filetype: str
+# #             fasta, fastq or abi file format
 
-        Parameters
-        ----------
-        file : Path
-            file path
-        compression : str
-            compression type, 'bzip2','gzip',None'
-        mode : str, optional
-            open mode, by default "rt"
+# #         Raises
+# #         ------
+# #         NotImplementedError
+# #             If a direcotry is passed as input and it contains heterogenous file types, we can not yet parse heterogenous file types
+# #         """
 
-        Returns
-        -------
-        Union[TextIOWrapper, gzip.GzipFile, bzip.BZ2File]
-            Buffer of textfile
+# #         if isinstance(input_path, str):
+# #             input_path = Path(input_path)
+# #         if not isinstance(input_path, Path):
+# #             raise TypeError(f"{input_path} is needs to be str of path or Path")
 
-        Raises
-        ------
-        TypeError
-            Can't determine file type
-        """
-        # get file buffer for compression
-        if compression is None:
-            file_buffer = open(file, mode)
-        elif compression == "gz":
-            file_buffer = gzip.open(file, mode)
-        elif compression == "bz2":
-            file_buffer = bz2.open(file, mode)
-        else:
-            raise TypeError(f"{file} can't determine file encoding")
-        return file_buffer
+# #         if not input_path.is_dir():
+# #             return SadieIO.get_file_type(input_path, SadieIO.guess_input_compression(input_path))
 
-    @staticmethod
-    def get_file_type(file: Path, compression: str) -> str:
-        """Get file type of file
+# #         # if dir
+# #         else:
+# #             _all_files_in_dir = SadieIO.get_file_type_dict(input_path)
+# #             if len(set(_all_files_in_dir.values())) != 1:
+# #                 raise NotImplementedError(
+# #                     pformat(f"all files in {input_path} directory are not of the same type {_all_files_in_dir}")
+# #                 )
+# #             else:
+# #                 return list(_all_files_in_dir.values())[0]
 
-        Parameters
-        ----------
-        file : Path
-            A file type
-        compression : str
-            the compression type gz, bz2 or NOne
+# #     @staticmethod
+# #     def __repr__(self):
+# #         property_dict = {
+# #             "input_path": self.input,
+# #             "input_compression": self.input_compressed,
+# #             "input_file_type": self.input_file_type,
+# #             "input_is_dir": self.isdir,
+# #             "output_path": self.output,
+# #             "output_file_type": self.output_format,
+# #             "output_compressed": self.output_compressed,
+# #         }
+# #         return pformat(property_dict, indent=4)
 
-        Returns
-        -------
-        str
-            the sequence file type, either 'abi','fasta' or 'fastq'
-        Raises
-        ------
-        TypeError
-            Can't determine filetype
-        """
-        file = Path(file)
+# #     def __str__(self):
+# #         return self.__repr__()
 
-        if compression not in ["gz", "bz2", None]:
-            raise TypeError("compression must be gzip,bzip2 or none")
-        # now find bio type
-        try:
-            next(SeqIO.parse(SadieIO.get_file_buffer(file, compression), "fasta"))
-            return "fasta"
-        except Exception:
-            pass
-        try:
-            next(SeqIO.parse(SadieIO.get_file_buffer(file, compression), "fastq"))
-            return "fastq"
-        except Exception:
-            pass
-        try:
-            next(SeqIO.parse(SadieIO.get_file_buffer(file, compression, mode="rb"), "abi"))
-            return "abi"
-        except Exception:
-            ValueError(f"can't determine file type of {file}")
 
-    @staticmethod
-    def guess_input_compression(input_path: Union[str, Path]) -> Union[str, None]:
-        """Guess if input compressed
+# # class SadieOutput:
+# #     def __init__(self):
+# #         pass
 
-        Parameters
-        ----------
-        input_path : str
-            input is compressed
+# #     @property
+# #     def output(self) -> Union[Path, str, None]:
+# #         # can be string because stdout
+# #         return self._output
 
-        Returns
-        -------
-        Tuple[str,None]
-            returns filetype compression or none if uncompressed
-        """
-        if Path(input_path).is_dir():
-            return "directory"
+# #     @output.setter
+# #     def output(self, output_path: Union[Path, str, None]) -> Union[Path, str, None]:
+# #         if self.output_format == "stdout" and output_path:
+# #             raise SadieIOError(f"output format explicitly specified as stdout with an output path {output_path} set")
 
-        # filetype needs string
-        _filetype: Union[Bz2, Gz, None] = guess(str(input_path))
-        if not _filetype:
-            return None
-        if isinstance(_filetype, Gz):
-            return "gz"
-        elif isinstance(_filetype, Bz2):
-            return "bz2"
-        raise ValueError(f"can't determine compression of {input_path}")
+# #         # no output was set
+# #         if not output_path:
+# #             if self.output_format == "infer":
+# #                 raise IOInferError("Output format infer was set but no output name was given.")
+# #             elif self.output_format == "stdout":
+# #                 self._output = "stdout"
+# #             else:
+# #                 # add appropriate handle
+# #                 if self.isdir:
+# #                     raise ValueError("If a directory is input, you have to specify an output name")
+# #                 output_path = self._get_name_without_suffix(self.input)
+# #                 suffix = f".{self.output_format}"
+# #                 if self.output_compressed in ["gz", "bz2"]:
+# #                     suffix += f".{self.output_compressed}"
+# #                 self._output = output_path.with_suffix(suffix)
+# #         # output was set
+# #         else:
+# #             if isinstance(output_path, str):
+# #                 output_path = Path(output_path)
+# #             if self.output_format == "infer":
+# #                 # we are inferring the format
+# #                 self.infered_output_format = output_path.suffixes[0].lstrip(".")
+# #                 if self.infered_output_format not in self._accepted_output_format_suffix:
+# #                     raise ValueError(
+# #                         f"{output_path} must have one of these suffixes {self._accepted_output_format_suffix}"
+# #                     )
+# #                 suffix = f".{self.infered_output_format}"
 
-    def __repr__(self):
-        property_dict = {
-            "input_path": self.input,
-            "input_compression": self.input_compressed,
-            "input_file_type": self.input_file_type,
-            "input_is_dir": self.isdir,
-            "output_path": self.output,
-            "output_file_type": self.output_format,
-            "output_compressed": self.output_compressed,
-        }
-        return pformat(property_dict, indent=4)
+# #                 self.infered_output_compression = output_path.suffixes[-1].lstrip(".")
+# #                 # don't fail an inferred compression but warn
+# #                 if self.infered_output_compression not in self._accepted_output_compression_suffix:
+# #                     warnings.warn(
+# #                         f"{self.infered_output_compression} not in {self._accepted_output_compression_suffix}, not compressing",
+# #                         NoExtensionNameWarning,
+# #                     )
 
-    def __str__(self):
-        return self.__repr__()
+# #                 if self.output_compressed in ["gz", "bz2"] or self.infered_output_compression in ["gz", "bz2"]:
+# #                     suffix += f".{self.output_compressed}"
+# #                 self._output = output_path.with_suffix(suffix)
+
+# #             else:
+# #                 # we will not get a stdout
+# #                 # output is set and output format is set. We can check if they are expected to match
+# #                 inferred_format = output_path.suffixes[0].lstrip(".")
+# #                 if inferred_format != self.output_format:
+# #                     raise ValueError(f"{inferred_format} of {output_path} does not match selected {self.output_format}")
+
+# #                 self.infered_output_format = self.output_format
+
+# #                 # get compression
+# #                 if self.output_compressed == "gz":
+# #                     output_path = output_path.with_suffix(".gz")
+
+# #                 elif self.output_compressed == "bz2":
+# #                     output_path = output_path.with_suffix(".bz2")
+# #             self._output = output_path
+
+# #     @property
+# #     def output_compressed(self) -> Union[None, str]:
+# #         return self._output_compressed
+
+# #     @output_compressed.setter
+# #     def output_compressed(self, compressed: str):
+# #         # if no output set and infer compressed
+# #         if compressed not in self._accepted_output_compression:
+# #             raise TypeError(f"{compressed} must be of {self._accepted_output_compression}")
+# #         self._output_compressed = compressed
+
+# #     @property
+# #     def output_format(self) -> str:
+# #         return self._output_format
+
+# #     @output_format.setter
+# #     def output_format(self, output_format: str):
+# #         if output_format not in self._accepted_output_format:
+# #             raise TypeError(f"{output_format} must be in {self._accepted_output_format}")
+# #         self._output_format = output_format
