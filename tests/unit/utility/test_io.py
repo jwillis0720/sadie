@@ -7,18 +7,25 @@
 # from gzip import GzipFile
 # from pathlib import Path
 
-# import pytest
-# from Bio.SeqIO import SeqRecord
-from pathlib import Path
-import pytest
-from sadie.utility.io import get_file_buffer, get_sequence_file_type, guess_input_compression
 from io import TextIOWrapper
+from pathlib import Path
 
-# from sadie.utility.exception import IOInferError
-# import gzip
+import pytest
+
+# third part
+from Bio.SeqIO.AbiIO import AbiIterator
+from Bio.SeqIO.FastaIO import FastaIterator
+from Bio.SeqIO.QualityIO import FastqPhredIterator
+from Bio.SeqRecord import SeqRecord
+
+# package
+from sadie.utility.io import get_file_buffer, get_sequence_file_iter, get_sequence_file_type, guess_input_compression
+from sadie.utility.io import SadieInputFile
 
 
 def test_io_methods(fixture_setup):
+    """Text methods in IO that are used mostly in objects"""
+
     # get fastq files
     multi_fastq: Path = fixture_setup.get_multiple_fastq()
     multi_fastq_gz: Path = fixture_setup.get_multiple_fastq_compressed("gz")
@@ -57,21 +64,46 @@ def test_io_methods(fixture_setup):
         # don't accept phylip format
         get_sequence_file_type(fixture_setup.get_phy_file())
 
-    # assert SadieIO.guess_input_compression(fixture_setup.get_multiple_fastq_compressed("gz")) == "gz"
-    # assert SadieIO.guess_input_compression(fixture_setup.get_multiple_fastq()) is None
-    # assert SadieIO.guess_input_compression(fixture_setup.get_multiple_fastq_compressed("bz2")) == "bz2"
-    # assert SadieIO.guess_input_compression(fixture_setup.fastq_inputs) == "directory"
+    # get explicit iterators
+    assert isinstance(get_sequence_file_iter(fixture_setup.get_abi_files()[0], "abi"), AbiIterator)
+    assert isinstance(get_sequence_file_iter(fixture_setup.get_abi_files()[0], "abi-trim"), AbiIterator)
+    assert isinstance(get_sequence_file_iter(fasta_file, "fasta"), FastaIterator)
+    assert isinstance(get_sequence_file_iter(multi_fastq, "fastq"), FastqPhredIterator)
 
-    # assert SadieIO.guess_sequence_file_type(fixture_setup.get_pg9_heavy_multiple_fasta()) == "fasta"
-    # assert SadieIO.guess_sequence_file_type(fixture_setup.get_multiple_fastq_compressed("gz")) == "fastq"
-    # assert SadieIO.guess_sequence_file_type(fixture_setup.get_abi_files()[0]) == "abi"
+    with pytest.raises(NotImplementedError):
+        get_sequence_file_iter(fixture_setup.get_phy_file(), "phy")
 
-    # _dict = SadieIO.get_file_type_dict(fixture_setup.fastq_inputs)
-    # assert isinstance(_dict, dict)
-    # assert all([x == "fastq" for x in _dict.values()])
 
-    # with pytest.raises(TypeError):
-    #     SadieIO.get_file_type_dict(fixture_setup.get_pg9_heavy_multiple_fasta())
+def test_sadie_input(fixture_setup):
+    multi_fastq: Path = fixture_setup.get_multiple_fastq()
+    multi_fastq_gz: Path = fixture_setup.get_multiple_fastq_compressed("gz")
+    multi_fastq_bz: Path = fixture_setup.get_multiple_fastq_compressed("bz2")
+    fastq_dir_path: Path = fixture_setup.fastq_inputs  # this is a directory
+
+    # infer both compression and filetype
+    SadieInputFile(multi_fastq)
+    SadieInputFile(multi_fastq_gz)
+    SadieInputFile(multi_fastq_bz)
+    SadieInputFile(multi_fastq, "fastq", None)
+    SadieInputFile(multi_fastq_gz, "fastq", "gz")
+    SadieInputFile(multi_fastq_bz, "fastq", "bz2")
+
+    with pytest.raises(TypeError):
+        # no paths in input file
+        SadieInputFile(fastq_dir_path)
+    with pytest.raises(ValueError):
+        # bad compression
+        SadieInputFile(multi_fastq_bz, "fastq", "bz")
+
+    with pytest.warns(UserWarning):
+        # compression does not match declared
+        SadieInputFile(multi_fastq_gz, "fastq", "bz2")
+    phy_file = fixture_setup.get_phy_file()
+    with pytest.raises(NotImplementedError):
+        SadieInputFile(phy_file, "phy")
+
+    for seq in SadieInputFile(multi_fastq_gz):
+        assert isinstance(seq, SeqRecord)
 
 
 # def test_io_single_files(fixture_setup):

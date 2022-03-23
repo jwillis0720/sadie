@@ -1,18 +1,17 @@
 from pathlib import Path
+import warnings
 from filetype import guess
 from filetype.types.base import Type
 from filetype.types.archive import Gz, Bz2
 import gzip
 import bz2
-from typing import IO, TextIO, Union, Any
+from typing import IO, Iterator, TextIO, Union, Any
 
 from Bio import SeqIO
-
-# from Bio.SeqIO.FastaIO import FastaIterator
-# from Bio.SeqIO.QualityIO import FastqPhredIterator
-# from Bio.SeqIO.AbiIO import AbiIterator
-# from io import BufferedReader, FileIO, TextIOWrapper
-# from .exception import SadieIOError, IOInferError
+from Bio.SeqRecord import SeqRecord
+from Bio.SeqIO.AbiIO import AbiIterator
+from Bio.SeqIO.FastaIO import FastaIterator
+from Bio.SeqIO.QualityIO import FastqPhredIterator
 
 
 class NoExtensionNameWarning(UserWarning):
@@ -127,39 +126,77 @@ def get_sequence_file_type(file: Union[str, Path]) -> str:
         raise ValueError(f"can't determine sequence file type of {file}")
 
 
-# # class SadieInput:
-# #     def __init__(
-# #         self,
-# #         input_path: Union[Path, str],
-# #         output_path: Union[str, Path, None] = None,
-# #         in_format: str = "infer",
-# #         compressed: str = "infer",
-# #     ):
-# #         """Constructor for SadieIO to aid in input output operations
+def get_sequence_file_iter(
+    file: Union[str, Path, TextIO, IO[Any]], file_type: str
+) -> Union[AbiIterator, FastaIterator, FastqPhredIterator]:
+    """Get a sequence file iterator from SeqIO module"""
+    if file_type not in ["fasta", "fastq", "abi", "abi-trim"]:
+        raise NotImplementedError(f"{file_type} is not a supported sequence file type")
+    return SeqIO.parse(file, file_type)
 
-# #         Parameters
-# #         ----------
-# #         input_path : Path
-# #             The input Path
-# #         output_path : Union[Path,None], default=None
-# #             The output Path, can be inferred from input if none
-# #         in_format : str , default='infer'
-# #             an explict input format, can infer, ex: 'fasta','fastq','abi'
-# #         out_format : str, default='infer'
-# #             an explicit ouptut format
-# #         compressed : str, defualt=None
-# #             the compression type of the output, "infer","gz","bz2"
-# #         """
-# #         # input path
-# #         self.input = input_path
 
-# #         # we assume input is not a directorys
-# #         self._isdir = False
+class SadieInputFile:
+    """Sadie Input File will handle input files. Use SadieInputDir for input directories"""
 
-# #         # check if input is a directory:
-# #         if self.input.is_dir():
-# #             self._isdir = True
-# #             self.all_files_in_dir = self.get_file_type_dict(self.input)
+    def __init__(
+        self,
+        input_path: Union[Path, str],
+        input_format: str = "infer",
+        compression_format: Union[str, None] = "infer",
+    ):
+        self.input = input_path
+        self.compression_format_inferred = False
+        self.file_type_inferred = False
+
+        # infer compression no matter what
+        inferred_compression_format = guess_input_compression(self.input)
+
+        # check if directory
+        if inferred_compression_format == "directory":
+            raise TypeError(f"{self.input} is a directory, use SadieInputDir instead")
+
+        # if we are to infer, we will get a filetype back
+        if compression_format == "infer":
+            self.compression_format_inferred = True
+            self.compression_format = inferred_compression_format
+        else:
+            # set what the user put in
+            if compression_format not in ["gz", "bz2", None]:
+                raise ValueError(f"{compression_format} is not a valid compression type, need gz or bz2")
+
+            # only warn if we got it wrong
+            if compression_format != inferred_compression_format:
+                warnings.warn(
+                    f"{self.input} is detected to be {inferred_compression_format} but you specified {compression_format}",
+                    UserWarning,
+                )
+            self.compression_format = compression_format
+
+        # handle the input format next
+        self.input_format = input_format
+
+        # if inferred, try to guess type
+        if self.input_format == "infer":
+            self.input_format_inferred = True
+            self.input_format = get_sequence_file_type(self.input)
+        else:
+            # else its explicit, but check that its implemented
+            if self.input_format not in ["fasta", "fastq", "abi", "abi-trim"]:
+                raise NotImplementedError(
+                    f"{self.input_format} is not a supported sequence file type, only fasta, fastq, abi, abi-trim"
+                )
+
+        # get open file
+        self.input = Path(self.input)
+        self.open_input = get_file_buffer(self.input, self.compression_format)
+
+        # finally get the generator
+        self.sequence_generator = get_sequence_file_iter(self.open_input, self.input_format)
+
+    def __iter__(self) -> Iterator[SeqRecord]:
+        for seq in self.sequence_generator:
+            yield seq
+
 
 # #         # check if input is compressed - gzip or bzip2
 # #         self.input_compressed = self.guess_input_compression(self.input)
