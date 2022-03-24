@@ -87,6 +87,19 @@ def test_sadie_input(fixture_setup):
     SadieInputFile(multi_fastq, "fastq", None)
     SadieInputFile(multi_fastq_gz, "fastq", "gz")
     SadieInputFile(multi_fastq_bz, "fastq", "bz2")
+    # test __str__
+    print(SadieInputFile(multi_fastq_bz, "fastq", "bz2"))
+    print(SadieInputFile(multi_fastq_bz, "fastq", "bz2").__repr__())
+
+    gzip_fastq = SadieInputFile(multi_fastq_gz, "fastq", "gz")
+    bzip_fastq = SadieInputFile(multi_fastq_bz, "fastq", "bz2")
+
+    # test equivalence of get_seq_records across compression
+    assert [i.seq for i in gzip_fastq.get_seq_records()] == [i.seq for i in bzip_fastq.get_seq_records()]
+    assert [i.id for i in gzip_fastq.get_seq_records()] == [i.id for i in bzip_fastq.get_seq_records()]
+
+    # test __iter__ directly
+    assert [i.seq for i in gzip_fastq] == [i.seq for i in bzip_fastq]
 
     with pytest.raises(TypeError):
         # no paths in input file

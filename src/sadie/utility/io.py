@@ -1,11 +1,12 @@
 from pathlib import Path
+from pprint import pformat
 import warnings
 from filetype import guess
 from filetype.types.base import Type
 from filetype.types.archive import Gz, Bz2
 import gzip
 import bz2
-from typing import IO, Iterator, TextIO, Union, Any
+from typing import IO, Dict, Iterator, List, TextIO, Union, Any
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
@@ -193,9 +194,32 @@ class SadieInputFile:
         # finally get the generator
         self.sequence_generator = get_sequence_file_iter(self.open_input, self.input_format)
 
+    def get_seq_records(self) -> List[SeqRecord]:
+        """Return all seqeunces as a list of sequence records
+
+        Returns
+        -------
+        List[SeqRecord]
+            A list of SeqRecord objects from file input
+        """
+        return [i for i in self]
+
     def __iter__(self) -> Iterator[SeqRecord]:
         for seq in self.sequence_generator:
             yield seq
+
+    def __repr__(self) -> str:
+        property_dict: Dict[str, Union[str, bool, None]] = {
+            "input_path": str(self.input),
+            "input_file_type": self.input_format,
+            "input_inferred": self.file_type_inferred,
+            "input_compression": self.compression_format,
+            "compression_inferred": self.compression_format_inferred,
+        }
+        return pformat(property_dict, indent=4)
+
+    def __str__(self) -> str:
+        return str(self.input)
 
 
 # #         # check if input is compressed - gzip or bzip2
