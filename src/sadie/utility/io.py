@@ -1,3 +1,4 @@
+import glob
 from pathlib import Path
 from pprint import pformat
 import warnings
@@ -124,7 +125,7 @@ def get_sequence_file_type(file: Union[str, Path]) -> str:
         SeqIO.parse(file_buffer, "abi").__next__()
         return "abi"
     except (StopIteration, ValueError, OSError):
-        raise ValueError(f"can't determine sequence file type of {file}")
+        raise NotAValidSequenceFile(f"can't determine sequence file type of {file}")
 
 
 def get_sequence_file_iter(
@@ -134,6 +135,14 @@ def get_sequence_file_iter(
     if file_type not in ["fasta", "fastq", "abi", "abi-trim"]:
         raise NotImplementedError(f"{file_type} is not a supported sequence file type")
     return SeqIO.parse(file, file_type)
+
+
+class NotAValidSequenceFile(NotImplementedError):
+    pass
+
+
+class NotAValidCompression(NotImplementedError):
+    pass
 
 
 class SadieInputFile:
@@ -163,7 +172,7 @@ class SadieInputFile:
         else:
             # set what the user put in
             if compression_format not in ["gz", "bz2", None]:
-                raise ValueError(f"{compression_format} is not a valid compression type, need gz or bz2")
+                raise NotAValidCompression(f"{compression_format} is not a valid compression type, need gz or bz2")
 
             # only warn if we got it wrong
             if compression_format != inferred_compression_format:
@@ -183,13 +192,18 @@ class SadieInputFile:
         else:
             # else its explicit, but check that its implemented
             if self.input_format not in ["fasta", "fastq", "abi", "abi-trim"]:
-                raise NotImplementedError(
+                raise NotAValidSequenceFile(
                     f"{self.input_format} is not a supported sequence file type, only fasta, fastq, abi, abi-trim"
                 )
 
         # get open file
         self.input = Path(self.input)
-        self.open_input = get_file_buffer(self.input, self.compression_format)
+        if self.input_format in ["abi", "abi-trim"]:
+            # if abi, force rb mode, no matter what compression format is
+            mode = "rb"
+        else:
+            mode = "rt"
+        self.open_input = get_file_buffer(self.input, self.compression_format, mode)
 
         # finally get the generator
         self.sequence_generator = get_sequence_file_iter(self.open_input, self.input_format)
@@ -216,10 +230,72 @@ class SadieInputFile:
             "input_compression": self.compression_format,
             "compression_inferred": self.compression_format_inferred,
         }
-        return pformat(property_dict, indent=4)
+        return "SadieInput" + pformat(property_dict, indent=4)
 
     def __str__(self) -> str:
         return str(self.input)
+
+
+class SadieInputDir:
+    """Sadie Input Dir will handle input directories. Use SadieInputFile for input files"""
+
+    def __init__(
+        self,
+        directory_path: Union[Path, str],
+        direcotry_file_format: str = "infer",
+        compression_format: Union[str, None] = "infer",
+        recurse: bool = False,
+        ignore_bad_seq_files: bool = True,
+    ):
+        if Path(directory_path).is_file():
+            raise TypeError(f"{directory_path} is a file, use SadieInputFile instead")
+        self.directory_input = directory_path
+        self.directory_file_format = direcotry_file_format
+        self.directory_file_format_inferred = False
+        self.compression_file_format = compression_format
+        self.recurse = recurse
+        self.ignore_bad_seq_files = ignore_bad_seq_files
+
+        if self.directory_file_format == "infer":
+            self.directory_file_format_inferred = True
+        else:
+            # else its explicit, but check that its implemented
+            if self.directory_file_format not in ["fasta", "fastq", "abi", "abi-trim"]:
+                raise NotImplementedError(
+                    f"{self.directory_input} is not a supported sequence file type, only fasta, fastq, abi, abi-trim"
+                )
+
+        self.sequence_files: List[SadieInputFile] = self._get_parse()
+        self.sequence_files_dict: Dict[Union[Path, str], str] = {i.input: i.input_format for i in self.sequence_files}
+
+    def get_combined_seq_records(self) -> List[SeqRecord]:
+        """For all sequence files in list, combine them into a single list of sequence records
+
+        Returns
+        -------
+        List[SeqRecord]
+            Combined list of all sequence records from all files in directory
+        """
+        _records = []
+        for x in self.sequence_files:
+            _records += x.get_seq_records()
+        return _records
+
+    def _get_parse(self) -> List[SadieInputFile]:
+        """Private method to handle parsing directory"""
+        _files: List[SadieInputFile] = []
+        for x in glob.glob(str(self.directory_input) + "/*", recursive=self.recurse):
+            try:
+                _files.append(SadieInputFile(x, self.directory_file_format, self.compression_file_format))
+            except NotAValidSequenceFile as e:
+                if self.ignore_bad_seq_files:
+                    warnings.warn(f"{x} is not a valid sequence file, skipping", UserWarning)
+                else:
+                    raise e
+        return _files
+
+    def __repr__(self) -> str:
+        return "\nSadieDir:\n" + pformat(self.sequence_files_dict, indent=4)
 
 
 # #         # check if input is compressed - gzip or bzip2
@@ -229,7 +305,6 @@ class SadieInputFile:
 # #         self.infer_input = False
 # #         if in_format == "infer":
 # #             self.infer_input = True
-
 # #         # infer input
 # #         if self.infer_input:
 # #             self.input_file_type = self.guess_sequence_file_type(self.input)
@@ -297,13 +372,6 @@ class SadieInputFile:
 # #             path = Path(path.stem)
 # #         return path
 
-# #     def _get_parse(self, format, mode="rt"):
-# #         return itertools.chain(
-# #             *[
-# #                 SeqIO.parse(SadieIO.get_file_buffer(x, self.guess_input_compression(x), mode), format)
-# #                 for x in self.all_files_in_dir
-# #             ]
-# #         )
 
 # #     def get_input_records(self) -> Union[FastaIterator, FastqPhredIterator, AbiIterator]:
 # #         if not self.isdir:

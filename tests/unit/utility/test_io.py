@@ -9,6 +9,8 @@
 
 from io import TextIOWrapper
 from pathlib import Path
+import shutil
+from typing import List
 
 import pytest
 
@@ -19,7 +21,15 @@ from Bio.SeqIO.QualityIO import FastqPhredIterator
 from Bio.SeqRecord import SeqRecord
 
 # package
-from sadie.utility.io import get_file_buffer, get_sequence_file_iter, get_sequence_file_type, guess_input_compression
+from sadie.utility.io import (
+    NotAValidCompression,
+    NotAValidSequenceFile,
+    SadieInputDir,
+    get_file_buffer,
+    get_sequence_file_iter,
+    get_sequence_file_type,
+    guess_input_compression,
+)
 from sadie.utility.io import SadieInputFile
 
 
@@ -60,7 +70,7 @@ def test_io_methods(fixture_setup):
     assert all(get_sequence_file_type(x) == "fastq" for x in [multi_fastq, multi_fastq_bz, multi_fastq_gz])
     assert all(get_sequence_file_type(x) == "abi" for x in fixture_setup.get_abi_files())
 
-    with pytest.raises(ValueError):
+    with pytest.raises(NotAValidSequenceFile):
         # don't accept phylip format
         get_sequence_file_type(fixture_setup.get_phy_file())
 
@@ -78,12 +88,19 @@ def test_sadie_input(fixture_setup):
     multi_fastq: Path = fixture_setup.get_multiple_fastq()
     multi_fastq_gz: Path = fixture_setup.get_multiple_fastq_compressed("gz")
     multi_fastq_bz: Path = fixture_setup.get_multiple_fastq_compressed("bz2")
+    abi_files: List[Path] = fixture_setup.get_abi_files()
     fastq_dir_path: Path = fixture_setup.fastq_inputs  # this is a directory
 
     # infer both compression and filetype
     SadieInputFile(multi_fastq)
     SadieInputFile(multi_fastq_gz)
     SadieInputFile(multi_fastq_bz)
+
+    # check abi files
+    for file in abi_files:
+        SadieInputFile(file)
+        SadieInputFile(file, "abi")
+        SadieInputFile(file, "abi-trim")
     SadieInputFile(multi_fastq, "fastq", None)
     SadieInputFile(multi_fastq_gz, "fastq", "gz")
     SadieInputFile(multi_fastq_bz, "fastq", "bz2")
@@ -104,7 +121,7 @@ def test_sadie_input(fixture_setup):
     with pytest.raises(TypeError):
         # no paths in input file
         SadieInputFile(fastq_dir_path)
-    with pytest.raises(ValueError):
+    with pytest.raises(NotAValidCompression):
         # bad compression
         SadieInputFile(multi_fastq_bz, "fastq", "bz")
 
@@ -112,11 +129,59 @@ def test_sadie_input(fixture_setup):
         # compression does not match declared
         SadieInputFile(multi_fastq_gz, "fastq", "bz2")
     phy_file = fixture_setup.get_phy_file()
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotAValidSequenceFile):
         SadieInputFile(phy_file, "phy")
 
     for seq in SadieInputFile(multi_fastq_gz):
         assert isinstance(seq, SeqRecord)
+
+
+def test_sadie_directory(fixture_setup, tmpdir_factory):
+
+    with pytest.raises(TypeError):
+        # raise on a single file
+        SadieInputDir(fixture_setup.get_abi_files()[0], "abi")
+
+    abi_inputs_dir: Path = fixture_setup.abi_inputs
+    fasta_inputs_dir: Path = fixture_setup.fasta_inputs
+    fastq_inputs_dir: Path = fixture_setup.fastq_inputs
+
+    abi_inputs_dir_obj = SadieInputDir(abi_inputs_dir)
+    fasta_inputs_dir_obj = SadieInputDir(fasta_inputs_dir)
+    fastq_inputs_dir_obj = SadieInputDir(fastq_inputs_dir)
+
+    assert all(
+        [x.directory_file_format_inferred for x in [abi_inputs_dir_obj, fasta_inputs_dir_obj, fastq_inputs_dir_obj]]
+    )
+
+    abi_inputs_dir_obj = SadieInputDir(abi_inputs_dir, "abi")
+    fasta_inputs_dir_obj = SadieInputDir(fasta_inputs_dir, "fasta")
+    fastq_inputs_dir_obj = SadieInputDir(fastq_inputs_dir, "fastq")
+    with pytest.raises(NotImplementedError):
+        SadieInputDir(fastq_inputs_dir, "fastz")
+
+    with pytest.raises(ValueError):
+        # if give fasta and specified fastq, will complain when try to get seq records
+        SadieInputDir(fasta_inputs_dir, "fastq").get_combined_seq_records()
+    fasta_inputs_dir_obj.__repr__()
+    fastq_inputs_dir_obj.__repr__()
+    abi_inputs_dir_obj.__repr__()
+    mix_dir_path = tmpdir_factory.mktemp("test_sadie_directory")
+    for directory in [abi_inputs_dir, fasta_inputs_dir, fastq_inputs_dir]:
+        for file in directory.glob("*"):
+            shutil.copy(file, mix_dir_path + "/.")
+    mixed_dir_object = SadieInputDir(mix_dir_path)
+    mixed_dir_object.__repr__()
+    mixed_dir_object.get_combined_seq_records()
+
+    # now add a bad file to the mix
+    shutil.copy(fixture_setup.get_phy_file(), mix_dir_path + "/.")
+    with pytest.warns(UserWarning):
+        # warn that we have a bum file in the directory
+        mixed_dir_object = SadieInputDir(mix_dir_path)
+
+    with pytest.raises(NotAValidSequenceFile):
+        mixed_dir_object = SadieInputDir(mix_dir_path, ignore_bad_seq_files=False)
 
 
 # def test_io_single_files(fixture_setup):
