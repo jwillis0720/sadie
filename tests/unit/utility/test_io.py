@@ -22,15 +22,17 @@ from Bio.SeqRecord import SeqRecord
 
 # package
 from sadie.utility.io import (
+    DirectoryExistsError,
     NotAValidCompression,
     NotAValidSequenceFile,
     SadieInputDir,
+    SadieInputFile,
+    SadieOutput,
     get_file_buffer,
     get_sequence_file_iter,
     get_sequence_file_type,
     guess_input_compression,
 )
-from sadie.utility.io import SadieInputFile
 
 
 def test_io_methods(fixture_setup):
@@ -182,6 +184,26 @@ def test_sadie_directory(fixture_setup, tmpdir_factory):
 
     with pytest.raises(NotAValidSequenceFile):
         mixed_dir_object = SadieInputDir(mix_dir_path, ignore_bad_seq_files=False)
+
+
+def test_sadie_output(fixture_setup, tmpdir_factory):
+    output_dir = tmpdir_factory.mktemp("test_sadie_output")
+    abi_output_dir = fixture_setup.abi_inputs
+    fasta_file = fixture_setup.get_pg9_heavy_fasta()
+    shutil.copytree(abi_output_dir, output_dir + "/existing_dir")
+    shutil.copy(fasta_file, output_dir + "/fasta_file.fasta")
+    SadieOutput(output_dir.join("/output.json"), "infer", "infer")
+
+    with pytest.raises(DirectoryExistsError):
+        SadieOutput(output_dir.join("/existing_dir"), "infer", "infer")
+    with pytest.raises(FileExistsError):
+        SadieOutput(output_dir.join("/fasta_file.fasta"), "infer", "infer", overwrite=False)
+    with pytest.warns(UserWarning):
+        SadieOutput(output_dir.join("/fasta_file.fasta"), "infer", "infer", overwrite=True)
+    with pytest.raises(ValueError):
+        SadieOutput(output_dir.join("/output.json"), "zxs", "infer")
+    with pytest.raises(ValueError):
+        SadieOutput(output_dir.join("/output.json"), "infer", "xy")
 
 
 # def test_io_single_files(fixture_setup):

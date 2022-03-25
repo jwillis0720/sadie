@@ -298,6 +298,76 @@ class SadieInputDir:
         return "\nSadieDir:\n" + pformat(self.sequence_files_dict, indent=4)
 
 
+class DirectoryExistsError(FileExistsError):
+    pass
+
+
+class SadieOutput:
+    """Sadie Output will handle output files, infer compression and filetype"""
+
+    def __init__(
+        self,
+        output_path: Union[Path, str],
+        output_format: str = "infer",
+        compression_format: str = "infer",
+        overwrite: bool = True,
+    ):
+        if Path(output_path).is_dir() and Path(output_path).exists():
+            raise DirectoryExistsError(f"{output_path}  exists and is directory directory instead")
+        elif Path(output_path).exists():
+            if overwrite:
+                warnings.warn(f"{output_path} exists, overwriting", UserWarning)
+            else:
+                raise FileExistsError(f"{output_path} is exists and is directory directory instead")
+
+        # set accepted formats
+        self._accepted_output_format = ["infer", "json", "csv", "tsv", "feather", "stdout"]
+        self._accepted_output_compression = ["infer", "gz", "bz2", "infer"]
+
+        # check specified compression and output format are okay
+        if output_format not in self._accepted_output_format:
+            raise ValueError(f"{output_format} is not a valid output format, only {self._accepted_output_format}")
+        if compression_format not in self._accepted_output_compression:
+            raise ValueError(
+                f"{compression_format} is not a valid compression format, only {self._accepted_output_compression}"
+            )
+
+        self.output_path = Path(output_path)
+        self.base_path = self.output_path.with_suffix("")
+        self.suffixes = self.output_path.suffixes
+
+        # handle compression format
+        self.compression_format = compression_format
+        if self.compression_format == "infer":
+            self.compression_format_inferred = True
+            if len(self.suffixes) <= 1:
+                self.compression_format = None
+            elif len(self.suffixes) == 2:
+                self.compression_format = self.suffixes[-1]
+            else:
+                raise ValueError(f"{self.output_path} has too many suffixes; {self.suffixes}")
+        else:
+            if len(self.suffixes) in [1, 2]:
+                if self.compression_format != self.suffixes[-1]:
+                    raise ValueError(
+                        f"{self.output_path} has suffix {self.suffixes[-1]}, but specified compression format is {self.compression_format}, using {self.compression_format}",
+                    )
+
+        # handle output format
+        self.output_format = output_format
+        if self.output_format == "infer":
+            if len(self.suffixes) in [1, 2]:
+                self.output_format = self.suffixes[0]
+            elif len(self.suffixes) == 0:
+                raise ValueError(f"{self.output_path} has no suffixes to infer format")
+        else:
+            if len(self.suffixes) in [1, 2]:
+                if self.output_format != self.suffixes[0]:
+                    raise ValueError(
+                        f"{self.output_path} has output_format {self.output_format}, but {self.suffixes[0]} was specified"
+                    )
+
+
 # #         # check if input is compressed - gzip or bzip2
 # #         self.input_compressed = self.guess_input_compression(self.input)
 
@@ -312,10 +382,6 @@ class SadieInputDir:
 # #         else:
 # #             self.input_file_type = in_format
 
-# #         # output format must set before output
-# #         self._accepted_output_format = ["infer", "json", "csv", "tsv", "feather", "stdout"]
-# #         self._accepted_output_format_suffix = ["json", "csv", "tsv", "feather"]
-# #         self._accepted_output_compression = ["gz", "bz2", "infer"]
 # #         self._accepted_output_compression_suffix = ["gz", "bz2"]
 # #         self.output_format = out_format
 # #         self.infered_output_format = None
