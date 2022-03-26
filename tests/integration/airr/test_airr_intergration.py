@@ -310,9 +310,9 @@ def test_cli(caplog, fixture_setup):
     # https://github.com/pallets/click/issues/824
     caplog.set_level(200000)
     # IMGT DB
-    quereies = fixture_setup.get_fasta_files()
+    queries = fixture_setup.get_fasta_files()
     species = ["dog", "rat", "human", "mouse", "macaque", "se09"]
-    products = product(species, ["imgt"], quereies)
+    products = product(species, ["imgt"], queries)
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         # run 1 with mutational analysis

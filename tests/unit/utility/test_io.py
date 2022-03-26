@@ -22,9 +22,6 @@ from Bio.SeqRecord import SeqRecord
 
 # package
 from sadie.utility.io import (
-    DirectoryExistsError,
-    NotAValidCompression,
-    NotAValidSequenceFile,
     SadieInputDir,
     SadieInputFile,
     SadieOutput,
@@ -32,6 +29,11 @@ from sadie.utility.io import (
     get_sequence_file_iter,
     get_sequence_file_type,
     guess_input_compression,
+)
+from sadie.utility.exception import (
+    DirectoryExistsError,
+    NotAValidCompression,
+    NotAValidSequenceFile,
 )
 
 
