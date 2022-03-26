@@ -1,4 +1,3 @@
-from .util import split_fasta
-from .io import SadieIO
+# from .util import split_fasta
 
-__all__ = ["split_fasta", "SadieIO"]
+# __all__ = ["split_fasta", "SadieIO"]
