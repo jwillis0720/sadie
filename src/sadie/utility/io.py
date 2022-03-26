@@ -15,9 +15,8 @@ from Bio.SeqIO.AbiIO import AbiIterator
 from Bio.SeqIO.FastaIO import FastaIterator
 from Bio.SeqIO.QualityIO import FastqPhredIterator
 
-
-class NoExtensionNameWarning(UserWarning):
-    pass
+# exceptions handled in own file
+from sadie.utility.exception import NotAValidSequenceFile, NotAValidCompression, DirectoryExistsError
 
 
 def guess_input_compression(input_path: Union[str, Path]) -> Union[str, None]:
@@ -135,14 +134,6 @@ def get_sequence_file_iter(
     if file_type not in ["fasta", "fastq", "abi", "abi-trim"]:
         raise NotImplementedError(f"{file_type} is not a supported sequence file type")
     return SeqIO.parse(file, file_type)
-
-
-class NotAValidSequenceFile(NotImplementedError):
-    pass
-
-
-class NotAValidCompression(NotImplementedError):
-    pass
 
 
 class SadieInputFile:
@@ -296,10 +287,6 @@ class SadieInputDir:
 
     def __repr__(self) -> str:
         return "\nSadieDir:\n" + pformat(self.sequence_files_dict, indent=4)
-
-
-class DirectoryExistsError(FileExistsError):
-    pass
 
 
 class SadieOutput:
