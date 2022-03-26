@@ -1,7 +1,9 @@
 """This is our main entry point"""
 import logging
+from pathlib import Path
 import sys
 import os
+from typing import Union
 import click
 
 # airr
@@ -9,7 +11,7 @@ from sadie.airr import Airr
 from sadie.airr.methods import run_igl_assignment, run_mutational_analysis
 
 # utility
-from sadie.utility import SadieIO
+from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
 from sadie.utility.util import get_verbosity_level, get_project_root
 
 # reference
@@ -18,12 +20,11 @@ from sadie.reference import Reference
 
 @click.group()
 @click.pass_context
-def sadie(ctx):
+def sadie(ctx: click.Context) -> None:
     pass
 
 
 @sadie.command("airr")
-@click.pass_context
 @click.option(
     "-v",
     "--verbose",
@@ -39,77 +40,79 @@ def sadie(ctx):
     default="human",
 )
 @click.option("--db-type", type=click.Choice(["imgt", "custom"]), default="imgt", show_default=True)
-@click.option(
-    "--compress",
-    "-z",
-    type=click.Choice(["gz", "bz2", "infer"]),
-    help="file compression for output, gzip, bzip2 or infer from output name",
-    default="infer",
-)
-@click.option("--skip-mutation", is_flag=True, help="Skip the somewhat time instansive mutational analysis")
 @click.option("--skip-igl", is_flag=True, help="Skip the igl assignment")
-@click.option(
-    "--in-format",
-    type=click.Choice(["infer", "fasta", "fastq", "ab1"]),
-    help="The input format you have passed. ",
-    default="infer",
-    show_default=True,
-)
-@click.option(
-    "--out-format",
-    type=click.Choice(["infer", "json", "csv", "tsv", "feather", "stdout"]),
-    help="output file type format. Default is to infer from output argument",
-    default="infer",
-    show_default=True,
-)
+@click.option("--skip-mutation", is_flag=True, help="Skip the somewhat time instansive mutational analysis")
 @click.argument(
-    "input",
+    "input_path",
     required=True,
-    type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True, resolve_path=True),
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=True,
+        readable=True,
+        resolve_path=True,
+    ),
 )
 @click.argument(
-    "output", required=False, type=click.Path(file_okay=True, dir_okay=False, writable=True, resolve_path=True)
+    "output_path",
+    required=False,
+    type=click.Path(
+        file_okay=True,
+        dir_okay=False,
+        writable=True,
+        resolve_path=True,
+    ),
 )
-def airr(ctx, verbose, species, db_type, compress, skip_igl, skip_mutation, in_format, out_format, input, output):
+def airr(
+    verbose: int,
+    species: str,
+    db_type: str,
+    skip_igl: bool,
+    skip_mutation: bool,
+    input_path: Path,
+    output_path: Union[None, Path, str],
+) -> None:
+
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
     airr = Airr(species=species, database=db_type)
-
-    # force this so we don't get an error
-    if not output and out_format == "infer":
-        out_format = "csv"
-    io = SadieIO(input, output, in_format, out_format, compress)
-
-    # airr file handling
-    # only having a fasta file uncompressed allow calling directly on run_fasta
-    if io.input_file_type == "fasta" and not io.input_compressed:
-        airr_table = airr.run_fasta(io.input)
+    if not output_path:
+        output_path = "stdout"
     else:
-        airr_table = airr.run_records(io.get_input_records())
-    # now get mutation analysis
+        output_path = Path(output_path)
+
+    input_path = Path(input_path)
+    if input_path.is_dir():
+        input_object = SadieInputDir(input_path)
+        if output_path is None:
+            output_path = input_path / Path(input_path.name + ".tsv.gz")
+        _records = input_object.get_combined_seq_records()
+
+    else:  # we listed a signelf iel
+        input_object = SadieInputFile(input_path)
+        if output_path is None:
+            output_path = input_path.parent / Path(input_path.stem + ".tsv.gz")
+        _records = input_object.get_seq_records()
+    output_object = SadieOutput(output_path)
+    airr_table = airr.run_records(_records)
+
     if not skip_mutation:
         airr_table = run_mutational_analysis(airr_table, "kabat")
 
     if not skip_igl:
         airr_table = run_igl_assignment(airr_table)
 
-    # handle output
-    click.echo(f"Writing {len(airr_table)} to output to {io.output} file")
-    if io.infered_output_format == "csv":
-        airr_table.to_csv(io.output)
-    elif io.infered_output_format == "tsv":
-        airr_table.to_csv(io.output, sep="\t")
-    elif io.infered_output_format == "feather":
-        airr_table.to_feather(io.output)
-    elif io.infered_output_format == "json":
-        airr_table.to_json(io.output)
+    if output_object.output_format == "stdout":
+        output_str = str(airr_table.to_csv(sep="\t"))
+        sys.stdout.write(output_str)
     else:
-        sys.stdout.write(airr_table.to_csv(sep="\t"))
+        airr_table.to_output(output_object)
+    # handle output
 
 
 @sadie.group()
 @click.pass_context
-def reference(ctx):
+def reference(ctx: click.Context) -> None:
     pass
 
 
@@ -137,7 +140,7 @@ def reference(ctx):
     default=os.path.join(os.path.dirname(__file__), "reference/data/reference.yml"),
     show_default=True,
 )
-def make_igblast_reference(verbose, outpath, reference):
+def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None:
     """make the igblast reference files
 
     This script will make the imgt reference files used by igblast or airr, including internal data, the blast
@@ -151,7 +154,7 @@ def make_igblast_reference(verbose, outpath, reference):
     click.echo(f"reference path {reference}")
 
     if not outpath:
-        outpath = os.path.abspath(os.path.dirname(__file__) + "reference/data/germlines")
+        outpath = Path(__file__).parent.joinpath("reference/data/germlines").resolve()
         click.echo(f"No outpath specified, using {outpath}")
 
     # make reference
@@ -167,5 +170,3 @@ def make_igblast_reference(verbose, outpath, reference):
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
     sadie()
-    # airr()
-    # make_igblast_reference()

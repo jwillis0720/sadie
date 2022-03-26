@@ -124,7 +124,8 @@ class Airr:
             except BadIgBLASTExe:
                 logger.error(f"Could not find igblast executable {igblast_exe}, searching path")
                 try:
-                    self.executable = shutil.which("igblastn")
+                    # cast this to string for type checking
+                    self.executable = str(shutil.which("igblastn"))
                 except BadIgBLASTExe as e:
                     logger.error(f"package igblast and path igblast not working: {os.environ['PATH']}")
                     raise e
@@ -391,7 +392,7 @@ class Airr:
             return self.run_records(_get_seq_generator(), scfv=scfv)
 
     def run_records(
-        self, seqrecords: Union[List[SeqRecord], SequenceIterator, Generator, itertools.chain], scfv=False
+        self, seqrecords: Union[List[SeqRecord], SequenceIterator, Generator[SeqRecord, None, None]], scfv: bool = False
     ) -> Union[AirrTable, LinkedAirrTable]:
         """Run Airr annotation on seq records
 
@@ -637,7 +638,7 @@ class Airr:
         light_chain_table = light_chain_table.groupby(["sequence_id", "sequence"]).head(1)
         _heavy_airr = AirrTable(heavy_chain_table.reset_index(drop=True))
         _light_airr = AirrTable(light_chain_table.reset_index(drop=True))
-        linked_table = _heavy_airr.merge(_light_airr, suffixes=["_heavy", "_light"], on="sequence_id")
+        linked_table = _heavy_airr.merge(_light_airr, suffixes=("_heavy", "_light"), on="sequence_id")
         linked_table = LinkedAirrTable(linked_table)
         return linked_table
 
@@ -653,11 +654,11 @@ class Airr:
         return Path(os.path.dirname(os.path.abspath(__file__))) / "bin" / system / executable
 
     @staticmethod
-    def get_available_datasets() -> list:
+    def get_available_datasets() -> List[str]:
         return GermlineData.get_available_datasets()
 
     @staticmethod
-    def get_available_species() -> list:
+    def get_available_species() -> List[str]:
         """get all species available
 
         Returns

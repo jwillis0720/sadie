@@ -15,6 +15,7 @@ from Bio import SeqRecord, SeqIO
 from sadie.airr.airrtable.constants import IGBLAST_AIRR
 from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
 from sadie.airr.exceptions import MissingAirrColumns
+from sadie.utility.io import SadieOutput
 from sadie.utility.util import correct_alignment
 from pprint import pformat
 
@@ -642,6 +643,24 @@ class AirrTable(pd.DataFrame):
         elif suffixes[0] != ".tsv":
             raise ValueError("File name must end with .tsv or .tsv.gz or .tsv.bz")
         self._unset_boolean(reverse_to_boolean).to_csv(file_name, sep="\t")
+
+    def to_output(self, output_object: SadieOutput) -> None:
+        """Output AIRR object to SADIE output object
+
+        Parameters
+        ----------
+        output_object : SadieOutput
+            SADIE output obhject
+        """
+        reverse_to_boolean = ["productive", "vj_in_frame", "stop_codon", "rev_comp", "v_frameshift", "complete_vdj"]
+
+        # traditional tsv
+        if output_object.output_format in ["tsv", "csv"]:
+            self._unset_boolean(reverse_to_boolean)
+            if output_object.output_format == "tsv":
+                self.to_csv(output_object.output_path, sep="\t")
+            else:
+                self.to_csv(output_object.output_path)
 
     @staticmethod
     def read_airr(file_name: Union[str, Path]) -> "AirrTable":

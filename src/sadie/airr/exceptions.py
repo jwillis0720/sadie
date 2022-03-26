@@ -1,4 +1,7 @@
 import os
+from pathlib import Path
+from typing import Any, List, Union
+from pandas.core.indexes.base import Index
 
 
 class Error(Exception):
@@ -11,7 +14,7 @@ class MissingAirrColumns(Error):
     Attributes:
     """
 
-    def __init__(self, missing_columns):
+    def __init__(self, missing_columns: Union[Index, List[Union[str, int]]]):
         super().__init__()
         self.missing_columns = missing_columns
 
@@ -26,7 +29,7 @@ class EmtpyFileError(Error):
 
     """
 
-    def __init__(self, file):
+    def __init__(self, file: Union[str, Path]):
         super().__init__()
         self.passed_arguments = file
 
@@ -40,12 +43,12 @@ class BadIgBLASTExe(Error):
     Attributes:
     """
 
-    def __init__(self, passed_executable, msg):
+    def __init__(self, passed_executable: Union[str, Path], msg: str):
         super().__init__()
         self.passed_arguments = passed_executable
         self.msg = msg
 
-    def __str__(self):
+    def __str__(self) -> str:
         _env = os.environ["PATH"]
         return f"Cant find IgBLAST {self.passed_arguments}. Check {_env}\n {self.msg}"
 
@@ -57,23 +60,32 @@ class MissingIgBLASTArgument(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         super().__init__()
         self.msg = msg
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.msg
 
 
 class BadIgBLASTArgument(Error):
     """Exception raised for passing incorrect params to an igblast arguments"""
 
-    def __init__(self, passed_arguments, accepted_argumetns):
+    def __init__(
+        self,
+        passed_arguments: Any,
+        accepted_arguments: Union[
+            str,
+            type,
+            Union[Path, str],
+            List[str],
+        ],
+    ):
         super().__init__()
         self.passed_arguments = passed_arguments
-        self.accepted_arguments = accepted_argumetns
+        self.accepted_arguments = accepted_arguments
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Passed argument {}. Only accepts {}".format(self.passed_arguments, self.accepted_arguments)
 
 
@@ -83,7 +95,7 @@ class BadIgDATA(Error):
     Attributes:
     """
 
-    def __init__(self, passed_arguments):
+    def __init__(self, passed_arguments: Any):
         super().__init__()
         self.passed_arguments = passed_arguments
 
@@ -94,7 +106,7 @@ class BadIgDATA(Error):
 class IgBLASTRunTimeError(Error):
     """Exception raised for Igblast runtime error"""
 
-    def __init__(self, stderr):
+    def __init__(self, stderr: bytes):
         super().__init__()
         self.stderr = stderr
 
@@ -108,7 +120,7 @@ class BadDataSet(Error):
     Attributes:
     """
 
-    def __init__(self, requested_type, accepted_types):
+    def __init__(self, requested_type: str, accepted_types: List[str]):
         super().__init__()
         self.requested_type = requested_type
         self.accepted_types = accepted_types
@@ -123,7 +135,7 @@ class BadRequstedFileType(Error):
     Attributes:
     """
 
-    def __init__(self, requested_type, accepted_types):
+    def __init__(self, requested_type: str, accepted_types: List[str]):
         super().__init__()
         self.requested_type = requested_type
         self.accepted_types = accepted_types

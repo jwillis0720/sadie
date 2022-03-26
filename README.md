@@ -14,6 +14,9 @@
     <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
     <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
          alt="Mac Build">
+    <a href="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg">
+    <img src="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg"
+         alt="Static Type">
     <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue">
     <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue"
         alt="Python Version">
@@ -29,7 +32,7 @@
     <a href="https://github.com/pre-commit/pre-commit">
     <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
         alt='pypi'>
-    <a href="https://app.netlify.com/sites/sadie-docs/deploys" >
+    <a href="https://sadie.jordanrwillis.com" >
     <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
         alt="Documentation">
     </a>

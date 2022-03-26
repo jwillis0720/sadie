@@ -103,7 +103,7 @@ def split_fasta(parent_file, how_many, outdir=".", filetype="fasta"):
                     f.write("\n".join(joiner))
 
 
-def get_verbosity_level(verbosity_count):
+def get_verbosity_level(verbosity_count: int):
     """Get verbosity level by how many --vvv were passed
 
     Arguments:
