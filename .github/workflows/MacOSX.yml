@@ -5,9 +5,9 @@ on:
   push:
     tags:
     - '*'
-    branches: ['master']
+    branches: ['main']
   pull_request:
-    branches: [ 'master', 'update_doc']
+    branches: [ 'main', 'update_doc']
 
 jobs:
   build-test:
