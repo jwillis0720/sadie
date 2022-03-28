@@ -1,23 +1,29 @@
-from typing import Union
+from typing import Any, Type, Dict, Generator, List, Set, Union
 from yaml import load
 from pathlib import Path
 
+
 try:
-    from yaml import CLoader as Loader
+    from yaml import CLoader
+    from yaml import Loader
+
+    cload: Union[Type[CLoader], Type[Loader]] = CLoader
 except ImportError:
     from yaml import Loader
+
+    cload = Loader
 
 
 class YamlRef:
     def __init__(self, filepath: Union[None, Path, str] = None):
+
         if not filepath:
-            self.ref_path = Path(__file__).parent.joinpath("data/reference.yml")
-        else:
-            self.ref_path = filepath
+            filepath = Path(__file__).parent.joinpath("data/reference.yml")
+        self.ref_path = filepath
 
         self.yaml = load(open(self.ref_path), Loader=Loader)
 
-    def get_database_types(self) -> set:
+    def get_database_types(self) -> Set[str]:
         """Return database types in current yaml
 
         Example
@@ -32,13 +38,13 @@ class YamlRef:
         """
         return set(self.yaml.keys())
 
-    def get_species_keys(self, reference_type: str) -> list:
+    def get_species_keys(self, reference_type: str) -> List[str]:
         """Return functional types from reference types and functional type
 
         Example
         -------
-        yaml.get_species_keys('imgt','functional')
-        >>> {'alpaca','cat','dog'...}
+        yaml.get_species_keys('imgt'))
+        >>> ['alpaca','cat','dog']
 
         Returns
         -------
@@ -47,7 +53,7 @@ class YamlRef:
         """
         return list(self.yaml.get(reference_type).keys())
 
-    def get_sub_species(self, reference_type: str, species: str) -> list:
+    def get_sub_species(self, reference_type: str, species: str) -> List[str]:
         """
         get sub species keys. For instance for humanized mouse, a sub species will be mouse and human
 
@@ -62,12 +68,11 @@ class YamlRef:
 
         Returns
         -------
-        int
-            number of sub species
+            List of species
         """
         return list(self.yaml.get(reference_type).get(species).keys())
 
-    def get_genes(self, reference_type: str, species: str, sub_species: str) -> list:
+    def get_genes(self, reference_type: str, species: str, sub_species: str) -> List[str]:
         """Get the genes associated with these keys
 
         Parameters
@@ -89,9 +94,10 @@ class YamlRef:
         object.get_genes('imgt'','human','human')
         >>> ['IGHV1-2*01','IGHV1-69*01'....]
         """
-        return self.yaml.get(reference_type).get(species).get(sub_species)
+        _a: List[str] = self.yaml.get(reference_type).get(species).get(sub_species)
+        return _a
 
-    def get_gene_segment(self, reference_type: str, species: str, sub_species: str, gene_segment: str) -> list:
+    def get_gene_segment(self, reference_type: str, species: str, sub_species: str, gene_segment: str) -> List[str]:
         """Get the genes associated with these keys
 
         Parameters
@@ -116,10 +122,10 @@ class YamlRef:
         """
         return list(filter(lambda x: x[3] == gene_segment, self.get_genes(reference_type, species, sub_species)))
 
-    def __repr__(self):
+    def __repr__(self) -> Any:
         return self.yaml.__repr__()
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[Dict[str, str], None, None]:
         """Iter method will step through the yaml file"""
         for database in self.yaml:
             for species in self.yaml[database]:

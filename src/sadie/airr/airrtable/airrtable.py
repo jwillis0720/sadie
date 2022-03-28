@@ -701,7 +701,7 @@ class LinkedAirrTable(AirrTable):
         return self._suffixes
 
     @property
-    def left_suffix(self):
+    def left_suffix(self) -> str:
         return self.suffixes[0]
 
     @property
