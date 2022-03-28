@@ -18,7 +18,7 @@ from .exception import (
     BadNTSequenceWarning,
 )
 
-from .utility import format_alignment
+from sadie.utility.util import format_alignment
 
 # Common amino acids
 STANDARD_AMINO_ACIDS = "ACDEFGHIKLMNPQRSTVYW"

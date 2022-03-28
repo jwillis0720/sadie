@@ -1,45 +1,136 @@
 import bz2
 import gzip
-import os
 import logging
+import os
 import warnings
-from functools import partial
-from mimetypes import guess_type
 from pathlib import Path
 from typing import Union
 
 import pandas as pd
+from Bio.SeqIO import MultipleSeqAlignment
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from Bio.SubsMat import MatrixInfo as matlist
     from Bio import pairwise2, SeqIO
 
+from sadie.utility.io import SadieInputFile
+
+# global
 blosum_matrix = matlist.blosum62
 logger = logging.getLogger("Utilility")
 
 
+def getVerbosityLevel(verbosity_count: int) -> int:
+    """Set verbosity level by how many --vvv were passed
+
+    Arguments:
+        verboisty_count {int} -- how many v's were passed
+
+    50 - critical
+    40 - error
+    30 - warning
+    20 - info
+    10 -debug
+    0 - notset
+    """
+
+    # If 5, we want 10 debug level logging
+    if verbosity_count == 5:
+        return 10
+    # If 4, we want 20 info level logging
+    if verbosity_count == 4:
+        return 20
+    # If 3, we want 30 warming level logging
+    if verbosity_count == 3:
+        return 30
+    # If 2, we want 40 error level logging
+    if verbosity_count == 2:
+        return 40
+
+    # always return critical
+    return 50
+
+
 def get_project_root() -> Path:
+    """Get the pakage root direcotry"""
     return Path(__file__).parent.parent
 
 
-def determine_encoding(parent_file):
-    guess_compress(parent_file)
-    encoding = guess_type(parent_file)
-    if encoding[1] == "gzip":
-        return "gzip", partial(gzip.open, mode="rt")
-    if encoding[0] == "application/x-bzip" or encoding[1] == "bzip2":
-        return "bzip", partial(bz2.open, mode="rt")
-    return None, open
+def format_alignment(
+    alignment: MultipleSeqAlignment, max_line_length: int = 80, ljust: int = 12, max_id: int = 30
+) -> str:
+    """Format an alignment object
+
+    Parameters
+    ----------
+    alignment : Bio.MultipleSequenceAlignment
+        Biopython multiple sequence alignment
+    max_line_length : int, optional
+        how many characters until wrap, by default 80
+    ljust : int, optional
+        what is the spacing between id and sequence, by default 12
+    max_id : int, optional
+        maximum characters in id of alignment, by default 30
+
+    Returns
+    -------
+    str
+        Formatted string alignment
+
+    Raises
+    ------
+    ValueError
+        Must have at least one sequence
+    ValueError
+        If sequence is empty
+    """
+    if len(alignment) == 0:
+        raise ValueError("Must have at least one sequence")
+    if alignment.get_alignment_length() == 0:
+        # This doubles as a check for an alignment object
+        raise ValueError("Non-empty sequences are required")
+
+    output = ""
+    cur_char = 0
+    max_length = len(alignment[0])
+
+    if max_length <= 0:
+        raise ValueError("Non-empty sequences are required")
+
+    # keep displaying sequences until we reach the end
+    while cur_char != max_length:
+        # calculate the number of sequences to show, which will
+        # be less if we are at the end of the sequence
+        if (cur_char + max_line_length) > max_length:
+            show_num = max_length - cur_char
+        else:
+            show_num = max_line_length
+
+        # go through all of the records and print out the sequences
+        # when we output, we do a nice 80 column output, although this
+        # may result in truncation of the ids.
+        for record in alignment:
+            # Make sure we don't get any spaces in the record
+            # identifier when output in the file by replacing
+            # them with underscores:
+            line = record.id[0:max_id].replace(" ", "_").ljust(ljust)
+            line += str(record.seq[cur_char : (cur_char + show_num)])
+            output += line + "\n"
+        output += "\n"
+        cur_char += show_num
+    return output
 
 
-def split_fasta(parent_file, how_many, outdir=".", filetype="fasta"):
+def split_fasta(
+    parent_file: Union[str, Path], how_many: int, outdir: Union[str, Path] = ".", filetype: str = "fasta"
+) -> None:
     # files_suffix = {"fasta": ".fasta", "fastq": ".fastq"}
     # get file_counter and base name of fasta_file
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     counter = 1
-    encoding, _open = determine_encoding(parent_file)
+    encoding, _open = SadieInputFile(parent_file)
     if not encoding:
         encoding = "Uncompressed"
     # click.echo(f"Detected {encoding} filetype")
@@ -103,7 +194,7 @@ def split_fasta(parent_file, how_many, outdir=".", filetype="fasta"):
                     f.write("\n".join(joiner))
 
 
-def get_verbosity_level(verbosity_count: int):
+def get_verbosity_level(verbosity_count: int) -> int:
     """Get verbosity level by how many --vvv were passed
 
     Arguments:
@@ -134,7 +225,7 @@ def get_verbosity_level(verbosity_count: int):
     return 50
 
 
-def guess_compress(filename):
+def guess_compress(filename: Union[str, Path]) -> Union[str, bool]:
     """Guess compression type
 
     Arguments:
@@ -157,7 +248,7 @@ def guess_compress(filename):
     return False
 
 
-def is_tool(name):
+def is_tool(name: str) -> bool:
     """Check whether `name` is on PATH and marked as executable."""
 
     # from whichcraft import which

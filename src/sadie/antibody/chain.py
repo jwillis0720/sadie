@@ -24,7 +24,7 @@ from .segment import (
     CDR2AA,
     CDR3AA,
 )
-from .utility import format_alignment
+from sadie.utility.util import format_alignment
 from .genetable import VGene, JGene
 
 
