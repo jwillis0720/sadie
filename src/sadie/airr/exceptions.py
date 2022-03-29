@@ -77,6 +77,7 @@ class BadIgBLASTArgument(Error):
         accepted_arguments: Union[
             str,
             type,
+            int,
             Union[Path, str],
             List[str],
         ],
