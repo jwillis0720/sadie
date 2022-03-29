@@ -18,7 +18,7 @@ class MissingAirrColumns(Error):
         super().__init__()
         self.missing_columns = missing_columns
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Must have all AIRR columns defined, missing {}".format(self.missing_columns)
 
 
@@ -33,7 +33,7 @@ class EmtpyFileError(Error):
         super().__init__()
         self.passed_arguments = file
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} is empty".format(self.passed_arguments)
 
 
@@ -99,7 +99,7 @@ class BadIgDATA(Error):
         super().__init__()
         self.passed_arguments = passed_arguments
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Bad IgDAta path {self.passed_arguments} - please provide where IgDATA is located"
 
 
@@ -110,7 +110,7 @@ class IgBLASTRunTimeError(Error):
         super().__init__()
         self.stderr = stderr
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Runtime Error with Blast {}".format(self.stderr.decode("utf-8"))
 
 
@@ -125,7 +125,7 @@ class BadDataSet(Error):
         self.requested_type = requested_type
         self.accepted_types = accepted_types
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} dataset, avail datasets{}".format(self.requested_type, sorted(self.accepted_types))
 
 
@@ -140,5 +140,5 @@ class BadRequstedFileType(Error):
         self.requested_type = requested_type
         self.accepted_types = accepted_types
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} file passed, only accepts {}".format(self.requested_type, self.accepted_types)
