@@ -125,7 +125,7 @@ class YamlRef:
     def __repr__(self) -> Any:
         return self.yaml.__repr__()
 
-    def __iter__(self) -> Generator[Dict[str, str], None, None]:
+    def __iter__(self) -> Generator[Dict[str, Union[str, List[str]]], None, None]:
         """Iter method will step through the yaml file"""
         for database in self.yaml:
             for species in self.yaml[database]:

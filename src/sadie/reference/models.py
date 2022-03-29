@@ -9,23 +9,22 @@ class Species(BaseModel):
 class GeneEntry(BaseModel):
     """V,D or J Gene Entry with validation"""
 
-    sub_species: Optional[str]
     species: str
+    sub_species: Optional[str] = ""
     gene: str
     database: str
 
     # values: a dict containing the name-to-value mapping of any previously-validated fields
-
-    @validator("sub_species")
-    def check_sub_species(cls, v: str) -> str:
+    @validator("species")
+    def check_species(cls, v: str) -> str:
         # pylint: disable=no-self-argument
         return Species(**{"species": v}).species
 
-    @validator("species")
-    def check_species(cls, v: str, values: Dict[str, str]) -> str:
+    @validator("sub_species", always=True)
+    def check_sub_species(cls, v: str, values: Dict[str, str]) -> str:
         # pylint: disable=no-self-argument
-        if values["sub_species"] is None:
-            values["sub_species"] = Species(**{"species": v}).species
+        if not v:
+            return values["species"]
         return Species(**{"species": v}).species
 
     @validator("gene")
@@ -46,21 +45,21 @@ class GeneEntry(BaseModel):
 class GeneEntries(BaseModel):
     """V,D or J Gene Entry with validation"""
 
-    sub_species: Optional[str]
     species: str
+    sub_species: Optional[str] = ""
     gene: List[str]
     database: str
 
-    @validator("sub_species")
-    def check_sub_species(cls, v: str) -> str:
+    @validator("species")
+    def check_species(cls, v: str) -> str:
         # pylint: disable=no-self-argument
         return Species(**{"species": v}).species
 
-    @validator("species")
-    def check_species(cls, v: str, values: Dict[str, str]) -> str:
+    @validator("sub_species", always=True)
+    def check_sub_species(cls, v: str, values: Dict[str, str]) -> str:
         # pylint: disable=no-self-argument
-        if values["sub_species"] is None:
-            values["sub_species"] = Species(**{"species": v}).species
+        if not v:
+            return values["species"]
         return Species(**{"species": v}).species
 
     @validator("gene", each_item=True)
