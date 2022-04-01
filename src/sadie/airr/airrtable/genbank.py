@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Dict, List, Union
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import datetime
@@ -46,7 +46,7 @@ class GenBankFeature:
         end: int,
         feature_type: str,
         id: Union[str, None] = None,
-        qualifier_dict: Union[str, None] = None,
+        qualifier_dict: Union[Dict[str, str], None] = None,
     ):
         self.start = start
         self.end = end

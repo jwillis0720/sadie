@@ -2,7 +2,7 @@
 # std lib
 import logging
 from pathlib import Path
-from typing import Tuple, List, Union
+from typing import Any, Hashable, Optional, Tuple, List, Union
 import warnings
 
 # third party
@@ -72,27 +72,27 @@ class AirrTable(pd.DataFrame):
 
     _metadata = ["_suffixes", "_islinked"]
 
-    def __init__(self, data=None, *args, key_column="sequence_id", **kwargs):
-        super(AirrTable, self).__init__(data=data, *args, **kwargs)
+    def __init__(self, data: Any = None, key_column: str = "sequence_id", copy: bool = False):
+        super(AirrTable, self).__init__(data=data, copy=copy)
         if not isinstance(data, pd.core.internals.managers.BlockManager):
             if self.__class__ is AirrTable:
-                self._islinked = False
-                self._key_column = key_column
-                self._suffixes = []
+                self._islinked: bool = False
+                self._key_column: str = key_column
+                self._suffixes: List[str] = []
                 self._verify()
 
     @property
-    def verified(self):
+    def verified(self) -> bool:
         if not hasattr(self, "_verified"):
             return False
         return self._verified
 
     @property
-    def _constructor(self):
-        return AirrTable
+    def _constructor(self) -> "AirrTable":
+        return AirrTable  # type: ignore[return-value]
 
     @property
-    def key_column(self):
+    def key_column(self) -> str:
         return self._key_column
 
     @property
@@ -128,8 +128,7 @@ class AirrTable(pd.DataFrame):
         """
         return pd.Index(list(set(self.columns).intersection(self.compliant_cols)))
 
-    @property
-    def sanitized_antibodies(self) -> "AirrTable":
+    def get_sanitized_antibodies(self) -> "AirrTable":
         """Getter method for airr entires that have  all antibody segments
 
         Returns
@@ -137,26 +136,21 @@ class AirrTable(pd.DataFrame):
         AirrTable
             AirrTable for just sanitized_antibodies
         """
-        _sanitized = self[
-            ~(
-                (self["fwr1_aa"].isna())
-                | (self["cdr1_aa"].isna())
-                | (self["fwr2_aa"].isna())
-                | (self["cdr2_aa"].isna())
-                | (self["fwr3_aa"].isna())
-                | (self["cdr3_aa"].isna())
-                | (self["fwr4_aa"].isna())
-            )
-        ]
-        # ensures that we start aligning at the very first codon
-        return _sanitized[
-            (_sanitized["v_germline_start"] == 1)
-            & (_sanitized["productive"])
-            & (_sanitized["vj_in_frame"])
-            & (_sanitized["fwr4_aa"].str.len() >= 8)
-        ]
+        return AirrTable(
+            self[
+                ~(
+                    (self["fwr1_aa"].isna())
+                    | (self["cdr1_aa"].isna())
+                    | (self["fwr2_aa"].isna())
+                    | (self["cdr2_aa"].isna())
+                    | (self["fwr3_aa"].isna())
+                    | (self["cdr3_aa"].isna())
+                    | (self["fwr4_aa"].isna())
+                )
+            ].copy()
+        )
 
-    def write_fasta(self, id_field: str, sequence_field: str, file_out: Path):
+    def write_fasta(self, id_field: str, sequence_field: str, file_out: Path) -> None:
         """given an id field and sequence field, write out dataframe to fasta
 
         Parameters
@@ -169,17 +163,18 @@ class AirrTable(pd.DataFrame):
             the file output path to fasta
         """
         with open(file_out, "w") as f:
+            # Todo: send this to a function
             for _, row in self.iterrows():
                 f.write(f">{row[id_field]}\n{row[sequence_field]}\n")
 
-    def get_genbank(self):
+    def get_genbank(self) -> List[GenBank]:
         _genbanks = []
         # go through as an iterator
         for row in self.iterrows():
             _genbanks.append(AirrTable.parse_row_to_genbank(row))
         return _genbanks
 
-    def to_genbank(self, filename: str, compression="gzip"):
+    def to_genbank(self, filename: str, compression: str = "gzip") -> None:
         """write airrtable to genbank file
 
         Parameters
@@ -191,7 +186,7 @@ class AirrTable(pd.DataFrame):
         _records = self.get_genbank()
         SeqIO.write(_records, filename, "genbank")
 
-    def _verify(self):
+    def _verify(self) -> None:
         # if there is any missing columns
         missing_columns = set(self.compliant_cols).difference(self.columns)
         if missing_columns:
@@ -312,15 +307,15 @@ class AirrTable(pd.DataFrame):
             )
         self._verified = True
 
-    def _get_aa_distance(self, X):
+    def _get_aa_distance(self, X: pd.Series) -> float:
         "get character levenshtrein distance, will work with '-' on alignments"
         first = X[0]
         second = X[1]
         if not first or not second or isinstance(first, float) or isinstance(second, float):
-            return
-        return (distance(first, second) / max(len(first), len(first))) * 100
+            return nan
+        return float((distance(first, second) / max(len(first), len(first))) * 100)
 
-    def _set_boolean(self, columns: List[str]):
+    def _set_boolean(self, columns: List[str]) -> None:
         """Change 'F' and 'T' strings to boolean dataframe values"""
         for column in columns:
             self[column] = (
@@ -411,22 +406,23 @@ class AirrTable(pd.DataFrame):
     def correct_indel(self) -> Union["AirrTable", "LinkedAirrTable"]:
         airrtable = pd.DataFrame(self)
         _fields = [
-            ("sequence_alignment_aa", "germline_alignment_aa"),
-            ("v_sequence_alignment_aa", "v_germline_alignment_aa"),
+            ["sequence_alignment_aa", "germline_alignment_aa"],
+            ["v_sequence_alignment_aa", "v_germline_alignment_aa"],
         ]
         if self.__class__ is LinkedAirrTable:
-            _linked_fields = []
+            _linked_fields: List[List[str]] = []
             for suffix in self._suffixes:
                 for field_1, field_2 in _fields:
                     _linked_fields.append([f"{field_1}{suffix}", f"{field_2}{suffix}"])
             _fields = _linked_fields
 
         def _get_indel_index(field_1: str, field_2: str) -> pd.Index:
-            return self[
+            index: pd.Index = self[
                 (self[field_1].str.len() != self[field_2].str.len()) & (~self[field_1].isna()) & (~self[field_2].isna())
             ].index
+            return index
 
-        def _update_align(airrtable: pd.DataFrame, field_1: str, field_2: str):
+        def _update_align(airrtable: pd.DataFrame, field_1: str, field_2: str) -> pd.DataFrame:
             # get indels in sequence_germline_alignment_aa that were not accounted for in the total alignment
             indel_indexes = _get_indel_index(field_1, field_2)
             logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid germline alignment")
@@ -447,7 +443,9 @@ class AirrTable(pd.DataFrame):
         return self.__class__(airrtable)
 
     @staticmethod
-    def parse_row_to_genbank(row: Tuple[int, pd.core.series.Series], suffix="") -> SeqRecord:
+    def parse_row_to_genbank(
+        row: Tuple[Optional[Hashable], pd.core.series.Series], suffix: str = ""
+    ) -> SeqRecord.SeqRecord:
         single_seq = row[1]
         # these should be joined by sequence, so even if its heavy or light suffix, sequence should be in common
         sequence = single_seq["sequence"]
@@ -671,17 +669,26 @@ class AirrTable(pd.DataFrame):
             at = AirrTable(at.reset_index())
         return at
 
-    def __eq__(self, other) -> bool:
-        """equals method for LinkedDataFrame"""
+    def __eq__(self, other: object) -> bool:  # type: ignore[override]
+        """equals method for AirrTable"""
         # needs to be cast to dataframe and na needs to be fileld
+        if not isinstance(other, AirrTable):
+            raise NotImplementedError("Can only compare AirrTable to AirrTable")
         _dataframe = pd.DataFrame(self).fillna("")
         other_dataframe = pd.DataFrame(other).fillna("")
-        return (_dataframe == other_dataframe).all().all()
+        _is_equal: bool = (_dataframe == other_dataframe).all().all()
+        return _is_equal
 
 
 class LinkedAirrTable(AirrTable):
-    def __init__(self, data=None, *args, suffixes=["_heavy", "_light"], key_column: str = "sequence_id", **kwargs):
-        super(LinkedAirrTable, self).__init__(data=data, *args, **kwargs)
+    def __init__(
+        self,
+        data: Any = None,
+        suffixes: List[str] = ["_heavy", "_light"],
+        key_column: str = "sequence_id",
+        copy: bool = False,
+    ):
+        super(LinkedAirrTable, self).__init__(data=data, copy=copy)
         if not isinstance(data, pd.core.internals.managers.BlockManager):
             if self.__class__ == LinkedAirrTable:
                 self._islinked = True
@@ -705,7 +712,7 @@ class LinkedAirrTable(AirrTable):
         return self.suffixes[0]
 
     @property
-    def right_suffix(self):
+    def right_suffix(self) -> str:
         return self.suffixes[1]
 
     @property
@@ -726,10 +733,10 @@ class LinkedAirrTable(AirrTable):
         if key_column not in common_columns:
             raise ValueError(f"{key_column} key column not in common columns")
         left_table = self[common_columns + left_rows]
-        left_airr_columns = list(map(lambda x: x.replace(self._suffixes[0], ""), list(left_table.columns)))
+        left_airr_columns: List[str] = list(map(lambda x: x.replace(self._suffixes[0], ""), list(left_table.columns)))  # type: ignore[no-any-return]
         left_table.columns = left_airr_columns
         right_table = self[common_columns + right_rows]
-        right_airr_columns = list(map(lambda x: x.replace(self._suffixes[1], ""), list(right_table.columns)))
+        right_airr_columns = list(map(lambda x: x.replace(self._suffixes[1], ""), list(right_table.columns)))  # type: ignore[no-any-return]
         right_table.columns = right_airr_columns
         return AirrTable(left_table, key_column=key_column), AirrTable(right_table, key_column=key_column)
 

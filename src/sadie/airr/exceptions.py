@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, List, Union
-from pandas.core.indexes.base import Index
+from typing import Any, List, Set, Union
 
 
 class Error(Exception):
@@ -14,7 +13,7 @@ class MissingAirrColumns(Error):
     Attributes:
     """
 
-    def __init__(self, missing_columns: Union[Index, List[Union[str, int]]]):
+    def __init__(self, missing_columns: Union[Set[str], List[Union[str, int]]]) -> None:
         super().__init__()
         self.missing_columns = missing_columns
 

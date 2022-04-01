@@ -3,7 +3,7 @@ import warnings
 from pathlib import Path
 
 # package/module level
-from sadie.reference.reference import YamlRef
+from sadie.reference import YamlRef
 from sadie.airr.igblast.igblast import ensure_prefix_to
 
 
