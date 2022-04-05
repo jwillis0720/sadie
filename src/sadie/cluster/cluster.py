@@ -3,9 +3,10 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
 from Levenshtein._levenshtein import distance as lev_distance
 from sadie.airr import AirrTable, LinkedAirrTable
-from typing import Union
+from typing import Any, List, Optional, Union
 import numpy as np
 import logging
+import numpy.typing as npt
 
 
 logger = logging.getLogger("Cluster")
@@ -20,10 +21,10 @@ class Cluster:
     def __init__(
         self,
         airrtable: Union[AirrTable, LinkedAirrTable],
-        linkage="complete",
-        groupby=None,
-        lookup=["cdr1_aa", "cdr2_aa", "cdr3_aa"],
-        pad_somatic=False,
+        linkage: str = "complete",
+        groupby: Optional[str] = None,
+        lookup: List[str] = ["cdr1_aa", "cdr2_aa", "cdr3_aa"],
+        pad_somatic: bool = False,
     ):
         """Initialize the clustering class.
 
@@ -86,7 +87,7 @@ class Cluster:
         else:
             self._type = "unlinked"
 
-    def _get_distance_df(self, df):
+    def _get_distance_df(self, df: pd.DataFrame) -> Any:
         """Given a dataframe, get the N x N pairwise distances using Levenshtein distance of the lookup"""
         if self.pad_somatic:
             _lookup = self.lookup + self.pad_somatic_values
@@ -94,30 +95,30 @@ class Cluster:
             _lookup = self.lookup
         df_lookup = df[_lookup].to_dict(orient="index")
 
-        def calc_lev(x, y):
+        def calc_lev(x: npt.ArrayLike, y: npt.ArrayLike) -> float:
             dist = 0
             for metric in self.lookup:
-                dist += lev_distance(str(df_lookup[x[0]][metric]), str(df_lookup[y[0]][metric]))
-            if self.pad_somatic and x[0] != y[0]:
+                dist += lev_distance(str(df_lookup[x[0]][metric]), str(df_lookup[y[0]][metric]))  # type: ignore[index]
+            if self.pad_somatic and x[0] != y[0]:  # type: ignore[index]
                 if len(self.pad_somatic_values) == 2:
-                    _mutations_1_heavy = df_lookup[x[0]][self.pad_somatic_values[0]]
-                    _mutations_2_heavy = df_lookup[y[0]][self.pad_somatic_values[0]]
-                    _mutations_1_light = df_lookup[x[0]][self.pad_somatic_values[1]]
-                    _mutations_2_light = df_lookup[y[0]][self.pad_somatic_values[1]]
+                    _mutations_1_heavy = df_lookup[x[0]][self.pad_somatic_values[0]]  # type: ignore[index]
+                    _mutations_2_heavy = df_lookup[y[0]][self.pad_somatic_values[0]]  # type: ignore[index]
+                    _mutations_1_light = df_lookup[x[0]][self.pad_somatic_values[1]]  # type: ignore[index]
+                    _mutations_2_light = df_lookup[y[0]][self.pad_somatic_values[1]]  # type: ignore[index]
                     subtract_heavy = len(np.intersect1d(_mutations_1_heavy, _mutations_2_heavy))
                     subtract_light = len(np.intersect1d(_mutations_1_light, _mutations_2_light))
                     subtract_all = subtract_heavy + subtract_light
                 else:
-                    _mutations_1 = df_lookup[x[0]][self.pad_somatic_values[0]]
-                    _mutations_2 = df_lookup[y[0]][self.pad_somatic_values[0]]
+                    _mutations_1 = df_lookup[x[0]][self.pad_somatic_values[0]]  # type: ignore[index]
+                    _mutations_2 = df_lookup[y[0]][self.pad_somatic_values[0]]  # type: ignore[index]
                     subtract_all = len(np.intersect1d(_mutations_1, _mutations_2))
                 dist -= subtract_all
             return max(dist, 0)
 
-        X = np.array(df.index).reshape(-1, 1)
+        X: npt.ArrayLike = np.array(df.index).reshape(-1, 1)
         return pairwise_distances(X, metric=calc_lev, n_jobs=-1)
 
-    def cluster(self, distance_threshold=3):
+    def cluster(self, distance_threshold:int=3) -> Union[AirrTable, LinkedAirrTable]:
         """Cluster the data.
 
         This method clusters the data using the specified linkage and affinity

@@ -1,5 +1,6 @@
-from typing import Union
+from typing import List, Union
 import logging
+import numpy as np
 
 # third party
 import pandas as pd
@@ -12,7 +13,7 @@ logger = logging.getLogger("AirrMethod")
 
 
 def run_mutational_analysis(
-    airrtable: Union[AirrTable, LinkedAirrTable], scheme: str, run_multiproc=True
+    airrtable: Union[AirrTable, LinkedAirrTable], scheme: str, run_multiproc: bool = True
 ) -> Union[AirrTable, LinkedAirrTable]:
     """Run a mutational analysis given a numbering scheme. Returns an AirrTable with added mutational analysis columns
 
@@ -45,14 +46,18 @@ def run_mutational_analysis(
         left_table = run_mutational_analysis(left_table, scheme, run_multiproc)
         right_table = run_mutational_analysis(right_table, scheme, run_multiproc)
         key = airrtable.key_column
-        return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=airrtable.suffixes), key_column=key)
+
+        l_suffix = airrtable.suffixes[0]
+        r_suffix = airrtable.suffixes[1]
+
+        return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
 
     if not airrtable.index.is_monotonic_increasing:
         raise IndexError(f"{airrtable.index} must be monotonic increasing")
 
     # create anarci api
     logger.info("Running ANARCI on germline alignment")
-    anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)
+    anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)  # type: ignore[no-untyped-call]
     germline_results_anarci = anarci_api.run_dataframe(
         airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,
@@ -103,7 +108,7 @@ def run_mutational_analysis(
             lambda x: x[0] + x.name + x[1], axis=1
         )
         if mutation_array.empty:
-            mutation_array = []
+            mutation_array = []  # type: ignore[assignment]
         else:
             mutation_array = mutation_array.to_list()
         mutation_arrays.append(mutation_array)
@@ -117,7 +122,7 @@ def run_mutational_analysis(
     )
 
 
-def _get_igl(row: pd.Series) -> str:
+def _get_igl(row: pd.Series) -> Union[str, float]:
     """Get infered germline sequences from Airr Row
 
     Parameters
@@ -134,7 +139,7 @@ def _get_igl(row: pd.Series) -> str:
     v_germline = row.v_germline_alignment_aa
     full_germline = row.germline_alignment_aa
     if isinstance(v_germline, float):
-        return
+        return np.nan
     cdr3_j_germline = full_germline[len(v_germline) :]
 
     # get mature components
@@ -146,7 +151,7 @@ def _get_igl(row: pd.Series) -> str:
     # this will happen on non-productive
     if len(cdr3_j_mature) != len(cdr3_j_germline):
         logger.debug(f"{row.name} - strange iGL")
-        return
+        return np.nan
 
     iGL_cdr3 = ""
     for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
@@ -155,7 +160,7 @@ def _get_igl(row: pd.Series) -> str:
             continue
         iGL_cdr3 += germline
 
-    full_igl = v_germline.replace("-", "") + iGL_cdr3.replace("-", "")
+    full_igl: str = v_germline.replace("-", "") + iGL_cdr3.replace("-", "")
     return full_igl
 
 
@@ -170,7 +175,9 @@ def run_igl_assignment(airrtable: Union[AirrTable, LinkedAirrTable]) -> Union[Ai
         left_table = run_igl_assignment(left_table)
         right_table = run_igl_assignment(right_table)
         key = airrtable.key_column
-        return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=airrtable.suffixes), key_column=key)
+        l_suffix = airrtable.suffixes[0]
+        r_suffix = airrtable.suffixes[1]
+        return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
 
     airrtable["iGL"] = airrtable.apply(_get_igl, axis=1)
     return airrtable

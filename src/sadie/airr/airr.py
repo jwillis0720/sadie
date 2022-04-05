@@ -9,7 +9,8 @@ import tempfile
 import warnings
 from pathlib import Path
 from types import GeneratorType
-from typing import Generator, List, Union
+from typing import Generator, Iterator, List, Tuple, Union
+from multiprocessing import cpu_count
 
 
 # third party
@@ -125,7 +126,7 @@ class Airr:
                 logger.error(f"Could not find igblast executable {igblast_exe}, searching path")
                 try:
                     # cast this to string for type checking
-                    self.executable = str(shutil.which("igblastn"))
+                    self.executable = Path(str(shutil.which("igblastn")))
                 except BadIgBLASTExe as e:
                     logger.error(f"package igblast and path igblast not working: {os.environ['PATH']}")
                     raise e
@@ -172,7 +173,7 @@ class Airr:
                 temp_directory = Path(tempfile.gettempdir()) / "airr/"
 
         # set igblast temp after instance temp
-        self.temp_directory = temp_directory
+        self.temp_directory = Path(temp_directory)
         self.igblast.temp_dir = self.temp_directory
 
         # Properties that will be passed to germline Data Class.
@@ -182,7 +183,7 @@ class Airr:
 
             # set custom directory path
             custom_directory = self.temp_directory / "custom/"
-            full_out_path = species.make_airr_database(custom_directory)
+            full_out_path = Path(species.make_airr_database(custom_directory))
 
             # what database type did they pass?
             database_names = species.get_database_types()
@@ -215,7 +216,7 @@ class Airr:
         self.igblast.organism = self.species
 
         if num_cpus == -1:
-            self.igblast.num_threads = os.cpu_count()
+            self.igblast.num_threads = cpu_count()
         else:
             self.igblast.num_threads = num_cpus
 
@@ -227,7 +228,7 @@ class Airr:
 
         # set airr specific attributes
         self.correct_indel = correct_indel
-        self.liable_seqs = []
+        self.liable_seqs: List[Union[str, int]] = []
 
         # Init pre run check to make sure everything is good
         # We don't have to do this now as it happens at execution.
@@ -238,7 +239,7 @@ class Airr:
         return self._adapt_penalty
 
     @adapt_penalty.setter
-    def adapt_penalty(self, adapt_penalty: bool):
+    def adapt_penalty(self, adapt_penalty: bool) -> None:
         if not isinstance(adapt_penalty, bool):
             raise TypeError(f"Adapt_penalty must be bool, not {type(adapt_penalty)}")
         self._adapt_penalty = adapt_penalty
@@ -252,7 +253,7 @@ class Airr:
         return self._temp_directory
 
     @temp_directory.setter
-    def temp_directory(self, temp_directory: Union[str, Path]):
+    def temp_directory(self, temp_directory: Union[str, Path]) -> None:
         if not isinstance(temp_directory, (str, Path)):
             raise TypeError(f"temp_directory must be str or Path, not {type(temp_directory)}")
 
@@ -279,7 +280,7 @@ class Airr:
         return self._igblast
 
     @igblast.setter
-    def igblast(self, igblast: IgBLASTN):
+    def igblast(self, igblast: IgBLASTN) -> None:
         if not isinstance(igblast, IgBLASTN):
             raise TypeError(f"{igblast} must be an instance of {IgBLASTN}")
         self._igblast = igblast
@@ -289,7 +290,7 @@ class Airr:
         return self._executable
 
     @executable.setter
-    def executable(self, path: Union[Path, str]):
+    def executable(self, path: Union[Path, str]) -> None:
         # none can be passed if which(igblastn) returns None
         if not path:
             raise BadIgBLASTExe(path, "No igblastn found")
@@ -306,7 +307,7 @@ class Airr:
         # set path as executable
         self._executable = path
 
-    def run_single(self, seq_id: str, seq: str, scfv=False) -> Union[AirrTable, LinkedAirrTable]:
+    def run_single(self, seq_id: str, seq: str, scfv: bool = False) -> Union[AirrTable, LinkedAirrTable]:
         """Run a single string sequence
 
         Parameters
@@ -332,9 +333,9 @@ class Airr:
         dataframe: pd.DataFrame,
         seq_id_field: Union[str, int],
         seq_field: Union[str, int],
-        scfv=False,
-        return_join=False,
-    ) -> AirrTable:
+        scfv: bool = False,
+        return_join: bool = False,
+    ) -> Union[AirrTable, pd.DataFrame]:
         """Pass dataframe and field and run airr.
 
         Parameters
@@ -369,7 +370,7 @@ class Airr:
                 f"{dataframe[dataframe[seq_id_field].duplicated()][seq_id_field]} is duplicated. Nees to be unique"
             )
 
-        def _get_seq_generator():
+        def _get_seq_generator() -> Iterator[SeqRecord]:
             for seq_id, seq in zip(
                 dataframe.reset_index()[seq_id_field],
                 dataframe.reset_index()[seq_field],
@@ -433,7 +434,7 @@ class Airr:
             results = self.run_fasta(temp_fasta.name, scfv=scfv)
         return results
 
-    def run_fasta(self, file: Path, scfv=False) -> Union[AirrTable, LinkedAirrTable]:
+    def run_fasta(self, file: Union[Path, str], scfv: bool = False) -> Union[AirrTable, LinkedAirrTable]:
         """Run airr annotator on a fasta file
 
         If it contains a scfv linked pair, it will annotate both heavy and light chain
@@ -467,22 +468,22 @@ class Airr:
         try:
             next(SeqIO.parse(file, "fasta"))
         except Exception:
-            raise BadRequstedFileType("", "fasta")
+            raise BadRequstedFileType("", ["fasta"])
 
         if scfv:
             logger.info("scfv file was passed")
             scfv_airr = self._run_scfv(file)
             if not scfv_airr.empty:
-                scfv_airr.insert(2, "species", self.species)
+                scfv_airr.insert(2, "species", pd.Series([self.species] * len(scfv_airr)))  #
             if self.correct_indel:
                 scfv_airr.correct_indel()
             return scfv_airr
 
         else:
             logger.info(f"Running blast on {file}")
-            result = self.igblast.run_file(file)
+            result = self.igblast.run_file(Path(file))
             logger.info(f"Ran blast on  {file}")
-            result.insert(2, "species", self.species)
+            result.insert(2, "species", pd.Series([self.species] * len(result)))
             result = AirrTable(result)
             result["v_penalty"] = self._v_gene_penalty
             result["d_penalty"] = self._d_gene_penalty
@@ -509,8 +510,8 @@ class Airr:
                                 temp_directory=self.temp_directory,
                                 adaptable=False,
                             )
-                            adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
-                            adapt_results = (
+                            adapt_results = pd.DataFrame(adaptable_api.run_dataframe(_start_df, "index", "sequence"))
+                            adapt_results = pd.DataFrame(
                                 adapt_results.rename({"sequence_id": "index"}, axis=1)
                                 .astype({"index": int})
                                 .set_index("index")
@@ -557,7 +558,7 @@ class Airr:
         return result
 
     # private run methods
-    def _run_scfv(self, file: Path) -> LinkedAirrTable:
+    def _run_scfv(self, file: Union[Path, str]) -> LinkedAirrTable:
         """An internal method kito run a special scfv execution on paired scfv or other linked chains
 
 
@@ -566,7 +567,7 @@ class Airr:
              - A joined heavy light airr table
         """
         # Do one round of blast on a file
-        result_a = self.igblast.run_file(file)
+        result_a = self.igblast.run_file(Path(file))
 
         # Now take out the results from the input sequence
         remaining_seq = (
@@ -654,7 +655,7 @@ class Airr:
         return Path(os.path.dirname(os.path.abspath(__file__))) / "bin" / system / executable
 
     @staticmethod
-    def get_available_datasets() -> List[str]:
+    def get_available_datasets() -> List[Tuple[str, str]]:
         return GermlineData.get_available_datasets()
 
     @staticmethod
@@ -668,8 +669,8 @@ class Airr:
         """
         return list(set(map(lambda x: x[0], GermlineData.get_available_datasets())))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.igblast.__repr__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.__repr__()

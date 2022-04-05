@@ -27,7 +27,7 @@ class GermlineData:
         species: str,
         database: str = "imgt",
         receptor: str = "Ig",
-        database_dir: Optional[str] = None,
+        database_dir: Union[Optional[str], Optional[Path]] = None,
     ):
         """
 

@@ -89,10 +89,10 @@ def airr(
         _records = input_object.get_combined_seq_records()
 
     else:  # we listed a signelf iel
-        input_object = SadieInputFile(input_path)
+        input_object = SadieInputFile(input_path)  # type: ignore[assignment]
         if output_path is None:
             output_path = input_path.parent / Path(input_path.stem + ".tsv.gz")
-        _records = input_object.get_seq_records()
+        _records = input_object.get_seq_records()  # type: ignore[attr-defined]
     output_object = SadieOutput(output_path)
     airr_table = airr.run_records(_records)
 

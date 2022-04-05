@@ -819,7 +819,7 @@ class IgBLASTN:
                     raise BadIgDATA(self.igdata)
 
     # Run methods
-    def run_file(self, file: Path) -> pd.DataFrame:
+    def run_file(self, file: Union[Path, str]) -> pd.DataFrame:
         """Run IgBlast on a file
 
         Parameters
