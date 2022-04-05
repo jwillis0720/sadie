@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Union
 import logging
 import numpy as np
 

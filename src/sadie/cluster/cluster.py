@@ -118,7 +118,7 @@ class Cluster:
         X: npt.ArrayLike = np.array(df.index).reshape(-1, 1)
         return pairwise_distances(X, metric=calc_lev, n_jobs=-1)
 
-    def cluster(self, distance_threshold:int=3) -> Union[AirrTable, LinkedAirrTable]:
+    def cluster(self, distance_threshold: int = 3) -> Union[AirrTable, LinkedAirrTable]:
         """Cluster the data.
 
         This method clusters the data using the specified linkage and affinity
