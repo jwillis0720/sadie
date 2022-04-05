@@ -38,7 +38,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: PreCommit
-        uses: pre-commit/action@v2.0.0
+        uses: pre-commit/action@v2.0.3
       - name: Unit Testing
         run: |
           pytest -x -n 2 -v tests/unit
