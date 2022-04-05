@@ -43,10 +43,10 @@ class GermlineData:
             self.base_dir = Path(database_dir).absolute()
         else:
             self.base_dir = Path(__file__).absolute().parent / "../data/germlines/"
-        self.blast_dir = str(self.base_dir) + f"/{database}/{receptor}/blastdb/{species}_"
-        self.v_gene_dir = self.blast_dir.__str__() + "V"
-        self.d_gene_dir = self.blast_dir.__str__() + "D"
-        self.j_gene_dir = self.blast_dir.__str__() + "J"
+        self.blast_dir = Path(str(self.base_dir) + f"/{database}/{receptor}/blastdb/{species}_")
+        self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
+        self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
+        self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
         self.aux_path = self.base_dir / f"{database}/aux_db/{species}_gl.aux"
         self.igdata = self.base_dir / f"{database}/{receptor}/"
 
@@ -176,7 +176,7 @@ class GermlineData:
            available datasets (common_name, custom|imgt, functional|all)
         """
         y = YamlRef()
-        db_types = []
+        db_types: List[Tuple[str, str]] = []
         for database_type in y.yaml:
             for common in y.yaml[database_type]:
                 if (common, database_type) not in db_types:
