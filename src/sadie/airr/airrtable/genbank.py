@@ -1,3 +1,4 @@
+from typing import Dict, List, Union
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import datetime
@@ -39,7 +40,14 @@ feature_types = [
 
 
 class GenBankFeature:
-    def __init__(self, start, end, feature_type, id=None, qualifier_dict=None):
+    def __init__(
+        self,
+        start: int,
+        end: int,
+        feature_type: str,
+        id: Union[str, None] = None,
+        qualifier_dict: Union[Dict[str, str], None] = None,
+    ):
         self.start = start
         self.end = end
         self.id = id
@@ -61,7 +69,7 @@ class GenBankFeature:
         return self._feature_type
 
     @feature_type.setter
-    def feature_type(self, t: str):
+    def feature_type(self, t: str) -> None:
         if t not in feature_types:
             raise TypeError(f"{t} must be in {feature_types}")
         else:
@@ -73,7 +81,9 @@ class GenBankFeature:
 
 
 class GenBank:
-    def __init__(self, sequence, id, name=None, description=None):
+    def __init__(
+        self, sequence: Union[str, Seq], id: str, name: Union[str, None] = None, description: Union[str, None] = None
+    ):
         self.sequence = sequence
         self.id = id
         if name:
@@ -86,19 +96,20 @@ class GenBank:
         self._record = SeqRecord(self.sequence, id=self.id, name=self.name, description=self.description)
 
     @property
-    def record(self):
+    def record(self) -> SeqRecord:
         return self._record
 
     @property
-    def features(self):
-        return self.record.features
+    def features(self) -> List[SeqFeature]:
+        _a: List[SeqFeature] = self.record.features
+        return _a
 
     @property
-    def sequence(self):
+    def sequence(self) -> Seq:
         return self._sequence
 
     @sequence.setter
-    def sequence(self, seq):
+    def sequence(self, seq: Union[str, Seq]) -> None:
         if isinstance(seq, str):
             self._sequence = Seq(seq)
         elif isinstance(seq, Seq):
@@ -106,7 +117,7 @@ class GenBank:
         else:
             raise TypeError(f"{type(str)} must be instance of str or Bio.Seq")
 
-    def add_feature(self, feature: GenBankFeature):
+    def add_feature(self, feature: GenBankFeature) -> None:
         if not isinstance(feature, GenBankFeature):
             raise TypeError(f"{feature} must be of type {GenBankFeature}")
         else:

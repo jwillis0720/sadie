@@ -1,5 +1,6 @@
 __version__ = "0.4.5"
 from sadie.reference.reference import Reference, G3Error
+from sadie.reference.yaml import YamlRef
 from sadie.reference.settings import (
     RECEPTORS,
     IMGT_DEF_nt,
@@ -30,4 +31,5 @@ __all__ = [
     "REVERSE_IMGT_LOOKUP",
     "SEGMENTS",
     "SEGMENTS_INTERNAL_DATA",
+    "YamlRef",
 ]

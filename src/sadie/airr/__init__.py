@@ -1,6 +1,7 @@
 __version__ = "0.4.5"
 
-from .airr import Airr, BadDataSet, BadRequstedFileType, GermlineData
-from .airrtable import AirrTable, LinkedAirrTable
+from .airr import Airr
+from sadie.airr.igblast import GermlineData
+from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 
-__all__ = ["Airr", "AirrTable", "LinkedAirrTable", "BadDataSet", "BadRequstedFileType", "GermlineData"]
+__all__ = ["Airr", "AirrTable", "LinkedAirrTable", "GermlineData"]

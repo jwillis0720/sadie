@@ -1,9 +1,9 @@
-import os
+from typing import List, Optional, Tuple, Union
 import warnings
 from pathlib import Path
 
 # package/module level
-from sadie.reference.reference import YamlRef
+from sadie.reference import YamlRef
 from sadie.airr.igblast.igblast import ensure_prefix_to
 
 
@@ -27,7 +27,7 @@ class GermlineData:
         species: str,
         database: str = "imgt",
         receptor: str = "Ig",
-        database_dir: str = None,
+        database_dir: Union[Optional[str], Optional[Path]] = None,
     ):
         """
 
@@ -42,13 +42,13 @@ class GermlineData:
         if database_dir:
             self.base_dir = Path(database_dir).absolute()
         else:
-            self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data/germlines"))
-        self.blast_dir = os.path.join(self.base_dir, f"{database}/{receptor}/blastdb/{species}_")
-        self.v_gene_dir = self.blast_dir + "V"
-        self.d_gene_dir = self.blast_dir + "D"
-        self.j_gene_dir = self.blast_dir + "J"
-        self.aux_path = os.path.join(self.base_dir, f"{database}/aux_db/{species}_gl.aux")
-        self.igdata = os.path.join(self.base_dir, f"{database}/{receptor}/")
+            self.base_dir = Path(__file__).absolute().parent / "../data/germlines/"
+        self.blast_dir = Path(str(self.base_dir) + f"/{database}/{receptor}/blastdb/{species}_")
+        self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
+        self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
+        self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
+        self.aux_path = self.base_dir / f"{database}/aux_db/{species}_gl.aux"
+        self.igdata = self.base_dir / f"{database}/{receptor}/"
 
     @property
     def base_dir(self) -> Path:
@@ -62,23 +62,22 @@ class GermlineData:
         return self._base_dir
 
     @base_dir.setter
-    def base_dir(self, directory: str):
+    def base_dir(self, directory: Union[str, Path]) -> None:
         _path = Path(directory)
         if not _path.exists():
             raise FileNotFoundError(f"Base directory, {directory} not found")
-        self._base_dir = directory
+        self._base_dir = _path
 
     @property
     def blast_dir(self) -> Path:
         return self._blast_dir
 
     @blast_dir.setter
-    def blast_dir(self, directory: str):
+    def blast_dir(self, directory: Union[str, Path]) -> None:
         # Must be a parent since this is not a valid path yet
-        _path = Path(directory).parent
-        if not _path.exists():
+        if not Path(directory).parent.exists():
             raise FileNotFoundError(f"Blast directory, {directory} not found")
-        self._blast_dir = directory
+        self._blast_dir = Path(directory)
 
     @property
     def v_gene_dir(self) -> Path:
@@ -93,7 +92,7 @@ class GermlineData:
         return self._v_gene_dir
 
     @v_gene_dir.setter
-    def v_gene_dir(self, directory: str):
+    def v_gene_dir(self, directory: Union[Path, str]) -> None:
         _path = Path(directory)
         if not ensure_prefix_to(_path):
             raise FileNotFoundError(f"V gene directory glob, {directory} not found")
@@ -112,7 +111,7 @@ class GermlineData:
         return self._d_gene_dir
 
     @d_gene_dir.setter
-    def d_gene_dir(self, directory: str):
+    def d_gene_dir(self, directory: Union[str, Path]) -> None:
         _path = Path(directory)
         if not ensure_prefix_to(_path):
             warnings.warn(f"D gene directory not found for {self.species}", UserWarning)
@@ -131,7 +130,7 @@ class GermlineData:
         return self._j_gene_dir
 
     @j_gene_dir.setter
-    def j_gene_dir(self, directory: str):
+    def j_gene_dir(self, directory: Union[str, Path]) -> None:
         _path = Path(directory)
         if not ensure_prefix_to(_path):
             raise FileNotFoundError(f"J gene directory glob, {directory} not found")
@@ -150,7 +149,7 @@ class GermlineData:
         return self._aux_path
 
     @aux_path.setter
-    def aux_path(self, directory: str):
+    def aux_path(self, directory: Union[str, Path]) -> None:
         _path = Path(directory)
         if not _path.exists():
             raise FileNotFoundError(f"J gene directory glob, {directory} not found")
@@ -161,14 +160,14 @@ class GermlineData:
         return self._igdata
 
     @igdata.setter
-    def igdata(self, directory: Path):
+    def igdata(self, directory: Path) -> None:
         _path = Path(directory)
         if not _path.exists():
             raise FileNotFoundError(f"IGDATA, {directory} not found")
         self._igdata = _path
 
     @staticmethod
-    def get_available_datasets() -> list:
+    def get_available_datasets() -> List[Tuple[str, str]]:
         """A static non-instantiated method to get a list of avaialble species with the builtin data
 
         Returns
@@ -177,7 +176,7 @@ class GermlineData:
            available datasets (common_name, custom|imgt, functional|all)
         """
         y = YamlRef()
-        db_types = []
+        db_types: List[Tuple[str, str]] = []
         for database_type in y.yaml:
             for common in y.yaml[database_type]:
                 if (common, database_type) not in db_types:

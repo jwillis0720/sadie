@@ -1,7 +1,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 from urllib.parse import quote as url_quote
 
 import pandas as pd
@@ -28,7 +28,7 @@ class G3Error(Exception):
         super().__init__(self.message)
 
 
-def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
+def _write_out_fasta(sequences: List[SeqRecord], outpath: Union[str, Path]) -> Path:
     """Conveinence function to write out a fasta file
 
     Parameters
@@ -44,9 +44,9 @@ def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
         The fully qualified path
     """
     logger = logging.getLogger(__file__)
-    if isinstance(outpath, Path):
-        outpath = str(outpath)
-    output_fasta = outpath + ".fasta"
+    if isinstance(outpath, str):
+        outpath = Path(outpath)
+    output_fasta = outpath.with_suffix(".fasta")
     logger.debug("output fasta {}".format(output_fasta))
 
     with open(output_fasta, "w") as f:
@@ -57,7 +57,7 @@ def _write_out_fasta(sequences: List[SeqRecord], outpath: Path) -> Path:
     return output_fasta
 
 
-def get_species_from_database(database_json: List[Dict]) -> List[str]:
+def get_species_from_database(database_json: List[Dict[str, str]]) -> List[str]:
     """Get a list of available species from the G3 database
 
     Parameters
@@ -72,7 +72,7 @@ def get_species_from_database(database_json: List[Dict]) -> List[str]:
     return list(set(map(lambda x: x["common"], database_json)))
 
 
-def get_database(source: str, custom_endpoint: Union[str, None] = None) -> List[Dict]:
+def get_database(source: str, custom_endpoint: Union[str, None] = None) -> List[Dict[str, str]]:
     """Get the all entries of either the IMGT or Custom databases. This function calls on the G3 API
 
     Parameters
@@ -99,10 +99,11 @@ def get_database(source: str, custom_endpoint: Union[str, None] = None) -> List[
         error_log = f"Error loading database: {response.status_code}, {response.text}"
         logger.error(error_log)
         raise G3Error(error_log)
-    return response.json()
+    response_json: List[Dict[str, str]] = response.json()
+    return response_json
 
 
-def get_loaded_database() -> dict:
+def get_loaded_database() -> Dict[str, List[Dict[str, str]]]:
     """Get G3 database , wrapped in this function so we don't call on response when module is loaded
 
     Returns
@@ -124,20 +125,20 @@ class Reference:
         endpoint : str, optional
            The endpoint API address to get the data. Defaults to the G3 API.
         """
-        self.data = []
+        self.data: List[Dict[str, str]] = []
         self.endpoint = endpoint
 
     @property
-    def endpoint(self):
+    def endpoint(self) -> str:
         return self._endpoint
 
     @endpoint.setter
-    def endpoint(self, endpoint: str):
+    def endpoint(self, endpoint: str) -> None:
         if requests.get(endpoint).status_code != 200:
             raise G3Error(f"{endpoint} is not a valid G3 API endpoint or is down")
         self._endpoint = endpoint
 
-    def add_gene(self, gene: dict):
+    def add_gene(self, gene: Dict[str, str]) -> None:
         """Add a single gene to the reference data
 
         Parameters
@@ -157,7 +158,7 @@ class Reference:
         # add dictionaries to list from G3
         self.data.append(self._get_gene(gene_valid))
 
-    def add_genes(self, genes: List[Dict]):
+    def add_genes(self, genes: Dict[str, Union[str, List[str]]]) -> None:
         """Add a List of genes to the reference data object
 
         Parameters
@@ -165,7 +166,7 @@ class Reference:
         genes : List[Dict]
             _description_
         """
-        genes_valid = GeneEntries(**genes)
+        genes_valid = GeneEntries(**genes)  # type: ignore
         self.data += self._get_genes(genes_valid)
 
     def get_dataframe(self) -> pd.DataFrame:
@@ -177,7 +178,7 @@ class Reference:
         return list(set((map(lambda x: x["source"], self.data))))
 
     @staticmethod
-    def parse_yaml(yaml_path: Path = None) -> "Reference":
+    def parse_yaml(yaml_path: Optional[Path] = None) -> "Reference":
         """Parse a yaml file into a reference file object
 
         Parameters
@@ -198,7 +199,7 @@ class Reference:
         return ref
 
     @staticmethod
-    def read_file(path: Union[Path, str], type="csv") -> "Reference":
+    def read_file(path: Union[Path, str], type: str = "csv") -> "Reference":
         """Read file into a reference object
 
         Parameters
@@ -230,12 +231,17 @@ class Reference:
         if type == "csv":
             _data = pd.read_csv(path, index_col=0).to_dict(orient="records")
         elif type == "json":
-            _data = pd.read_json(path, orient="records")
+            _data = pd.read_json(path, orient="records").to_dict(orient="records")
         elif type == "feather":
             _data = pd.read_feather(path).to_dict(orient="records")
         else:
             raise ValueError(f"{type} is not a valid file type")
-        ref.data = _data
+        new_data: List[Dict[str, str]] = list(map(lambda x: {str(i): str(j) for i, j in x.items()}, _data))
+        # for entry in _data:
+        #     for i, k in entry.items():
+        #         new_data.append({str(i): str(k)})
+        # ref.data = new_data
+        ref.data = new_data
         return ref
 
     def make_airr_database(self, output_path: Path) -> Path:
@@ -277,7 +283,7 @@ class Reference:
         logger.info(f"Generated Aux Data {output_path}/aux_db")
         return output_path
 
-    def _g3_get(self, query: str) -> Tuple[int, Dict]:
+    def _g3_get(self, query: str) -> Tuple[int, List[Dict[str, str]]]:
         """Use the G3 Restful API
 
         Parameters
@@ -287,7 +293,7 @@ class Reference:
 
         Returns
         -------
-        Tuple[int, Dict]
+        Tuple[int, List[Dict[str,st]]]
             status code and response
 
         Raises
@@ -302,7 +308,7 @@ class Reference:
             raise G3Error(f"{response.url} error G3 database response: {response.status_code}\n{response.text}")
         return response.status_code, response.json()
 
-    def _get_gene(self, gene: GeneEntry) -> dict:
+    def _get_gene(self, gene: GeneEntry) -> Dict[str, str]:
         """Get a single gene from the G3 Restful API using a GeneEntry Model
 
         Parameters
@@ -312,8 +318,7 @@ class Reference:
 
         Returns
         -------
-        dict
-            Json -> Dict response
+         Single Json -> Dict response
 
         Raises
         ------
@@ -337,11 +342,13 @@ class Reference:
 
         # put the species in sub species in because they are not a part of G3.
         logger.debug(f"have {len(response_json)} genes")
-        response_json[0]["sub_species"] = gene.sub_species
-        response_json[0]["species"] = gene.species
-        return response_json[0]
+        response_data: Dict[str, str] = response_json[0]
+        response_data["sub_species"] = str(gene.sub_species)
+        # sub_species will never return None, only can be assigned NOne
+        response_data["species"] = gene.species
+        return response_data
 
-    def _get_genes(self, genes: GeneEntries) -> List[dict]:
+    def _get_genes(self, genes: GeneEntries) -> List[Dict[str, str]]:
         """Get a list of genes from entries model. Similar to _get_gene but for multiple genes
 
         Parameters
@@ -372,7 +379,9 @@ class Reference:
 
         # add the sub_species to the response json
         for document in response_json:
-            document["sub_species"] = genes.sub_species
+            document["sub_species"] = str(
+                genes.sub_species
+            )  # must cast this to str since validator converts an optional None to str
             document["species"] = genes.species
         # only get what the person reqeusted in the json.
         # this is faster than getting individual genes from the g3 api
@@ -425,7 +434,7 @@ class Reference:
                     fasta_file = _write_out_fasta(seqs, out_segment)
 
                     # Convert fasta file to blast db
-                    write_blast_db(fasta_file, fasta_file.split(".fasta")[0])
+                    write_blast_db(fasta_file, Path(str(fasta_file).split(".fasta")[0]))
                     logger.info(f"Wrote blast for {fasta_file}")
 
     def _make_auxillary_file(self, outpath: Path) -> None:
@@ -488,18 +497,17 @@ class Reference:
                 )
                 logger.info(f"Wrote aux to {aux_file_species}")
 
-    def _make_blast_db_for_internal(self, df: pd.DataFrame, dboutput: Union[str, Path]):
+    def _make_blast_db_for_internal(self, df: pd.DataFrame, dboutput: Union[str, Path]) -> None:
         """Make a blast database from dataframe"""
-        out_fasta = str(dboutput) + ".fasta"
+        out_fasta = Path(dboutput).with_suffix(".fasta")
         logger.debug("Writing fasta to {}".format(out_fasta))
         with open(out_fasta, "w") as f:
             for id_, seq in zip(df["gene"], df["sequence"]):
                 f.write(">{}\n{}\n".format(id_, seq))
         # get basename
-        out_db = out_fasta.split(".fasta")[0]
-        write_blast_db(out_fasta, out_db)
+        write_blast_db(out_fasta, dboutput)
 
-    def _make_internal_annotaion_file(self, outpath: Path):
+    def _make_internal_annotaion_file(self, outpath: Path) -> None:
         """Generate the internal database file for IgBlast
 
         Parameters

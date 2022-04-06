@@ -9,7 +9,9 @@ from typing import Union
 logger = logging.getLogger(__name__)
 
 
-def write_blast_db(filename: Union[Path, str], output_db: Union[Path, str], make_blast_db_bin: Union[Path, str] = None):
+def write_blast_db(
+    filename: Union[Path, str], output_db: Union[Path, str], make_blast_db_bin: Union[Path, None, str] = None
+) -> None:
     """Write input fasta to a blast database
 
     Parameters
