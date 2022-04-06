@@ -16,5 +16,6 @@ jobs:
           python-version: 3.9
       - run: |
           pip install .
+          pip install types-requests types-PyYAML pandas-stubs
           pip install mypy==0.941
       - run: sh ./scripts/check_mypy.sh
