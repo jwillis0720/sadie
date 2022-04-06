@@ -1,4 +1,4 @@
-__version__ = "0.4.5"
+__version__ = "0.4.6"
 from sadie.reference.reference import Reference, G3Error
 from sadie.reference.yaml import YamlRef
 from sadie.reference.settings import (
