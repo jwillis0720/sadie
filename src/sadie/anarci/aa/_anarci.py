@@ -67,7 +67,18 @@ import warnings
 from Bio.SearchIO.HmmerIO import Hmmer3TextParser as HMMERParser
 
 # Import from the schemes submodule
-from ._schemes import *
+from ._schemes import (
+    number_kabat_heavy,
+    number_kabat_light,
+    number_chothia_heavy,
+    number_chothia_light,
+    number_martin_heavy,
+    number_martin_light,
+    number_imgt,
+    number_aho,
+    number_wolfguy_heavy,
+    number_wolfguy_light,
+)
 from ._germlines import all_germlines
 from ...antibody.exception import LongHCDR3Error, AnarciDecreasing
 
@@ -310,11 +321,11 @@ def parsed_output(sequences, numbered, details):
                 all_pos[c] = set()
 
             # Update the insertion order for the scheme. i.e. is it A B C or C B A (e.g. imgt 111 and 112 repectively)
-            l = -1
+            tmp_p = -1
             r = 0
             for p, _ in numbered[i][j][0]:
-                if p[0] != l:
-                    l = p[0]
+                if p[0] != tmp_p:
+                    tmp_p = p[0]
                     r = 0
                 else:
                     r += 1
@@ -322,7 +333,6 @@ def parsed_output(sequences, numbered, details):
                 all_pos[c].add(p)
 
     summary_dataframes = []
-    alignment_dataframes = []
     # Write a new file for each chain type. Kappa and lambda are written together as light chains.
     for cts in ["H", "KL", "A", "B", "G", "D"]:
         if cts in chain_types:
@@ -379,17 +389,6 @@ def parsed_output(sequences, numbered, details):
                 d = dict(numbered[i][j][0])
                 seq_ = [d.get(p, "-") for p in positions]
                 numbering_ = [[int(p[0]), p[1]] for p in positions]
-                # align_df = pd.DataFrame(
-                #     {
-                #         "Id": line[0],
-                #         "Chain": cts,
-                #         "Numbering": "",
-                #         "Insertion": "",
-                #         "Sequence": seq_,
-                #     }
-                # )
-                # align_df[["Numbering", "Insertion"]] = numbering_
-                # align_df["Numbering"] = align_df["Numbering"].astype(int)
                 assert len(line) == len(fields)
                 _df = pd.Series(line, index=fields)
                 _df["Chain"] = cts
@@ -397,6 +396,7 @@ def parsed_output(sequences, numbered, details):
                 _df["Insertion"] = list(map(lambda x: x[1].strip(), numbering_))
                 _df["Numbered_Sequence"] = seq_
                 summary_dataframes.append(_df)
+
     return summary_dataframes
 
 
@@ -435,11 +435,11 @@ def csv_output(sequences, numbered, details, outfileroot):
                 all_pos[c] = set()
 
             # Update the insertion order for the scheme. i.e. is it A B C or C B A (e.g. imgt 111 and 112 repectively)
-            l = -1
+            tmp_p = -1
             r = 0
             for p, _ in numbered[i][j][0]:
-                if p[0] != l:
-                    l = p[0]
+                if p[0] != tmp_p:
+                    tmp_p = p[0]
                     r = 0
                 else:
                     r += 1
@@ -759,10 +759,6 @@ def run_hmmer(
     pr_stdout, pr_stderr = process.communicate()
 
     if pr_stderr:
-        # _f = os.fdopen(
-        #     output_filehandle
-        # )  # This is to remove the filedescriptor from the os. I have had problems with it before.
-        # _f.close()
         print(pr_stdout)
         raise HMMscanError(pr_stderr.decode("utf-8"))
     results = parse_hmmer_output(
@@ -1322,5 +1318,5 @@ def number(
         return False, False
 
 
-if __name__ == "__main__":
-    Anarci()
+# if __name__ == "__main__":
+#     Anarci()
