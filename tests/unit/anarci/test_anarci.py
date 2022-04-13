@@ -104,7 +104,7 @@ def test_alternate_numbering():
 
 
 def test_anarci_multi_input():
-    anarci_api = Anarci(run_multiproc=True)
+    anarci_api = Anarci()
     seq_records = [
         SeqRecord(
             Seq(
@@ -712,7 +712,7 @@ def test_imgt():
 
 
 def test_anarci_multi_on():
-    anarci_api = Anarci(run_multiproc=True, assign_germline=False)
+    anarci_api = Anarci(run_multiproc=True)
     seq_records = [
         SeqRecord(
             Seq(
@@ -726,7 +726,7 @@ def test_anarci_multi_on():
     
     
 def test_anarci_multi_off():
-    anarci_api = Anarci(run_multiproc=False, assign_germline=False)
+    anarci_api = Anarci(run_multiproc=False)
     seq_records = [
         SeqRecord(
             Seq(
@@ -740,7 +740,7 @@ def test_anarci_multi_off():
     
     
 if __name__ == "__main__":
-    for f in [test_anarci_multi_off]:
+    for f in [test_anarci_multi_off, test_anarci_multi_on]:
         profiler = Profiler()
         profiler.start()
         f()
