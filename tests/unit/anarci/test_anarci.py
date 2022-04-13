@@ -711,36 +711,94 @@ def test_imgt():
     number_imgt(state_vector, sequence)
 
 
-def test_anarci_multi_on():
+def benchmark_anarci_multi_on():
     anarci_api = Anarci(run_multiproc=True)
-    seq_records = [
-        SeqRecord(
-            Seq(
-                "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
-            ),
-            id=f"DupulimabH{i}",
+    seq_records = []
+    [
+        seq_records.extend(
+            [
+                SeqRecord(
+                    Seq(
+                        "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
+                    ),
+                    id=f"DupulimabH{i}",
+                ),
+                SeqRecord(
+                    Seq(
+                        "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
+                    ),
+                    id=f"DupulimabL{i}",
+                ),
+            ]
         )
-        for i in range(1000)
+        for i in range(500)
     ]
-    _ = anarci_api.run_multiple(seq_records)
-    
-    
-def test_anarci_multi_off():
+    results = anarci_api.run_multiple(seq_records)
+    assert isinstance(results, AnarciResults)
+    single_result_1 = results.query("Id=='DupulimabH0'").iloc[0]
+    single_result_2 = results.query("Id=='DupulimabL0'").iloc[0]
+    assert single_result_1.fwr1_aa_gaps == "EVQLVESGG-GLEQPGGSLRLSCAGS"
+    assert single_result_1.cdr1_aa_gaps == "GFTF----RDYA"
+    assert single_result_1.fwr2_aa_gaps == "MTWVRQAPGKGLEWVSS"
+    assert single_result_1.cdr2_aa_gaps == "ISGS--GGNT"
+    assert single_result_1.fwr3_aa_gaps == "YYADSVK-GRFTISRDNSKNTLYLQMNSLRAEDTAVYYC"
+    assert single_result_1.cdr3_aa_gaps == "AKDRLSITIRPRYYGLDV"
+    assert single_result_1.fwr4_aa_gaps == "WGQGTTVTVSS"
+
+    assert single_result_2.fwr1_aa_gaps == "DIVMTQSPLSLPVTPGEPASISCRSS"
+    assert single_result_2.cdr1_aa_gaps == "QSLLYS-IGYNY"
+    assert single_result_2.fwr2_aa_gaps == "LDWYLQKSGQSPQLLIY"
+    assert single_result_2.cdr2_aa_gaps == "LG-------S"
+    assert single_result_2.fwr3_aa_gaps == "NRASGVP-DRFSGSG--SGTDFTLKISRVEAEDVGFYYC"
+    assert single_result_2.cdr3_aa_gaps == "MQALQ----TPYT"
+    assert single_result_2.fwr4_aa_gaps == "FGQGTKLEIK"
+
+
+def benchmark_anarci_multi_off():
     anarci_api = Anarci(run_multiproc=False)
-    seq_records = [
-        SeqRecord(
-            Seq(
-                "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
-            ),
-            id=f"DupulimabH{i}",
+    seq_records = []
+    [
+        seq_records.extend(
+            [
+                SeqRecord(
+                    Seq(
+                        "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
+                    ),
+                    id=f"DupulimabH{i}",
+                ),
+                SeqRecord(
+                    Seq(
+                        "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
+                    ),
+                    id=f"DupulimabL{i}",
+                ),
+            ]
         )
-        for i in range(1000)
+        for i in range(500)
     ]
-    _ = anarci_api.run_multiple(seq_records)
-    
-    
+    results = anarci_api.run_multiple(seq_records)
+    assert isinstance(results, AnarciResults)
+    single_result_1 = results.query("Id=='DupulimabH0'").iloc[0]
+    single_result_2 = results.query("Id=='DupulimabL0'").iloc[0]
+    assert single_result_1.fwr1_aa_gaps == "EVQLVESGG-GLEQPGGSLRLSCAGS"
+    assert single_result_1.cdr1_aa_gaps == "GFTF----RDYA"
+    assert single_result_1.fwr2_aa_gaps == "MTWVRQAPGKGLEWVSS"
+    assert single_result_1.cdr2_aa_gaps == "ISGS--GGNT"
+    assert single_result_1.fwr3_aa_gaps == "YYADSVK-GRFTISRDNSKNTLYLQMNSLRAEDTAVYYC"
+    assert single_result_1.cdr3_aa_gaps == "AKDRLSITIRPRYYGLDV"
+    assert single_result_1.fwr4_aa_gaps == "WGQGTTVTVSS"
+
+    assert single_result_2.fwr1_aa_gaps == "DIVMTQSPLSLPVTPGEPASISCRSS"
+    assert single_result_2.cdr1_aa_gaps == "QSLLYS-IGYNY"
+    assert single_result_2.fwr2_aa_gaps == "LDWYLQKSGQSPQLLIY"
+    assert single_result_2.cdr2_aa_gaps == "LG-------S"
+    assert single_result_2.fwr3_aa_gaps == "NRASGVP-DRFSGSG--SGTDFTLKISRVEAEDVGFYYC"
+    assert single_result_2.cdr3_aa_gaps == "MQALQ----TPYT"
+    assert single_result_2.fwr4_aa_gaps == "FGQGTKLEIK"
+
+
 if __name__ == "__main__":
-    for f in [test_anarci_multi_off, test_anarci_multi_on]:
+    for f in [benchmark_anarci_multi_off, benchmark_anarci_multi_on]:
         profiler = Profiler()
         profiler.start()
         f()
