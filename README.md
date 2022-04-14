@@ -29,7 +29,7 @@
     <a href="https://github.com/pre-commit/pre-commit">
     <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
         alt="pre commit">
-    <a href=https://pypi.org/project/sadie-antibody">
+    <a href="https://pypi.org/project/sadie-antibody">
     <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
         alt='pypi'>
     <a href="https://sadie.jordanrwillis.com" >
@@ -44,9 +44,9 @@
 
 <!-- use a href so you can use _blank to open new tab -->
 
-**Documentation**: <a href="https://sadie.jordanrwillis.com" target="_blank">https://sadie.jordanrwillis.com</a>
+**Documentation**: <a href="<<https://sadie.jordanrwillis.com>>" target="_blank">https://sadie.jordanrwillis.com</a>
 
-**Source Code**: <a href="https://github.com/jwillis0720/sadie" target="_blank">https://github.com/jwillis0720/sadie</a>
+**Source Code**: <a href="<<https://github.com/jwillis0720/sadie>>" target="_blank">https://github.com/jwillis0720/sadie</a>
 
 ---
 
@@ -73,17 +73,17 @@ SADIE is billed as a "**complete antibody library**", not because it aims to do 
 Installation is handled using the python package installer `pip`
 
 ```console
-$ pip install sadie-antibody
+pip install sadie-antibody
 ```
 
-### Development installation.
+### Development installation
 
 !!! info
 Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
 
 ```console
-$ git clone git@github.com/jwillis0720/sadie.git
-$ pip install -e .[dev]
+git clone git@github.com/jwillis0720/sadie.git
+pip install -e .[dev]
 ```
 
 ## The Littlest Usage
@@ -95,7 +95,7 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 Annotate antibody sequences only from functional human imgt antibodies to a gzip output
 
 ```console
-$ airr -q my_sequecnes.fasta -s human -d imgt
+airr -q my_sequecnes.fasta -s human -d imgt
 ```
 
 ### API
