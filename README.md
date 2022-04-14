@@ -1,7 +1,7 @@
 <!-- <h2 align="center" style="font-family:verdana;font-size:150%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</h2> -->
 <h2 align="center" style="font-family:verdana;font-size:150%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</h2>
 <div align="center">
-  <img src="docs/img/Sadie.svg" alt="SADIE" style="margin:0.5em;width:50%">
+  <img src="https://sadiestaticcrm.s3.us-west-2.amazonaws.com/Sadie.svg" alt="SADIE" style="margin:0.5em;width:50%">
 </div>
 
 <div class="flex-container" align="center">
@@ -17,8 +17,8 @@
     <a href="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg">
     <img src="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg"
          alt="Static Type">
-    <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue">
-    <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue"
+    <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue">
+    <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue"
         alt="Python Version">
     <a href="https://github.com/psf/black">
     <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
@@ -29,7 +29,7 @@
     <a href="https://github.com/pre-commit/pre-commit">
     <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
         alt="pre commit">
-    <a href="https://github.com/pre-commit/pre-commit">
+    <a href="https://pypi.org/project/sadie-antibody">
     <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
         alt='pypi'>
     <a href="https://sadie.jordanrwillis.com" >
@@ -43,25 +43,26 @@
 ---
 
 <!-- use a href so you can use _blank to open new tab -->
+
 **Documentation**: <a href="https://sadie.jordanrwillis.com" target="_blank">https://sadie.jordanrwillis.com</a>
 
 **Source Code**: <a href="https://github.com/jwillis0720/sadie" target="_blank">https://github.com/jwillis0720/sadie</a>
 
 ---
 
- SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key feautures include:
+SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key feautures include:
 
-* Provide pre-built **command line apps** for popular immunoinformatics applications.
+- Provide pre-built **command line apps** for popular immunoinformatics applications.
 
-* Provide a **low-level API framework** for immunoinformatics developers to build higher level tools.
+- Provide a **low-level API framework** for immunoinformatics developers to build higher level tools.
 
-* Provide a **testable** and **reusable** library that WORKS!
+- Provide a **testable** and **reusable** library that WORKS!
 
-* Provide a **customizable** and **verified** germline reference library.
+- Provide a **customizable** and **verified** germline reference library.
 
-* Maintain data formats consistent with standards governed by the [**AIRR community**](https://docs.airr-community.org/en/stable/#table-of-contents)
+- Maintain data formats consistent with standards governed by the [**AIRR community**](https://docs.airr-community.org/en/stable/#table-of-contents)
 
-* **Portability** ready to use out the box.
+- **Portability** ready to use out the box.
 
 SADIE is billed as a "**complete antibody library**", not because it aims to do everything, but because it aims to meet the needs of all immunoinformatics users. SADIE contains both low, mid and high level functionality for immunoinformatics tools and workflows. You can use SADIE as a framework to develop your own tools, use many of the prebuilt contributed tools, or run it in a notebook to enable data exploration. In addition, SADIE aims to port all code to python because relies heavily on the [Pandas](https://www.pandas.org) library, the workhorse of the data science/machine learning age.
 
@@ -71,23 +72,19 @@ SADIE is billed as a "**complete antibody library**", not because it aims to do 
 
 Installation is handled using the python package installer `pip`
 
-
 ```console
 $ pip install sadie-antibody
 ```
 
-
 ### Development installation.
 
 !!! info
-    Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
-
+Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
 
 ```console
 $ git clone git@github.com/jwillis0720/sadie.git
 $ pip install -e .[dev]
 ```
-
 
 ## The Littlest Usage
 
@@ -97,11 +94,9 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 
 Annotate antibody sequences only from functional human imgt antibodies to a gzip output
 
-
 ```console
 $ airr -q my_sequecnes.fasta -s human -d imgt
 ```
-
 
 ### API
 
