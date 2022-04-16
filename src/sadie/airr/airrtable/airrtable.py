@@ -24,21 +24,21 @@ logger = logging.getLogger("AIRRTable")
 
 class SubclassedSeries(pd.Series):
     @property
-    def _constructor(self):
+    def _constructor(self) -> pd.Series:
         return SubclassedSeries
 
     @property
-    def _constructor_expanddim(self):
+    def _constructor_expanddim(self) -> pd.DataFrame:
         return SubclassedDataFrame
 
 
 class SubclassedDataFrame(pd.DataFrame):
     @property
-    def _constructor(self):
+    def _constructor(self) -> pd.DataFrame:
         return SubclassedDataFrame
 
     @property
-    def _constructor_sliced(self):
+    def _constructor_sliced(self) -> pd.Series:
         return SubclassedSeries
 
 
