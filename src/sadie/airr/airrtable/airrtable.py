@@ -22,27 +22,7 @@ from pprint import pformat
 logger = logging.getLogger("AIRRTable")
 
 
-class SubclassedSeries(pd.Series):
-    @property
-    def _constructor(self) -> pd.Series:
-        return SubclassedSeries
-
-    @property
-    def _constructor_expanddim(self) -> pd.DataFrame:
-        return SubclassedDataFrame
-
-
-class SubclassedDataFrame(pd.DataFrame):
-    @property
-    def _constructor(self) -> pd.DataFrame:
-        return SubclassedDataFrame
-
-    @property
-    def _constructor_sliced(self) -> pd.Series:
-        return SubclassedSeries
-
-
-class AirrTable(SubclassedDataFrame):
+class AirrTable(pd.DataFrame):
     """
     Object oriented Airr table
     compliance with - https://docs.airr-community.org/_/downloads/en/v1.2.1/pdf/
