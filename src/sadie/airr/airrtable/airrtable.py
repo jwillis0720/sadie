@@ -433,7 +433,7 @@ class AirrTable(pd.DataFrame):
                     lambda x: correct_alignment(x, field_1, field_2), axis=1
                 )
                 # Correction in place
-                self.update(correction_alignments)
+                self.update(correction_alignments)  # type: ignore
             self.loc[indel_indexes, f"{field_2}_corrected"] = True
 
         for field_1, field_2 in _fields:
