@@ -6,8 +6,6 @@ import click
 from ..utility.util import get_verbosity_level
 from .anarci import Anarci
 
-"""This is our main command line tag"""
-
 
 def _validate_anarci_objects(ctx, param, value):
     """Private method for click context to evaluate comma seperated lists and make sure each field is okay"""
