@@ -13,8 +13,8 @@ class AirrSeries(pd.Series):
                 self._verify()
 
     @property
-    def _constructor(self) -> "AirrSeries":  # type: ignore:
-        return AirrSeries
+    def _constructor(self) -> "AirrSeries":
+        return AirrSeries  # type: ignore[return-value]
 
     def _verify(self) -> None:
         data = AirrSeriesModel(**self).dict()
