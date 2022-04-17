@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any, Dict
 from pydantic import BaseModel, root_validator
 
 import pandas as pd
@@ -106,7 +106,7 @@ class AirrSeriesModel(BaseModel):
     species: Optional[str]
 
     @root_validator(pre=True)
-    def fix_dependent_attrs(cls, values):
+    def fix_dependent_attrs(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         cleaned_values = {}
         for k, v in values.items():
             if isinstance(v, str):
