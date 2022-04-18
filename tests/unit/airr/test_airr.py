@@ -9,7 +9,7 @@ import pytest
 import semantic_version
 from Bio.SeqRecord import SeqRecord
 from numpy import isnan
-from sadie.airr import Airr, AirrTable, GermlineData, LinkedAirrTable
+from sadie.airr import Airr, AirrSeries, AirrTable, GermlineData, LinkedAirrTable
 from sadie.airr.exceptions import BadDataSet, BadRequstedFileType
 from sadie.airr import __file__ as sadie_airr_file
 from sadie.airr import exceptions as airr_exceptions
@@ -560,3 +560,12 @@ def test_write_and_check_airr(fixture_setup):
     d.drop("sequence_id", axis=1).to_csv(output_file, sep="\t")
     with pytest.raises(airr.schema.ValidationError):
         airr.load_rearrangement(output_file, debug=True, validate=True)
+
+
+def test_airr_series(fixture_setup):
+    """Test that we can create an airr series"""
+    df = pd.read_feather(fixture_setup.get_catnap_heavy_airrtable())
+    series = AirrSeries(df.iloc[0])
+    assert isinstance(series, AirrSeries)
+    table = AirrTable([series, series])
+    assert isinstance(table, AirrTable)

@@ -7,7 +7,7 @@ on:
     - '*'
     branches: ['main']
   pull_request:
-    branches: [ 'main' , 'update_doc']
+    branches: [ 'main' , 'update_doc', 'development' ]
 
 jobs:
   build-test:
@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.7,3.8,3.9]
+        python-version: [3.7,3.8,3.9,"3.10"]
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2

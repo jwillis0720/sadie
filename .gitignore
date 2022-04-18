@@ -40,3 +40,4 @@ test_me/*
 my_output_database_path/*
 sadie.workspace.code-workspace
 src/sadie/anarci/aa/_schemes_old.py
+nb/*

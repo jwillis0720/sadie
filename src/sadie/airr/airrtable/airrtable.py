@@ -404,7 +404,7 @@ class AirrTable(pd.DataFrame):
         return True
 
     def correct_indel(self) -> Union["AirrTable", "LinkedAirrTable"]:
-        airrtable = pd.DataFrame(self)
+
         _fields = [
             ["sequence_alignment_aa", "germline_alignment_aa"],
             ["v_sequence_alignment_aa", "v_germline_alignment_aa"],
@@ -422,25 +422,24 @@ class AirrTable(pd.DataFrame):
             ].index
             return index
 
-        def _update_align(airrtable: pd.DataFrame, field_1: str, field_2: str) -> pd.DataFrame:
+        def _update_align(field_1: str, field_2: str) -> None:
             # get indels in sequence_germline_alignment_aa that were not accounted for in the total alignment
             indel_indexes = _get_indel_index(field_1, field_2)
             logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid germline alignment")
-            airrtable.loc[:, f"{field_2}_corrected"] = False
+            self.loc[:, f"{field_2}_corrected"] = False
             if not indel_indexes.empty:
-                correction_alignments = airrtable.loc[indel_indexes, :].apply(
+                # Pass self through top level dataframe to remove validation checks when using apply.
+                correction_alignments = pd.DataFrame(self.loc[indel_indexes, :]).apply(
                     lambda x: correct_alignment(x, field_1, field_2), axis=1
                 )
                 # Correction in place
-                airrtable.update(correction_alignments)
-            airrtable.loc[indel_indexes, f"{field_2}_corrected"] = True
-            # @Todo. For some reason, this next line creates a seg fault in pandas >= 1.4 when called from pytest
-            return pd.DataFrame(airrtable)
+                self.update(correction_alignments)  # type: ignore
+            self.loc[indel_indexes, f"{field_2}_corrected"] = True
 
         for field_1, field_2 in _fields:
-            airrtable = _update_align(airrtable, field_1, field_2)
+            _update_align(field_1, field_2)
 
-        return self.__class__(airrtable)
+        return self
 
     @staticmethod
     def parse_row_to_genbank(
