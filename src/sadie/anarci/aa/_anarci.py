@@ -49,7 +49,7 @@ Notes:
 
 
 """
-
+from functools import lru_cache
 import os
 import sys
 import tempfile
@@ -192,7 +192,7 @@ def validate_numbering(xxx_todo_changeme, name_seq=[]):
 
     for (index, _), a in numbering:
         if index < last:
-            raise AnarciDecreasing(name, f"decreasing sequence count in the numbering")
+            raise AnarciDecreasing(name, "decreasing sequence count in the numbering")
 
             # , "Numbering was found to decrease along the sequence %s. Please report." % name
         last = index
@@ -851,6 +851,7 @@ def number_sequences_from_alignment(
     numbered = []
     alignment_details = []
     hit_tables = []
+    
     for i in range(len(sequences)):
 
         # Unpack
@@ -920,6 +921,7 @@ def number_sequences_from_alignment(
     return numbered, alignment_details, hit_tables
 
 
+@lru_cache(maxsize=None)
 def get_identity(state_sequence, germline_sequence):
     """
     Get the partially matched sequence identity between two aligned sequences.
