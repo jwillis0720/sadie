@@ -851,7 +851,7 @@ def number_sequences_from_alignment(
     numbered = []
     alignment_details = []
     hit_tables = []
-    
+
     for i in range(len(sequences)):
 
         # Unpack
