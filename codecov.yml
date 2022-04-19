@@ -1,2 +1,3 @@
 ignore:
-  - "src/sadie/anarci/aa"  # ignore folders and all its contents
+  - "src/sadie/anarci/aa"
+  - "tests"  # ignore folders and all its contents
