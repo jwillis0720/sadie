@@ -29,6 +29,7 @@ jobs:
           pip install pytest
           pip install pytest-xdist
           pip install airr==1.3.1
+          pip install pyinstrument
           pip install .
       - name : Cache PIP
         uses: actions/cache@v2
