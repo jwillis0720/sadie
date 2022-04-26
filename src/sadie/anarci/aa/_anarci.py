@@ -695,6 +695,7 @@ def parse_hmmer_output(filedescriptor="", bit_score_threshold=80, hmmer_species=
     with openfile(filedescriptor) as inputfile:
         p = HMMERParser(inputfile)
         for query in p:
+            print(query)
             results.append(
                 _parse_hmmer_query(
                     query,
@@ -731,7 +732,8 @@ def run_hmmer(
 
     # Check that hmm_database is available
 
-    assert hmm_database in ["ALL"], "Unknown HMM database %s" % hmm_database
+    # assert hmm_database in ["ALL"], "Unknown HMM database %s" % hmm_database
+    hmm_database = "cat_H"
     HMM = os.path.join(HMM_path, "%s.hmm" % hmm_database)
 
     # Create a fasta file for all the sequences. Label them with their sequence index
@@ -757,7 +759,10 @@ def run_hmmer(
         ]
     process = Popen(command, stdout=PIPE, stderr=PIPE)
     pr_stdout, pr_stderr = process.communicate()
-
+    with open(output_filename) as f:
+        with open("/Users/tmsincomb/Desktop/hmmscan.out", "w") as outfile:
+            outfile.write(f.read())
+    print(" ".join(command))
     if pr_stderr:
         print(pr_stdout)
         raise HMMscanError(pr_stderr.decode("utf-8"))
@@ -766,7 +771,7 @@ def run_hmmer(
         bit_score_threshold=bit_score_threshold,
         hmmer_species=hmmer_species,
     )
-
+    print(results)
     # clear up
     os.remove(fasta_filename)
     os.remove(output_filename)
@@ -851,7 +856,7 @@ def number_sequences_from_alignment(
     numbered = []
     alignment_details = []
     hit_tables = []
-    
+
     for i in range(len(sequences)):
 
         # Unpack
