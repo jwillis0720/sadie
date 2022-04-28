@@ -309,11 +309,14 @@ class AirrTable(pd.DataFrame):
 
     def _get_aa_distance(self, X: pd.Series) -> float:
         "get character levenshtrein distance, will work with '-' on alignments"
-        first = X[0]
-        second = X[1]
+        first: str = str(X[0])
+        second: str = str(X[1])
         if not first or not second or isinstance(first, float) or isinstance(second, float):
             return nan
-        return float((distance(first, second) / max(len(first), len(first))) * 100)
+        d: int = distance(first, second)
+        max_len: int = max(len(first), len(second))
+        a: float = float(d / max_len) * 100.0
+        return a
 
     def _set_boolean(self, columns: List[str]) -> None:
         """Change 'F' and 'T' strings to boolean dataframe values"""
