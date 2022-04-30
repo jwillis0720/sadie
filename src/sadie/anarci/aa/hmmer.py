@@ -1,13 +1,11 @@
 # from functools import lru_cache TODO: see if this is worth it for get_hmm_models
 from operator import itemgetter
 from pathlib import Path
-from typing import Union, List, Tuple, Optional
+from typing import Union, Optional, Dict, List, Tuple
 
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import pyhmmer
-
-# Sequence = Union[List[Path, SeqRecord, str], Path, SeqRecord, str]
 
 
 class HMMER:
@@ -35,32 +33,32 @@ class HMMER:
             Dictionary with the available species and their paths.
         """
         species_to_paths = {}
+
         for path in self.hmm_paths:
-            species = path.stem.split("_")[0]
-            if species.lower() == "all":
-                continue
+            species, *chain = path.stem.split("_")
             try:
                 species_to_paths[species].append(path)
             except KeyError:
                 species_to_paths[species] = [path]
+
         return species_to_paths
 
     def get_hmm_models(
-        self, 
-        species: Union[List[str], str] = None, 
+        self,
+        species: Optional[Union[List[str], str]] = None,
     ) -> List[pyhmmer.plan7.HMMFile]:
         """
         Return a HMMER model for a given specie.
 
         Parameters
         ----------
-        get_species_model: Union[list, str]
+        species: Optional[Union[List[str], str]]
             Available species: ALL, alpaca, cat, cow, dog, human, mouse, pig, rabbit, rat, rhesus
 
         Returns
         -------
         pyhmmer.plan7.HMMERModel
-            HMM model for a specific species
+            HMM model for specific species
         """
         hmms = []
 
@@ -68,6 +66,7 @@ class HMMER:
             species = self.available_species
         if isinstance(species, str):
             species = [species]
+
         for _species in species:
             try:
                 hmm_paths = self.species_to_paths[_species]
@@ -77,6 +76,7 @@ class HMMER:
                 with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
                     hmm = next(hmm_file)
                     hmms.append(hmm)
+
         return hmms
 
     def __digitize_seq(self, name: str, seq: str) -> pyhmmer.easel.DigitalSequence:
@@ -156,7 +156,7 @@ class HMMER:
         limit: int = 1,
         for_anarci: bool = False,
         for_j_region: bool = False,
-    ) -> List[Union[str, int]]:
+    ) -> List[List[Dict[str, Union[str, int]]]]:
         """
         Perform a HMMER search for a given sequence.
 
@@ -167,15 +167,44 @@ class HMMER:
 
         Parameters
         ----------
-        sequences : str
-            Sequence to be searched.
+        sequences : Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
+            Sequences and/or Fasta files to be searched.
         species : Union[list, str]
-            Available species: ALL, alpaca, cat, cow, dog, human, mouse, pig, rabbit, rat, rhesus
+            Available species: alpaca, cat, cow, dog, human, mouse, pig, rabbit, rat, rhesus
+        bit_score_threshold : int
+            Domain bit score threshold, default is 80.
+        limit : int
+            Number of domain hits to be returned, default is 1.
+        for_anarci : bool
+            If True, return the ANARCI expected state_vector object.
+        for_j_region : bool
+            If True, return the J-region expected state_vector object.
+            Anarci reruns hmmsearch with the J-region to correct possible mistakes.
+
+        Examples
+        >>> seq = 'DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF'
+        >>> HMMER().hmmsearch(seq, species=['human', 'mouse']', bit_score_threshold=80, limit=1)
+        [[{
+            'query': '0',
+            'hmm_seq': 'qvqLvesGalelvkpgeslklsCaasGftlsllsssyalsWvrqapgkgLewvglisssaesgsteYaeslklgrvtisrdtskntlylqlsslraeDtavYyCarklll....llllfdvWGqGtlvtvs',
+            'hmm_start': 1,
+            'hmm_end': 127,
+            'id': 'human_H',
+            'description': '',
+            'evalue': 8.02e-53,
+            'bitscore': 164.4,
+            'bias': 1.6,
+            'query_seq': 'DVQLVESGG-DLAKPGGSLRLTCVASGLSV----TSNSMSWVRQAPGKGLRWVSTIWSK---GGTYYADSVK-GRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYdadyLHWYFDFWGQGALVTVS',
+            'query_start': 0,
+            'query_end': 122,
+            'species': 'human',
+            'chain_type': 'H'
+        }]]
 
         Returns
         -------
-        List[str, int]
-            List of HMMER hit attributes for ANARCI numbering.
+        List[List[Dict[str, Union[str, int]]]]
+            List of HMMER hits for ANARCI numbering.
         """
         sequences = self.__transform_seq(sequences)
         if not sequences:
@@ -253,20 +282,191 @@ class HMMER:
         query_end: int,
         **kwargs,
     ) -> List[Tuple[Tuple[int, str], int]]:
+        """
+        Get the ANARCI state_vector object.
+
+        Parameters
+        ----------
+        hmm_seq : str
+            HMM sequence.
+        query_seq : str
+            Query sequence.
+        hmm_start : int
+            HMM start alignmnet index; starts at 1
+        hmm_end : int
+            HMM end position.
+        query_start : int
+            Query start position; starts at 0 for pythonic index
+        query_end : int
+            Query end position.
+
+        Notes
+        -----
+        'i' = insertion in HMM seq (aka a '.')
+        'd' = deletion in Query seq (aka a '-')
+        'm' = match or accepted missmatch where both are showing an amino acid in their seqs
+
+        Example
+        -------
+        >>> hmm_seq = 'divltqsPsslsvsvgdrvtisCrasqsilesddgssylaWyqqkpgkapklliyaalllllllsslasGvPlsrfsGsGllsGtdftltissleaedvavyyCqqaklllllllltfGqGtkveik'
+        >>> query_seq = 'DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS-IGYNYLDWYLQKSGQSPQLLIYLG-------SNRASGVP-DRFSGSG--SGTDFTLKISRVEAEDVGFYYCMQAL----QTPYTFGQGTKLEIK'
+        >>> hmm_start = 1
+        >>> hmm_end = 127
+        >>> query_start = 0
+        >>> query_end = 122
+        >>> get_vector_state(hmm_seq, query_seq, hmm_start, hmm_end, query_start, query_end)
+        [
+            ((1, 'm'), 0),
+            ((2, 'm'), 1),
+            ((3, 'm'), 2),
+            ((4, 'm'), 3),
+            ((5, 'm'), 4),
+            ((6, 'm'), 5),
+            ((7, 'm'), 6),
+            ((8, 'm'), 7),
+            ((9, 'm'), 8),
+            ((10, 'm'), 9),
+            ((11, 'm'), 10),
+            ((12, 'm'), 11),
+            ((13, 'm'), 12),
+            ((14, 'm'), 13),
+            ((15, 'm'), 14),
+            ((16, 'm'), 15),
+            ((17, 'm'), 16),
+            ((18, 'm'), 17),
+            ((19, 'm'), 18),
+            ((20, 'm'), 19),
+            ((21, 'm'), 20),
+            ((22, 'm'), 21),
+            ((23, 'm'), 22),
+            ((24, 'm'), 23),
+            ((25, 'm'), 24),
+            ((26, 'm'), 25),
+            ((27, 'm'), 26),
+            ((28, 'm'), 27),
+            ((29, 'm'), 28),
+            ((30, 'm'), 29),
+            ((31, 'm'), 30),
+            ((32, 'm'), 31),
+            ((33, 'd'), None),
+            ((34, 'm'), 32),
+            ((35, 'm'), 33),
+            ((36, 'm'), 34),
+            ((37, 'm'), 35),
+            ((38, 'm'), 36),
+            ((39, 'm'), 37),
+            ((40, 'm'), 38),
+            ((41, 'm'), 39),
+            ((42, 'm'), 40),
+            ((43, 'm'), 41),
+            ((44, 'm'), 42),
+            ((45, 'm'), 43),
+            ((46, 'm'), 44),
+            ((47, 'm'), 45),
+            ((48, 'm'), 46),
+            ((49, 'm'), 47),
+            ((50, 'm'), 48),
+            ((51, 'm'), 49),
+            ((52, 'm'), 50),
+            ((53, 'm'), 51),
+            ((54, 'm'), 52),
+            ((55, 'm'), 53),
+            ((56, 'm'), 54),
+            ((57, 'm'), 55),
+            ((58, 'd'), None),
+            ((59, 'd'), None),
+            ((60, 'd'), None),
+            ((61, 'd'), None),
+            ((62, 'd'), None),
+            ((63, 'd'), None),
+            ((64, 'd'), None),
+            ((65, 'm'), 56),
+            ((66, 'm'), 57),
+            ((67, 'm'), 58),
+            ((68, 'm'), 59),
+            ((69, 'm'), 60),
+            ((70, 'm'), 61),
+            ((71, 'm'), 62),
+            ((72, 'm'), 63),
+            ((73, 'd'), None),
+            ((74, 'm'), 64),
+            ((75, 'm'), 65),
+            ((76, 'm'), 66),
+            ((77, 'm'), 67),
+            ((78, 'm'), 68),
+            ((79, 'm'), 69),
+            ((80, 'm'), 70),
+            ((81, 'd'), None),
+            ((82, 'd'), None),
+            ((83, 'm'), 71),
+            ((84, 'm'), 72),
+            ((85, 'm'), 73),
+            ((86, 'm'), 74),
+            ((87, 'm'), 75),
+            ((88, 'm'), 76),
+            ((89, 'm'), 77),
+            ((90, 'm'), 78),
+            ((91, 'm'), 79),
+            ((92, 'm'), 80),
+            ((93, 'm'), 81),
+            ((94, 'm'), 82),
+            ((95, 'm'), 83),
+            ((96, 'm'), 84),
+            ((97, 'm'), 85),
+            ((98, 'm'), 86),
+            ((99, 'm'), 87),
+            ((100, 'm'), 88),
+            ((101, 'm'), 89),
+            ((102, 'm'), 90),
+            ((103, 'm'), 91),
+            ((104, 'm'), 92),
+            ((105, 'm'), 93),
+            ((106, 'm'), 94),
+            ((107, 'm'), 95),
+            ((108, 'm'), 96),
+            ((109, 'd'), None),
+            ((110, 'd'), None),
+            ((111, 'd'), None),
+            ((112, 'd'), None),
+            ((113, 'm'), 97),
+            ((114, 'm'), 98),
+            ((115, 'm'), 99),
+            ((116, 'm'), 100),
+            ((117, 'm'), 101),
+            ((118, 'm'), 102),
+            ((119, 'm'), 103),
+            ((120, 'm'), 104),
+            ((121, 'm'), 105),
+            ((122, 'm'), 106),
+            ((123, 'm'), 107),
+            ((124, 'm'), 108),
+            ((125, 'm'), 109),
+            ((126, 'm'), 110),
+            ((127, 'm'), 111)
+        ]
+
+        Returns
+        -------
+        List[Tuple[Tuple[int, str], int]]
+            List of ANARCI state_vector objects.
+        """
         assert len(hmm_seq) == len(query_seq), "The 2 seqs should be alignments of eachother"
 
         vector_state = []
 
-        hmm_step = hmm_start
-        query_step = query_start
+        hmm_step = hmm_start  # real world index starting at 1 to match HMMER output
+        query_step = query_start  # pythonic index starting at 0
 
         for i in range(len(hmm_seq)):
+            # HMM seq insertion
             if hmm_seq[i] == ".":
                 vector_state.append(((hmm_step, "i"), query_step))
                 query_step += 1
+            # Query seq deletion
             elif query_seq[i] == "-":
                 vector_state.append(((hmm_step, "d"), None))
                 hmm_step += 1
+            # match or accepted missmatch
             else:
                 vector_state.append(((hmm_step, "m"), query_step))
                 hmm_step += 1
