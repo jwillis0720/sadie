@@ -680,7 +680,6 @@ def _hmm_alignment_to_states(hsp, n, seq_length):
             s += 1
         else:  # delete state
             h += 1
-    print("somthing", state_vector)
 
     return state_vector
 

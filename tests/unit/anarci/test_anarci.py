@@ -201,7 +201,6 @@ def test_cat():
     assert result.fwr2_aa_gaps == "MSWVRQAPGKGLRWVST"
     assert result.cdr2_aa_gaps == "IWSK---GGT"
     assert result.fwr3_aa_gaps == "YYADSVK-GRFTVSRDSAKNTLYLQMDSLATEDTATYYC"
-    # assert result.fwr4_aa_gaps in ["WGQGALVTVSF", "WGQGALVTVS"]
     assert result.fwr4_aa_gaps in "WGQGALVTVSF"
     assert result.v_gene == "IGHV17-1*01"
     assert result.j_gene == "IGHJ5*01"
