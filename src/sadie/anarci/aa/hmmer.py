@@ -105,13 +105,40 @@ class HMMER:
         self, seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
     ) -> List[pyhmmer.easel.DigitalSequence]:
         """
-        Transform a sequence into a Easel sequence file.
+        Transform sequences or Fasta files into a list of Easel Digital objects for hmmer.
 
         Parameters
         ----------
         sequence: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
             Sequence to be transformed.
-
+            
+        Example
+        -------
+        >>> file = Path("test.fasta")  # only 1 sequence in the file
+        >>> seq = Seq('DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS')
+        >>> seqrecord = SeqRecord('DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS', id="unique name", description="long description")
+        >>> loose_str = 'DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS'
+        
+        >>> __transform_seq(file)  # read fasta file with amino acids 
+        [<pyhmmer.easel.DigitalSequence at 0x1396614c0>]
+        
+        >>> __transform_seq(seq)  # read Biopython Seq object; auto-assigns id via a counter starting at 0
+        [<pyhmmer.easel.DigitalSequence at 0x139661540>]
+        
+        >>> __transform_seq(seqrecord)  # read Biopython SeqRecord object
+        [<pyhmmer.easel.DigitalSequence at 0x139de98c0>]
+        
+        >>> __transform_seq(loose_str)  # read string of amino acids; auto-assigns id via a counter starting at 0
+        [<pyhmmer.easel.DigitalSequence at 0x139deb800>]
+        
+        >>> __transform_seq([file, seq, seqrecord, loose_str])  # read all of the above together as 1 list output
+        [
+            <pyhmmer.easel.DigitalSequence at 0x1396614c0>,
+            <pyhmmer.easel.DigitalSequence at 0x139661540>,
+            <pyhmmer.easel.DigitalSequence at 0x139de98c0>,
+            <pyhmmer.easel.DigitalSequence at 0x139deb800>
+        ]
+            
         Returns
         -------
         pyhmmer.easel.SequenceFile
