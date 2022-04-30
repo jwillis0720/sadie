@@ -10,7 +10,7 @@ import pyhmmer
 
 class HMMER:
     """
-    Extension of Pyhmmer with built-in alignment models that are specie specific.
+    Extension of Pyhmmer with built-in alignment models that are species specific.
     """
 
     def __init__(self):
