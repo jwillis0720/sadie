@@ -66,6 +66,8 @@ import pandas as pd
 import warnings
 from Bio.SearchIO.HmmerIO import Hmmer3TextParser as HMMERParser
 
+from .hmmer import HMMER
+
 # Import from the schemes submodule
 from ._schemes import (
     number_kabat_heavy,
@@ -82,6 +84,7 @@ from ._schemes import (
 from ._germlines import all_germlines
 from ...antibody.exception import LongHCDR3Error, AnarciDecreasing
 
+HMMER = HMMER()
 all_species = list(all_germlines["V"]["H"].keys())
 logger = logging.getLogger("ANARCI")
 
@@ -362,7 +365,7 @@ def parsed_output(sequences, numbered, details):
 
             # Iterate over the domains identified
             for i, j in chain_types[cts]:
-                if details[i][j]["germlines"]["j_gene"][0]:
+                if details[i][j].get("germlines", {}).get("j_gene", [0])[0]:
                     j_gene = details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[0][1]
                     j_gene_score = "%.2f" % details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[1]
                 else:
@@ -603,7 +606,6 @@ def _hmm_alignment_to_states(hsp, n, seq_length):
     """
     Take a hit hsp and turn the alignment into a state vector with sequence indices
     """
-
     # Extract the strings for the reference states and the posterior probability strings
     reference_string = hsp.aln_annotation["RF"]
     state_string = hsp.aln_annotation["PP"]
@@ -678,6 +680,7 @@ def _hmm_alignment_to_states(hsp, n, seq_length):
             s += 1
         else:  # delete state
             h += 1
+    print("somthing", state_vector)
 
     return state_vector
 
@@ -695,7 +698,7 @@ def parse_hmmer_output(filedescriptor="", bit_score_threshold=80, hmmer_species=
     with openfile(filedescriptor) as inputfile:
         p = HMMERParser(inputfile)
         for query in p:
-            print(query)
+
             results.append(
                 _parse_hmmer_query(
                     query,
@@ -715,6 +718,7 @@ def run_hmmer(
     bit_score_threshold=80,
     hmmer_species=None,
     tempdir="/tmp",
+    for_j_region: bool = False,
 ):
     """
     Run the sequences in sequence list against a precompiled hmm_database.
@@ -729,18 +733,19 @@ def run_hmmer(
     @param hmmerpath: The path to hmmer binaries if not in the path
     @param ncpu: The number of cpu's to allow hmmer to use.
     """
-
     # Check that hmm_database is available
-
     # assert hmm_database in ["ALL"], "Unknown HMM database %s" % hmm_database
-    hmm_database = "cat_H"
-    HMM = os.path.join(HMM_path, "%s.hmm" % hmm_database)
+    # hmm_database = "ALL"
+    # HMM = os.path.join(HMM_path, "%s.hmm" % hmm_database)
 
     # Create a fasta file for all the sequences. Label them with their sequence index
     # This will go to a temp file
     fasta_filehandle, fasta_filename = tempfile.mkstemp(".fasta", text=True, dir=tempdir)
     with os.fdopen(fasta_filehandle, "w") as outfile:
         write_fasta(sequence_list, outfile)
+
+    results = HMMER.hmmsearch(fasta_filename, for_anarci=True, for_j_region=for_j_region, species=hmmer_species)
+    return results
 
     output_filehandle, output_filename = tempfile.mkstemp(".txt", text=True, dir=tempdir)
 
@@ -759,19 +764,19 @@ def run_hmmer(
         ]
     process = Popen(command, stdout=PIPE, stderr=PIPE)
     pr_stdout, pr_stderr = process.communicate()
-    with open(output_filename) as f:
-        with open("/Users/tmsincomb/Desktop/hmmscan.out", "w") as outfile:
-            outfile.write(f.read())
-    print(" ".join(command))
+    # with open(output_filename) as f:
+    #     with open("/Users/tmsincomb/Desktop/hmmscan.out", "w") as outfile:
+    #         outfile.write(f.read())
+    # print(" ".join(command))
     if pr_stderr:
-        print(pr_stdout)
+        # print(pr_stdout)
         raise HMMscanError(pr_stderr.decode("utf-8"))
+
     results = parse_hmmer_output(
         output_filehandle,
         bit_score_threshold=bit_score_threshold,
         hmmer_species=hmmer_species,
     )
-    print(results)
     # clear up
     os.remove(fasta_filename)
     os.remove(output_filename)
@@ -1026,10 +1031,12 @@ def check_for_j(sequences, alignments, scheme, hmmerpath):
                         cys_ai = ali.index(((104, "m"), cys_si))
 
                         # Try to identify a J region in the remaining sequence after the 104. A low bit score threshold is used.
+                        # print([(sequences[i][0], sequences[i][1][cys_si + 1 :])])
                         _, re_states, re_details = run_hmmer(
                             [(sequences[i][0], sequences[i][1][cys_si + 1 :])],
                             hmmerpath=hmmerpath,
                             bit_score_threshold=10,
+                            for_j_region=True,
                         )[0]
 
                         # Check if a J region was detected in the remaining sequence.

@@ -1,5 +1,4 @@
-# from functools import lru_cache TODO: see if this is worth it
-from collections import defaultdict
+# from functools import lru_cache TODO: see if this is worth it for get_hmm_models
 from operator import itemgetter
 from pathlib import Path
 from typing import Union, List, Tuple
@@ -18,7 +17,7 @@ class HMMER:
     """
 
     def __init__(self):
-        # pathing 
+        # pathing
         self.hmm_folder = Path(__file__).parent.parent / "data/anarci/HMMs"
         self.hmm_paths = self.hmm_folder.glob("*.hmm")
         # species specific
@@ -39,14 +38,17 @@ class HMMER:
         species_to_paths = {}
         for path in self.hmm_paths:
             species = path.stem.split("_")[0]
+            if species.lower() == "all":
+                continue
             try:
                 species_to_paths[species].append(path)
             except KeyError:
                 species_to_paths[species] = [path]
         return species_to_paths
 
-    # @lru_cache(maxsize=None)
-    def get_hmm_models(self, species: Union[List[str], str]) -> List[pyhmmer.plan7.HMMFile]:
+    def get_hmm_models(
+        self, species: Union[List[str], str] = None, chains: Union[List[str], str] = None
+    ) -> List[pyhmmer.plan7.HMMFile]:
         """
         Return a HMMER model for a given specie.
 
@@ -61,11 +63,11 @@ class HMMER:
             HMM model for a specific species
         """
         hmms = []
-        # if isinstance(species, str):
-        #     if species.lower() in ["all", "*"]:
-        #         species = self.available_species
-        #     else:
-        #         species = [species]
+
+        if not species:
+            species = self.available_species
+        if isinstance(species, str):
+            species = [species]
         for _species in species:
             try:
                 hmm_paths = self.species_to_paths[_species]
@@ -75,11 +77,12 @@ class HMMER:
                 with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
                     hmm = next(hmm_file)
                     hmms.append(hmm)
+                break
         return hmms
-    
+
     def __digitize_seq(self, name: str, seq: str) -> pyhmmer.easel.DigitalSequence:
         """
-        Digitize a sequence for hmmer. 
+        Digitize a sequence for hmmer.
 
         Parameters
         ----------
@@ -98,10 +101,9 @@ class HMMER:
         if isinstance(seq, Seq):
             seq = str(seq)
         return pyhmmer.easel.TextSequence(name=name, sequence=seq).digitize(self.alphabet)
-        
+
     def __transform_seq(
-        self, 
-        seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
+        self, seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
     ) -> List[pyhmmer.easel.DigitalSequence]:
         """
         Transform a sequence into a Easel sequence file.
@@ -117,12 +119,12 @@ class HMMER:
             Easel sequence file.
         """
         sequences = []
-        
+
         if not isinstance(seq_objs, (list, set, tuple)):
             seq_objs = [seq_objs]
-        
+
         for sudo_name, seq_obj in enumerate(seq_objs):
-            
+
             # If the sequence is a path, open it and digitize
             if isinstance(seq_obj, Path):
                 with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
@@ -134,37 +136,28 @@ class HMMER:
                         with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
                             sequences.extend(list(seq_file))
                             continue
-                        
+
             # If sequence is a string, digitize it directly and add it to the list
-            if isinstance(seq_obj, str):
+            if isinstance(seq_obj, (Seq, str)):
                 sequences.append(self.__digitize_seq(name=str(sudo_name), seq=seq_obj))
                 continue
             if isinstance(seq_obj, SeqRecord):
                 sequences.append(self.__digitize_seq(name=seq_obj.id, seq=seq_obj.seq))
                 continue
-            
-            raise ValueError(f'seq_obj {seq_obj} is not a valid sequence or path')      
-                
+
+            raise ValueError(f"seq_obj {seq_obj} is not a valid sequence or path")
+
         return sequences
 
     def hmmsearch(
         self,
         sequences: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str],
-        species: List[Union[str, int]] = [
-            "alpaca",
-            "cat",
-            "cow",
-            "dog",
-            "human",
-            "mouse",
-            "pig",
-            "rabbit",
-            "rat",
-            "rhesus",
-        ],
-        bit_score_threshold: int = 80,  # TODO: doesn't work for now
+        species: List[Union[str, int]] = None,
+        chains: List[Union[str, int]] = None,
+        bit_score_threshold: int = 80,
         limit: int = 1,
         for_anarci: bool = False,
+        for_j_region: bool = False,
     ) -> List[Union[str, int]]:
         """
         Perform a HMMER search for a given sequence.
@@ -189,23 +182,27 @@ class HMMER:
         sequences = self.__transform_seq(sequences)
         if not sequences:
             return None
-        hmms = self.get_hmm_models(species)
-        results = defaultdict(list)
+        hmms = self.get_hmm_models(species, chains)
+        results = {seq.name.decode(): [] for seq in sequences}
         for top_hits in pyhmmer.hmmsearch(hmms, sequences):
             for sequence_index, hit in enumerate(top_hits):
+
                 domain = hit.best_domain
                 ali = hit.best_domain.alignment
+
+                if domain.score < bit_score_threshold:
+                    continue
+
                 results[hit.name.decode()].append(
                     {
                         "query": hit.name.decode(),
                         "hmm_seq": ali.hmm_sequence,
                         "hmm_start": ali.hmm_from,  # hmm seq starts with 1 and not 0
                         "hmm_end": ali.hmm_to,
-                        # "seq": sequences[sequence_index].textize().sequence,
                         "id": ali.hmm_name.decode(),
                         "description": hit.description or "",
                         "evalue": float("{:.2e}".format(domain.c_evalue)),
-                        # "bitscore": round(hit.score, 1),
+                        # "bitscore": round(hit.score, 1),  # TODO: anarci doesnt use hit score, but domain score; maybe use this as an option later?
                         "bitscore": round(domain.score, 1),
                         "bias": round(hit.bias, 1),
                         "query_seq": ali.target_sequence,
@@ -221,6 +218,7 @@ class HMMER:
 
         # TODO: This will be deprecated in the future and will be replaced direct formatting
         if for_anarci:
+            default_out = ([["id", "description", "evalue", "bitscore", "bias", "query_start", "query_end"]], [], [])
             anarci_keys = [
                 "id",
                 "description",
@@ -232,29 +230,31 @@ class HMMER:
                 "species",
                 "chain_type",
             ]
-            best_results = [result[0] for result in best_results]  # Anarci only expects best result per query
+            best_results = [result[0] for result in best_results if result]  # Anarci only expects best result per query
+            if not best_results:
+                return [default_out]
             return [
                 (
                     [anarci_keys, itemgetter(*anarci_keys)(result)],
                     [self.get_vector_state(**result)],
                     [result],
                 )
+                # if result['query_start'] < 4 and for_j_region is False else default_out
                 for result in best_results
             ]
 
         return best_results
 
     def get_vector_state(
-        self, 
-        hmm_seq: str, 
-        query_seq: str, 
-        hmm_start: int, 
-        hmm_end: int, 
-        query_start: int, 
+        self,
+        hmm_seq: str,
+        query_seq: str,
+        hmm_start: int,
+        hmm_end: int,
+        query_start: int,
         query_end: int,
         **kwargs,
     ) -> List[Tuple[Tuple[int, str], int]]:
-        # assert target_start < 5, "Query start should not be more than 5"
         assert len(hmm_seq) == len(query_seq), "The 2 seqs should be alignments of eachother"
 
         vector_state = []
