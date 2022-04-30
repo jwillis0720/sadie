@@ -1,9 +1,8 @@
 # from functools import lru_cache TODO: see if this is worth it for get_hmm_models
 from operator import itemgetter
 from pathlib import Path
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Optional
 
-# from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import pyhmmer
@@ -47,7 +46,8 @@ class HMMER:
         return species_to_paths
 
     def get_hmm_models(
-        self, species: Union[List[str], str] = None, chains: Union[List[str], str] = None
+        self, 
+        species: Union[List[str], str] = None, 
     ) -> List[pyhmmer.plan7.HMMFile]:
         """
         Return a HMMER model for a given specie.
@@ -77,7 +77,6 @@ class HMMER:
                 with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
                     hmm = next(hmm_file)
                     hmms.append(hmm)
-                break
         return hmms
 
     def __digitize_seq(self, name: str, seq: str) -> pyhmmer.easel.DigitalSequence:
@@ -110,7 +109,7 @@ class HMMER:
 
         Parameters
         ----------
-        sequence: Union[Path, list, str]
+        sequence: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
             Sequence to be transformed.
 
         Returns
@@ -152,8 +151,7 @@ class HMMER:
     def hmmsearch(
         self,
         sequences: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str],
-        species: List[Union[str, int]] = None,
-        chains: List[Union[str, int]] = None,
+        species: Optional[List[Union[str, int]]] = None,
         bit_score_threshold: int = 80,
         limit: int = 1,
         for_anarci: bool = False,
@@ -182,7 +180,7 @@ class HMMER:
         sequences = self.__transform_seq(sequences)
         if not sequences:
             return None
-        hmms = self.get_hmm_models(species, chains)
+        hmms = self.get_hmm_models(species)
         results = {seq.name.decode(): [] for seq in sequences}
         for top_hits in pyhmmer.hmmsearch(hmms, sequences):
             for sequence_index, hit in enumerate(top_hits):
