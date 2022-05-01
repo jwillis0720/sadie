@@ -111,26 +111,26 @@ class HMMER:
         ----------
         sequence: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
             Sequence to be transformed.
-            
+
         Example
         -------
         >>> file = Path("test.fasta")  # only 1 sequence in the file
         >>> seq = Seq('DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS')
         >>> seqrecord = SeqRecord('DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS', id="unique name", description="long description")
         >>> loose_str = 'DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS'
-        
-        >>> __transform_seq(file)  # read fasta file with amino acids 
+
+        >>> __transform_seq(file)  # read fasta file with amino acids
         [<pyhmmer.easel.DigitalSequence at 0x1396614c0>]
-        
+
         >>> __transform_seq(seq)  # read Biopython Seq object; auto-assigns id via a counter starting at 0
         [<pyhmmer.easel.DigitalSequence at 0x139661540>]
-        
+
         >>> __transform_seq(seqrecord)  # read Biopython SeqRecord object
         [<pyhmmer.easel.DigitalSequence at 0x139de98c0>]
-        
+
         >>> __transform_seq(loose_str)  # read string of amino acids; auto-assigns id via a counter starting at 0
         [<pyhmmer.easel.DigitalSequence at 0x139deb800>]
-        
+
         >>> __transform_seq([file, seq, seqrecord, loose_str])  # read all of the above together as 1 list output
         [
             <pyhmmer.easel.DigitalSequence at 0x1396614c0>,
@@ -138,7 +138,7 @@ class HMMER:
             <pyhmmer.easel.DigitalSequence at 0x139de98c0>,
             <pyhmmer.easel.DigitalSequence at 0x139deb800>
         ]
-            
+
         Returns
         -------
         pyhmmer.easel.SequenceFile
@@ -172,7 +172,7 @@ class HMMER:
                 continue
 
             raise ValueError(f"seq_obj {seq_obj} is not a valid sequence or path")
-        
+
         if not sequences:
             raise ValueError(f"No valid sequences were found in {seq_objs}")
 
@@ -238,15 +238,15 @@ class HMMER:
         """
         # Convert sequences to Easel sequences
         sequences = self.__transform_seq(sequences)
-        
+
         # Load Models by species
         hmms = self.get_hmm_models(species)
-        
-        # Maintain order of sequences since pyhmmer is async  
+
+        # Maintain order of sequences since pyhmmer is async
         results = {seq.name.decode(): [] for seq in sequences}
-        
+
         for top_hits in pyhmmer.hmmsearch(hmms, sequences):
-            for sequence_index, hit in enumerate(top_hits):
+            for hit in top_hits:
 
                 domain = hit.best_domain
                 ali = hit.best_domain.alignment
@@ -273,10 +273,10 @@ class HMMER:
                         "chain_type": ali.hmm_name.decode().split("_")[1],
                     }
                 )
-                
+
         # Sort by bitscore and limit results
         best_results = []
-        for query_id, result in results.items():
+        for query_id in results.keys():
             best_results.append(sorted(results[query_id], key=lambda x: x["bitscore"], reverse=True)[:limit])
 
         # TODO: This will be deprecated in the future and will be replaced direct formatting
