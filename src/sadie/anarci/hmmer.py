@@ -15,7 +15,7 @@ class HMMER:
 
     def __init__(self):
         # pathing
-        self.hmm_folder = Path(__file__).parent.parent / "data/anarci/HMMs"
+        self.hmm_folder = Path(__file__).parent / "data/anarci/HMMs"
         self.hmm_paths = self.hmm_folder.glob("*.hmm")
         # species specific
         self.species_to_paths = self.get_species_to_paths()
@@ -172,6 +172,9 @@ class HMMER:
                 continue
 
             raise ValueError(f"seq_obj {seq_obj} is not a valid sequence or path")
+        
+        if not sequences:
+            raise ValueError(f"No valid sequences were found in {seq_objs}")
 
         return sequences
 
@@ -233,11 +236,15 @@ class HMMER:
         List[List[Dict[str, Union[str, int]]]]
             List of HMMER hits for ANARCI numbering.
         """
+        # Convert sequences to Easel sequences
         sequences = self.__transform_seq(sequences)
-        if not sequences:
-            return None
+        
+        # Load Models by species
         hmms = self.get_hmm_models(species)
+        
+        # Maintain order of sequences since pyhmmer is async  
         results = {seq.name.decode(): [] for seq in sequences}
+        
         for top_hits in pyhmmer.hmmsearch(hmms, sequences):
             for sequence_index, hit in enumerate(top_hits):
 
@@ -266,6 +273,8 @@ class HMMER:
                         "chain_type": ali.hmm_name.decode().split("_")[1],
                     }
                 )
+                
+        # Sort by bitscore and limit results
         best_results = []
         for query_id, result in results.items():
             best_results.append(sorted(results[query_id], key=lambda x: x["bitscore"], reverse=True)[:limit])

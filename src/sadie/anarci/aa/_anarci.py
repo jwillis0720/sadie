@@ -66,7 +66,7 @@ import pandas as pd
 import warnings
 from Bio.SearchIO.HmmerIO import Hmmer3TextParser as HMMERParser
 
-from .hmmer import HMMER
+from sadie.anarci.hmmer import HMMER
 
 # Import from the schemes submodule
 from ._schemes import (
