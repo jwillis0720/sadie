@@ -737,8 +737,6 @@ def run_hmmer(
     fasta_filehandle, fasta_filename = tempfile.mkstemp(".fasta", text=True, dir=tempdir)
     with os.fdopen(fasta_filehandle, "w") as outfile:
         write_fasta(sequence_list, outfile)
-    with open("/Users/tmsincomb/Desktop/test.fasta", "w") as outfile:
-        write_fasta(sequence_list, outfile)
 
     results = HMMER.hmmsearch(fasta_filename, for_anarci=True, for_j_region=for_j_region, species=hmmer_species)
     return results
