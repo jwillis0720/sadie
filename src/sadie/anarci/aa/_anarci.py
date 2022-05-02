@@ -732,19 +732,21 @@ def run_hmmer(
     @param hmmerpath: The path to hmmer binaries if not in the path
     @param ncpu: The number of cpu's to allow hmmer to use.
     """
-    # Check that hmm_database is available
-    # assert hmm_database in ["ALL"], "Unknown HMM database %s" % hmm_database
-    # hmm_database = "ALL"
-    # HMM = os.path.join(HMM_path, "%s.hmm" % hmm_database)
-
     # Create a fasta file for all the sequences. Label them with their sequence index
     # This will go to a temp file
     fasta_filehandle, fasta_filename = tempfile.mkstemp(".fasta", text=True, dir=tempdir)
     with os.fdopen(fasta_filehandle, "w") as outfile:
         write_fasta(sequence_list, outfile)
+    with open("/Users/tmsincomb/Desktop/test.fasta", "w") as outfile:
+        write_fasta(sequence_list, outfile)
 
     results = HMMER.hmmsearch(fasta_filename, for_anarci=True, for_j_region=for_j_region, species=hmmer_species)
     return results
+
+    # Check that hmm_database is available
+    assert hmm_database in ["ALL"], "Unknown HMM database %s" % hmm_database
+    hmm_database = "ALL"
+    HMM = os.path.join(HMM_path, "%s.hmm" % hmm_database)
 
     output_filehandle, output_filename = tempfile.mkstemp(".txt", text=True, dir=tempdir)
 
@@ -1141,7 +1143,7 @@ def anarci(
     # Perform the alignments of the sequences to the hmm database
     alignments = run_hmmer(
         sequences,
-        hmm_database=database,
+        # hmm_database=database,
         hmmerpath=hmmerpath,
         ncpu=ncpu,
         bit_score_threshold=bit_score_threshold,
