@@ -683,7 +683,6 @@ def number_imgt(state_vector, sequence):
     7. Positions after CDR3
 
     """
-
     # Set up the numbering
 
     # State string - 'X' means the imgt position exists in the scheme. 'I' means that it should be treated as an insertion of the previous number

@@ -391,7 +391,8 @@ class Anarci:
         # Perform the alignments of the sequences to the hmm database
         _alignments = run_hmmer(
             sequences,
-            hmm_database="ALL",
+            # hmm_database="ALL",
+            hmmer_species=self.allowed_species,
             hmmerpath=self.hmmerpath,
             ncpu=self.num_cpus,
             bit_score_threshold=self.threshold_bit,
