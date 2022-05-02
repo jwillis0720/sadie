@@ -1,5 +1,5 @@
 __version__ = "0.4.7"
-from sadie.reference.reference import Reference, G3Error
+from sadie.reference.reference import Reference, G3Error, get_loaded_database
 from sadie.reference.yaml import YamlRef
 from sadie.reference.settings import (
     RECEPTORS,
@@ -32,4 +32,5 @@ __all__ = [
     "SEGMENTS",
     "SEGMENTS_INTERNAL_DATA",
     "YamlRef",
+    "get_loaded_database",
 ]

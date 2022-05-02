@@ -49,7 +49,7 @@ Notes:
 
 
 """
-
+from functools import lru_cache
 import os
 import sys
 import tempfile
@@ -66,11 +66,25 @@ import pandas as pd
 import warnings
 from Bio.SearchIO.HmmerIO import Hmmer3TextParser as HMMERParser
 
+from sadie.anarci.hmmer import HMMER
+
 # Import from the schemes submodule
-from ._schemes import *
+from ._schemes import (
+    number_kabat_heavy,
+    number_kabat_light,
+    number_chothia_heavy,
+    number_chothia_light,
+    number_martin_heavy,
+    number_martin_light,
+    number_imgt,
+    number_aho,
+    number_wolfguy_heavy,
+    number_wolfguy_light,
+)
 from ._germlines import all_germlines
 from ...antibody.exception import LongHCDR3Error, AnarciDecreasing
 
+HMMER = HMMER()
 all_species = list(all_germlines["V"]["H"].keys())
 logger = logging.getLogger("ANARCI")
 
@@ -181,7 +195,7 @@ def validate_numbering(xxx_todo_changeme, name_seq=[]):
 
     for (index, _), a in numbering:
         if index < last:
-            raise AnarciDecreasing(name, f"decreasing sequence count in the numbering")
+            raise AnarciDecreasing(name, "decreasing sequence count in the numbering")
 
             # , "Numbering was found to decrease along the sequence %s. Please report." % name
         last = index
@@ -310,11 +324,11 @@ def parsed_output(sequences, numbered, details):
                 all_pos[c] = set()
 
             # Update the insertion order for the scheme. i.e. is it A B C or C B A (e.g. imgt 111 and 112 repectively)
-            l = -1
+            tmp_p = -1
             r = 0
             for p, _ in numbered[i][j][0]:
-                if p[0] != l:
-                    l = p[0]
+                if p[0] != tmp_p:
+                    tmp_p = p[0]
                     r = 0
                 else:
                     r += 1
@@ -322,7 +336,6 @@ def parsed_output(sequences, numbered, details):
                 all_pos[c].add(p)
 
     summary_dataframes = []
-    alignment_dataframes = []
     # Write a new file for each chain type. Kappa and lambda are written together as light chains.
     for cts in ["H", "KL", "A", "B", "G", "D"]:
         if cts in chain_types:
@@ -352,7 +365,7 @@ def parsed_output(sequences, numbered, details):
 
             # Iterate over the domains identified
             for i, j in chain_types[cts]:
-                if details[i][j]["germlines"]["j_gene"][0]:
+                if details[i][j].get("germlines", {}).get("j_gene", [0])[0]:
                     j_gene = details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[0][1]
                     j_gene_score = "%.2f" % details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[1]
                 else:
@@ -379,17 +392,6 @@ def parsed_output(sequences, numbered, details):
                 d = dict(numbered[i][j][0])
                 seq_ = [d.get(p, "-") for p in positions]
                 numbering_ = [[int(p[0]), p[1]] for p in positions]
-                # align_df = pd.DataFrame(
-                #     {
-                #         "Id": line[0],
-                #         "Chain": cts,
-                #         "Numbering": "",
-                #         "Insertion": "",
-                #         "Sequence": seq_,
-                #     }
-                # )
-                # align_df[["Numbering", "Insertion"]] = numbering_
-                # align_df["Numbering"] = align_df["Numbering"].astype(int)
                 assert len(line) == len(fields)
                 _df = pd.Series(line, index=fields)
                 _df["Chain"] = cts
@@ -397,6 +399,7 @@ def parsed_output(sequences, numbered, details):
                 _df["Insertion"] = list(map(lambda x: x[1].strip(), numbering_))
                 _df["Numbered_Sequence"] = seq_
                 summary_dataframes.append(_df)
+
     return summary_dataframes
 
 
@@ -435,11 +438,11 @@ def csv_output(sequences, numbered, details, outfileroot):
                 all_pos[c] = set()
 
             # Update the insertion order for the scheme. i.e. is it A B C or C B A (e.g. imgt 111 and 112 repectively)
-            l = -1
+            tmp_p = -1
             r = 0
             for p, _ in numbered[i][j][0]:
-                if p[0] != l:
-                    l = p[0]
+                if p[0] != tmp_p:
+                    tmp_p = p[0]
                     r = 0
                 else:
                     r += 1
@@ -603,7 +606,6 @@ def _hmm_alignment_to_states(hsp, n, seq_length):
     """
     Take a hit hsp and turn the alignment into a state vector with sequence indices
     """
-
     # Extract the strings for the reference states and the posterior probability strings
     reference_string = hsp.aln_annotation["RF"]
     state_string = hsp.aln_annotation["PP"]
@@ -695,6 +697,7 @@ def parse_hmmer_output(filedescriptor="", bit_score_threshold=80, hmmer_species=
     with openfile(filedescriptor) as inputfile:
         p = HMMERParser(inputfile)
         for query in p:
+
             results.append(
                 _parse_hmmer_query(
                     query,
@@ -714,6 +717,7 @@ def run_hmmer(
     bit_score_threshold=80,
     hmmer_species=None,
     tempdir="/tmp",
+    for_j_region: bool = False,
 ):
     """
     Run the sequences in sequence list against a precompiled hmm_database.
@@ -728,17 +732,19 @@ def run_hmmer(
     @param hmmerpath: The path to hmmer binaries if not in the path
     @param ncpu: The number of cpu's to allow hmmer to use.
     """
-
-    # Check that hmm_database is available
-
-    assert hmm_database in ["ALL"], "Unknown HMM database %s" % hmm_database
-    HMM = os.path.join(HMM_path, "%s.hmm" % hmm_database)
-
     # Create a fasta file for all the sequences. Label them with their sequence index
     # This will go to a temp file
     fasta_filehandle, fasta_filename = tempfile.mkstemp(".fasta", text=True, dir=tempdir)
     with os.fdopen(fasta_filehandle, "w") as outfile:
         write_fasta(sequence_list, outfile)
+
+    results = HMMER.hmmsearch(fasta_filename, for_anarci=True, for_j_region=for_j_region, species=hmmer_species)
+    return results
+
+    # Check that hmm_database is available
+    assert hmm_database in ["ALL"], "Unknown HMM database %s" % hmm_database
+    hmm_database = "ALL"
+    HMM = os.path.join(HMM_path, "%s.hmm" % hmm_database)
 
     output_filehandle, output_filename = tempfile.mkstemp(".txt", text=True, dir=tempdir)
 
@@ -757,20 +763,19 @@ def run_hmmer(
         ]
     process = Popen(command, stdout=PIPE, stderr=PIPE)
     pr_stdout, pr_stderr = process.communicate()
-
+    # with open(output_filename) as f:
+    #     with open("/Users/tmsincomb/Desktop/hmmscan.out", "w") as outfile:
+    #         outfile.write(f.read())
+    # print(" ".join(command))
     if pr_stderr:
-        # _f = os.fdopen(
-        #     output_filehandle
-        # )  # This is to remove the filedescriptor from the os. I have had problems with it before.
-        # _f.close()
-        print(pr_stdout)
+        # print(pr_stdout)
         raise HMMscanError(pr_stderr.decode("utf-8"))
+
     results = parse_hmmer_output(
         output_filehandle,
         bit_score_threshold=bit_score_threshold,
         hmmer_species=hmmer_species,
     )
-
     # clear up
     os.remove(fasta_filename)
     os.remove(output_filename)
@@ -855,6 +860,7 @@ def number_sequences_from_alignment(
     numbered = []
     alignment_details = []
     hit_tables = []
+
     for i in range(len(sequences)):
 
         # Unpack
@@ -924,6 +930,7 @@ def number_sequences_from_alignment(
     return numbered, alignment_details, hit_tables
 
 
+@lru_cache(maxsize=None)
 def get_identity(state_sequence, germline_sequence):
     """
     Get the partially matched sequence identity between two aligned sequences.
@@ -1023,10 +1030,12 @@ def check_for_j(sequences, alignments, scheme, hmmerpath):
                         cys_ai = ali.index(((104, "m"), cys_si))
 
                         # Try to identify a J region in the remaining sequence after the 104. A low bit score threshold is used.
+                        # print([(sequences[i][0], sequences[i][1][cys_si + 1 :])])
                         _, re_states, re_details = run_hmmer(
                             [(sequences[i][0], sequences[i][1][cys_si + 1 :])],
                             hmmerpath=hmmerpath,
                             bit_score_threshold=10,
+                            for_j_region=True,
                         )[0]
 
                         # Check if a J region was detected in the remaining sequence.
@@ -1132,7 +1141,7 @@ def anarci(
     # Perform the alignments of the sequences to the hmm database
     alignments = run_hmmer(
         sequences,
-        hmm_database=database,
+        # hmm_database=database,
         hmmerpath=hmmerpath,
         ncpu=ncpu,
         bit_score_threshold=bit_score_threshold,
@@ -1322,5 +1331,5 @@ def number(
         return False, False
 
 
-if __name__ == "__main__":
-    Anarci()
+# if __name__ == "__main__":
+#     Anarci()
