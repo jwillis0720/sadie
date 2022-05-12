@@ -278,10 +278,10 @@ def test_catnap_integration(fixture_setup):
     heavy_file = fixture_setup.get_catnap_heavy_nt()
     light_file = fixture_setup.get_catnap_light_nt()
     airr_api = Airr(species="human", database="imgt", adaptable=True)
-    catnap_heavy = airr_api.run_fasta(heavy_file)
-    catnap_light = airr_api.run_fasta(light_file)
     heavy_at = AirrTable(pd.read_feather(fixture_setup.get_catnap_heavy_airrtable()))
     light_at = AirrTable(pd.read_feather(fixture_setup.get_catnap_light_airrtable()))
+    catnap_heavy = airr_api.run_fasta(heavy_file)
+    catnap_light = airr_api.run_fasta(light_file)
     diffs = catnap_light.columns.symmetric_difference(light_at.columns)
     if not diffs.empty:
         raise AssertionError(f"Light table has the following different columns {diffs}")
