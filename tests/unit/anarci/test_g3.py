@@ -26,7 +26,7 @@ def test_g3_hmm(fixture_setup):
             try:
                 stockholm_pairs = g3.get_stockholm_pairs(species=species, chain=chain)
             except ValueError:
-                print(f'G3 cannot find this species/chain, {species} {chain}')
+                print(f"G3 cannot find this species/chain, {species} {chain}")
                 continue
 
             print(f"{species} {chain}")
@@ -41,7 +41,7 @@ def test_g3_hmm(fixture_setup):
             if (anarci_stockholm_folder / f"{species}_{chain}.stockholm").is_file() is False:
                 print(f"{species} {chain} anarci sto not found")
                 continue
-            
+
             with open(anarci_stockholm_folder / f"{species}_{chain}.stockholm") as f:
                 for line in f.read().split("\n"):
                     if not line:
@@ -60,4 +60,4 @@ def test_g3_hmm(fixture_setup):
                 # seqs can change but the alignment positions from end of V to J looks highly conserved so we check there only.
                 # TODO: fuzzy match?
                 assert anarci_align[-5:] == g3_align[-5:]
-                assert anarci_align[-35:].count('-') == g3_align[-35:].count('-')
+                assert anarci_align[-35:].count("-") == g3_align[-35:].count("-")

@@ -1,26 +1,28 @@
 from collections import UserString
+from typing import Callable, Generator
 
 from pydantic.fields import ModelField
 
+# TODO: go through and see which are viable to use; tests need to be fixed first in test_g3 to handle this
 SPECIES = {
-    'rhesus': 'macaque',
-    'homo_sapiens': 'human',
-    'mus': 'mouse',
-    'rattus_norvegicus': 'rat',
-    'oryctolagus_cuniculus': 'rabbit',
-    'macaca_mulatta': 'rhesus',
-    'sus_scrofa': 'pig',
-    'vicugna_pacos': 'alpaca',
-    'bos_taurus': 'cow',
-    'alpaca': 'alpaca',
-    'human': 'human',
-    'macaque': 'macaque',
-    'mouse': 'mouse',
-    'rabbit': 'rabbit',
-    'dog': 'dog',
-    'cat': 'cat',
-    'rat': 'rat',
-    'pig': 'pig',
+    "rhesus": "macaque",
+    "homo_sapiens": "human",
+    "mus": "mouse",
+    "rattus_norvegicus": "rat",
+    "oryctolagus_cuniculus": "rabbit",
+    "macaca_mulatta": "rhesus",
+    "sus_scrofa": "pig",
+    "vicugna_pacos": "alpaca",
+    "bos_taurus": "cow",
+    "alpaca": "alpaca",
+    "human": "human",
+    "macaque": "macaque",
+    "mouse": "mouse",
+    "rabbit": "rabbit",
+    "dog": "dog",
+    "cat": "cat",
+    "rat": "rat",
+    "pig": "pig",
     # 'amberjack': 'amberjack',
     # 'bass': 'bass',
     # 'boar': 'boar',
@@ -63,18 +65,18 @@ SPECIES = {
 
 
 class Species(UserString):
-    
+
     species = SPECIES
-    
+
     @classmethod
-    def __get_validators__(cls):    
+    def __get_validators__(cls) -> Generator[Callable[[str, ModelField], str], None, None]:
         yield cls.validate
 
     @classmethod
     def validate(cls, value: str, field: ModelField) -> str:
         if not isinstance(value, str):
             raise ValueError(f"{field} [{value}] must be a string")
-        value = value.strip().lower().replace(' ', '_')
+        value = value.strip().lower().replace(" ", "_")
         if value not in SPECIES:
             raise ValueError(f"{field} [{value}] must be in {SPECIES.keys()}")
         value = SPECIES[value]

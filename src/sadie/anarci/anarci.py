@@ -397,7 +397,7 @@ class Anarci:
             SeqRecord(
                 Seq(seq),
                 id=seq_id,
-            ) 
+            )
             for seq_id, seq in sequences
         ]
         # Perform the alignments of the sequences to the hmm database
@@ -412,7 +412,7 @@ class Anarci:
         )
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Modify alignments in-place
-        hmmer.check_for_j(            
+        hmmer.check_for_j(
             sequences=_sequences,
             alignments=_alignments,
             species=self.allowed_species,
@@ -454,7 +454,7 @@ class Anarci:
         # segment the region
         # anarci_results = anarci_results.add_segment_regions()
         return anarci_results
-    
+
     def run_single(self, seq_id: str, seq: str) -> AnarciResults:
         """Run a single string sequence on an amino acid
 

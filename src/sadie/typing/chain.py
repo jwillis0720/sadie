@@ -1,16 +1,17 @@
 from collections import UserString
+from typing import Callable, Generator
 
 from pydantic.fields import ModelField
 
-CHAINS = {'L', 'H', 'K', 'A', 'B', 'G'}
+CHAINS = {"L", "H", "K", "A", "B", "G"}
 
 
 class Chain(UserString):
-    
+
     chains = CHAINS
-    
+
     @classmethod
-    def __get_validators__(cls):    
+    def __get_validators__(cls) -> Generator[Callable[[str, ModelField], str], None, None]:
         yield cls.validate
 
     @classmethod
@@ -20,5 +21,5 @@ class Chain(UserString):
         value = value.strip().upper()
         if value not in CHAINS:
             raise ValueError(f"{field} [{value}] must be in {CHAINS}")
-        
+
         return value

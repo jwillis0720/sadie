@@ -15,19 +15,19 @@ class G3:
     """API Wrapper with OpenAPI found here https://g3.jordanrwillis.com/docs"""
 
     # TODO: most likely make this an import
-    data_folder = Path(__file__).parent.parent / 'data'
+    data_folder = Path(__file__).parent.parent / "data"
     segments = {"V", "D", "J"}
     chains = {"H", "K", "L"}
 
     def __init__(self):
         self.base_url = URL("https://g3.jordanrwillis.com/api/v1")
         self.not_usable_species = [
-            "pig", 
-            "cow", 
-            'cat',  # missing L
-            "alpaca",  # missing L and K 
+            "pig",
+            "cow",
+            "cat",  # missing L
+            "alpaca",  # missing L and K
             "dog",  # TODO: viable but does not match. Need to check if diff species of dog from G3
-        ]   
+        ]
         self.alphabet = pyhmmer.easel.Alphabet.amino()
         self.builder = pyhmmer.plan7.Builder(self.alphabet, architecture="hand")
         self.background = pyhmmer.plan7.Background(self.alphabet)
@@ -45,11 +45,7 @@ class G3:
         resp = r.get(self.base_url)
         resp.raise_for_status()
         species = resp.json()["components"]["schemas"]["CommonName"]["enum"]
-        return [
-            single_species 
-            for single_species in species 
-            if single_species not in self.not_usable_species
-        ]
+        return [single_species for single_species in species if single_species not in self.not_usable_species]
 
     @lru_cache(maxsize=None)
     @validate_arguments
@@ -83,9 +79,7 @@ class G3:
         limit: Optional[int] = None,
     ) -> str:
         resp = self.__get_gene_resp(source=source, species=species, segment=segment, limit=limit)
-        return [
-            x for x in resp.json() if x["gene"][2].lower() == chain.lower()
-        ]
+        return [x for x in resp.json() if x["gene"][2].lower() == chain.lower()]
 
     def get_stockholm_pairs(
         self,
@@ -190,7 +184,7 @@ class G3:
         -------
         str
             stockholm file in string format
-        """        
+        """
         sto_path = self.data_folder / f"stockholms/{species}_{chain}.sto"
 
         sto_pairs = self.get_stockholm_pairs(source=source, chain=chain, species=species, limit=limit)
@@ -200,7 +194,7 @@ class G3:
         head = f"# STOCKHOLM 1.0\n#=GF ID {species}_{chain}\n"
         body = "\n".join([f"{name}\t{ali}" for name, ali in sto_pairs])
         tail = "\n#=GC RF" + "\t" + "x" * 128 + "\n//\n"
-        
+
         # TODO: hand arch needs a parsed file -- will be refactored to handle digital directly
         with open(sto_path, "w") as outfile:
             outfile.write(head + body + tail)
@@ -217,8 +211,8 @@ class G3:
     ) -> Path:
         sto_path = self.build_stockholm(source=source, chain=chain, species=species, limit=limit)
         if not sto_path:
-            return 
-        
+            return
+
         hmm_path = self.data_folder / f"hmms/{species}_{chain}.hmm"
 
         with pyhmmer.easel.MSAFile(sto_path, digital=True, alphabet=self.alphabet, format="stockholm") as msa_file:
@@ -249,7 +243,7 @@ class G3:
 
         if not hmm_path:
             return
-        
+
         with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
             hmm = next(hmm_file)
 
