@@ -21,7 +21,7 @@ class HMMER:
     g3 = G3()
     anarci = AnarciTranslator()
 
-    def __init__(self, use_anarci_hmms: bool = True):
+    def __init__(self, use_anarci_hmms: bool = False):
         # Force Anarci local HMMs to be used -- mostely for primiary testing
         self.use_anarci_hmms = use_anarci_hmms
         # place holders for hmmer

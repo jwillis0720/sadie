@@ -72,7 +72,7 @@ class Anarci:
         threshold=80,
         run_multiproc=True,
         num_cpus=cpu_count(),
-        from_backup: bool = True,
+        prioritize_cached_hmm: bool = False,
     ):
         """[summary]
 
@@ -112,7 +112,7 @@ class Anarci:
         self.num_cpus = num_cpus
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
-        self.from_backup = from_backup
+        self.prioritize_cached_hmm = prioritize_cached_hmm
         if not self.check_combination(self.scheme, self.region_definition):
             raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
 
@@ -407,7 +407,7 @@ class Anarci:
             chains=self.allowed_chains,
             bit_score_threshold=self.threshold_bit,
             limit=1,
-            prioritize_cached_hmm=self.from_backup,
+            prioritize_cached_hmm=self.prioritize_cached_hmm,
             for_anarci=True,
         )
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
@@ -417,7 +417,7 @@ class Anarci:
             alignments=_alignments,
             species=self.allowed_species,
             chains=self.allowed_chains,
-            prioritize_cached_hmm=self.from_backup,
+            prioritize_cached_hmm=self.prioritize_cached_hmm,
         )
         # # Apply the desired numbering scheme to all sequences
         _numbered, _alignment_details, _hit_tables = number_sequences_from_alignment(
@@ -454,26 +454,6 @@ class Anarci:
         # segment the region
         # anarci_results = anarci_results.add_segment_regions()
         return anarci_results
-
-    # def run_single(self, seq_id: str, seq: str, scfv=False) -> AnarciResults:
-    #     """Run a single string sequence on an amino acid
-
-    #     Parameters
-    #     ----------
-    #     seq_id : str
-    #        the sequence_id of the string object, ex. "my_sequence"
-    #     seq : str
-    #         The string nucletodide sequence, ex. "EVQLQQSGAEVVRSG ..."
-
-    #     Returns
-    #     -------
-    #         AnarchiResults Object
-    #     """
-
-    #     if not scfv:
-    #         sequences = [(seq_id, seq)]
-
-    #     return self._run(sequences)
     
     def run_single(self, seq_id: str, seq: str) -> AnarciResults:
         """Run a single string sequence on an amino acid

@@ -1,6 +1,6 @@
 import re
 
-from sadie.anarci import G3
+from sadie.anarci.clients import G3
 
 
 def test_g3_hmm(fixture_setup):
@@ -11,9 +11,6 @@ def test_g3_hmm(fixture_setup):
         "mouse",
         "rat",
         "rabbit",
-        # "rhesus",  # TODO: sequnce too different
-        # "pig",  # does not exist in G3
-        "alpaca",
     ]
     chains = [
         "H",

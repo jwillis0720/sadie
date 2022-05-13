@@ -21,7 +21,13 @@ class G3:
 
     def __init__(self):
         self.base_url = URL("https://g3.jordanrwillis.com/api/v1")
-        self.not_usable_species = ["pig", "cow"]
+        self.not_usable_species = [
+            "pig", 
+            "cow", 
+            'cat',  # missing L
+            "alpaca",  # missing L and K 
+            "dog",  # TODO: viable but does not match. Need to check if diff species of dog from G3
+        ]   
         self.alphabet = pyhmmer.easel.Alphabet.amino()
         self.builder = pyhmmer.plan7.Builder(self.alphabet, architecture="hand")
         self.background = pyhmmer.plan7.Background(self.alphabet)
