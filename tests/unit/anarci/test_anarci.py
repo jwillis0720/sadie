@@ -15,9 +15,7 @@ USE_CACHE = True  # TODO: make this an option in the config
 
 
 def test_long_seq():
-    anarci_api = Anarci(
-        scheme="chothia", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=USE_CACHE
-    )
+    anarci_api = Anarci(scheme="chothia", region_assign="imgt", prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
     anarci_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
@@ -114,7 +112,7 @@ def test_alternate_numbering():
 
 
 def test_anarci_multi_input():
-    anarci_api = Anarci(prioritize_cached_hmm=USE_CACHE)
+    anarci_api = Anarci(prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
     seq_records = [
         SeqRecord(
             Seq(

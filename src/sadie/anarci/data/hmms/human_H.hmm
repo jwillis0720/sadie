@@ -7,8 +7,8 @@ MM    no
 CONS  yes
 CS    no
 MAP   yes
-DATE  Fri May 13 13:59:36 2022
-COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest -sv tests/unit/anarci/test_anarci_using_g3.py::test_single_seq
+DATE  Fri May 13 20:29:26 2022
+COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest -sv tests/unit/airr/test_airr.py::test_mutational_analysis
 NSEQ  3679
 EFFN  0.943805
 CKSUM 1643542238

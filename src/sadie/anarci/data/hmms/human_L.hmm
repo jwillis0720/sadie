@@ -7,8 +7,8 @@ MM    no
 CONS  yes
 CS    no
 MAP   yes
-DATE  Fri May 13 13:55:02 2022
-COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/lib/python3.10/site-packages/ipykernel_launcher.py -f /Users/tmsincomb/Library/Jupyter/runtime/kernel-0980cfec-5692-4805-9d26-d95fb3528e70.json
+DATE  Fri May 13 20:29:33 2022
+COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest -sv tests/unit/airr/test_airr.py::test_mutational_analysis
 NSEQ  750
 EFFN  1.078606
 CKSUM 1772094465

@@ -64,6 +64,7 @@ def run_mutational_analysis(
         "germline_alignment_aa",
     )
     logger.info("Running ANARCI on mature alignment")
+    # from IPython import embed; embed()
     mature_results_anarci = anarci_api.run_dataframe(
         airrtable["sequence_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,

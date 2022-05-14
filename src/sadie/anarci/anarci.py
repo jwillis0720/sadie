@@ -72,7 +72,8 @@ class Anarci:
         threshold=80,
         run_multiproc=True,
         num_cpus=cpu_count(),
-        prioritize_cached_hmm: bool = False,
+        prioritize_cached_hmm: bool = True,  # G3 multiprocessing broken
+        use_anarci_hmms: bool = False,
     ):
         """[summary]
 
@@ -113,6 +114,7 @@ class Anarci:
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
         self.prioritize_cached_hmm = prioritize_cached_hmm
+        self.use_anarci_hmms = use_anarci_hmms
         if not self.check_combination(self.scheme, self.region_definition):
             raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
 
@@ -390,7 +392,7 @@ class Anarci:
                               e.g. [ ("seq1","EVQLQQSGAEVVRSG ..."),
                                      ("seq2","DIVMTQSQKFMSTSV ...")
         """
-        hmmer = HMMER()
+        hmmer = HMMER(use_anarci_hmms=self.use_anarci_hmms)
 
         # TODO: downstream expects tuples so we convert them to seqrecords for hmmer
         _sequences = [
@@ -616,7 +618,7 @@ class Anarci:
                 shutil.copyfileobj(file_buffer, tmpfile)
                 file = tmpfile.name
 
-            # run on fasta
+        # run on fasta
         _results = self.run_multiple(list(SeqIO.parse(file, "fasta")))
         # if we had a file delete it
         if _filetype:

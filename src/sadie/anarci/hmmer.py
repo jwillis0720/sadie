@@ -49,7 +49,6 @@ class HMMER:
             HMM model for specific species
         """
         hmms = []
-
         species = species if species else set(Species.species.values())
         chains = chains if chains else Chain.chains
 
@@ -185,11 +184,13 @@ class HMMER:
     #         msa = next(msa_file)
     #     return msa
 
+    # @validate_arguments(config=dict(arbitrary_types_allowed=True))
     def hmmsearch(
         self,
         sequences: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str],
-        species: Optional[List[Union[str, int]]] = None,
-        chains: Optional[List[Union[str, int]]] = None,
+        species: Optional[Union[List[Species], Species]] = None,
+        chains: Optional[Union[List[Chain], Chain]] = None,
+        source: Source = "imgt",
         bit_score_threshold: int = 80,
         limit: Optional[int] = 1,
         prioritize_cached_hmm: bool = False,
@@ -245,10 +246,13 @@ class HMMER:
         List[List[Dict[str, Union[str, int]]]]
             List of HMMER hits for ANARCI numbering.
         """
+
         # Convert sequences to Easel sequences
         sequences = self.__transform_seq(sequences)
         # Load Models by species
-        hmms = self.get_hmm_models(species=species, chains=chains, prioritize_cached_hmm=prioritize_cached_hmm)
+        hmms = self.get_hmm_models(
+            species=species, chains=chains, source=source, prioritize_cached_hmm=prioritize_cached_hmm
+        )
 
         # Maintain order of sequences since pyhmmer is async
         results = {seq.name.decode(): [] for seq in sequences}

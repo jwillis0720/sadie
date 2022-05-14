@@ -26,6 +26,7 @@ class G3:
             "cow",
             "cat",  # missing L
             "alpaca",  # missing L and K
+            "rhesus",  # TODO: breaks tests; fix and fall back on anarci for now
             "dog",  # TODO: viable but does not match. Need to check if diff species of dog from G3
         ]
         self.alphabet = pyhmmer.easel.Alphabet.amino()
