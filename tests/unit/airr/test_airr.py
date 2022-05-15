@@ -181,10 +181,7 @@ def test_airr_init(tmpdir, monkeypatch):
 
 def test_custom_mice_init():
     """Test we can initialize custom Mice"""
-    Airr("hugl18")
     Airr("se09")
-    Airr("se16")
-    Airr("sa684")
 
 
 def test_airr_single_sequence(fixture_setup):
@@ -388,18 +385,22 @@ def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
 
     # run on heavy from fixture of airr
     heavy_airrtable_with_analysis = airr_methods.run_mutational_analysis(
-        heavy_catnap_airrtable, "kabat", run_multiproc=False
+        heavy_catnap_airrtable, "kabat", run_multiproc=True
     )
     assert "mutations" in heavy_airrtable_with_analysis.columns
 
     # run on light
-    light_airrtable_with_analysis = airr_methods.run_mutational_analysis(light_catnap_airrtable, "kabat")
+    light_airrtable_with_analysis = airr_methods.run_mutational_analysis(
+        light_catnap_airrtable, "kabat", run_multiproc=False
+    )
     assert "mutations" in light_airrtable_with_analysis.columns
     link_table = heavy_catnap_airrtable.merge(light_catnap_airrtable, on="cellid", suffixes=["_heavy", "_light"])
 
     # make sure we can run it on linked airr table
     joined_airr_table = LinkedAirrTable(link_table, key_column="cellid")
-    joined_airr_table_with_analysis = airr_methods.run_mutational_analysis(joined_airr_table, "kabat")
+    joined_airr_table_with_analysis = airr_methods.run_mutational_analysis(
+        joined_airr_table, "kabat", run_multiproc=False
+    )
     assert "mutations_heavy" in joined_airr_table_with_analysis.columns
     assert "mutations_light" in joined_airr_table_with_analysis.columns
     return heavy_airrtable_with_analysis, light_airrtable_with_analysis, joined_airr_table_with_analysis

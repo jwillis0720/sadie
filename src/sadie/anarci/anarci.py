@@ -22,11 +22,12 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 import pandas as pd
 
+from sadie.anarci.hmmer import HMMER
 from .aa._anarci import (
-    check_for_j,
+    # check_for_j,
     parsed_output,
     number_sequences_from_alignment,
-    run_hmmer,
+    # run_hmmer,
 )
 from .exception import (
     AnarciDuplicateIdError,
@@ -71,6 +72,8 @@ class Anarci:
         threshold=80,
         run_multiproc=True,
         num_cpus=cpu_count(),
+        prioritize_cached_hmm: bool = True,  # G3 multiprocessing broken
+        use_anarci_hmms: bool = False,
     ):
         """[summary]
 
@@ -110,6 +113,8 @@ class Anarci:
         self.num_cpus = num_cpus
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
+        self.prioritize_cached_hmm = prioritize_cached_hmm
+        self.use_anarci_hmms = use_anarci_hmms
         if not self.check_combination(self.scheme, self.region_definition):
             raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
 
@@ -387,22 +392,35 @@ class Anarci:
                               e.g. [ ("seq1","EVQLQQSGAEVVRSG ..."),
                                      ("seq2","DIVMTQSQKFMSTSV ...")
         """
+        hmmer = HMMER(use_anarci_hmms=self.use_anarci_hmms)
 
+        # TODO: downstream expects tuples so we convert them to seqrecords for hmmer
+        _sequences = [
+            SeqRecord(
+                Seq(seq),
+                id=seq_id,
+            )
+            for seq_id, seq in sequences
+        ]
         # Perform the alignments of the sequences to the hmm database
-        _alignments = run_hmmer(
-            sequences,
-            # hmm_database="ALL",
-            hmmer_species=self.allowed_species,
-            hmmerpath=self.hmmerpath,
-            ncpu=self.num_cpus,
+        _alignments = hmmer.hmmsearch(
+            sequences=_sequences,
+            species=self.allowed_species,
+            chains=self.allowed_chains,
             bit_score_threshold=self.threshold_bit,
-            tempdir=self.tempdir,
+            limit=1,
+            prioritize_cached_hmm=self.prioritize_cached_hmm,
+            for_anarci=True,
         )
-
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Modify alignments in-place
-        check_for_j(sequences, _alignments, self.scheme, self.hmmerpath)
-
+        hmmer.check_for_j(
+            sequences=_sequences,
+            alignments=_alignments,
+            species=self.allowed_species,
+            chains=self.allowed_chains,
+            prioritize_cached_hmm=self.prioritize_cached_hmm,
+        )
         # # Apply the desired numbering scheme to all sequences
         _numbered, _alignment_details, _hit_tables = number_sequences_from_alignment(
             sequences,
@@ -439,7 +457,7 @@ class Anarci:
         # anarci_results = anarci_results.add_segment_regions()
         return anarci_results
 
-    def run_single(self, seq_id: str, seq: str, scfv=False) -> AnarciResults:
+    def run_single(self, seq_id: str, seq: str) -> AnarciResults:
         """Run a single string sequence on an amino acid
 
         Parameters
@@ -453,9 +471,7 @@ class Anarci:
         -------
             AnarchiResults Object
         """
-
-        if not scfv:
-            sequences = [(seq_id, seq)]
+        sequences = [(seq_id, seq)]
 
         return self._run(sequences)
 
@@ -602,7 +618,7 @@ class Anarci:
                 shutil.copyfileobj(file_buffer, tmpfile)
                 file = tmpfile.name
 
-            # run on fasta
+        # run on fasta
         _results = self.run_multiple(list(SeqIO.parse(file, "fasta")))
         # if we had a file delete it
         if _filetype:

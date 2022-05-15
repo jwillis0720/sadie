@@ -311,7 +311,7 @@ def test_cli(caplog, fixture_setup):
     caplog.set_level(200000)
     # IMGT DB
     queries = fixture_setup.get_fasta_files()
-    species = ["dog", "rat", "human", "mouse", "macaque", "se09"]
+    species = ["rat", "human", "mouse", "macaque", "se09"]
     products = product(species, ["imgt"], queries)
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
@@ -347,7 +347,7 @@ def test_cli(caplog, fixture_setup):
 
 def test_cli_custom(caplog, fixture_setup):
     queries = fixture_setup.get_fasta_files()
-    species = ["cat", "macaque", "dog"]
+    species = ["macaque"]
     products = product(species, ["custom"], queries)
     caplog.set_level(200000)
 

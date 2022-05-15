@@ -11,14 +11,18 @@ from sadie.anarci import Anarci, AnarciDuplicateIdError, AnarciResults
 from sadie.anarci.aa._schemes import number_imgt
 from sadie.anarci.aa._anarci import number_sequences_from_alignment, number_sequence_from_alignment
 
+USE_CACHE = True  # TODO: make this an option in the config
+
 
 def test_long_seq():
-    anarci_api = Anarci(scheme="chothia", region_assign="imgt", allowed_species=["human"])
+    anarci_api = Anarci(scheme="chothia", region_assign="imgt", prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
     anarci_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
-    anarci_api = Anarci(scheme="kabat", region_assign="imgt", allowed_species=["human"])
+    anarci_api = Anarci(
+        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=USE_CACHE
+    )
     anarci_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
@@ -27,7 +31,9 @@ def test_long_seq():
 
 def test_no_j_gene():
     """no j gene found"""
-    anarci_api = Anarci(scheme="chothia", region_assign="imgt", allowed_species=["rat"])
+    anarci_api = Anarci(
+        scheme="chothia", region_assign="imgt", allowed_species=["rat"], prioritize_cached_hmm=USE_CACHE
+    )
     anarci_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
@@ -35,7 +41,7 @@ def test_no_j_gene():
 
 
 def test_trouble_seqs():
-    anarci = Anarci(scheme="kabat", region_assign="imgt", run_multiproc=False)
+    anarci = Anarci(scheme="kabat", region_assign="imgt", run_multiproc=False, prioritize_cached_hmm=USE_CACHE)
     # Legacy check. Id is sudo numbered in order so users cant just throw in a string
     # with pytest.warns(UserWarning):
     #     results = anarci.run_single(
@@ -68,7 +74,7 @@ def test_trouble_seqs():
 
 
 def test_single_seq():
-    anarci_api = Anarci(region_assign="imgt")
+    anarci_api = Anarci(region_assign="imgt", prioritize_cached_hmm=USE_CACHE)
     result = anarci_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
@@ -93,12 +99,12 @@ def test_single_seq():
 
 
 def test_alternate_numbering():
-    anarci_api = Anarci(scheme="chothia", region_assign="chothia")
+    anarci_api = Anarci(scheme="chothia", region_assign="chothia", prioritize_cached_hmm=USE_CACHE)
     anarci_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
-    anarci_api = Anarci(scheme="chothia", region_assign="abm")
+    anarci_api = Anarci(scheme="chothia", region_assign="abm", prioritize_cached_hmm=USE_CACHE)
     anarci_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
@@ -106,7 +112,7 @@ def test_alternate_numbering():
 
 
 def test_anarci_multi_input():
-    anarci_api = Anarci()
+    anarci_api = Anarci(prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
     seq_records = [
         SeqRecord(
             Seq(
@@ -145,7 +151,7 @@ def test_anarci_multi_input():
 def test_io(fixture_setup):
     """Test file io"""
     main_file = fixture_setup.get_dog_aa_seqs()
-    anarci_api = Anarci(allowed_species=["dog", "cat"])
+    anarci_api = Anarci(allowed_species=["dog", "cat"], prioritize_cached_hmm=USE_CACHE)
     results = anarci_api.run_file(main_file)
     assert isinstance(results, AnarciResults)
     with tempfile.NamedTemporaryFile(suffix=".anarci.bz2") as temp:
@@ -155,7 +161,7 @@ def test_io(fixture_setup):
 
 
 def test_dog():
-    anarci_api = Anarci()
+    anarci_api = Anarci(allowed_species=["dog"], prioritize_cached_hmm=USE_CACHE)
     result = anarci_api.run_single(
         "V3-38_J4",
         "EVQLVESGGDLVKPGGTLRLSCVASGLSLTSNSMSWVRQSPGKGLQWVAVIWSNGGTYYADAVKGRFTISRDNAKNTLYLQMNSLRAEDTAVYYCASIYYYDADYLHWGQGTLVTVSS",
@@ -185,12 +191,12 @@ def test_dog():
     assert result.fwr4_aa_gaps == "FGAGTKVELK"
     assert result.v_gene == "IGKV3S1*01"
     assert result.j_gene == "IGKJ1*01"
-    assert float(result.v_identity) == 0.91
+    assert float(result.v_identity) == 0.9
     assert float(result.j_identity) == 0.92
 
 
 def test_cat():
-    anarci_api = Anarci(allowed_species=["cat"])
+    anarci_api = Anarci(allowed_species=["cat"], prioritize_cached_hmm=USE_CACHE)
     result = anarci_api.run_single(
         "CF-R01-D01",
         "DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF",
@@ -210,13 +216,13 @@ def test_cat():
 
 def test_bad_sequences():
     bad_sequence = "SEQLTQPESLTLRPGQPLTIRCQVSYSVSSTGYATHWIRQPDGRGLEWIGGIRIGWKGAKDSLSSQFSLAVDGSSKTITLQGQNMQPGDSAVYYCAR"
-    anarci_api = Anarci()
+    anarci_api = Anarci(prioritize_cached_hmm=USE_CACHE)
     result = anarci_api.run_single("bad_sequence", bad_sequence)
     assert result.empty
 
 
 def test_duplicated_seq():
-    anarci_api = Anarci()
+    anarci_api = Anarci(prioritize_cached_hmm=USE_CACHE)
     seq_records = [
         SeqRecord(
             Seq(
@@ -240,10 +246,9 @@ def test_df(fixture_setup):
     df = pd.DataFrame(
         [{"id": x.id, "seq": x.seq, "description": x.description} for x in SeqIO.parse(test_file_heavy, "fasta")]
     )
-    anarci_obj = Anarci()
+    anarci_obj = Anarci(prioritize_cached_hmm=USE_CACHE)
     anarci_results = anarci_obj.run_dataframe(df, "id", "seq")
     assert isinstance(anarci_results, (AnarciResults, pd.DataFrame))
-    print("ehllo")
 
 
 def test_numbering_seqs():

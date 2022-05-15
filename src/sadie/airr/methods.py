@@ -57,13 +57,14 @@ def run_mutational_analysis(
 
     # create anarci api
     logger.info("Running ANARCI on germline alignment")
-    anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)  # type: ignore[no-untyped-call]
+    anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)
     germline_results_anarci = anarci_api.run_dataframe(
         airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,
         "germline_alignment_aa",
     )
     logger.info("Running ANARCI on mature alignment")
+    # from IPython import embed; embed()
     mature_results_anarci = anarci_api.run_dataframe(
         airrtable["sequence_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,
