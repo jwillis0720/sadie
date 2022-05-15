@@ -7,34 +7,38 @@
     <!-- <a href="https://github.com/jwillis0720/sadie/commits/master">
     <img src="https://img.shields.io/github/commit-activity/y/jwillis0720/sadie?style=flat-square"
          alt="GitHub commits"> -->
-    <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
-    <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
-         alt="Linux Build">
-    <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
-    <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
-         alt="Mac Build">
-    <a href="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg">
-    <img src="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg"
-         alt="Static Type">
-    <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue">
-    <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue"
-        alt="Python Version">
-    <a href="https://github.com/psf/black">
-    <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
-        alt="Format Version">
-    <a href="https://codecov.io/gh/jwillis0720/sadie">
-    <img src="https://codecov.io/gh/jwillis0720/sadie/branch/master/graph/badge.svg?token=EH9QEX4ZMP"
-        alt="Code Coverage">
-    <a href="https://github.com/pre-commit/pre-commit">
-    <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
-        alt="pre commit">
-    <a href=https://pypi.org/project/sadie-antibody">
-    <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
-        alt='pypi'>
-    <a href="https://sadie.jordanrwillis.com" >
-    <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
-        alt="Documentation">
-    </a>
+    <div class="flex-container" align="center">
+        <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
+            alt="Linux Build">
+        <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
+            alt="Mac Build">
+        <a href="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg"
+            alt="Static Type">
+    </div>
+    <div class="flex-container" align="center">
+        <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue">
+        <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue"
+            alt="Python Version">
+        <a href="https://github.com/psf/black">
+        <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
+            alt="Format Version">
+        <a href="https://codecov.io/gh/jwillis0720/sadie">
+        <img src="https://codecov.io/gh/jwillis0720/sadie/branch/master/graph/badge.svg?token=EH9QEX4ZMP"
+            alt="Code Coverage">
+        <a href="https://github.com/pre-commit/pre-commit">
+        <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
+            alt="pre commit">
+        <a href=https://pypi.org/project/sadie-antibody">
+        <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
+            alt='pypi'>
+        <a href="https://sadie.jordanrwillis.com" >
+        <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
+            alt="Documentation">
+        </a>
+    </div>
 </div>
 
 ## About
@@ -83,16 +87,19 @@ $ pip install sadie-antibody
 ### Development installation.
 
 !!! info
-Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
+
+    Pull requests are highly     [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reusability.
 
 <div class="termy">
 
 A development installation is available by running the following command:
 
-```console
-$ git clone git@github.com/jwillis0720/sadie.git
-$ pip install -e .[dev]
-```
+    ```console
+    $ git clone git@github.com/jwillis0720/sadie.git
+    ---> 100%
+    $ pip install -e .[dev]
+    ---> 100%
+    ```
 
 </div>
 
@@ -105,7 +112,8 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 <!-- get these icons through icon search https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/#search -->
 
 === ":material-console-line: Command Line Usage"
-Annotate antibody sequences only from functional human imgt antibodies to a gzip output
+
+    Annotate antibody sequences only from functional human IMGT antibodies to a gzip output
 
     <div class="termy">
 
@@ -116,7 +124,8 @@ Annotate antibody sequences only from functional human imgt antibodies to a gzip
     </div>
 
 === " :material-api: Python"
-Use the SADIE library to annotate seqeuences
+
+    Use the SADIE library to annotate sequences
 
     ```Python
     {!> docs_src/annotation/tutorial002.py!}
