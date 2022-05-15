@@ -83,16 +83,19 @@ $ pip install sadie-antibody
 ### Development installation.
 
 !!! info
-Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
+
+    Pull requests are highly     [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reusability.
 
 <div class="termy">
 
 A development installation is available by running the following command:
 
-```console
-$ git clone git@github.com/jwillis0720/sadie.git
-$ pip install -e .[dev]
-```
+    ```console
+    $ git clone git@github.com/jwillis0720/sadie.git
+    ---> 100%
+    $ pip install -e .[dev]
+    ---> 100%
+    ```
 
 </div>
 
@@ -105,7 +108,8 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 <!-- get these icons through icon search https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/#search -->
 
 === ":material-console-line: Command Line Usage"
-Annotate antibody sequences only from functional human imgt antibodies to a gzip output
+
+    Annotate antibody sequences only from functional human IMGT antibodies to a gzip output
 
     <div class="termy">
 
@@ -116,7 +120,8 @@ Annotate antibody sequences only from functional human imgt antibodies to a gzip
     </div>
 
 === " :material-api: Python"
-Use the SADIE library to annotate seqeuences
+
+    Use the SADIE library to annotate sequences
 
     ```Python
     {!> docs_src/annotation/tutorial002.py!}
