@@ -181,10 +181,7 @@ def test_airr_init(tmpdir, monkeypatch):
 
 def test_custom_mice_init():
     """Test we can initialize custom Mice"""
-    Airr("hugl18")
     Airr("se09")
-    Airr("se16")
-    Airr("sa684")
 
 
 def test_airr_single_sequence(fixture_setup):

@@ -1,19 +1,11 @@
 [
-    "/imgt/Ig/internal_data/clk/clk.ndm.imgt",
     "/imgt/Ig/internal_data/rabbit/rabbit.ndm.imgt",
-    "/imgt/Ig/internal_data/se09/se09.ndm.imgt",
-    "/imgt/Ig/internal_data/dog/dog.ndm.imgt",
-    "/custom/Ig/internal_data/cat/cat.ndm.imgt",
     "/custom/Ig/internal_data/macaque/macaque.ndm.imgt",
-    "/imgt/Ig/internal_data/bat64/bat64.ndm.imgt",
-    "/imgt/Ig/internal_data/se16/se16.ndm.imgt",
-    "/imgt/Ig/internal_data/sa684/sa684.ndm.imgt",
+    "/imgt/Ig/internal_data/clk/clk.ndm.imgt",
     "/imgt/Ig/internal_data/human/human.ndm.imgt",
+    "/imgt/Ig/internal_data/dog/dog.ndm.imgt",
     "/imgt/Ig/internal_data/macaque/macaque.ndm.imgt",
-    "/imgt/Ig/internal_data/hugl18/hugl18.ndm.imgt",
-    "/custom/Ig/internal_data/dog/dog.ndm.imgt",
     "/imgt/Ig/internal_data/rat/rat.ndm.imgt",
-    "/imgt/Ig/internal_data/mouse/mouse.ndm.imgt",
-    "/imgt/Ig/internal_data/se6156/se6156.ndm.imgt",
-    "/imgt/Ig/internal_data/se0916/se0916.ndm.imgt"
+    "/imgt/Ig/internal_data/se09/se09.ndm.imgt",
+    "/imgt/Ig/internal_data/mouse/mouse.ndm.imgt"
 ]
