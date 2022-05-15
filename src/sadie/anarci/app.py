@@ -108,10 +108,15 @@ def run_anarci(verbose, query, scheme, region, allowed_species, allowed_chains, 
 
     # setup object
     anarci_api = Anarci(
-        scheme=scheme, region_assign=region, allowed_chain=allowed_chains, allowed_species=allowed_species
+        scheme=scheme,
+        region_assign=region,
+        allowed_chain=allowed_chains,
+        allowed_species=allowed_species,
+        prioritize_cached_hmm=True,
+        use_anarci_hmms=False,
     )
 
-    # run file on query
+    # # run file on query
     anarci_results = anarci_api.run_file(query)
 
     # deal with output

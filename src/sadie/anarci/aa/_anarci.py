@@ -66,7 +66,7 @@ import pandas as pd
 import warnings
 from Bio.SearchIO.HmmerIO import Hmmer3TextParser as HMMERParser
 
-from sadie.anarci.hmmer import HMMER
+# from sadie.anarci.hmmer import HMMER
 
 # Import from the schemes submodule
 from ._schemes import (
@@ -84,7 +84,7 @@ from ._schemes import (
 from ._germlines import all_germlines
 from ...antibody.exception import LongHCDR3Error, AnarciDecreasing
 
-HMMER = HMMER()
+# HMMER = HMMER()
 all_species = list(all_germlines["V"]["H"].keys())
 logger = logging.getLogger("ANARCI")
 
@@ -718,6 +718,8 @@ def run_hmmer(
     hmmer_species=None,
     tempdir="/tmp",
     for_j_region: bool = False,
+    from_backup: bool = False,
+    hmm_chains: list = None,
 ):
     """
     Run the sequences in sequence list against a precompiled hmm_database.
@@ -738,8 +740,16 @@ def run_hmmer(
     with os.fdopen(fasta_filehandle, "w") as outfile:
         write_fasta(sequence_list, outfile)
 
-    results = HMMER.hmmsearch(fasta_filename, for_anarci=True, for_j_region=for_j_region, species=hmmer_species)
-    return results
+    # results = HMMER.hmmsearch(
+    #     fasta_filename,
+    #     for_anarci=True,
+    #     for_j_region=for_j_region,
+    #     species=hmmer_species,
+    #     chains=hmm_chains,
+    #     from_backup=from_backup,
+    #     bit_score_threshold=bit_score_threshold,
+    # )
+    # return results
 
     # Check that hmm_database is available
     assert hmm_database in ["ALL"], "Unknown HMM database %s" % hmm_database
@@ -1000,7 +1010,7 @@ def run_germline_assignment(state_vector, sequence, chain_type, allowed_species=
     return genes
 
 
-def check_for_j(sequences, alignments, scheme, hmmerpath):
+def check_for_j(sequences, alignments, scheme, hmmerpath, from_backup, hmm_chains):
     """
     As the length of CDR3 gets long (over 30ish) an alignment that does not include the J region becomes more favourable.
     This leads to really long CDR3s not being numberable.
@@ -1034,8 +1044,10 @@ def check_for_j(sequences, alignments, scheme, hmmerpath):
                         _, re_states, re_details = run_hmmer(
                             [(sequences[i][0], sequences[i][1][cys_si + 1 :])],
                             hmmerpath=hmmerpath,
+                            hmm_chains=hmm_chains,
                             bit_score_threshold=10,
                             for_j_region=True,
+                            from_backup=from_backup,
                         )[0]
 
                         # Check if a J region was detected in the remaining sequence.
@@ -1077,6 +1089,8 @@ def anarci(
     allowed_species=None,
     bit_score_threshold=80,
     hmmer_species=None,
+    from_backup=False,
+    hmm_chains: list = None,
 ):
     """
     The main function for anarci. Identify antibody and TCR domains, number them and annotate their germline and species.
@@ -1146,11 +1160,13 @@ def anarci(
         ncpu=ncpu,
         bit_score_threshold=bit_score_threshold,
         hmmer_species=hmmer_species,
+        hmm_chains=hmm_chains,
+        from_backup=from_backup,
     )
 
     # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
     # Modify alignments in-place
-    check_for_j(sequences, alignments, scheme)
+    check_for_j(sequences, alignments, scheme, from_backup, hmm_chains)
 
     # Apply the desired numbering scheme to all sequences
     numbered, alignment_details, hit_tables = number_sequences_from_alignment(

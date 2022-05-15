@@ -369,7 +369,14 @@ class ReferenceFixtures:
         ]
 
 
-class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures):
+class AnarciFixtures:
+    def __init__(self, tmp_path: Path, base_datadir: Path):
+        self.base_datadir = base_datadir
+        self.tmp_path = tmp_path
+        self.anarci_data = self.base_datadir / "anarci/curated_alignments"
+
+
+class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures, AnarciFixtures):
     def __init__(self, tmp_path_factory):
         tmp_path = tmp_path_factory.mktemp("sadie_fixture")
         base_datadir = Path("tests/data/fixtures/")
@@ -378,6 +385,7 @@ class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures):
         AirrSequences.__init__(self, tmp_path, base_datadir)
         AirrTables.__init__(self, tmp_path, base_datadir)
         ReferenceFixtures.__init__(self, tmp_path, base_datadir)
+        AnarciFixtures.__init__(self, tmp_path, base_datadir)
 
         # then rest of attributes
         self.tmp_path = tmp_path

@@ -5,47 +5,35 @@ from typing import Union, Optional, Dict, List, Tuple
 
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from pydantic import validate_arguments
 import pyhmmer
+
+from sadie.anarci.clients import G3
+from sadie.anarci.anarci_translator import AnarciTranslator
+from sadie.typing import Species, Chain, Source
 
 
 class HMMER:
     """
-    Extension of Pyhmmer with built-in alignment models that are species specific.
+    Extension of Pyhmmer to accept local HMMs (from Anarci) and external HMMs (from G3).
     """
 
-    def __init__(self):
-        # pathing
-        self.hmm_folder = Path(__file__).parent / "data/anarci/HMMs"
-        self.hmm_paths = self.hmm_folder.glob("*.hmm")
-        # species specific
-        self.species_to_paths = self.get_species_to_paths()
-        self.available_species = sorted(self.species_to_paths.keys())
+    g3 = G3()
+    anarci = AnarciTranslator()
+
+    def __init__(self, use_anarci_hmms: bool = False):
+        # Force Anarci local HMMs to be used -- mostely for primiary testing
+        self.use_anarci_hmms = use_anarci_hmms
         # place holders for hmmer
         self.alphabet = pyhmmer.easel.Alphabet.amino()
 
-    def get_species_to_paths(self) -> dict:
-        """
-        Return a dictionary with the available species and their paths.
-
-        Returns
-        -------
-        dict
-            Dictionary with the available species and their paths.
-        """
-        species_to_paths = {}
-
-        for path in self.hmm_paths:
-            species, *chain = path.stem.split("_")
-            try:
-                species_to_paths[species].append(path)
-            except KeyError:
-                species_to_paths[species] = [path]
-
-        return species_to_paths
-
+    @validate_arguments
     def get_hmm_models(
         self,
-        species: Optional[Union[List[str], str]] = None,
+        species: Optional[Union[List[Species], Species]] = None,
+        chains: Optional[Union[List[Chain], Chain]] = None,
+        source: Source = "imgt",
+        prioritize_cached_hmm: bool = False,
     ) -> List[pyhmmer.plan7.HMMFile]:
         """
         Return a HMMER model for a given specie.
@@ -61,20 +49,33 @@ class HMMER:
             HMM model for specific species
         """
         hmms = []
+        species = species if species else set(Species.species.values())
+        chains = chains if chains else Chain.chains
 
-        if not species:
-            species = self.available_species
-        if isinstance(species, str):
-            species = [species]
-
-        for _species in species:
-            try:
-                hmm_paths = self.species_to_paths[_species]
-            except KeyError:
-                raise KeyError(f"{_species} is not a valid species from {self.available_species}")
-            for hmm_path in hmm_paths:
-                with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
-                    hmm = next(hmm_file)
+        for single_species in species:
+            for chain in chains:
+                # If not in G3 -- try Anarci
+                if chain not in self.g3.chains or single_species not in self.g3.species or self.use_anarci_hmms is True:
+                    # If not in Anarci -- ignore
+                    if (single_species, chain) not in self.anarci.species_chain_to_paths:
+                        continue
+                    # Build Anarci HMMs
+                    hmm_paths = self.anarci.species_chain_to_paths[(single_species, chain)]
+                    for hmm_path in hmm_paths:
+                        with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
+                            hmm = next(hmm_file)
+                            hmms.append(hmm)
+                # Build G3 HMMs
+                else:
+                    hmm = self.g3.get_hmm(
+                        source=source,
+                        chain=chain,
+                        species=single_species,
+                        limit=None,
+                        prioritize_cached_hmm=prioritize_cached_hmm,
+                    )
+                    if not hmm:
+                        continue
                     hmms.append(hmm)
 
         return hmms
@@ -178,14 +179,23 @@ class HMMER:
 
         return sequences
 
+    # def load_stockholm(self, stockholm_path: Union[Path, str]) -> pyhmmer.easel.DigitalMSA:
+    #     with pyhmmer.easel.MSAFile(stockholm_path, digital=True, alphabet=self.alphabet) as msa_file:
+    #         msa = next(msa_file)
+    #     return msa
+
+    # @validate_arguments(config=dict(arbitrary_types_allowed=True))
     def hmmsearch(
         self,
         sequences: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str],
-        species: Optional[List[Union[str, int]]] = None,
+        species: Optional[Union[List[Species], Species]] = None,
+        chains: Optional[Union[List[Chain], Chain]] = None,
+        source: Source = "imgt",
         bit_score_threshold: int = 80,
-        limit: int = 1,
+        limit: Optional[int] = 1,
+        prioritize_cached_hmm: bool = False,
         for_anarci: bool = False,
-        for_j_region: bool = False,
+        # check_for_j: bool = True,
     ) -> List[List[Dict[str, Union[str, int]]]]:
         """
         Perform a HMMER search for a given sequence.
@@ -207,9 +217,9 @@ class HMMER:
             Number of domain hits to be returned, default is 1.
         for_anarci : bool
             If True, return the ANARCI expected state_vector object.
-        for_j_region : bool
-            If True, return the J-region expected state_vector object.
-            Anarci reruns hmmsearch with the J-region to correct possible mistakes.
+        # for_j_region : bool
+        #     If True, return the J-region expected state_vector object.
+        #     Anarci reruns hmmsearch with the J-region to correct possible mistakes.
 
         Examples
         >>> seq = 'DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF'
@@ -236,11 +246,13 @@ class HMMER:
         List[List[Dict[str, Union[str, int]]]]
             List of HMMER hits for ANARCI numbering.
         """
+
         # Convert sequences to Easel sequences
         sequences = self.__transform_seq(sequences)
-
         # Load Models by species
-        hmms = self.get_hmm_models(species)
+        hmms = self.get_hmm_models(
+            species=species, chains=chains, source=source, prioritize_cached_hmm=prioritize_cached_hmm
+        )
 
         # Maintain order of sequences since pyhmmer is async
         results = {seq.name.decode(): [] for seq in sequences}
@@ -273,7 +285,6 @@ class HMMER:
                         "chain_type": ali.hmm_name.decode().split("_")[1],
                     }
                 )
-
         # Sort by bitscore and limit results
         best_results = []
         for query_id in results.keys():
@@ -513,3 +524,71 @@ class HMMER:
                 query_step += 1
 
         return vector_state
+
+    def check_for_j(
+        self,
+        sequences: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str],
+        alignments: List[List[Dict[str, Union[str, int]]]],
+        species: Optional[List[Union[str, int]]] = None,
+        chains: Optional[List[Union[str, int]]] = None,
+        prioritize_cached_hmm: bool = False,
+    ):
+        """
+        As the length of CDR3 gets long (over 30ish) an alignment that does not include the J region becomes more favourable.
+        This leads to really long CDR3s not being numberable.
+
+        To overcome this problem, when no J region is detected we try without the v region.
+        """
+        for i in range(len(sequences)):
+            # Check the alignment for J region
+            if len(alignments[i][1]) == 1:  # Only do for single domain chains.
+
+                # Check whether a J region has been identified. If not check whether there is still a considerable amount of sequence
+                # remaining.
+                ali = alignments[i][1][0]
+
+                # Find the last match position.
+                last_state = ali[-1][0][0]
+                last_si = ali[-1][1]
+                if last_state < 120:  # No or very little J region
+                    if last_si + 30 < len(
+                        sequences[i][1]
+                    ):  # Considerable amount of sequence left...suspicious of a long CDR3
+                        # Find the position of the conserved cysteine (imgt 104).
+                        cys_si = dict(ali).get((104, "m"), None)
+                        if cys_si is not None:  # 104 found.
+
+                            # Find the corresponding index in the alignment.
+                            cys_ai = ali.index(((104, "m"), cys_si))
+
+                            # Try to identify a J region in the remaining sequence after the 104. A low bit score threshold is used.
+                            # print([(sequences[i][0], sequences[i][1][cys_si + 1 :])])
+                            _, re_states, re_details = self.hmmsearch(
+                                sequences=[(sequences[i][0], sequences[i][1][cys_si + 1 :])],
+                                species=species,
+                                chains=chains,
+                                bit_score_threshold=10,
+                                prioritize_cached_hmm=prioritize_cached_hmm,
+                            )[0]
+
+                            # Check if a J region was detected in the remaining sequence.
+                            if re_states and re_states[0][-1][0][0] >= 126 and re_states[0][0][0][0] <= 117:
+
+                                # Sandwich the presumed CDR3 region between the V and J regions.
+
+                                vRegion = ali[: cys_ai + 1]
+                                jRegion = [
+                                    (state, index + cys_si + 1) for state, index in re_states[0] if state[0] >= 117
+                                ]
+                                cdrRegion = []
+                                next = 105
+                                for si in range(cys_si + 1, jRegion[0][1]):
+                                    if next >= 116:
+                                        cdrRegion.append(((116, "i"), si))
+                                    else:
+                                        cdrRegion.append(((next, "m"), si))
+                                        next += 1
+
+                                # Update the alignment entry.
+                                alignments[i][1][0] = vRegion + cdrRegion + jRegion
+                                alignments[i][2][0]["query_end"] = jRegion[-1][1] + 1
