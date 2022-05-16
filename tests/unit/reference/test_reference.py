@@ -388,23 +388,9 @@ def test_yaml(tmpdir, fixture_setup):
     """Test yaml module"""
     yaml = YamlRef()
     assert yaml.get_database_types() == {"imgt", "custom"}
-    imgt_keys = [
-        "se6156",
-        "sa684",
-        "bat64",
-        "clk",
-        "dog",
-        "hugl18",
-        "human",
-        "macaque",
-        "mouse",
-        "rabbit",
-        "rat",
-        "se09",
-        "se0916",
-        "se16",
-    ]
-    custom_keys = ["cat", "dog", "macaque"]
+    imgt_keys = ["clk", "dog", "human", "macaque", "mouse", "rabbit", "rat", "se09"]
+
+    custom_keys = ["macaque"]
     assert yaml.get_species_keys("imgt") == imgt_keys
     assert yaml.get_species_keys("custom") == custom_keys
 
