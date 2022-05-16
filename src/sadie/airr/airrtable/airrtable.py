@@ -2,7 +2,7 @@
 # std lib
 import logging
 from pathlib import Path
-from typing import Any, Hashable, Optional, Tuple, List, Union
+from typing import Any, Callable, Hashable, Optional, Tuple, List, Type, Union
 import warnings
 
 # third party
@@ -10,6 +10,7 @@ import pandas as pd
 from Levenshtein._levenshtein import distance
 from numpy import nan
 from Bio import SeqRecord, SeqIO
+from Bio.Seq import Seq
 
 # module/package
 from sadie.airr.airrtable.constants import IGBLAST_AIRR
@@ -18,8 +19,113 @@ from sadie.airr.exceptions import MissingAirrColumns
 from sadie.utility.io import SadieOutput
 from sadie.utility.util import correct_alignment
 from pprint import pformat
+from sadie.receptor.rearrangment import (
+    InputSequence,
+    PrimaryAnnotations,
+    AlignmentAnnotations,
+    RegionSequences,
+    AlignmentPositions,
+    JunctionLengths,
+    RegionPositions,
+    ReceptorChain,
+)
 
 logger = logging.getLogger("AIRRTable")
+
+
+def _get_raw_seq(row: pd.Series) -> str:
+    seq = row["sequence"]
+    rev_comp = row["rev_comp"]
+    if rev_comp:
+        seq = Seq(seq).reverse_complement()
+    else:
+        seq = seq
+    return str(seq)
+
+
+def _get_seq_aa(seq: str) -> str:
+    return str(Seq(seq).translate())
+
+
+class AirrSeries(pd.Series):
+    @property
+    def _constructor(self) -> Type["AirrSeries"]:
+        return AirrSeries
+
+    @property
+    def _constructor_expanddim(self) -> Type["AirrTable"]:
+        return AirrTable
+
+    def to_input_sequence_object(self) -> InputSequence:
+        """
+        Converts the AirrSeries to a InputSequence
+        """
+        sequence_fields: pd.Index = pd.Index(InputSequence.get_airr_fields())
+        model = InputSequence(**self[sequence_fields].to_dict())
+        return model
+
+    def to_primary_annotations_object(self) -> PrimaryAnnotations:
+        """
+        Converts the AirrSeries to a PrimaryAnnotations
+        """
+        sequence_fields: pd.Index = pd.Index(PrimaryAnnotations.get_airr_fields())
+        model = PrimaryAnnotations(**self[sequence_fields].to_dict())
+        return model
+
+    def to_alignment_annotations_object(self) -> AlignmentAnnotations:
+        """
+        Converts the AirrSeries to a AlignmentAnnotations
+        """
+        sequence_fields: pd.Index = pd.Index(AlignmentAnnotations.get_airr_fields())
+        model = AlignmentAnnotations(**self[sequence_fields].to_dict())
+        return model
+
+    def to_region_sequences_object(self) -> RegionSequences:
+        """
+        Converts the AirrSeries to a RegionSequences
+        """
+        sequence_fields: pd.Index = pd.Index(RegionSequences.get_airr_fields())
+        model = RegionSequences(**self[sequence_fields].to_dict())
+        return model
+
+    def to_alignment_positions_object(self) -> AlignmentPositions:
+        """
+        Converts the AirrSeries to a AlignmentPositions
+        """
+        sequence_fields: pd.Index = pd.Index(AlignmentPositions.get_airr_fields())
+        model = AlignmentPositions(**self[sequence_fields].to_dict())
+        return model
+
+    def to_region_positions_object(self) -> RegionPositions:
+        """
+        Converts the AirrSeries to a RegionPositions
+        """
+        sequence_fields: pd.Index = pd.Index(RegionPositions.get_airr_fields())
+        model = RegionPositions(**self[sequence_fields].to_dict())
+        return model
+
+    def to_junction_lengths_object(self) -> JunctionLengths:
+        """
+        Converts the AirrSeries to a JunctionLengths
+        """
+        sequence_fields: pd.Index = pd.Index(JunctionLengths.get_airr_fields())
+        model = JunctionLengths(**self[sequence_fields].to_dict())
+        return model
+
+    def to_receptor_chain_object(self) -> ReceptorChain:
+        """
+        Converts the AirrSeries to a ReceptorChain
+        """
+        model = ReceptorChain(
+            input_sequence=self.to_input_sequence_object(),
+            primary_annotations=self.to_primary_annotations_object(),
+            alignment_annotations=self.to_alignment_annotations_object(),
+            region_sequences=self.to_region_sequences_object(),
+            alignment_positions=self.to_alignment_positions_object(),
+            region_positions=self.to_region_positions_object(),
+            junction_lengths=self.to_junction_lengths_object(),
+        )
+        return model
 
 
 class AirrTable(pd.DataFrame):
@@ -80,6 +186,10 @@ class AirrTable(pd.DataFrame):
                 self._key_column: str = key_column
                 self._suffixes: List[str] = []
                 self._verify()
+
+    @property
+    def _constructor_sliced(self) -> Type[AirrSeries]:
+        return AirrSeries
 
     @property
     def verified(self) -> bool:
@@ -187,7 +297,11 @@ class AirrTable(pd.DataFrame):
         SeqIO.write(_records, filename, "genbank")
 
     def _verify(self) -> None:
-        # if there is any missing columns
+        # if there ais any missing columns
+        # add raw seq and sequence_aa_columns
+        # if not self._islinked:
+        #     self[f"raw_seq"] = self[["sequence", "rev_comp"]].apply(_get_raw_seq, axis=1)
+        #     self[f"sequence_aa"] = self["sequence"].apply(_get_seq_aa)
         missing_columns = set(self.compliant_cols).difference(self.columns)
         if missing_columns:
             raise MissingAirrColumns(missing_columns)
@@ -229,6 +343,7 @@ class AirrTable(pd.DataFrame):
                 self[f"vdj_aa{suffix}"] = self[_local_suffix_aa].apply(
                     lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1
                 )
+                self[f"sequence_aa{suffix}"] = self[f"sequence{suffix}"].apply(lambda x: Seq(x).translate().__str__())
         else:
             # get full nt vdj recombination
             self["vdj_nt"] = self[vdj_nt_keys].apply(
@@ -260,6 +375,7 @@ class AirrTable(pd.DataFrame):
 
                 # get mutation frequency rather than identity
                 self.loc[:, f"v_mutation{suffix}"] = self[f"v_identity{suffix}"].apply(lambda x: (100 - x))
+                self.loc[:, f"v_identity{suffix}"] = self[f"v_identity{suffix}"].apply(lambda x: x / 100)
 
                 # then get a percentage for AA by computing levenshtein
                 self.loc[:, f"v_mutation_aa{suffix}"] = self[
@@ -268,10 +384,13 @@ class AirrTable(pd.DataFrame):
 
                 # do the same for D and J gene segment portions
                 self.loc[:, f"d_mutation{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: (100 - x))
+                self.loc[:, f"d_identity{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: x / 100)
+
                 self.loc[:, f"d_mutation_aa{suffix}"] = self[
                     [f"d_sequence_alignment_aa{suffix}", f"d_germline_alignment_aa{suffix}"]
                 ].apply(lambda x: self._get_aa_distance(x), axis=1)
                 self.loc[:, f"j_mutation{suffix}"] = self[f"j_identity{suffix}"].apply(lambda x: (100 - x))
+                self.loc[:, f"j_identity{suffix}"] = self[f"j_identity{suffix}"].apply(lambda x: x / 100)
                 self.loc[:, f"j_mutation_aa{suffix}"] = self[
                     [f"j_sequence_alignment_aa{suffix}", f"j_germline_alignment_aa{suffix}"]
                 ].apply(lambda x: self._get_aa_distance(x), axis=1)
@@ -290,6 +409,7 @@ class AirrTable(pd.DataFrame):
 
             # get mutation frequency rather than identity
             self.loc[:, "v_mutation"] = self["v_identity"].apply(lambda x: (100 - x))
+            self.loc[:, "v_identity"] = self["v_identity"].apply(lambda x: x / 100)
 
             # then get a percentage for AA by computing levenshtein
             self.loc[:, "v_mutation_aa"] = self[["v_sequence_alignment_aa", "v_germline_alignment_aa"]].apply(
@@ -298,10 +418,12 @@ class AirrTable(pd.DataFrame):
 
             # do the same for D and J gene segment portions
             self.loc[:, "d_mutation"] = self["d_identity"].apply(lambda x: (100 - x))
+            self.loc[:, "d_identity"] = self["d_identity"].apply(lambda x: x / 100)
             self.loc[:, "d_mutation_aa"] = self[["d_sequence_alignment_aa", "d_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
             )
             self.loc[:, "j_mutation"] = self["j_identity"].apply(lambda x: (100 - x))
+            self.loc[:, "j_identity"] = self["j_identity"].apply(lambda x: x / 100)
             self.loc[:, "j_mutation_aa"] = self[["j_sequence_alignment_aa", "j_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
             )

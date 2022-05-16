@@ -116,8 +116,8 @@ def run_mutational_analysis(
 
     mature_results_hmmer["mutations"] = mutation_arrays
     return AirrTable(
-        airrtable.astype({key: "str"}).merge(
-            mature_results_hmmer.rename({"Id": key}, axis=1)[[key, "scheme", "mutations"]], on=key
+        pd.DataFrame(airrtable).astype({key: "str"}).merge(
+            pd.DataFrame(mature_results_anarci).rename({"Id": key}, axis=1)[[key, "scheme", "mutations"]], on=key
         ),
         key_column=key,
     )

@@ -446,7 +446,6 @@ class Airr:
         scfv : bool, optional
             if the fasta contains an H+L pair, by default False
 
-
         Returns
         -------
         Union[AirrTable, LinkedAirrTable]
@@ -457,6 +456,7 @@ class Airr:
         BadRequstedFileType
             not a fasta file
         """
+
         if isinstance(file, Path):
             # cast to str
             file = str(file)
@@ -483,6 +483,8 @@ class Airr:
             logger.info(f"Running blast on {file}")
             result = self.igblast.run_file(Path(file))
             logger.info(f"Ran blast on  {file}")
+
+            # this is worthless since query
             result.insert(2, "species", pd.Series([self.species] * len(result)))
             result = AirrTable(result)
             result["v_penalty"] = self._v_gene_penalty
@@ -494,7 +496,9 @@ class Airr:
                     # recurse
                     for v_penalty in range(-2, -4, -1):
                         for j_penalty in range(-1, -3, -1):
-                            _start_df = result[result["liable"]].copy().reset_index().astype({"index": str})
+                            _start_df = pd.DataFrame(result[result["liable"]].copy().reset_index()).astype(
+                                {"index": str}
+                            )
                             if _start_df.empty:
                                 logger.info("Corrected all liabilities")
                                 break
@@ -526,7 +530,7 @@ class Airr:
                             result.update(adapt_results[~adapt_results["liable"]])
 
                     # finally try to correct liabilites with VDJ overlap
-                    _start_df = result[result["liable"]].copy().reset_index().astype({"index": str})
+                    _start_df = pd.DataFrame(result[result["liable"]].copy().reset_index()).astype({"index": str})
                     if _start_df.empty:
                         logger.info("Corrected all liabilities")
                     else:
@@ -542,7 +546,7 @@ class Airr:
                         )
                         adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
                         adapt_results = (
-                            adapt_results.rename({"sequence_id": "index"}, axis=1)
+                            pd.DataFrame(adapt_results.rename({"sequence_id": "index"}, axis=1))
                             .astype({"index": int})
                             .set_index("index")
                             .rename({"index": ""})
@@ -618,7 +622,9 @@ class Airr:
         result_b.loc[result_a.index, "sequence"] = result_a.sequence
 
         # Grab the Heavy Chains
-        heavy_chain_table = pd.concat([result_a[result_a["locus"] == "IGH"], result_b[result_b["locus"] == "IGH"]])
+        result_a_heavy = result_a[result_a["locus"] == "IGH"]
+        result_b_heavy = result_b[result_b["locus"] == "IGH"]
+        heavy_chain_table = pd.concat([result_a_heavy, result_b_heavy])
 
         # Grab the Light Chains out of the set
         light_chain_table = pd.concat(

@@ -72,9 +72,23 @@ class AirrSequences:
         """get the file path for PG9 light chain fasta"""
         return self.fasta_inputs / "PG9_L.fasta"
 
+    def get_vrc01_light_fasta(self) -> Path:
+        """get a file path for the vrc01 light fasta file"""
+        return self.fasta_inputs / "vrc01_L.fasta"
+
+    def get_vrc01_heavy_fasta(self) -> Path:
+        """get a file path for the vrc01 light fasta file"""
+        return self.fasta_inputs / "vrc01_H.fasta"
+
     def get_pg9_light_sequence(self) -> SeqIO.SeqRecord:
         """get the sequence recored for the PG9 light chain"""
         return SeqIO.read(self.get_pg9_light_fasta(), "fasta")
+
+    def get_vrc01_light_sequecne(self) -> SeqIO.SeqRecord:
+        return SeqIO.read(self.get_vrc01_light_fasta(), "fasta")
+
+    def get_vrc01_heavy_sequence(self) -> SeqIO.SeqRecord:
+        return SeqIO.read(self.get_vrc01_heavy_fasta(), "fasta")
 
     def get_pg9_heavy_multiple_fasta(self) -> Path:
         """get multiple fasta file path for multiple PG9 heavy chains"""
