@@ -8,18 +8,18 @@ from Bio.SeqRecord import SeqRecord
 from pydantic import validate_arguments
 import pyhmmer
 
-from sadie.anarci.clients import G3
-from sadie.anarci.anarci_translator import AnarciTranslator
+from sadie.hmmer.clients import G3
+from sadie.hmmer.anarci_translator import AnarciTranslator
 from sadie.typing import Species, Chain, Source
 
 
-class HMMER:
+class HMMERTranslator:
     """
     Extension of Pyhmmer to accept local HMMs (from Anarci) and external HMMs (from G3).
     """
 
     g3 = G3()
-    anarci = AnarciTranslator()
+    anarci = AnarciTranslator()  # for anarci hmm files only and not their scripts
 
     def __init__(self, use_anarci_hmms: bool = False):
         # Force Anarci local HMMs to be used -- mostely for primiary testing
@@ -184,7 +184,6 @@ class HMMER:
     #         msa = next(msa_file)
     #     return msa
 
-    # @validate_arguments(config=dict(arbitrary_types_allowed=True))
     def hmmsearch(
         self,
         sequences: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str],
@@ -195,7 +194,6 @@ class HMMER:
         limit: Optional[int] = 1,
         prioritize_cached_hmm: bool = False,
         for_anarci: bool = False,
-        # check_for_j: bool = True,
     ) -> List[List[Dict[str, Union[str, int]]]]:
         """
         Perform a HMMER search for a given sequence.
@@ -316,8 +314,8 @@ class HMMER:
                     [self.get_vector_state(**result)],
                     [result],
                 )
-                # if result['query_start'] < 4 and for_j_region is False else default_out
-                if result else default_out
+                if result
+                else default_out
                 for result in best_results
             ]
 

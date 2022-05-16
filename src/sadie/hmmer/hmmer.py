@@ -9,7 +9,6 @@ import filetype
 import os
 import shutil
 import tempfile
-import platform
 
 import warnings
 from multiprocessing import cpu_count
@@ -22,24 +21,19 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 import pandas as pd
 
-from sadie.anarci.hmmer import HMMER
-from .aa._anarci import (
-    # check_for_j,
-    parsed_output,
-    number_sequences_from_alignment,
-    # run_hmmer,
-)
+from sadie.hmmer.hmmer_translator import HMMERTranslator
+from sadie.numbering import Numbering
+
 from .exception import (
     AnarciDuplicateIdError,
     BadAnarciArgument,
     BadRequstedFileType,
-    HmmerExecutionError,
 )
 from .result import AnarciResults
 from .constants import ANARCI_RESULTS
-from .numbering import scheme_numbering
+from .scheme_numbering import scheme_numbering
 
-logger = logging.getLogger("ANARCI")
+logger = logging.getLogger("HMMER")
 
 # Get out of here with your partial codon warnigns
 warnings.filterwarnings("ignore", "Partial codon")
@@ -49,7 +43,11 @@ class Error(Exception):
     """Base class for exceptions in this module."""
 
 
-class Anarci:
+class HMMER:
+
+    hmmer_translator = HMMERTranslator()
+    numbering = Numbering()
+
     def __init__(
         self,
         scheme="imgt",
@@ -68,14 +66,13 @@ class Anarci:
             "cat",
         ],
         tempdir="",
-        hmmerpath="",
         threshold=80,
         run_multiproc=True,
         num_cpus=cpu_count(),
         prioritize_cached_hmm: bool = True,  # G3 multiprocessing broken
         use_anarci_hmms: bool = False,
     ):
-        """[summary]
+        """HMMER v3 wrapper that runs hmmersearch using G3 built HMMs and numbering schema from Anarci.
 
         Parameters
         ----------
@@ -109,67 +106,13 @@ class Anarci:
         self.assign_germline = assign_germline
         self.allowed_species = allowed_species
         self.tempdir = tempdir
-        self.hmmerpath = hmmerpath
         self.num_cpus = num_cpus
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
         self.prioritize_cached_hmm = prioritize_cached_hmm
-        self.use_anarci_hmms = use_anarci_hmms
+        self.hmmer_translator.use_anarci_hmms = use_anarci_hmms
         if not self.check_combination(self.scheme, self.region_definition):
             raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
-
-    @property
-    def hmmerpath(self) -> Path:
-        """Path to the hmmrscan executable
-
-        Returns
-        -------
-        Path
-            The path of the hmmrscan
-        """
-        return self._hmmerpath
-
-    @hmmerpath.setter
-    def hmmerpath(self, path: Path):
-        _executable = "hmmscan"
-        if not path:  # try and use package hmmscan
-            system = platform.system().lower()
-            hmmer_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                f"bin/{system}/{_executable}",
-            )
-            # check if its
-            if os.path.exists(hmmer_path):
-                # check if it's executable
-                if shutil.which(hmmer_path):
-                    self._hmmerpath = hmmer_path
-                else:
-                    # If it's not check the access
-                    _access = os.access(hmmer_path, os.X_OK)
-                    raise HmmerExecutionError(hmmer_path, f"is, this executable? Executable-{_access}")
-            else:  # The package hmmscan is not working
-                logger.warning(
-                    f"Can't find hmmscan executable in {hmmer_path}, with system {system} within package {__package__}. Trying to find system installed hmmer"
-                )
-                hmmer_path = shutil.which(_executable)
-                if hmmer_path:
-                    self._hmmerpath = hmmer_path
-                else:
-                    raise HmmerExecutionError(
-                        hmmer_path,
-                        f"Can't find hmmrscan in package {__package__} or in path {os.environ['PATH']}",
-                    )
-        else:  # User specifed custome path
-            logger.debug(f"User passed custom hmmer path {path}")
-            hmmer_path = shutil.which(path)
-            if hmmer_path:
-                self._hmmerpath = hmmer_path
-            else:
-                _access = os.access(hmmer_path, os.X_OK)
-                raise HmmerExecutionError(
-                    hmmer_path,
-                    f"Custom hmmer path is not executable {hmmer_path}, {_access} ",
-                )
 
     @property
     def region_definition(self) -> str:
@@ -392,8 +335,6 @@ class Anarci:
                               e.g. [ ("seq1","EVQLQQSGAEVVRSG ..."),
                                      ("seq2","DIVMTQSQKFMSTSV ...")
         """
-        hmmer = HMMER(use_anarci_hmms=self.use_anarci_hmms)
-
         # TODO: downstream expects tuples so we convert them to seqrecords for hmmer
         _sequences = [
             SeqRecord(
@@ -403,7 +344,7 @@ class Anarci:
             for seq_id, seq in sequences
         ]
         # Perform the alignments of the sequences to the hmm database
-        _alignments = hmmer.hmmsearch(
+        _alignments = self.hmmer_translator.hmmsearch(
             sequences=_sequences,
             species=self.allowed_species,
             chains=self.allowed_chains,
@@ -414,15 +355,16 @@ class Anarci:
         )
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Modify alignments in-place
-        hmmer.check_for_j(
+        self.hmmer_translator.check_for_j(
             sequences=_sequences,
             alignments=_alignments,
             species=self.allowed_species,
             chains=self.allowed_chains,
             prioritize_cached_hmm=self.prioritize_cached_hmm,
         )
-        # # Apply the desired numbering scheme to all sequences
-        _numbered, _alignment_details, _hit_tables = number_sequences_from_alignment(
+
+        # Apply the desired numbering scheme to all sequences
+        _numbered, _alignment_details, _hit_tables = self.numbering.number_sequences_from_alignment(
             sequences,
             _alignments,
             scheme=self.scheme,
@@ -431,7 +373,7 @@ class Anarci:
             allowed_species=self.allowed_species,
         )
 
-        _summary = parsed_output(sequences, _numbered, _alignment_details)
+        _summary = self.numbering.parsed_output(sequences, _numbered, _alignment_details)
         anarci_results = pd.DataFrame(_summary)
         if anarci_results.empty:
             return AnarciResults()
@@ -616,7 +558,7 @@ class Anarci:
                 else:
                     raise BadRequstedFileType(_filetype, ["bzip2", "gzip"])
                 shutil.copyfileobj(file_buffer, tmpfile)
-                file = tmpfile.name
+                file = Path(tmpfile.name)
 
         # run on fasta
         _results = self.run_multiple(list(SeqIO.parse(file, "fasta")))

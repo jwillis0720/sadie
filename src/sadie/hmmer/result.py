@@ -3,7 +3,7 @@ import pandas as pd
 from ast import literal_eval
 
 from .constants import ANARCI_RESULTS
-from .numbering import scheme_numbering
+from .scheme_numbering import scheme_numbering
 
 logger = logging.getLogger("ANARCI")
 

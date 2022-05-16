@@ -1,3 +1,6 @@
+from typing import List
+
+
 class Error(Exception):
     """Base class for exceptions in this module."""
 
@@ -25,7 +28,7 @@ class BadRequstedFileType(Error):
     Attributes:
     """
 
-    def __init__(self, requested_type, accepted_types):
+    def __init__(self, requested_type: str, accepted_types: List[str]):
         super().__init__()
         self.requested_type = requested_type
         self.accepted_types = accepted_types
