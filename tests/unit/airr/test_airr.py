@@ -239,16 +239,16 @@ def test_run_multiple(fixture_setup):
 
 
 # def test_scfv(fixture_setup):
-    # """Run on short scfv sequence"""
-    # airr = Airr("human", adaptable=False)
-    # linked = airr.run_records(fixture_setup.get_scfv_sequences(), scfv=True)
-    # assert isinstance(linked, LinkedAirrTable)
+# """Run on short scfv sequence"""
+# airr = Airr("human", adaptable=False)
+# linked = airr.run_records(fixture_setup.get_scfv_sequences(), scfv=True)
+# assert isinstance(linked, LinkedAirrTable)
 
-    # """Run on multiple long scfv sequences"""
-    # scfv = fixture_setup.get_long_scfv_fastq()
-    # airr = Airr("human", adaptable=False)
-    # results = airr.run_records(scfv, scfv=True)
-    # assert isinstance(results, LinkedAirrTable)
+# """Run on multiple long scfv sequences"""
+# scfv = fixture_setup.get_long_scfv_fastq()
+# airr = Airr("human", adaptable=False)
+# results = airr.run_records(scfv, scfv=True)
+# assert isinstance(results, LinkedAirrTable)
 
 
 def test_airr_from_dataframe(fixture_setup):

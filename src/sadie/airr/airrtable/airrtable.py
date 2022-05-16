@@ -2,7 +2,7 @@
 # std lib
 import logging
 from pathlib import Path
-from typing import Any, Callable, Hashable, Optional, Tuple, List, Type, Union
+from typing import Any, Hashable, Optional, Tuple, List, Type, Union
 import warnings
 
 # third party
