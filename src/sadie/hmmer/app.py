@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from typing import List
 
 import click
 
@@ -7,7 +8,7 @@ from ..utility.util import get_verbosity_level
 from .hmmer import HMMER
 
 
-def _validate_anarci_objects(ctx, param, value):
+def _validate_anarci_objects(ctx, param, value: str) -> List[str]:
     """Private method for click context to evaluate comma seperated lists and make sure each field is okay"""
     columns = [c.strip() for c in value.split(",")]
     param_name = param.human_readable_name
@@ -93,7 +94,17 @@ def _validate_anarci_objects(ctx, param, value):
     help="output file type format",
     default="csv",
 )
-def run_anarci(verbose, query, scheme, region, allowed_species, allowed_chains, out, compress, file_format):
+def run_anarci(
+    verbose: bool,
+    query: Path,
+    scheme: str,
+    region: str,
+    allowed_species: List[str],
+    allowed_chains: List[str],
+    out: Path,
+    compress: str,
+    file_format: str,
+) -> None:
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
     logger = logging.getLogger("Anarci")
@@ -132,8 +143,8 @@ def run_anarci(verbose, query, scheme, region, allowed_species, allowed_chains, 
             compress = "." + compress
         else:
             compress = ""
-        segment_out = Path(str(input_path.stem) + f"_anarci_segment.{file_format.lower()}{compress}")
-        align_out = Path(str(input_path.stem) + f"_anarci_alignment.{file_format.lower()}{compress}")
+        segment_out = input_path.stem + f"_anarci_segment.{file_format.lower()}{compress}"
+        align_out = input_path.stem + f"_anarci_alignment.{file_format.lower()}{compress}"
 
     # deal with file format
     # csv

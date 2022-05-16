@@ -558,7 +558,7 @@ class HMMER:
                 else:
                     raise BadRequstedFileType(_filetype, ["bzip2", "gzip"])
                 shutil.copyfileobj(file_buffer, tmpfile)
-                file = tmpfile.name
+                file = Path(tmpfile.name)
 
         # run on fasta
         _results = self.run_multiple(list(SeqIO.parse(file, "fasta")))
