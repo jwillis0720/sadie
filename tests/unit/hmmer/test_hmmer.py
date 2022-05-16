@@ -7,23 +7,21 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pandas.testing import assert_frame_equal
-from sadie.anarci import Anarci, AnarciDuplicateIdError, AnarciResults
-from sadie.anarci.aa._schemes import number_imgt
-from sadie.anarci.aa._anarci import number_sequences_from_alignment, number_sequence_from_alignment
+from sadie.hmmer import HMMER, AnarciDuplicateIdError, AnarciResults
+from sadie.numbering.schemes import number_imgt
+from sadie.numbering import Numbering
 
 USE_CACHE = True  # TODO: make this an option in the config
 
 
 def test_long_seq():
-    anarci_api = Anarci(scheme="chothia", region_assign="imgt", prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
-    anarci_api.run_single(
+    hmmer_api = HMMER(scheme="chothia", region_assign="imgt", prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
+    hmmer_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
-    anarci_api = Anarci(
-        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=USE_CACHE
-    )
-    anarci_api.run_single(
+    hmmer_api = HMMER(scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=USE_CACHE)
+    hmmer_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
@@ -31,17 +29,15 @@ def test_long_seq():
 
 def test_no_j_gene():
     """no j gene found"""
-    anarci_api = Anarci(
-        scheme="chothia", region_assign="imgt", allowed_species=["rat"], prioritize_cached_hmm=USE_CACHE
-    )
-    anarci_api.run_single(
+    hmmer_api = HMMER(scheme="chothia", region_assign="imgt", allowed_species=["rat"], prioritize_cached_hmm=USE_CACHE)
+    hmmer_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
 
 
 def test_trouble_seqs():
-    anarci = Anarci(scheme="kabat", region_assign="imgt", run_multiproc=False, prioritize_cached_hmm=USE_CACHE)
+    anarci = HMMER(scheme="kabat", region_assign="imgt", run_multiproc=False, prioritize_cached_hmm=USE_CACHE)
     # Legacy check. Id is sudo numbered in order so users cant just throw in a string
     # with pytest.warns(UserWarning):
     #     results = anarci.run_single(
@@ -67,15 +63,15 @@ def test_trouble_seqs():
 
     # Legacy check. Id is sudo numbered in order so users cant just throw in a string
     # can't capture this user warning with multiprocess
-    # anarci = Anarci(scheme="kabat", region_assign="imgt", run_multiproc=False)
+    # anarci = HMMER(scheme="kabat", region_assign="imgt", run_multiproc=False)
     # with pytest.warns(UserWarning):
     #     results = anarci.run_multiple(seq_records)
     assert len(results) == 1
 
 
 def test_single_seq():
-    anarci_api = Anarci(region_assign="imgt", prioritize_cached_hmm=USE_CACHE)
-    result = anarci_api.run_single(
+    hmmer_api = HMMER(region_assign="imgt", prioritize_cached_hmm=USE_CACHE)
+    result = hmmer_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     ).iloc[0]
@@ -99,20 +95,20 @@ def test_single_seq():
 
 
 def test_alternate_numbering():
-    anarci_api = Anarci(scheme="chothia", region_assign="chothia", prioritize_cached_hmm=USE_CACHE)
-    anarci_api.run_single(
+    hmmer_api = HMMER(scheme="chothia", region_assign="chothia", prioritize_cached_hmm=USE_CACHE)
+    hmmer_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
-    anarci_api = Anarci(scheme="chothia", region_assign="abm", prioritize_cached_hmm=USE_CACHE)
-    anarci_api.run_single(
+    hmmer_api = HMMER(scheme="chothia", region_assign="abm", prioritize_cached_hmm=USE_CACHE)
+    hmmer_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
 
 
 def test_anarci_multi_input():
-    anarci_api = Anarci(prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
+    hmmer_api = HMMER(prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
     seq_records = [
         SeqRecord(
             Seq(
@@ -127,7 +123,7 @@ def test_anarci_multi_input():
             id="DupulimabL",
         ),
     ]
-    results = anarci_api.run_multiple(seq_records)
+    results = hmmer_api.run_multiple(seq_records)
     assert isinstance(results, AnarciResults)
     single_result_1 = results.query("Id=='DupulimabH'").iloc[0]
     single_result_2 = results.query("Id=='DupulimabL'").iloc[0]
@@ -151,8 +147,8 @@ def test_anarci_multi_input():
 def test_io(fixture_setup):
     """Test file io"""
     main_file = fixture_setup.get_dog_aa_seqs()
-    anarci_api = Anarci(allowed_species=["dog", "cat"], prioritize_cached_hmm=USE_CACHE)
-    results = anarci_api.run_file(main_file)
+    hmmer_api = HMMER(allowed_species=["dog", "cat"], prioritize_cached_hmm=USE_CACHE)
+    results = hmmer_api.run_file(main_file)
     assert isinstance(results, AnarciResults)
     with tempfile.NamedTemporaryFile(suffix=".anarci.bz2") as temp:
         results.to_csv(temp.name)
@@ -161,8 +157,8 @@ def test_io(fixture_setup):
 
 
 def test_dog():
-    anarci_api = Anarci(allowed_species=["dog"], prioritize_cached_hmm=USE_CACHE)
-    result = anarci_api.run_single(
+    hmmer_api = HMMER(allowed_species=["dog"], prioritize_cached_hmm=USE_CACHE)
+    result = hmmer_api.run_single(
         "V3-38_J4",
         "EVQLVESGGDLVKPGGTLRLSCVASGLSLTSNSMSWVRQSPGKGLQWVAVIWSNGGTYYADAVKGRFTISRDNAKNTLYLQMNSLRAEDTAVYYCASIYYYDADYLHWGQGTLVTVSS",
     ).iloc[0]
@@ -178,7 +174,7 @@ def test_dog():
     assert float(result.v_identity) == 0.88
     assert float(result.j_identity) == 0.79
 
-    result = anarci_api.run_single(
+    result = hmmer_api.run_single(
         "V3-38_J4",
         "EIVMTQSPASLSLSQEEKVTITCRASEGISNSLAWYQQKPGQAPKLLIYATSNRATGVPSRFSGSGSGTDFSFTISSLEPEDVAVYYCQQGYKFPLTFGAGTKVELK",
     ).iloc[0]
@@ -196,8 +192,8 @@ def test_dog():
 
 
 def test_cat():
-    anarci_api = Anarci(allowed_species=["cat"], prioritize_cached_hmm=USE_CACHE)
-    result = anarci_api.run_single(
+    hmmer_api = HMMER(allowed_species=["cat"], prioritize_cached_hmm=USE_CACHE)
+    result = hmmer_api.run_single(
         "CF-R01-D01",
         "DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF",
     ).iloc[0]
@@ -216,13 +212,13 @@ def test_cat():
 
 def test_bad_sequences():
     bad_sequence = "SEQLTQPESLTLRPGQPLTIRCQVSYSVSSTGYATHWIRQPDGRGLEWIGGIRIGWKGAKDSLSSQFSLAVDGSSKTITLQGQNMQPGDSAVYYCAR"
-    anarci_api = Anarci(prioritize_cached_hmm=USE_CACHE)
-    result = anarci_api.run_single("bad_sequence", bad_sequence)
+    hmmer_api = HMMER(prioritize_cached_hmm=USE_CACHE)
+    result = hmmer_api.run_single("bad_sequence", bad_sequence)
     assert result.empty
 
 
 def test_duplicated_seq():
-    anarci_api = Anarci(prioritize_cached_hmm=USE_CACHE)
+    hmmer_api = HMMER(prioritize_cached_hmm=USE_CACHE)
     seq_records = [
         SeqRecord(
             Seq(
@@ -238,7 +234,7 @@ def test_duplicated_seq():
         ),
     ]
     with pytest.raises(AnarciDuplicateIdError):
-        anarci_api.run_multiple(seq_records)
+        hmmer_api.run_multiple(seq_records)
 
 
 def test_df(fixture_setup):
@@ -246,7 +242,7 @@ def test_df(fixture_setup):
     df = pd.DataFrame(
         [{"id": x.id, "seq": x.seq, "description": x.description} for x in SeqIO.parse(test_file_heavy, "fasta")]
     )
-    anarci_obj = Anarci(prioritize_cached_hmm=USE_CACHE)
+    anarci_obj = HMMER(prioritize_cached_hmm=USE_CACHE)
     anarci_results = anarci_obj.run_dataframe(df, "id", "seq")
     assert isinstance(anarci_results, (AnarciResults, pd.DataFrame))
 
@@ -428,7 +424,7 @@ def test_numbering_seqs():
     assign_germline = True
     allowed_species = ["cat"]
 
-    _numbered, _alignment_details, _hit_tables = number_sequences_from_alignment(
+    _numbered, _alignment_details, _hit_tables = Numbering().number_sequences_from_alignment(
         sequences,
         _alignments,
         scheme=scheme,
@@ -576,7 +572,7 @@ def test_numbering_seq():
     seq = "DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF"
     scheme = "imgt"
     chain_type = "H"
-    number_sequence_from_alignment(state_vector, seq, scheme=scheme, chain_type=chain_type)
+    Numbering().number_sequence_from_alignment(state_vector, seq, scheme=scheme, chain_type=chain_type)
 
 
 def test_imgt():
@@ -719,7 +715,7 @@ def test_imgt():
 
 
 def benchmark_anarci_multi_on():
-    anarci_api = Anarci(run_multiproc=True)
+    hmmer_api = HMMER(run_multiproc=True)
     seq_records = []
     [
         seq_records.extend(
@@ -740,11 +736,11 @@ def benchmark_anarci_multi_on():
         )
         for i in range(500)
     ]
-    _ = anarci_api.run_multiple(seq_records)
+    _ = hmmer_api.run_multiple(seq_records)
 
 
 def benchmark_anarci_multi_off():
-    anarci_api = Anarci(run_multiproc=False)
+    hmmer_api = HMMER(run_multiproc=False)
     seq_records = []
     [
         seq_records.extend(
@@ -765,7 +761,7 @@ def benchmark_anarci_multi_off():
         )
         for i in range(500)
     ]
-    _ = anarci_api.run_multiple(seq_records)
+    _ = hmmer_api.run_multiple(seq_records)
 
 
 if __name__ == "__main__":

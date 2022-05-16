@@ -1,9 +1,8 @@
 recursive-include src/sadie/antibody/data *
 recursive-include src/sadie/reference/data *
-recursive-include src/sadie/anarci/bin *
 recursive-include src/sadie/airr/bin *
 recursive-include src/sadie/reference/bin *
-recursive-include src/sadie/anarci/data *
+recursive-include src/sadie/hmmer/data *
 recursive-include src/sadie/airr/data *
 include README.md
 include LICENSE

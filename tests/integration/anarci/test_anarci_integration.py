@@ -6,8 +6,8 @@ from itertools import product
 from pathlib import Path
 
 from click.testing import CliRunner
-from sadie.anarci.app import run_anarci
-from sadie.anarci import Anarci
+from sadie.hmmer.app import run_anarci
+from sadie.hmmer import HMMER
 
 logger = logging.getLogger()
 
@@ -30,7 +30,7 @@ def _run_cli(p_tuple):
             p_tuple[4],
             "-vvvvv",
         ]
-        if not Anarci.check_combination(p_tuple[3], p_tuple[4]):
+        if not HMMER.check_combination(p_tuple[3], p_tuple[4]):
             logger.info(f"skipping {p_tuple[4]}-{p_tuple[3]}")
             return True
 

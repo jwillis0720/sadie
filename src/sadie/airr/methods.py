@@ -7,7 +7,7 @@ import pandas as pd
 
 # module/package level
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
-from sadie.anarci import Anarci
+from sadie.hmmer import HMMER
 
 logger = logging.getLogger("AirrMethod")
 
@@ -55,49 +55,49 @@ def run_mutational_analysis(
     if not airrtable.index.is_monotonic_increasing:
         raise IndexError(f"{airrtable.index} must be monotonic increasing")
 
-    # create anarci api
-    logger.info("Running ANARCI on germline alignment")
-    anarci_api = Anarci(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)
-    germline_results_anarci = anarci_api.run_dataframe(
+    # create HMMER api
+    logger.info("Running HMMER on germline alignment")
+    hmmer_api = HMMER(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)
+    germline_results_hmmer = hmmer_api.run_dataframe(
         airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,
         "germline_alignment_aa",
     )
-    logger.info("Running ANARCI on mature alignment")
-    # from IPython import embed; embed()
-    mature_results_anarci = anarci_api.run_dataframe(
+    logger.info("Running HMMER on mature alignment")
+
+    mature_results_hmmer = hmmer_api.run_dataframe(
         airrtable["sequence_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,
         "sequence_alignment_aa",
     )
-    logger.info("Getting ANARCI on alignment tables")
+    logger.info("Getting HMMER on alignment tables")
     sets_of_lists = [
-        set(germline_results_anarci["Id"]),
-        set(mature_results_anarci["Id"]),
+        set(germline_results_hmmer["Id"]),
+        set(mature_results_hmmer["Id"]),
         set(airrtable[key].astype("str")),
     ]
     sets_of_lists = sorted(sets_of_lists, key=lambda x: len(x))
     common_results = set.intersection(*sets_of_lists)
 
     logger.info(f"Can run mutational analysis on {len(common_results)} out of {len(airrtable)} results")
-    germline_results_anarci = germline_results_anarci.loc[germline_results_anarci["Id"].isin(common_results), :]
-    germline_results_anarci_at = germline_results_anarci.get_alignment_table()
-    mature_results_anarci = mature_results_anarci.loc[mature_results_anarci["Id"].isin(common_results), :]
-    mature_results_anarci_at = mature_results_anarci.get_alignment_table()
+    germline_results_hmmer = germline_results_hmmer.loc[germline_results_hmmer["Id"].isin(common_results), :]
+    germline_results_hmmer_at = germline_results_hmmer.get_alignment_table()
+    mature_results_hmmer = mature_results_hmmer.loc[mature_results_hmmer["Id"].isin(common_results), :]
+    mature_results_hmmer_at = mature_results_hmmer.get_alignment_table()
     lookup_dataframe = (
-        mature_results_anarci_at.drop(["chain_type", "scheme"], axis=1)
+        mature_results_hmmer_at.drop(["chain_type", "scheme"], axis=1)
         .set_index("Id")
         .transpose()
         .join(
-            germline_results_anarci_at.drop(["chain_type", "scheme"], axis=1).set_index("Id").transpose(),
+            germline_results_hmmer_at.drop(["chain_type", "scheme"], axis=1).set_index("Id").transpose(),
             lsuffix="_mature",
             rsuffix="_germ",
         )
     )
     lookup_dataframe = lookup_dataframe[sorted(lookup_dataframe.columns)].fillna("-")
     mutation_arrays = []
-    logger.info(f"Finding mutations on {len(mature_results_anarci)} sequences")
-    for x in mature_results_anarci["Id"]:
+    logger.info(f"Finding mutations on {len(mature_results_hmmer)} sequences")
+    for x in mature_results_hmmer["Id"]:
         germ_tag = x + "_germ"
         mat_tag = x + "_mature"
 
@@ -114,7 +114,7 @@ def run_mutational_analysis(
             mutation_array = mutation_array.to_list()
         mutation_arrays.append(mutation_array)
 
-    mature_results_anarci["mutations"] = mutation_arrays
+    mature_results_hmmer["mutations"] = mutation_arrays
     return AirrTable(
         pd.DataFrame(airrtable).astype({key: "str"}).merge(
             pd.DataFrame(mature_results_anarci).rename({"Id": key}, axis=1)[[key, "scheme", "mutations"]], on=key
