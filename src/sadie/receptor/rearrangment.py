@@ -12,12 +12,12 @@ from pydantic import BaseModel, validator
 
 
 @lru_cache
-def get_nt_validator_regex() -> re.Pattern[Any]:
+def get_nt_validator_regex() -> Any:
     return re.compile(r"^[ACNTGYRWSKMDVHBacntgyrwskmdvhb]+\Z")
 
 
 @lru_cache
-def get_aa_validator_regex() -> re.Pattern[Any]:
+def get_aa_validator_regex() -> Any:
     return re.compile(r"^[ACDEFGHIKLMNPQRSTVWXYacdefghiklmnpqrstvwxy]+\Z")
 
 
