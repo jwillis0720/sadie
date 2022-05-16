@@ -6,7 +6,7 @@ import re
 from functools import lru_cache
 from typing import Any, List, Optional, Set, Union
 from uuid import UUID, uuid4
-
+from pandas._libs.missing import NAType
 from Bio.Seq import Seq
 from pydantic import BaseModel, validator
 
@@ -151,7 +151,7 @@ class InputSequence(BaseModel):
 
     @staticmethod
     def get_airr_fields() -> List[str]:
-        return ["sequence_id", "sequence", "raw_sequence", "sequence_aa"]
+        return ["sequence_id", "sequence"]
 
     class Config:
         arbitrary_types_allowed = True
@@ -488,24 +488,24 @@ class AlignmentPositions(BaseModel):
         End position of the J gene alignment in both the sequence_alignment and germline_alignment fields (1-based closed interval).
     """
 
-    v_sequence_start: Optional[int] = None
-    v_sequence_end: Optional[int] = None
-    v_germline_start: Optional[int] = None
-    v_germline_end: Optional[int] = None
-    v_alignment_start: Optional[int] = None
-    v_alignment_end: Optional[int] = None
-    d_sequence_start: Optional[int] = None
-    d_sequence_end: Optional[int] = None
-    d_germline_start: Optional[int] = None
-    d_germline_end: Optional[int] = None
-    d_alignment_start: Optional[int] = None
-    d_alignment_end: Optional[int] = None
-    d2_sequence_start: Optional[int] = None
-    d2_sequence_end: Optional[int] = None
-    d2_germline_start: Optional[int] = None
-    d2_germline_end: Optional[int] = None
-    d2_alignment_start: Optional[int] = None
-    d2_alignment_end: Optional[int] = None
+    v_sequence_start: Optional[Union[int, NAType]] = None
+    v_sequence_end: Optional[Union[int, NAType]] = None
+    v_germline_start: Optional[Union[int, NAType]] = None
+    v_germline_end: Optional[Union[int, NAType]] = None
+    v_alignment_start: Optional[Union[int, NAType]] = None
+    v_alignment_end: Optional[Union[int, NAType]] = None
+    d_sequence_start: Optional[Union[int, NAType]] = None
+    d_sequence_end: Optional[Union[int, NAType]] = None
+    d_germline_start: Optional[Union[int, NAType]] = None
+    d_germline_end: Optional[Union[int, NAType]] = None
+    d_alignment_start: Optional[Union[int, NAType]] = None
+    d_alignment_end: Optional[Union[int, NAType]] = None
+    d2_sequence_start: Optional[Union[int, NAType]] = None
+    d2_sequence_end: Optional[Union[int, NAType]] = None
+    d2_germline_start: Optional[Union[int, NAType]] = None
+    d2_germline_end: Optional[Union[int, NAType]] = None
+    d2_alignment_start: Optional[Union[int, NAType]] = None
+    d2_alignment_end: Optional[Union[int, NAType]] = None
     j_sequence_start: Optional[int] = None
     j_sequence_end: Optional[int] = None
     j_germline_start: Optional[int] = None
@@ -513,6 +513,40 @@ class AlignmentPositions(BaseModel):
     j_alignment_start: Optional[int] = None
     j_alignment_end: Optional[int] = None
     category: Optional[RearrargmentCategory] = RearrargmentCategory(category="alignment_positions")
+
+    @validator(
+        "v_sequence_start",
+        "v_sequence_end",
+        "v_germline_start",
+        "v_germline_end",
+        "v_alignment_start",
+        "v_alignment_end",
+        "d_sequence_start",
+        "d_sequence_end",
+        "d_germline_start",
+        "d_germline_end",
+        "d_alignment_start",
+        "d_alignment_end",
+        "d2_sequence_start",
+        "d2_sequence_end",
+        "d2_germline_start",
+        "d2_germline_end",
+        "d2_alignment_start",
+        "d2_alignment_end",
+        "j_sequence_start",
+        "j_sequence_end",
+        "j_germline_start",
+        "j_germline_end",
+        "j_alignment_start",
+        "j_alignment_end",
+    )
+    @classmethod
+    def validate_with_na(cls, v: Union[int, NAType]) -> Union[int, None]:
+        if v is None or isinstance(v, int):
+            return v
+        if isinstance(v, NAType):
+            return None
+        raise ValueError(f"Invalid value for alignment_positions: {v}")
 
     class Config:
         arbitrary_types_allowed = True
@@ -791,7 +825,7 @@ class ReceptorChain(BaseModel):
         airr_api = Airr(species=species, database=database)
         result: AirrTable = airr_api.run_single(sequence_id, str(sequence))
         result_sliced: AirrSeries = result.iloc[0]
-        
+
         # my py won't stop complaining unless I pass the sliced object back through itself
         return ReceptorChain(**result_sliced.to_receptor_chain_object().__dict__)
 

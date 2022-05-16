@@ -1,4 +1,5 @@
 from pprint import pprint
+from sadie.airr import Airr
 from sadie.receptor.rearrangment import (
     InputSequence,
     PrimaryAnnotations,
@@ -175,3 +176,21 @@ def test_init_models():
         junction_lengths=junction_length_model,
     )
     print(receptor_chain_model)
+
+
+def test_airr_interpobility(fixture_setup):
+    human_airr_api = Airr("human")
+    heavy_chain_input = fixture_setup.get_vrc01_heavy_sequence().seq.__str__()
+    light_chain_input = fixture_setup.get_vrc01_light_sequecne().seq.__str__()
+    heavy_chain = human_airr_api.run_single("vrc01_heavy", heavy_chain_input)
+    light_chain = human_airr_api.run_single("vrc01_light", light_chain_input)
+    heavy_chain_slice = heavy_chain.iloc[0]
+    light_chain_slice = light_chain.iloc[0]
+    assert isinstance(heavy_chain_slice.to_receptor_chain_object(), ReceptorChain)
+    assert isinstance(light_chain_slice.to_receptor_chain_object(), ReceptorChain)
+
+    # output obj
+    output_obj = ReceptorChain.from_single("vrc01_heavy", heavy_chain_input)
+    assert isinstance(output_obj, ReceptorChain)
+    output_obj = ReceptorChain.from_single("vrc01_light", light_chain_input)
+    assert isinstance(output_obj, ReceptorChain)
