@@ -1,4 +1,4 @@
-__version__ = "0.4.12"
+__version__ = "0.4.13"
 from .hmmer import HMMER
 from .exception import AnarciDuplicateIdError
 from .anarci_translator import AnarciTranslator
