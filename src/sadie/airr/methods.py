@@ -58,6 +58,7 @@ def run_mutational_analysis(
     # create HMMER api
     logger.info("Running HMMER on germline alignment")
     hmmer_api = HMMER(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)
+    airrtable = pd.DataFrame(airrtable)
     germline_results_hmmer = hmmer_api.run_dataframe(
         airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,
