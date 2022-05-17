@@ -1,9 +1,10 @@
 name: sadie-production
 channels:
-  - defaults
   - conda-forge
+  - defaults
   - bioconda
-dependencies:
+  - conda-forge/label/broken
+pendencies:
   - python==3.8
   - pip:
     - biopython==1.79
