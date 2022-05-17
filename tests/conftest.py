@@ -47,7 +47,7 @@ def _get_uncompressed_file(tmp_path: Path, compressed_file: Path, compression: s
 
 class AirrSequences:
     """
-    Organization of sequence fixtures that are used by Airr and Anarci primarily.
+    Organization of sequence fixtures that are used by Airr and Numbering primarily.
     Will be sub-classed by SadieFixtures
     """
 
@@ -383,14 +383,14 @@ class ReferenceFixtures:
         ]
 
 
-class AnarciFixtures:
+class NumberingFixtures:
     def __init__(self, tmp_path: Path, base_datadir: Path):
         self.base_datadir = base_datadir
         self.tmp_path = tmp_path
-        self.anarci_data = self.base_datadir / "anarci/curated_alignments"
+        self.numbering_data = self.base_datadir / "Numbering/curated_alignments"
 
 
-class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures, AnarciFixtures):
+class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures, NumberingFixtures):
     def __init__(self, tmp_path_factory):
         tmp_path = tmp_path_factory.mktemp("sadie_fixture")
         base_datadir = Path("tests/data/fixtures/")
@@ -399,7 +399,7 @@ class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures, AnarciFixtures)
         AirrSequences.__init__(self, tmp_path, base_datadir)
         AirrTables.__init__(self, tmp_path, base_datadir)
         ReferenceFixtures.__init__(self, tmp_path, base_datadir)
-        AnarciFixtures.__init__(self, tmp_path, base_datadir)
+        NumberingFixtures.__init__(self, tmp_path, base_datadir)
 
         # then rest of attributes
         self.tmp_path = tmp_path

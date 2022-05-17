@@ -6,7 +6,7 @@ import sys
 import pandas as pd
 from numpy import nan
 
-from sadie.antibody.exception import LongHCDR3Error, AnarciDecreasing
+from sadie.antibody.exception import LongHCDR3Error, NumberingDecreasing
 from .germlines import all_germlines
 from .schemes import (
     number_kabat_heavy,
@@ -62,7 +62,7 @@ class Numbering:
 
         for (index, _), a in numbering:
             if index < last:
-                raise AnarciDecreasing(name, "decreasing sequence count in the numbering")
+                raise NumberingDecreasing(name, "decreasing sequence count in the numbering")
 
                 # , "Numbering was found to decrease along the sequence %s. Please report." % name
             last = index
@@ -224,7 +224,7 @@ class Numbering:
                         except LongHCDR3Error as e:
                             e.sequence_name = details["query_name"]
                             raise e
-                        except AnarciDecreasing:
+                        except NumberingDecreasing:
                             warnings.warn(f"Skipping {details['query_name']}", UserWarning)
                             continue
                             # raise e

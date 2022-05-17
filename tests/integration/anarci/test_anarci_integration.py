@@ -6,7 +6,7 @@ from itertools import product
 from pathlib import Path
 
 from click.testing import CliRunner
-from sadie.hmmer.app import run_anarci
+from sadie.hmmer.app import run_numbering
 from sadie.hmmer import HMMER
 
 logger = logging.getLogger()
@@ -36,13 +36,13 @@ def _run_cli(p_tuple):
 
         logger.info(f"CLI input {' '.join(cli_input)}")
         runner = CliRunner()
-        result = runner.invoke(run_anarci, cli_input)
+        result = runner.invoke(run_numbering, cli_input)
         if result.exit_code != 0:
             logger.info(f"!!!STDERR {result}")
 
         assert result.exit_code == 0
 
-        # anarci appends reults and alignment so glob
+        # numbering appends reults and alignment so glob
         out_file = Path(tmpfile.name).stem + "*"
     for f in glob.glob(out_file):
         os.remove(f)

@@ -360,15 +360,15 @@ class VGene:
 
         if region_assign != "imgt":
             raise NotImplementedError(f"Other region definitions {region_assign} not implmented yet")
-            # anarci_result = anarci.Anarci(scheme="imgt", region_assign=region_assign).run_single(
+            # numbering_result = numbering.Numbering(scheme="imgt", region_assign=region_assign).run_single(
             #     self._name, self._v_full
             # )
-            # self._fwr1_aa = FrameWork1AA(anarci_result.framework1_aa.upper().replace("-", ""))
-            # self._fwr2_aa = FrameWork2AA(anarci_result.framework2_aa.upper().replace("-", ""))
-            # self._fwr3_aa = FrameWork3AA(anarci_result.framework3_aa.upper().replace("-", ""))
-            # self._cdr1_aa = CDR1AA(anarci_result.cdr1_aa.upper().replace("-", ""))
-            # self._cdr2_aa = CDR2AA(anarci_result.cdr2_aa.upper().replace("-", ""))
-            # self._cdr3_aa = CDR3AA(anarci_result.cdr3_aa.upper().replace("-", ""))
+            # self._fwr1_aa = FrameWork1AA(numbering_result.framework1_aa.upper().replace("-", ""))
+            # self._fwr2_aa = FrameWork2AA(numbering_result.framework2_aa.upper().replace("-", ""))
+            # self._fwr3_aa = FrameWork3AA(numbering_result.framework3_aa.upper().replace("-", ""))
+            # self._cdr1_aa = CDR1AA(numbering_result.cdr1_aa.upper().replace("-", ""))
+            # self._cdr2_aa = CDR2AA(numbering_result.cdr2_aa.upper().replace("-", ""))
+            # self._cdr3_aa = CDR3AA(numbering_result.cdr3_aa.upper().replace("-", ""))
         # Set the ranges according to the length of each amino acid segment:
         _start = 0
         for segment in [
