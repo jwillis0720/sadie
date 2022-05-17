@@ -29,12 +29,10 @@ sadie.code-workspace
 
 .ipynb_checkpoints**
 local_gene_reference/*
-notebooks/*
 site/*
 images/Sadie.ai
 coverage/reports/html
 coverage/reports/xml/coverage.xml
-notebooks/*
 PG9 AIRR*
 test_me/*
 my_output_database_path/*
@@ -102,3 +100,9 @@ airr_html_source/Requirement Levels of AIRR Schema Fields — AIRR Standards 1.3
 airr_html_source/Requirement Levels of AIRR Schema Fields — AIRR Standards 1.3 documentation_files/sphinx-book-theme.css
 airr_html_source/Requirement Levels of AIRR Schema Fields — AIRR Standards 1.3 documentation_files/theme.css
 airr_html_source/Requirement Levels of AIRR Schema Fields — AIRR Standards 1.3 documentation_files/underscore.js
+notebooks/refactor/AirrTable.ipynb
+notebooks/refactor/test.csv
+notebooks/refactor/Untitled.ipynb
+notebooks/Testing/vquest_airr.tsv
+notebooks/airr_clone-pass.tsv
+.gitignore
