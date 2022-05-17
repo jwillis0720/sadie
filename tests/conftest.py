@@ -387,7 +387,7 @@ class NumberingFixtures:
     def __init__(self, tmp_path: Path, base_datadir: Path):
         self.base_datadir = base_datadir
         self.tmp_path = tmp_path
-        self.Numbering_data = self.base_datadir / "Numbering/curated_alignments"
+        self.numbering_data = self.base_datadir / "Numbering/curated_alignments"
 
 
 class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures, NumberingFixtures):
