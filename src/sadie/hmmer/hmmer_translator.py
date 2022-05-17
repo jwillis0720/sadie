@@ -55,7 +55,11 @@ class HMMERTranslator:
         for single_species in species:
             for chain in chains:
                 # If not in G3 -- try Numbering
-                if chain not in self.g3.chains or single_species not in self.g3.species or self.use_numbering_hmms is True:
+                if (
+                    chain not in self.g3.chains
+                    or single_species not in self.g3.species
+                    or self.use_numbering_hmms is True
+                ):
                     # If not in Numbering -- ignore
                     if (single_species, chain) not in self.numbering.species_chain_to_paths:
                         continue

@@ -392,7 +392,9 @@ class HMMER:
         numbering_results = numbering_results._add_segment_regions()
 
         if len(numbering_results["Id"].unique()) != len(numbering_results):
-            logger.warning(f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated")
+            logger.warning(
+                f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated"
+            )
             numbering_results = numbering_results.sort_values("score").groupby("Id").head(1)
 
         # segment the region
