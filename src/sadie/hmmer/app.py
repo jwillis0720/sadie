@@ -8,7 +8,7 @@ from ..utility.util import get_verbosity_level
 from .hmmer import HMMER
 
 
-def _validate_anarci_objects(ctx, param, value: str) -> List[str]:
+def _validate_numbering_objects(ctx, param, value: str) -> List[str]:
     """Private method for click context to evaluate comma seperated lists and make sure each field is okay"""
     columns = [c.strip() for c in value.split(",")]
     param_name = param.human_readable_name
@@ -63,7 +63,7 @@ def _validate_anarci_objects(ctx, param, value: str) -> List[str]:
     is_flag=False,
     default=",".join(HMMER.get_allowed_species()),
     show_default=True,
-    callback=_validate_anarci_objects,
+    callback=_validate_numbering_objects,
     help="A comma seperated list of species to align against",
 )
 @click.option(
@@ -72,7 +72,7 @@ def _validate_anarci_objects(ctx, param, value: str) -> List[str]:
     is_flag=False,
     default=",".join(HMMER.get_allowed_chains()),
     show_default=True,
-    callback=_validate_anarci_objects,
+    callback=_validate_numbering_objects,
     help="A comma seperated list of species to align against",
 )
 @click.option(
@@ -94,7 +94,7 @@ def _validate_anarci_objects(ctx, param, value: str) -> List[str]:
     help="output file type format",
     default="csv",
 )
-def run_anarci(
+def run_numbering(
     verbose: bool,
     query: Path,
     scheme: str,
@@ -107,7 +107,7 @@ def run_anarci(
 ) -> None:
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
-    logger = logging.getLogger("Anarci")
+    logger = logging.getLogger("Numbering")
 
     # No reason to use click echo over print except to show e can
     click.echo(f"Logging with level=>{logging.getLevelName(logger.getEffectiveLevel())}")
@@ -124,7 +124,7 @@ def run_anarci(
         allowed_chain=allowed_chains,
         allowed_species=allowed_species,
         prioritize_cached_hmm=True,
-        use_anarci_hmms=False,
+        use_numbering_hmms=False,
     )
 
     # # run file on query
@@ -135,7 +135,7 @@ def run_anarci(
     if out:
         out = Path(out)
         segment_out = str(out.stem) + "_hmmer_results" + str(out.suffix)
-        align_out = str(out.stem) + "_anarci_alignment" + str(out.suffix)
+        align_out = str(out.stem) + "_numbering_alignment" + str(out.suffix)
     else:
         input_path = Path(query)
         if compress and file_format.lower() != "feather":
@@ -143,8 +143,8 @@ def run_anarci(
             compress = "." + compress
         else:
             compress = ""
-        segment_out = input_path.stem + f"_anarci_segment.{file_format.lower()}{compress}"
-        align_out = input_path.stem + f"_anarci_alignment.{file_format.lower()}{compress}"
+        segment_out = input_path.stem + f"_numbering_segment.{file_format.lower()}{compress}"
+        align_out = input_path.stem + f"_numbering_alignment.{file_format.lower()}{compress}"
 
     # deal with file format
     # csv
@@ -170,4 +170,4 @@ def run_anarci(
 
 
 if __name__ == "__main__":
-    run_anarci()
+    run_numbering()
