@@ -2,17 +2,17 @@ import logging
 import pandas as pd
 from ast import literal_eval
 
-from .constants import ANARCI_RESULTS
+from .constants import NUMBERING_RESULTS
 from .scheme_numbering import scheme_numbering
 
-logger = logging.getLogger("ANARCI")
+logger = logging.getLogger("NUMBERING")
 
 
-class AnarciResults(pd.DataFrame):
+class NumberingResults(pd.DataFrame):
     def __init__(self, *args, scheme="", region_definition="", allowed_chains=[], allowed_species=[], **kwargs):
         # use the __init__ method from DataFrame to ensure
         # that we're inheriting the correct behavior
-        super(AnarciResults, self).__init__(*args, **kwargs)
+        super(NumberingResults, self).__init__(*args, **kwargs)
         # self["scheme"] = scheme
         # self["region_definition"] = region_definition
         # self["allowed_species"] = ",".join(allowed_species)
@@ -21,7 +21,7 @@ class AnarciResults(pd.DataFrame):
 
     @property
     def _constructor(self):
-        return AnarciResults
+        return NumberingResults
 
     def get_alignment_table(self) -> pd.DataFrame:
         """Get a numbered alignment table from the numbering and insertions
@@ -70,13 +70,13 @@ class AnarciResults(pd.DataFrame):
             }
         )
 
-    def _add_segment_regions(self) -> "AnarciResults":
+    def _add_segment_regions(self) -> "NumberingResults":
         """Private method to delineate the framework and cdr boundaries from the numbering
 
         Returns
         -------
-        AnarciResults
-            Instance of AnarciResults
+        NumberingResults
+            Instance of NumberingResults
         """
         return_frames = []
         for group, sub_df in self.groupby(["scheme", "region_definition", "Chain"]):
@@ -111,7 +111,7 @@ class AnarciResults(pd.DataFrame):
         Parameters
         ----------
         row : pd.Series
-            indidual Anarci result row
+            indidual Numbering result row
 
         Returns
         -------
@@ -133,15 +133,15 @@ class AnarciResults(pd.DataFrame):
 
     @staticmethod
     def read_csv(*args, **kwargs):
-        return AnarciResults(
+        return NumberingResults(
             pd.read_csv(
                 *args,
                 index_col=0,
-                dtype=ANARCI_RESULTS,
+                dtype=NUMBERING_RESULTS,
                 converters={"Numbering": literal_eval, "Insertion": literal_eval, "Numbered_Sequence": literal_eval},
                 **kwargs,
             )
         )
 
-    def drop_bad_anarci(self) -> "AnarciResults":
+    def drop_bad_numbering(self) -> "NumberingResults":
         return self[(self["seqstart_index"] == 0) & (self["seqend_index"] == self["sequence"].str.len() - 1)]

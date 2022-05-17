@@ -7,7 +7,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pandas.testing import assert_frame_equal
-from sadie.hmmer import HMMER, AnarciDuplicateIdError, AnarciResults
+from sadie.hmmer import HMMER, NumberingDuplicateIdError, NumberingResults
 from sadie.numbering.schemes import number_imgt
 from sadie.numbering import Numbering
 
@@ -37,10 +37,10 @@ def test_no_j_gene():
 
 
 def test_trouble_seqs():
-    anarci = HMMER(scheme="kabat", region_assign="imgt", run_multiproc=False, prioritize_cached_hmm=USE_CACHE)
+    numbering = HMMER(scheme="kabat", region_assign="imgt", run_multiproc=False, prioritize_cached_hmm=USE_CACHE)
     # Legacy check. Id is sudo numbered in order so users cant just throw in a string
     # with pytest.warns(UserWarning):
-    #     results = anarci.run_single(
+    #     results = numbering.run_single(
     #         "POS",
     #         "DIQMTQSPSSLCASIGDRVTITCRASQSISSYLNQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQSYSTPVTFGGGTKVEIK",
     #     )
@@ -59,13 +59,13 @@ def test_trouble_seqs():
             id="DupulimabL",
         ),
     ]
-    results = anarci.run_multiple(seq_records)
+    results = numbering.run_multiple(seq_records)
 
     # Legacy check. Id is sudo numbered in order so users cant just throw in a string
     # can't capture this user warning with multiprocess
-    # anarci = HMMER(scheme="kabat", region_assign="imgt", run_multiproc=False)
+    # numbering = HMMER(scheme="kabat", region_assign="imgt", run_multiproc=False)
     # with pytest.warns(UserWarning):
-    #     results = anarci.run_multiple(seq_records)
+    #     results = numbering.run_multiple(seq_records)
     assert len(results) == 1
 
 
@@ -107,7 +107,7 @@ def test_alternate_numbering():
     )
 
 
-def test_anarci_multi_input():
+def test_numbering_multi_input():
     hmmer_api = HMMER(prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
     seq_records = [
         SeqRecord(
@@ -124,7 +124,7 @@ def test_anarci_multi_input():
         ),
     ]
     results = hmmer_api.run_multiple(seq_records)
-    assert isinstance(results, AnarciResults)
+    assert isinstance(results, NumberingResults)
     single_result_1 = results.query("Id=='DupulimabH'").iloc[0]
     single_result_2 = results.query("Id=='DupulimabL'").iloc[0]
     assert single_result_1.fwr1_aa_gaps == "EVQLVESGG-GLEQPGGSLRLSCAGS"
@@ -149,10 +149,10 @@ def test_io(fixture_setup):
     main_file = fixture_setup.get_dog_aa_seqs()
     hmmer_api = HMMER(allowed_species=["dog", "cat"], prioritize_cached_hmm=USE_CACHE)
     results = hmmer_api.run_file(main_file)
-    assert isinstance(results, AnarciResults)
-    with tempfile.NamedTemporaryFile(suffix=".anarci.bz2") as temp:
+    assert isinstance(results, NumberingResults)
+    with tempfile.NamedTemporaryFile(suffix=".numbering.bz2") as temp:
         results.to_csv(temp.name)
-        other_results = AnarciResults.read_csv(temp.name).fillna("")
+        other_results = NumberingResults.read_csv(temp.name).fillna("")
         assert_frame_equal(other_results, results)
 
 
@@ -233,7 +233,7 @@ def test_duplicated_seq():
             id="DupulimabH",
         ),
     ]
-    with pytest.raises(AnarciDuplicateIdError):
+    with pytest.raises(NumberingDuplicateIdError):
         hmmer_api.run_multiple(seq_records)
 
 
@@ -242,9 +242,9 @@ def test_df(fixture_setup):
     df = pd.DataFrame(
         [{"id": x.id, "seq": x.seq, "description": x.description} for x in SeqIO.parse(test_file_heavy, "fasta")]
     )
-    anarci_obj = HMMER(prioritize_cached_hmm=USE_CACHE)
-    anarci_results = anarci_obj.run_dataframe(df, "id", "seq")
-    assert isinstance(anarci_results, (AnarciResults, pd.DataFrame))
+    numbering_obj = HMMER(prioritize_cached_hmm=USE_CACHE)
+    numbering_results = numbering_obj.run_dataframe(df, "id", "seq")
+    assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
 
 
 def test_numbering_seqs():
@@ -714,7 +714,7 @@ def test_imgt():
     number_imgt(state_vector, sequence)
 
 
-def benchmark_anarci_multi_on():
+def benchmark_numbering_multi_on():
     hmmer_api = HMMER(run_multiproc=True)
     seq_records = []
     [
@@ -739,7 +739,7 @@ def benchmark_anarci_multi_on():
     _ = hmmer_api.run_multiple(seq_records)
 
 
-def benchmark_anarci_multi_off():
+def benchmark_numbering_multi_off():
     hmmer_api = HMMER(run_multiproc=False)
     seq_records = []
     [
@@ -765,7 +765,7 @@ def benchmark_anarci_multi_off():
 
 
 if __name__ == "__main__":
-    for f in [benchmark_anarci_multi_on, benchmark_anarci_multi_off]:
+    for f in [benchmark_numbering_multi_on, benchmark_numbering_multi_off]:
         profiler = Profiler()
         profiler.start()
         f()

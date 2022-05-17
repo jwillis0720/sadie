@@ -1,12 +1,12 @@
 from pathlib import Path
 
 
-class AnarciTranslator:
+class NumberingTranslator:
     def __init__(self):
-        # Pathing for Anarci HMMs
+        # Pathing for Numbering HMMs
         self.hmm_folder = Path(__file__).parent / "data/anarci/HMMs"
         self.hmm_paths = list(self.hmm_folder.glob("*_[a-zA-Z].hmm"))
-        # Anarci specific species and chains
+        # Numbering specific species and chains
         self.species = set()
         self.chains = set()
         self.species_chain_to_paths = self.get_species_chain_to_paths()

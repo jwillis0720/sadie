@@ -1,4 +1,4 @@
-#    ANARCI - Antibody Numbering and Antigen Receptor ClassIfication
+#    NUMBERING - Antibody Numbering and Antigen Receptor ClassIfication
 #    Copyright (C) 2016 Oxford Protein Informatics Group (OPIG)
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -763,7 +763,7 @@ def number_imgt(state_vector, sequence):
 
     # CDR3
     # CDR3 has a range from 105 (inc.) to 118 (exc.). Insertions are placed on 112 and 111 symetrically. IMGT has a technical
-    # maximum length of 65 (13 positions, 26*2 insertions) . In practice ANARCI will not recognise CDR3s of this length.
+    # maximum length of 65 (13 positions, 26*2 insertions) . In practice NUMBERING will not recognise CDR3s of this length.
     cdr3seq = "".join([x[1] for x in _regions[5] if x[1] != "-"])
     cdr3length = len(cdr3seq)
     if cdr3length > 117:

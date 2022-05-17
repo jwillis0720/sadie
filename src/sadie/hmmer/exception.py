@@ -37,7 +37,7 @@ class BadRequstedFileType(Error):
         return "{} file passed, only accepts {}".format(self.requested_type, self.accepted_types)
 
 
-class BadAnarciArgument(Error):
+class BadNumberingArgument(Error):
     """Exception raised for passing incorrect params to an Ancari arguments"""
 
     def __init__(self, passed_arguments, accepted_argumetns):
@@ -49,7 +49,7 @@ class BadAnarciArgument(Error):
         return f"Passed argument {self.passed_arguments}. Only accepts {self.accepted_arguments}"
 
 
-class AnarciDuplicateIdError(Error):
+class NumberingDuplicateIdError(Error):
     """Exception raised for having duplicated IDS"""
 
     def __init__(self, ids, found):

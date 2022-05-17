@@ -1,4 +1,4 @@
-ANARCI_RESULTS = {
+NUMBERING_RESULTS = {
     "Id": "object",
     "domain_no": "int16",
     "e-value": "float32",
