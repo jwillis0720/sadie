@@ -116,7 +116,7 @@ def get_loaded_database() -> Dict[str, List[Dict[str, str]]]:
 
 
 class Reference:
-    """Reference class to handle reference databases for  sadie.airr and sadie.anarci"""
+    """Reference class to handle reference databases for  sadie.airr and sadie.numbering"""
 
     def __init__(self, endpoint: str = _endpoint):
         """Initialize the reference object
