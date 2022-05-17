@@ -238,17 +238,17 @@ def test_run_multiple(fixture_setup):
         airr.run_records(fixture_setup.get_pg9_heavy_sequence())
 
 
-def test_scfv(fixture_setup):
-    """Run on short scfv sequence"""
-    airr = Airr("human", adaptable=False)
-    linked = airr.run_records(fixture_setup.get_scfv_sequences(), scfv=True)
-    assert isinstance(linked, LinkedAirrTable)
+# def test_scfv(fixture_setup):
+# """Run on short scfv sequence"""
+# airr = Airr("human", adaptable=False)
+# linked = airr.run_records(fixture_setup.get_scfv_sequences(), scfv=True)
+# assert isinstance(linked, LinkedAirrTable)
 
-    """Run on multiple long scfv sequences"""
-    scfv = fixture_setup.get_long_scfv_fastq()
-    airr = Airr("human", adaptable=False)
-    results = airr.run_records(scfv, scfv=True)
-    assert isinstance(results, LinkedAirrTable)
+# """Run on multiple long scfv sequences"""
+# scfv = fixture_setup.get_long_scfv_fastq()
+# airr = Airr("human", adaptable=False)
+# results = airr.run_records(scfv, scfv=True)
+# assert isinstance(results, LinkedAirrTable)
 
 
 def test_airr_from_dataframe(fixture_setup):
@@ -510,37 +510,37 @@ def test_indel_correction(fixture_setup):
     assert isinstance(airr_table_indel, AirrTable)
 
 
-def test_scfv_airrtable(fixture_setup):
-    file_path = fixture_setup.get_linked_airrtable()
-    dummy_scfv_table = pd.read_csv(file_path, index_col=0)
-    linked_table = LinkedAirrTable(dummy_scfv_table)
-    # test if we can split
-    heavy_table, light_table = linked_table.get_split_table()
-    assert isinstance(heavy_table, AirrTable)
-    assert isinstance(light_table, AirrTable)
-    rebuild_table = LinkedAirrTable(heavy_table.merge(light_table, on="sequence_id", suffixes=["_heavy", "_light"]))
-    assert rebuild_table == rebuild_table
-    assert rebuild_table == linked_table
+# def test_scfv_airrtable(fixture_setup):
+#     file_path = fixture_setup.get_linked_airrtable()
+#     dummy_scfv_table = pd.read_csv(file_path, index_col=0)
+#     linked_table = LinkedAirrTable(dummy_scfv_table)
+#     # test if we can split
+#     heavy_table, light_table = linked_table.get_split_table()
+#     assert isinstance(heavy_table, AirrTable)
+#     assert isinstance(light_table, AirrTable)
+#     rebuild_table = LinkedAirrTable(heavy_table.merge(light_table, on="sequence_id", suffixes=["_heavy", "_light"]))
+#     assert rebuild_table == rebuild_table
+#     assert rebuild_table == linked_table
 
-    heavy_table["cell_id"] = heavy_table["sequence_id"]
-    light_table["cell_id"] = light_table["sequence_id"]
-    with pytest.raises(airr_exceptions.MissingAirrColumns):
-        LinkedAirrTable(heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]))
-    rebuild_data = LinkedAirrTable(
-        heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]), key_column="cell_id"
-    )
-    heavy_table_split, light_table_split = rebuild_data.get_split_table()
-    assert heavy_table_split.columns.difference(heavy_table.columns).empty
-    assert light_table_split.columns.difference(light_table.columns).empty
-    assert heavy_table == heavy_table_split[heavy_table.columns]
-    assert light_table == light_table_split[light_table.columns]
-    assert rebuild_data.key_column == "cell_id"
-    assert rebuild_data.suffixes == ["_heavy", "_light"]
+#     heavy_table["cell_id"] = heavy_table["sequence_id"]
+#     light_table["cell_id"] = light_table["sequence_id"]
+#     with pytest.raises(airr_exceptions.MissingAirrColumns):
+#         LinkedAirrTable(heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]))
+#     rebuild_data = LinkedAirrTable(
+#         heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]), key_column="cell_id"
+#     )
+#     heavy_table_split, light_table_split = rebuild_data.get_split_table()
+#     assert heavy_table_split.columns.difference(heavy_table.columns).empty
+#     assert light_table_split.columns.difference(light_table.columns).empty
+#     assert heavy_table == heavy_table_split[heavy_table.columns]
+#     assert light_table == light_table_split[light_table.columns]
+#     assert rebuild_data.key_column == "cell_id"
+#     assert rebuild_data.suffixes == ["_heavy", "_light"]
 
-    rebuild_data = LinkedAirrTable(
-        heavy_table.merge(light_table, on="cell_id", suffixes=["_h", "_l"]), suffixes=["_h", "_l"], key_column="cell_id"
-    )
-    assert rebuild_data.suffixes == ["_h", "_l"]
+#     rebuild_data = LinkedAirrTable(
+#         heavy_table.merge(light_table, on="cell_id", suffixes=["_h", "_l"]), suffixes=["_h", "_l"], key_column="cell_id"
+#     )
+#     assert rebuild_data.suffixes == ["_h", "_l"]
 
 
 def test_write_and_check_airr(fixture_setup):
