@@ -343,6 +343,8 @@ class HMMER:
             )
             for seq_id, seq in sequences
         ]
+        # _sequences = self.hmmer_translator(sequences)
+        # sequences = 
         # Perform the alignments of the sequences to the hmm database
         _alignments = self.hmmer_translator.hmmsearch(
             sequences=_sequences,

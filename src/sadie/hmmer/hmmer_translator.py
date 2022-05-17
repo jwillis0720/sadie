@@ -79,8 +79,8 @@ class HMMERTranslator:
                     hmms.append(hmm)
 
         return hmms
-
-    def __digitize_seq(self, name: str, seq: str) -> pyhmmer.easel.DigitalSequence:
+    
+    def test_seq(self, name: str, seq: str) -> pyhmmer.easel.DigitalSequence:
         """
         Digitize a sequence for hmmer.
 
@@ -100,9 +100,11 @@ class HMMERTranslator:
             name = name.encode()
         if isinstance(seq, Seq):
             seq = str(seq)
-        return pyhmmer.easel.TextSequence(name=name, sequence=seq).digitize(self.alphabet)
+        return pyhmmer.easel.TextSequence(name=name, sequence=seq) # .digitize(self.alphabet)
+        # digital_seq.seq = seq
+        # return digital_seq
 
-    def __transform_seq(
+    def transform_seq(
         self, seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
     ) -> List[pyhmmer.easel.DigitalSequence]:
         """
@@ -154,22 +156,22 @@ class HMMERTranslator:
 
             # If the sequence is a path, open it and digitize
             if isinstance(seq_obj, Path):
-                with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
+                with pyhmmer.easel.SequenceFile(seq_obj, digital=False) as seq_file:
                     sequences.extend(list(seq_file))
                     continue
             if isinstance(seq_obj, str):
                 if len(seq_obj) < 4096:
                     if Path(seq_obj).is_file():
-                        with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
+                        with pyhmmer.easel.SequenceFile(seq_obj, digital=False) as seq_file:
                             sequences.extend(list(seq_file))
                             continue
 
             # If sequence is a string, digitize it directly and add it to the list
             if isinstance(seq_obj, (Seq, str)):
-                sequences.append(self.__digitize_seq(name=str(sudo_name), seq=seq_obj))
+                sequences.append(self.text_seq(name=str(sudo_name), seq=seq_obj))
                 continue
             if isinstance(seq_obj, SeqRecord):
-                sequences.append(self.__digitize_seq(name=seq_obj.id, seq=seq_obj.seq))
+                sequences.append(self.text_seq(name=seq_obj.id, seq=seq_obj.seq))
                 continue
 
             raise ValueError(f"seq_obj {seq_obj} is not a valid sequence or path")
@@ -246,7 +248,8 @@ class HMMERTranslator:
         """
 
         # Convert sequences to Easel sequences
-        sequences = self.__transform_seq(sequences)
+        sequences = self.transform_seq(sequences)
+        digital_seqs = [seq.digitized]
         # Load Models by species
         hmms = self.get_hmm_models(
             species=species, chains=chains, source=source, prioritize_cached_hmm=prioritize_cached_hmm
