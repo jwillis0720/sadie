@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+from time import sleep
 from typing import Dict, List, Optional, Tuple, Union
 from urllib.parse import quote as url_quote
 
@@ -134,8 +135,18 @@ class Reference:
 
     @endpoint.setter
     def endpoint(self, endpoint: str) -> None:
-        if requests.get(endpoint).status_code != 200:
-            raise G3Error(f"{endpoint} is not a valid G3 API endpoint or is down")
+        _counter = 0
+        while True:
+            if requests.get(endpoint).status_code == 503:
+                _counter += 1
+                sleep(5)
+                logger.info(f"Waiting for G3 API {endpoint} to be available --try: {_counter}")
+            elif requests.get(endpoint).status_code == 200:
+                break
+            else:
+                raise G3Error(f"Error loading G3 API {endpoint}")
+            if _counter > 5:
+                raise G3Error(f"{endpoint} is not a valid G3 API endpoint or is down")
         self._endpoint = endpoint
 
     def add_gene(self, gene: Dict[str, str]) -> None:
