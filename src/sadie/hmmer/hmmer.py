@@ -1,4 +1,4 @@
-"""The ANARCI Abstraction to make it usuable"""
+"""The NUMBERING Abstraction to make it usuable"""
 
 # Std library
 import bz2
@@ -25,12 +25,12 @@ from sadie.hmmer.hmmer_translator import HMMERTranslator
 from sadie.numbering import Numbering
 
 from .exception import (
-    AnarciDuplicateIdError,
-    BadAnarciArgument,
+    NumberingDuplicateIdError,
+    BadNumberingArgument,
     BadRequstedFileType,
 )
-from .result import AnarciResults
-from .constants import ANARCI_RESULTS
+from .result import NumberingResults
+from .constants import NUMBERING_RESULTS
 from .scheme_numbering import scheme_numbering
 
 logger = logging.getLogger("HMMER")
@@ -70,9 +70,9 @@ class HMMER:
         run_multiproc=True,
         num_cpus=cpu_count(),
         prioritize_cached_hmm: bool = True,  # G3 multiprocessing broken
-        use_anarci_hmms: bool = False,
+        use_numbering_hmms: bool = False,
     ):
-        """HMMER v3 wrapper that runs hmmersearch using G3 built HMMs and numbering schema from Anarci.
+        """HMMER v3 wrapper that runs hmmersearch using G3 built HMMs and numbering schema from Numbering.
 
         Parameters
         ----------
@@ -110,7 +110,7 @@ class HMMER:
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
         self.prioritize_cached_hmm = prioritize_cached_hmm
-        self.hmmer_translator.use_anarci_hmms = use_anarci_hmms
+        self.hmmer_translator.use_numbering_hmms = use_numbering_hmms
         if not self.check_combination(self.scheme, self.region_definition):
             raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
 
@@ -127,7 +127,7 @@ class HMMER:
 
         """
         if definition.lower() not in self.get_available_region_definitions():
-            raise BadAnarciArgument(definition, self.get_available_region_definitions())
+            raise BadNumberingArgument(definition, self.get_available_region_definitions())
         self._region_definition = definition
 
     @staticmethod
@@ -158,7 +158,7 @@ class HMMER:
         __future_schemes = ["martin"]
         if scheme.lower() not in self.get_available_region_definitions():
             logger.warning(f"need support for {__future_schemes} numbering schemes. See abysis")
-            raise BadAnarciArgument(scheme, self.get_available_region_definitions())
+            raise BadNumberingArgument(scheme, self.get_available_region_definitions())
         self._scheme = scheme.lower()
 
     @staticmethod
@@ -239,7 +239,7 @@ class HMMER:
         _allowed_chain = self.get_allowed_chains()
         _diff = list(set(map(lambda x: x.upper(), allowed_chains)).difference(_allowed_chain))
         if _diff:
-            raise BadAnarciArgument(_diff, _allowed_chain)
+            raise BadNumberingArgument(_diff, _allowed_chain)
         self._allowed_chains = allowed_chains
 
     @staticmethod
@@ -272,7 +272,7 @@ class HMMER:
         _allowed_species = self.get_allowed_species()
         _diff = list(set(map(lambda x: x.lower(), allowed_species)).difference(_allowed_species))
         if _diff:
-            raise BadAnarciArgument(_diff, _allowed_species)
+            raise BadNumberingArgument(_diff, _allowed_species)
         self._allowed_species = allowed_species
 
     @staticmethod
@@ -299,7 +299,7 @@ class HMMER:
 
     @property
     def assign_germline(self) -> bool:
-        """Should Anarci try to assign germline
+        """Should Numbering try to assign germline
 
         Returns
         -------
@@ -309,7 +309,7 @@ class HMMER:
 
     @assign_germline.setter
     def assign_germline(self, assign: bool):
-        """Should anarci try to assign germline
+        """Should numbering try to assign germline
 
         Parameters
         ----------
@@ -317,16 +317,16 @@ class HMMER:
 
         Raises
         ------
-        BadAnarciArgument
+        BadNumberingArgument
             if not a bool
         """
         if not isinstance(assign, bool):
-            raise BadAnarciArgument(assign, bool)
+            raise BadNumberingArgument(assign, bool)
         self._assign_germline = assign
 
     def _run(self, sequences: List[Tuple]):
         """
-        private method to run Anarci
+        private method to run Numbering
 
         Parameters
         ----------
@@ -351,7 +351,7 @@ class HMMER:
             bit_score_threshold=self.threshold_bit,
             limit=1,
             prioritize_cached_hmm=self.prioritize_cached_hmm,
-            for_anarci=True,
+            for_numbering=True,
         )
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Modify alignments in-place
@@ -374,32 +374,34 @@ class HMMER:
         )
 
         _summary = self.numbering.parsed_output(sequences, _numbered, _alignment_details)
-        anarci_results = pd.DataFrame(_summary)
-        if anarci_results.empty:
-            return AnarciResults()
+        numbering_results = pd.DataFrame(_summary)
+        if numbering_results.empty:
+            return NumberingResults()
 
         # I really want to set the scheme and region in the constructor
         # https://stackoverflow.com/questions/66647680/subclassing-pandas-dataframe-and-setting-field-in-constuctor
-        anarci_results = AnarciResults(
-            anarci_results.astype(ANARCI_RESULTS),
+        numbering_results = NumberingResults(
+            numbering_results.astype(NUMBERING_RESULTS),
         )
 
         # Must set these schemes before we set the segments
-        anarci_results["scheme"] = self.scheme
-        anarci_results["region_definition"] = self.region_definition
-        anarci_results["allowed_species"] = ",".join(self.allowed_species)
-        anarci_results["allowed_chains"] = ",".join(self.allowed_chains)
-        anarci_results = anarci_results._add_segment_regions()
+        numbering_results["scheme"] = self.scheme
+        numbering_results["region_definition"] = self.region_definition
+        numbering_results["allowed_species"] = ",".join(self.allowed_species)
+        numbering_results["allowed_chains"] = ",".join(self.allowed_chains)
+        numbering_results = numbering_results._add_segment_regions()
 
-        if len(anarci_results["Id"].unique()) != len(anarci_results):
-            logger.warning(f"multiple results for {anarci_results[anarci_results['Id'].duplicated()]} is duplicated")
-            anarci_results = anarci_results.sort_values("score").groupby("Id").head(1)
+        if len(numbering_results["Id"].unique()) != len(numbering_results):
+            logger.warning(
+                f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated"
+            )
+            numbering_results = numbering_results.sort_values("score").groupby("Id").head(1)
 
         # segment the region
-        # anarci_results = anarci_results.add_segment_regions()
-        return anarci_results
+        # numbering_results = numbering_results.add_segment_regions()
+        return numbering_results
 
-    def run_single(self, seq_id: str, seq: str) -> AnarciResults:
+    def run_single(self, seq_id: str, seq: str) -> NumberingResults:
         """Run a single string sequence on an amino acid
 
         Parameters
@@ -417,7 +419,7 @@ class HMMER:
 
         return self._run(sequences)
 
-    def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> AnarciResults:
+    def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> NumberingResults:
         """Run multiple seq records
 
         Parameters
@@ -427,7 +429,7 @@ class HMMER:
 
         Returns
         -------
-            ANARCIResults - Holds many results
+            NUMBERINGResults - Holds many results
 
         Raises
         ------
@@ -444,7 +446,7 @@ class HMMER:
         _seen = set()
         for seq in seqrecords:
             if seq.id in _seen:
-                raise AnarciDuplicateIdError(seq.id, 1)
+                raise NumberingDuplicateIdError(seq.id, 1)
             _sequences.append((seq.id, str(seq.seq)))
             _seen.add(seq.id)
 
@@ -473,7 +475,7 @@ class HMMER:
         seq_id_field: Union[str, int],
         seq_field: Union[str, int],
         return_join=False,
-    ) -> AnarciResults:
+    ) -> NumberingResults:
         """Pass dataframe and field and run airr.
 
         Parameters
@@ -489,8 +491,8 @@ class HMMER:
 
         Returns
         -------
-        AnarciResults
-            AnarciResults object
+        NumberingResults
+            NumberingResults object
 
         ToDo
         -------
@@ -516,8 +518,8 @@ class HMMER:
         else:
             return self.run_multiple(_get_seq_generator())
 
-    def run_file(self, file: Path) -> "AnarciResults":
-        """Run anarci annotator on a fasta file
+    def run_file(self, file: Path) -> "NumberingResults":
+        """Run numbering annotator on a fasta file
 
         Parameters
         ----------
@@ -528,8 +530,8 @@ class HMMER:
 
         Returns
         -------
-        AnarciResults
-            Returns AnarciResults object
+        NumberingResults
+            Returns NumberingResults object
 
         Raises
         ------

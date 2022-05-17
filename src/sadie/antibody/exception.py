@@ -24,7 +24,7 @@ class LongHCDR3Error(Error):
         return f"{self.sequence_name} with an HCDR3 {self.hcdr3} is too long for the chosen numbering scheme {self.chosen_scheme}. Consider using {self.acceptable_scheme}"
 
 
-class AnarciDecreasing(Error):
+class NumberingDecreasing(Error):
 
     """Exception raised for HCDR3 being too long for chosen numbering scheme.
 
@@ -174,7 +174,7 @@ class BadRequstedFileType(Error):
         return "{} file passed, only accepts {}".format(self.requested_type, self.accepted_types)
 
 
-class AnarciDuplicateIdError(Error):
+class NumberingDuplicateIdError(Error):
     """Exception raised for having duplicated IDS"""
 
     def __init__(self, ids: List[str], found: int):

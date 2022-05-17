@@ -1,9 +1,9 @@
-__version__ = "0.4.11"
+__version__ = "0.4.13"
 from .hmmer import HMMER
-from .exception import AnarciDuplicateIdError
-from .anarci_translator import AnarciTranslator
+from .exception import NumberingDuplicateIdError
+from .numbering_translator import NumberingTranslator
 from .hmmer_translator import HMMERTranslator
-from .result import AnarciResults
+from .result import NumberingResults
 
 
-__all__ = ["AnarciResults", "AnarciTranslator", "HMMER", "HMMERTranslator", "AnarciDuplicateIdError"]
+__all__ = ["NumberingResults", "NumberingTranslator", "HMMER", "HMMERTranslator", "NumberingDuplicateIdError"]

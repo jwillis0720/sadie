@@ -18,7 +18,7 @@ def test_g3_hmm(fixture_setup):
         "K",
     ]
 
-    anarci_stockholm_folder = fixture_setup.anarci_data
+    numbering_stockholm_folder = fixture_setup.numbering_data
 
     for species in species_list:
         for chain in chains:
@@ -32,17 +32,17 @@ def test_g3_hmm(fixture_setup):
             print(f"{species} {chain}")
 
             g3_name2align = {}
-            anarci_name2align = {}
+            numbering_name2align = {}
 
             for name, align in stockholm_pairs:
                 name = "-".join([name_seg for name_seg in re.split(r"_|-", name) if "*" in name_seg])
                 g3_name2align[name] = align
 
-            if (anarci_stockholm_folder / f"{species}_{chain}.stockholm").is_file() is False:
-                print(f"{species} {chain} anarci sto not found")
+            if (numbering_stockholm_folder / f"{species}_{chain}.stockholm").is_file() is False:
+                print(f"{species} {chain} numbering sto not found")
                 continue
 
-            with open(anarci_stockholm_folder / f"{species}_{chain}.stockholm") as f:
+            with open(numbering_stockholm_folder / f"{species}_{chain}.stockholm") as f:
                 for line in f.read().split("\n"):
                     if not line:
                         continue
@@ -50,14 +50,14 @@ def test_g3_hmm(fixture_setup):
                         continue
                     name, align = line.split()
                     name = "-".join([name_seg for name_seg in re.split(r"_|-", name) if "*" in name_seg])
-                    anarci_name2align[name] = align
+                    numbering_name2align[name] = align
 
-            for name, anarci_align in anarci_name2align.items():
+            for name, numbering_align in numbering_name2align.items():
                 g3_align = g3_name2align.get(name)
                 if not g3_align:
                     print("missing", name)  # TODO: Only looking at Ig for now
                     continue
                 # seqs can change but the alignment positions from end of V to J looks highly conserved so we check there only.
                 # TODO: fuzzy match?
-                assert anarci_align[-5:] == g3_align[-5:]
-                assert anarci_align[-35:].count("-") == g3_align[-35:].count("-")
+                assert numbering_align[-5:] == g3_align[-5:]
+                assert numbering_align[-35:].count("-") == g3_align[-35:].count("-")

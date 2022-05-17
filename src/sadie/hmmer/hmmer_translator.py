@@ -9,21 +9,21 @@ from pydantic import validate_arguments
 import pyhmmer
 
 from sadie.hmmer.clients import G3
-from sadie.hmmer.anarci_translator import AnarciTranslator
+from sadie.hmmer.numbering_translator import NumberingTranslator
 from sadie.typing import Species, Chain, Source
 
 
 class HMMERTranslator:
     """
-    Extension of Pyhmmer to accept local HMMs (from Anarci) and external HMMs (from G3).
+    Extension of Pyhmmer to accept local HMMs (from Numbering) and external HMMs (from G3).
     """
 
     g3 = G3()
-    anarci = AnarciTranslator()  # for anarci hmm files only and not their scripts
+    numbering = NumberingTranslator()  # for numbering hmm files only and not their scripts
 
-    def __init__(self, use_anarci_hmms: bool = False):
-        # Force Anarci local HMMs to be used -- mostely for primiary testing
-        self.use_anarci_hmms = use_anarci_hmms
+    def __init__(self, use_numbering_hmms: bool = False):
+        # Force Numbering local HMMs to be used -- mostely for primiary testing
+        self.use_numbering_hmms = use_numbering_hmms
         # place holders for hmmer
         self.alphabet = pyhmmer.easel.Alphabet.amino()
 
@@ -54,13 +54,17 @@ class HMMERTranslator:
 
         for single_species in species:
             for chain in chains:
-                # If not in G3 -- try Anarci
-                if chain not in self.g3.chains or single_species not in self.g3.species or self.use_anarci_hmms is True:
-                    # If not in Anarci -- ignore
-                    if (single_species, chain) not in self.anarci.species_chain_to_paths:
+                # If not in G3 -- try Numbering
+                if (
+                    chain not in self.g3.chains
+                    or single_species not in self.g3.species
+                    or self.use_numbering_hmms is True
+                ):
+                    # If not in Numbering -- ignore
+                    if (single_species, chain) not in self.numbering.species_chain_to_paths:
                         continue
-                    # Build Anarci HMMs
-                    hmm_paths = self.anarci.species_chain_to_paths[(single_species, chain)]
+                    # Build Numbering HMMs
+                    hmm_paths = self.numbering.species_chain_to_paths[(single_species, chain)]
                     for hmm_path in hmm_paths:
                         with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
                             hmm = next(hmm_file)
@@ -193,7 +197,7 @@ class HMMERTranslator:
         bit_score_threshold: int = 80,
         limit: Optional[int] = 1,
         prioritize_cached_hmm: bool = False,
-        for_anarci: bool = False,
+        for_numbering: bool = False,
     ) -> List[List[Dict[str, Union[str, int]]]]:
         """
         Perform a HMMER search for a given sequence.
@@ -213,11 +217,11 @@ class HMMERTranslator:
             Domain bit score threshold, default is 80.
         limit : int
             Number of domain hits to be returned, default is 1.
-        for_anarci : bool
-            If True, return the ANARCI expected state_vector object.
+        for_numbering : bool
+            If True, return the NUMBERING expected state_vector object.
         # for_j_region : bool
         #     If True, return the J-region expected state_vector object.
-        #     Anarci reruns hmmsearch with the J-region to correct possible mistakes.
+        #     Numbering reruns hmmsearch with the J-region to correct possible mistakes.
 
         Examples
         >>> seq = 'DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF'
@@ -242,7 +246,7 @@ class HMMERTranslator:
         Returns
         -------
         List[List[Dict[str, Union[str, int]]]]
-            List of HMMER hits for ANARCI numbering.
+            List of HMMER hits for NUMBERING numbering.
         """
 
         # Convert sequences to Easel sequences
@@ -273,7 +277,7 @@ class HMMERTranslator:
                         "id": ali.hmm_name.decode(),
                         "description": hit.description or "",
                         "evalue": float("{:.2e}".format(domain.c_evalue)),
-                        # "bitscore": round(hit.score, 1),  # TODO: anarci doesnt use hit score, but domain score; maybe use this as an option later?
+                        # "bitscore": round(hit.score, 1),  # TODO: numbering doesnt use hit score, but domain score; maybe use this as an option later?
                         "bitscore": round(domain.score, 1),
                         "bias": round(hit.bias, 1),
                         "query_seq": ali.target_sequence,
@@ -289,9 +293,9 @@ class HMMERTranslator:
             best_results.append(sorted(results[query_id], key=lambda x: x["bitscore"], reverse=True)[:limit])
 
         # TODO: This will be deprecated in the future and will be replaced direct formatting
-        if for_anarci:
+        if for_numbering:
             default_out = ([["id", "description", "evalue", "bitscore", "bias", "query_start", "query_end"]], [], [])
-            anarci_keys = [
+            numbering_keys = [
                 "id",
                 "description",
                 "evalue",
@@ -302,15 +306,15 @@ class HMMERTranslator:
                 "species",
                 "chain_type",
             ]
-            # we want to keep every empty results as well for Anarci
+            # we want to keep every empty results as well for Numbering
             best_results = [
                 result[0] if result else None for result in best_results
-            ]  # Anarci only expects best result per query
+            ]  # Numbering only expects best result per query
             if not best_results:
                 return [default_out]
             return [
                 (
-                    [anarci_keys, itemgetter(*anarci_keys)(result)],
+                    [numbering_keys, itemgetter(*numbering_keys)(result)],
                     [self.get_vector_state(**result)],
                     [result],
                 )
@@ -332,7 +336,7 @@ class HMMERTranslator:
         **kwargs,
     ) -> List[Tuple[Tuple[int, str], int]]:
         """
-        Get the ANARCI state_vector object.
+        Get the NUMBERING state_vector object.
 
         Parameters
         ----------
@@ -497,7 +501,7 @@ class HMMERTranslator:
         Returns
         -------
         List[Tuple[Tuple[int, str], int]]
-            List of ANARCI state_vector objects.
+            List of NUMBERING state_vector objects.
         """
         assert len(hmm_seq) == len(query_seq), "The 2 seqs should be alignments of eachother"
 
