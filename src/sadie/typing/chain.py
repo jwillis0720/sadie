@@ -8,7 +8,7 @@ CHAINS = ["L", "H", "K", "A", "B", "G", "D"]
 
 class Chain(UserString):
 
-    # chains = CHAINS
+    chains = CHAINS
 
     @classmethod
     def __get_validators__(cls) -> Generator[Callable[[str, ModelField], str], None, None]:

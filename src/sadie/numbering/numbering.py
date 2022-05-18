@@ -39,12 +39,12 @@ class Numbering:
         self.light = {
             i: self.light_ranges[j][0].split("_")[0]
             for j in range(0, len(self.light_ranges), 2)
-            for i in range(self.light_ranges[j][1], self.light_ranges[j + 1][1])
+            for i in range(self.light_ranges[j][1], self.light_ranges[j + 1][1] + 1)
         }
         self.heavy = {
             i: self.heavy_ranges[j][0].split("_")[0]
             for j in range(0, len(self.heavy_ranges), 2)
-            for i in range(self.heavy_ranges[j][1], self.heavy_ranges[j + 1][1])
+            for i in range(self.heavy_ranges[j][1], self.heavy_ranges[j + 1][1] + 1)
         }
 
     def __len__(self):
@@ -151,8 +151,10 @@ class Numbering:
 
     def numbering(
         self,
-        hmm_seq: str,
+        hmm_aln: str,
+        query_aln: str,
         query_seq: str,
+        query_name: Optional[str] = None,
         chain_type: str = "H",
         hmm_start: Optional[int] = None,
         hmm_end: Optional[int] = None,
@@ -160,8 +162,9 @@ class Numbering:
         query_end: Optional[int] = None,
         **kwargs,
     ) -> List[Tuple[Tuple[int, str], int]]:
-        seq = query_seq.replace("_", "")
-        state_vector = self.get_vector_state(hmm_seq, query_seq, hmm_start, hmm_end, query_start, query_end)
+
+        state_vector = self.get_vector_state(hmm_aln, query_aln, hmm_start, hmm_end, query_start, query_end)
+
         _numbering, start, end = self.validate_numbering(
             self.number_sequence_from_alignment(
                 state_vector,
@@ -169,7 +172,7 @@ class Numbering:
                 self.scheme,
                 chain_type,
             ),
-            ("name", seq),
+            ("name", query_seq),
         )
 
         if chain_type.strip().upper() == "H":

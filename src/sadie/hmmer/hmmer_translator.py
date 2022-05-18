@@ -196,7 +196,7 @@ class HMMERTranslator:
         source: Source = "imgt",
         bit_score_threshold: int = 80,
         limit: Optional[int] = 1,
-        prioritize_cached_hmm: bool = False,
+        prioritize_cached_hmm: bool = True,
         for_numbering: bool = False,
     ) -> List[List[Dict[str, Union[str, int]]]]:
         """
