@@ -1,3 +1,4 @@
+from collections import namedtuple
 from functools import lru_cache
 import logging
 import warnings
@@ -8,6 +9,7 @@ import pandas as pd
 from numpy import nan
 
 from sadie.antibody.exception import LongHCDR3Error, NumberingDecreasing
+from sadie.numbering.scheme_numbering import scheme_numbering
 from .germlines import all_germlines
 from .schemes import (
     number_kabat_heavy,
@@ -26,9 +28,30 @@ logger = logging.getLogger("NUMBERING")
 
 
 class Numbering:
+
+    Number = namedtuple("Number", ["position", "ref_aa", "aa", "region"])
+
     def __init__(self, scheme: str = "imgt", region: str = "imgt"):
         self.scheme = scheme
         self.region = region
+        self.light_ranges = [(k, v) for k, v in scheme_numbering[scheme]["light"][region].items()]
+        self.heavy_ranges = [(k, v) for k, v in scheme_numbering[scheme]["heavy"][region].items()]
+        self.light = {
+            i: self.light_ranges[j][0].split("_")[0]
+            for j in range(0, len(self.light_ranges), 2)
+            for i in range(self.light_ranges[j][1], self.light_ranges[j + 1][1])
+        }
+        self.heavy = {
+            i: self.heavy_ranges[j][0].split("_")[0]
+            for j in range(0, len(self.heavy_ranges), 2)
+            for i in range(self.heavy_ranges[j][1], self.heavy_ranges[j + 1][1])
+        }
+
+    def __len__(self):
+        return len(self._numbering)
+
+    def __getitem__(self, key):
+        return self._numbering[key]
 
     @lru_cache(maxsize=None)
     def get_identity(self, state_sequence, germline_sequence):
@@ -139,7 +162,7 @@ class Numbering:
     ) -> List[Tuple[Tuple[int, str], int]]:
         seq = query_seq.replace("_", "")
         state_vector = self.get_vector_state(hmm_seq, query_seq, hmm_start, hmm_end, query_start, query_end)
-        numbering, start, end = self.validate_numbering(
+        _numbering, start, end = self.validate_numbering(
             self.number_sequence_from_alignment(
                 state_vector,
                 query_seq,
@@ -148,7 +171,18 @@ class Numbering:
             ),
             ("name", seq),
         )
-        return numbering, start, end
+
+        if chain_type.strip().upper() == "H":
+            mapping = self.heavy
+        elif chain_type.strip().upper() == "L":
+            mapping = self.light
+
+        return pd.DataFrame(
+            [
+                {"position": position, "ref_aa": ref_aa, "aa": aa, "region": mapping.get(position)}
+                for (position, ref_aa), aa in _numbering
+            ]
+        )
 
     def get_vector_state(
         self,

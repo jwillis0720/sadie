@@ -437,8 +437,10 @@ def test_numbering_seqs():
 def test_simple_numbering_from_alignment():
     hmm_seq = "divltqsPsslsvsvgdrvtisCrasqsilesddgssylaWyqqkpgkapklliyaalllllllsslasGvPlsrfsGsGllsGtdftltissleaedvavyyCqqaklllllllltfGqGtkveik"
     query_seq = "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS-IGYNYLDWYLQKSGQSPQLLIYLG-------SNRASGVP-DRFSGSG--SGTDFTLKISRVEAEDVGFYYCMQAL----QTPYTFGQGTKLEIK"
-    numbered_seq = Numbering(scheme="chothia").numbering(hmm_seq, query_seq)
-    print(numbered_seq)
+    numbered = Numbering(scheme="imgt").numbering(hmm_seq, query_seq)
+    print(numbered)
+    assert len(numbered) == 127
+    assert numbered.aa[0] == "D"
 
 
 def test_numbering_seq():
@@ -721,6 +723,7 @@ def test_numbering_seq():
     seq = "AAAAADVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF"
     scheme = "imgt"
     chain_type = "H"
+    print(Numbering().light)
     numbered_seq = Numbering().number_sequence_from_alignment(state_vector, seq, scheme=scheme, chain_type=chain_type)
     print(numbered_seq)
 
@@ -861,7 +864,7 @@ def test_imgt():
         ((128, "m"), 122),
     ]
     sequence = "DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF"
-    number_imgt(state_vector, sequence)
+    print(number_imgt(state_vector, sequence))
 
 
 def benchmark_numbering_multi_on():
