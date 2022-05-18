@@ -6,7 +6,7 @@ from itertools import product
 from pathlib import Path
 
 from click.testing import CliRunner
-from sadie.hmmer.app import run_numbering
+from sadie.app import renumbering
 from sadie.hmmer import HMMER
 
 logger = logging.getLogger()
@@ -36,7 +36,7 @@ def _run_cli(p_tuple):
 
         logger.info(f"CLI input {' '.join(cli_input)}")
         runner = CliRunner()
-        result = runner.invoke(run_numbering, cli_input)
+        result = runner.invoke(renumbering, cli_input)
         if result.exit_code != 0:
             logger.info(f"!!!STDERR {result}")
 
