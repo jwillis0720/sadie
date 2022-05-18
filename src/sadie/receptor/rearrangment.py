@@ -11,12 +11,12 @@ from Bio.Seq import Seq
 from pydantic import BaseModel, validator
 
 
-@lru_cache()
+@lru_cache(maxsize=1)
 def get_nt_validator_regex() -> Any:
     return re.compile(r"^[ACNTGYRWSKMDVHBacntgyrwskmdvhb]+\Z")
 
 
-@lru_cache()
+@lru_cache(maxsize=1)
 def get_aa_validator_regex() -> Any:
     return re.compile(r"^[ACDEFGHIKLMNPQRSTVWXYacdefghiklmnpqrstvwxy]+\Z")
 

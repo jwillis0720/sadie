@@ -31,7 +31,7 @@ from .exception import (
 )
 from .result import NumberingResults
 from .constants import NUMBERING_RESULTS
-from .scheme_numbering import scheme_numbering
+from sadie.numbering.scheme_numbering import scheme_numbering
 
 logger = logging.getLogger("HMMER")
 

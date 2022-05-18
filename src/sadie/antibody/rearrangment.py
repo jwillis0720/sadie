@@ -11,12 +11,12 @@ from uuid import UUID, uuid4
 import re
 
 
-@lru_cache
+@lru_cache(maxsize=1)
 def get_nt_validator_regex() -> re.Pattern[Any]:
     return re.compile(r"^[ACNTGacntg]+\Z")
 
 
-@lru_cache
+@lru_cache(maxsize=1)
 def get_aa_validator_regex() -> re.Pattern[Any]:
     return re.compile(r"^[ACDEFGHIKLMNPQRSTVWXYacdefghiklmnpqrstvwxy]+\Z")
 

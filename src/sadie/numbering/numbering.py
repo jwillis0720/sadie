@@ -1,12 +1,15 @@
+from collections import namedtuple
 from functools import lru_cache
 import logging
 import warnings
 import sys
+from typing import Optional, List, Tuple
 
 import pandas as pd
 from numpy import nan
 
 from sadie.antibody.exception import LongHCDR3Error, NumberingDecreasing
+from sadie.numbering.scheme_numbering import scheme_numbering
 from .germlines import all_germlines
 from .schemes import (
     number_kabat_heavy,
@@ -25,8 +28,30 @@ logger = logging.getLogger("NUMBERING")
 
 
 class Numbering:
-    def __init__(self):
-        pass
+
+    Number = namedtuple("Number", ["position", "ref_aa", "aa", "region"])
+
+    def __init__(self, scheme: str = "imgt", region: str = "imgt"):
+        self.scheme = scheme
+        self.region = region
+        self.light_ranges = [(k, v) for k, v in scheme_numbering[scheme]["light"][region].items()]
+        self.heavy_ranges = [(k, v) for k, v in scheme_numbering[scheme]["heavy"][region].items()]
+        self.light = {
+            i: self.light_ranges[j][0].split("_")[0]
+            for j in range(0, len(self.light_ranges), 2)
+            for i in range(self.light_ranges[j][1], self.light_ranges[j + 1][1] + 1)
+        }
+        self.heavy = {
+            i: self.heavy_ranges[j][0].split("_")[0]
+            for j in range(0, len(self.heavy_ranges), 2)
+            for i in range(self.heavy_ranges[j][1], self.heavy_ranges[j + 1][1] + 1)
+        }
+
+    def __len__(self):
+        return len(self._numbering)
+
+    def __getitem__(self, key):
+        return self._numbering[key]
 
     @lru_cache(maxsize=None)
     def get_identity(self, state_sequence, germline_sequence):
@@ -123,6 +148,256 @@ class Numbering:
                 raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
         else:
             raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
+
+    def numbering(
+        self,
+        hmm_aln: str,
+        query_aln: str,
+        query_seq: str,
+        query_name: Optional[str] = None,
+        chain_type: str = "H",
+        hmm_start: Optional[int] = None,
+        hmm_end: Optional[int] = None,
+        query_start: Optional[int] = None,
+        query_end: Optional[int] = None,
+        **kwargs,
+    ) -> List[Tuple[Tuple[int, str], int]]:
+
+        state_vector = self.get_vector_state(hmm_aln, query_aln, hmm_start, hmm_end, query_start, query_end)
+
+        _numbering, start, end = self.validate_numbering(
+            self.number_sequence_from_alignment(
+                state_vector,
+                query_seq,
+                self.scheme,
+                chain_type,
+            ),
+            ("name", query_seq),
+        )
+
+        if chain_type.strip().upper() == "H":
+            mapping = self.heavy
+        elif chain_type.strip().upper() == "L":
+            mapping = self.light
+
+        return pd.DataFrame(
+            [
+                {"position": position, "ref_aa": ref_aa, "aa": aa, "region": mapping.get(position)}
+                for (position, ref_aa), aa in _numbering
+            ]
+        )
+
+    def get_vector_state(
+        self,
+        hmm_seq: str,
+        query_seq: str,
+        hmm_start: Optional[int] = None,
+        hmm_end: Optional[int] = None,
+        query_start: Optional[int] = None,
+        query_end: Optional[int] = None,
+        **kwargs,
+    ) -> List[Tuple[Tuple[int, str], int]]:
+        """
+        Get the NUMBERING state_vector object.
+
+        Parameters
+        ----------
+        hmm_seq : str
+            HMM sequence.
+        query_seq : str
+            Query sequence.
+        hmm_start : int
+            HMM start alignmnet index; starts at 1
+        hmm_end : int
+            HMM end position.
+        query_start : int
+            Query start position; starts at 0 for pythonic index
+        query_end : int
+            Query end position.
+
+        Notes
+        -----
+        'i' = insertion in HMM seq (aka a '.')
+        'd' = deletion in Query seq (aka a '-')
+        'm' = match or accepted missmatch where both are showing an amino acid in their seqs
+
+        Example
+        -------
+        >>> hmm_seq = 'divltqsPsslsvsvgdrvtisCrasqsilesddgssylaWyqqkpgkapklliyaalllllllsslasGvPlsrfsGsGllsGtdftltissleaedvavyyCqqaklllllllltfGqGtkveik'
+        >>> query_seq = 'DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS-IGYNYLDWYLQKSGQSPQLLIYLG-------SNRASGVP-DRFSGSG--SGTDFTLKISRVEAEDVGFYYCMQAL----QTPYTFGQGTKLEIK'
+        >>> hmm_start = 1
+        >>> hmm_end = 127
+        >>> query_start = 0
+        >>> query_end = 122
+        >>> get_vector_state(hmm_seq, query_seq, hmm_start, hmm_end, query_start, query_end)
+        [
+            ((1, 'm'), 0),
+            ((2, 'm'), 1),
+            ((3, 'm'), 2),
+            ((4, 'm'), 3),
+            ((5, 'm'), 4),
+            ((6, 'm'), 5),
+            ((7, 'm'), 6),
+            ((8, 'm'), 7),
+            ((9, 'm'), 8),
+            ((10, 'm'), 9),
+            ((11, 'm'), 10),
+            ((12, 'm'), 11),
+            ((13, 'm'), 12),
+            ((14, 'm'), 13),
+            ((15, 'm'), 14),
+            ((16, 'm'), 15),
+            ((17, 'm'), 16),
+            ((18, 'm'), 17),
+            ((19, 'm'), 18),
+            ((20, 'm'), 19),
+            ((21, 'm'), 20),
+            ((22, 'm'), 21),
+            ((23, 'm'), 22),
+            ((24, 'm'), 23),
+            ((25, 'm'), 24),
+            ((26, 'm'), 25),
+            ((27, 'm'), 26),
+            ((28, 'm'), 27),
+            ((29, 'm'), 28),
+            ((30, 'm'), 29),
+            ((31, 'm'), 30),
+            ((32, 'm'), 31),
+            ((33, 'd'), None),
+            ((34, 'm'), 32),
+            ((35, 'm'), 33),
+            ((36, 'm'), 34),
+            ((37, 'm'), 35),
+            ((38, 'm'), 36),
+            ((39, 'm'), 37),
+            ((40, 'm'), 38),
+            ((41, 'm'), 39),
+            ((42, 'm'), 40),
+            ((43, 'm'), 41),
+            ((44, 'm'), 42),
+            ((45, 'm'), 43),
+            ((46, 'm'), 44),
+            ((47, 'm'), 45),
+            ((48, 'm'), 46),
+            ((49, 'm'), 47),
+            ((50, 'm'), 48),
+            ((51, 'm'), 49),
+            ((52, 'm'), 50),
+            ((53, 'm'), 51),
+            ((54, 'm'), 52),
+            ((55, 'm'), 53),
+            ((56, 'm'), 54),
+            ((57, 'm'), 55),
+            ((58, 'd'), None),
+            ((59, 'd'), None),
+            ((60, 'd'), None),
+            ((61, 'd'), None),
+            ((62, 'd'), None),
+            ((63, 'd'), None),
+            ((64, 'd'), None),
+            ((65, 'm'), 56),
+            ((66, 'm'), 57),
+            ((67, 'm'), 58),
+            ((68, 'm'), 59),
+            ((69, 'm'), 60),
+            ((70, 'm'), 61),
+            ((71, 'm'), 62),
+            ((72, 'm'), 63),
+            ((73, 'd'), None),
+            ((74, 'm'), 64),
+            ((75, 'm'), 65),
+            ((76, 'm'), 66),
+            ((77, 'm'), 67),
+            ((78, 'm'), 68),
+            ((79, 'm'), 69),
+            ((80, 'm'), 70),
+            ((81, 'd'), None),
+            ((82, 'd'), None),
+            ((83, 'm'), 71),
+            ((84, 'm'), 72),
+            ((85, 'm'), 73),
+            ((86, 'm'), 74),
+            ((87, 'm'), 75),
+            ((88, 'm'), 76),
+            ((89, 'm'), 77),
+            ((90, 'm'), 78),
+            ((91, 'm'), 79),
+            ((92, 'm'), 80),
+            ((93, 'm'), 81),
+            ((94, 'm'), 82),
+            ((95, 'm'), 83),
+            ((96, 'm'), 84),
+            ((97, 'm'), 85),
+            ((98, 'm'), 86),
+            ((99, 'm'), 87),
+            ((100, 'm'), 88),
+            ((101, 'm'), 89),
+            ((102, 'm'), 90),
+            ((103, 'm'), 91),
+            ((104, 'm'), 92),
+            ((105, 'm'), 93),
+            ((106, 'm'), 94),
+            ((107, 'm'), 95),
+            ((108, 'm'), 96),
+            ((109, 'd'), None),
+            ((110, 'd'), None),
+            ((111, 'd'), None),
+            ((112, 'd'), None),
+            ((113, 'm'), 97),
+            ((114, 'm'), 98),
+            ((115, 'm'), 99),
+            ((116, 'm'), 100),
+            ((117, 'm'), 101),
+            ((118, 'm'), 102),
+            ((119, 'm'), 103),
+            ((120, 'm'), 104),
+            ((121, 'm'), 105),
+            ((122, 'm'), 106),
+            ((123, 'm'), 107),
+            ((124, 'm'), 108),
+            ((125, 'm'), 109),
+            ((126, 'm'), 110),
+            ((127, 'm'), 111)
+        ]
+
+        Returns
+        -------
+        List[Tuple[Tuple[int, str], int]]
+            List of NUMBERING state_vector objects.
+        """
+        assert len(hmm_seq) == len(query_seq), "The 2 seqs should be alignments of eachother"
+
+        # Allowing the user simple numbering if they already have alignments
+        if hmm_start is None:
+            hmm_start = 1
+        if hmm_end is None:
+            hmm_end = len(hmm_seq) - hmm_seq.count(".")
+        if query_start is None:
+            query_start = 0
+        if query_end is None:
+            query_end = len(query_seq) - query_seq.count("-")
+
+        vector_state = []
+
+        hmm_step = hmm_start  # real world index starting at 1 to match HMMER output
+        query_step = query_start  # pythonic index starting at 0
+
+        for i in range(len(hmm_seq)):
+            # HMM seq insertion
+            if hmm_seq[i] == ".":
+                vector_state.append(((hmm_step, "i"), query_step))
+                query_step += 1
+            # Query seq deletion
+            elif query_seq[i] == "-":
+                vector_state.append(((hmm_step, "d"), None))
+                hmm_step += 1
+            # match or accepted missmatch
+            else:
+                vector_state.append(((hmm_step, "m"), query_step))
+                hmm_step += 1
+                query_step += 1
+
+        return vector_state
 
     def run_germline_assignment(self, state_vector, sequence, chain_type, allowed_species=None):
         """
