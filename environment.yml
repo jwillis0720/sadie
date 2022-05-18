@@ -1,0 +1,40 @@
+name: sadie-production
+channels:
+  - conda-forge
+  - defaults
+  - bioconda
+  - conda-forge/label/broken
+pendencies:
+  - python==3.9
+  - pip:
+    - biopython==1.79
+    - charset-normalizer==2.0.12
+    - click==8.1.3
+    - et-xmlfile==1.1.0
+    - filetype==1.0.13
+    - idna==3.3
+    - joblib==1.1.0
+    - multidict==6.0.2
+    - numpy==1.22.3
+    - openpyxl==3.0.9
+    - pandas==1.4.2
+    - psutil==5.9.0
+    - pyarrow==8.0.0
+    - pydantic==1.9.0
+    - pyhmmer==0.6.0
+    - python-dateutil==2.8.2
+    - python-levenshtein==0.12.2
+    - pytz==2022.1
+    - pyyaml==6.0
+    - requests==2.27.1
+    - sadie-antibody==0.4.11
+    - scikit-learn==1.1.0
+    - scipy==1.8.0
+    - semantic-version==2.9.0
+    - six==1.16.0
+    - sklearn==0.0
+    - threadpoolctl==3.1.0
+    - typing-extensions==4.2.0
+    - urllib3==1.26.9
+    - yarl==1.7.2
+    - nb-black==1.0.7
