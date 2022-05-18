@@ -196,7 +196,7 @@ class HMMERTranslator:
         source: Source = "imgt",
         bit_score_threshold: int = 80,
         limit: Optional[int] = 1,
-        prioritize_cached_hmm: bool = False,
+        prioritize_cached_hmm: bool = True,
         for_numbering: bool = False,
     ) -> List[List[Dict[str, Union[str, int]]]]:
         """
@@ -329,10 +329,10 @@ class HMMERTranslator:
         self,
         hmm_seq: str,
         query_seq: str,
-        hmm_start: int,
-        hmm_end: int,
-        query_start: int,
-        query_end: int,
+        hmm_start: Optional[int] = None,
+        hmm_end: Optional[int] = None,
+        query_start: Optional[int] = None,
+        query_end: Optional[int] = None,
         **kwargs,
     ) -> List[Tuple[Tuple[int, str], int]]:
         """
@@ -504,6 +504,16 @@ class HMMERTranslator:
             List of NUMBERING state_vector objects.
         """
         assert len(hmm_seq) == len(query_seq), "The 2 seqs should be alignments of eachother"
+
+        # Allowing the user simple numbering if they already have alignments
+        if hmm_start is None:
+            hmm_start = 1
+        if hmm_end is None:
+            hmm_end = len(hmm_seq) - hmm_seq.count(".")
+        if query_start is None:
+            query_start = 0
+        if query_end is None:
+            query_end = len(query_seq) - query_seq.count("-")
 
         vector_state = []
 
