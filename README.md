@@ -49,6 +49,8 @@
 
 **Source Code**: <a href="https://github.com/jwillis0720/sadie" target="_blank">https://github.com/jwillis0720/sadie</a>
 
+**Colab**: <a href="https://colab.research.google.com/github/jwillis0720/sadie/blob/development/notebooks/airr_c/SADIE_DEMO.ipynb" target="_blank">https://colab.research.google.com/github/jwillis0720/sadie/blob/development/notebooks/airr_c/SADIE_DEMO.ipynb</a>
+
 ---
 
 SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key feautures include:
