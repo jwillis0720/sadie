@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 import sys
 import os
-from typing import Union, List
+from typing import Union, Any, List
 import click
 
 # HMMER
@@ -113,7 +113,7 @@ def airr(
     # handle output
 
 
-def _validate_numbering_objects(ctx, param, value: str) -> List[str]:
+def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> List[str]:
     """Private method for click context to evaluate comma seperated lists and make sure each field is okay"""
     columns = [c.strip() for c in value.split(",")]
     param_name = param.human_readable_name
