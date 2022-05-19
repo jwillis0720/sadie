@@ -8,18 +8,18 @@ from Bio.SeqRecord import SeqRecord
 from pydantic import validate_arguments
 import pyhmmer
 
-from sadie.hmmer.clients import G3
-from sadie.hmmer.numbering_translator import NumberingTranslator
+from sadie.renumbering.clients import G3
+from sadie.renumbering.numbering_translator import NumberingTranslator
 from sadie.typing import Species, Chain, Source
 
 
-class HMMERTranslator:
+class HMMER:
     """
     Extension of Pyhmmer to accept local HMMs (from Numbering) and external HMMs (from G3).
     """
 
     g3 = G3()
-    numbering = NumberingTranslator()  # for numbering hmm files only and not their scripts
+    numbering = NumberingTranslator()  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
 
     def __init__(self, use_numbering_hmms: bool = False):
         # Force Numbering local HMMs to be used -- mostely for primiary testing

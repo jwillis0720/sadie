@@ -13,7 +13,7 @@ import tempfile
 import warnings
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import List, Tuple, Union, Generator
+from typing import Any, List, Tuple, Union, Generator
 
 # third party
 from Bio import SeqIO
@@ -21,7 +21,7 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 import pandas as pd
 
-from sadie.hmmer.hmmer_translator import HMMERTranslator
+from sadie.renumbering.aligners import HMMER
 from sadie.numbering import Numbering
 
 from .exception import (
@@ -33,7 +33,7 @@ from .result import NumberingResults
 from .constants import NUMBERING_RESULTS
 from sadie.numbering.scheme_numbering import scheme_numbering
 
-logger = logging.getLogger("HMMER")
+logger = logging.getLogger("RENUMBERING")
 
 # Get out of here with your partial codon warnigns
 warnings.filterwarnings("ignore", "Partial codon")
@@ -43,74 +43,79 @@ class Error(Exception):
     """Base class for exceptions in this module."""
 
 
-class HMMER:
+class Renumbering:
 
-    hmmer_translator = HMMERTranslator()
+    hmmer = HMMER()
     numbering = Numbering()
 
     def __init__(
         self,
-        scheme="imgt",
-        region_assign="imgt",
-        allowed_chain=["H", "K", "L"],
-        assign_germline=True,
-        allowed_species=[
-            "human",
-            "mouse",
-            "rat",
-            "rabbit",
-            "rhesus",
-            "pig",
-            "alpaca",
-            "dog",
-            "cat",
-        ],
-        tempdir="",
-        threshold=80,
-        run_multiproc=True,
-        num_cpus=cpu_count(),
-        prioritize_cached_hmm: bool = True,  # G3 multiprocessing broken
+        aligner: str = "hmmer",
+        scheme: str = "imgt",
+        region_assign: str = "imgt",
+        allowed_chain: List[str] = ["H", "K", "L"],
+        assign_germline: bool = True,
+        allowed_species: List[str] = ["human"],
+        threshold: int = 80,
+        run_multiproc: bool = True,
+        num_cpus: int = cpu_count(),
+        prioritize_cached_hmm: bool = True,
         use_numbering_hmms: bool = False,
+        *args,
+        **kwargs,
     ):
         """HMMER v3 wrapper that runs hmmersearch using G3 built HMMs and numbering schema from Numbering.
 
         Parameters
         ----------
+        aligner: str
+            The aligner to use. Currently only hmmer is supported
         scheme : str, optional
-            [description], by default "imgt"
+            scheme of alignment, by default imgt,
+            options: Chothia, Kabat, Martin (Extended Chothia), Aho
         region_assign : str, optional
-            [description], by default "imgt"
+            assigning frw1-cdr1-fwr2-cdr2-fwr3-cdr3-fwr4, by default "imgt"
+            options: imgt, kabat, chothia
         allowed_chain : list, optional
-            [description], by default ["H", "K", "L"]
+            antibody chains, by default ["H", "K", "L"]
+            all options: ["L", "H", "K", "A", "B", "G", "D"]
+            options with numbering scheme + region: ["H", "K", "L"]
         assign_germline : bool, optional
-            [description], by default True
+            assign germline; falls back on hardcoded dict in germlines.py, by default True
         allowed_species : list, optional
-            [description], by default [ "human", "mouse", "rat", "rabbit", "rhesus", "pig", "alpaca", "dog", "cat", ]
-        tempdir : str, optional
-            [description], by default ""
-        hmmerpath : str, optional
-            [description], by default ""
+            query sequnce only hits HMMs build with the species requested, by default ["human"]
+            options: human, mouse, rat, rabbit, rhesus, pig, alpaca, dog, cat
         threshold : int, optional
-            [description], by default 80
+            HMMER specific bitscore threshold determined by the best domain hit found, by default 80
+            notes: anything over 160 is a likely position and anything below 80 is a likely false positive hit. Anything inbetween is open to interpretation.
         run_multiproc : bool, optional
-            [description], by default True
+            Runs each sequence as a input concurrenty, by default True
+            notes: Each sequence in a fasta file give is run in parallel in the order given.
+        num_cpus : int, optional
+            number of cpus to use if multiple inputs are given, by default all cpus.
+        prioritize_cached_hmm : bool, optional
+            if True, will use cached hmms if they exist, by default True
+            notes: A queried species and chain will be pulled from G3 if it exists, otherwise it will check a local backup before failing.
+        use_numbering_hmms : bool, optional
+            if True, will use only backup hmms, by default False
+            note: these backup hmms are legacy from the ANARCI team and are not updated.
+        *args, **kwargs  # for backwards compatibility options
 
         Raises
         ------
         NotImplementedError
-            [description]
+            If the scheme + region assign combo is not implemented
         """
         self.scheme = scheme
         self.region_definition = region_assign
         self.allowed_chains = allowed_chain
         self.assign_germline = assign_germline
         self.allowed_species = allowed_species
-        self.tempdir = tempdir
         self.num_cpus = num_cpus
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
         self.prioritize_cached_hmm = prioritize_cached_hmm
-        self.hmmer_translator.use_numbering_hmms = use_numbering_hmms
+        self.hmmer.use_numbering_hmms = use_numbering_hmms
         if not self.check_combination(self.scheme, self.region_definition):
             raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
 
@@ -183,29 +188,6 @@ class HMMER:
         except KeyError:
             return False
         return True
-
-    @property
-    def tempdir(self) -> Path:
-        return self._path
-
-    @tempdir.setter
-    def tempdir(self, path: str):
-        if not path:
-            if "TMPFILE" in os.environ:
-                _path = os.environ["TMPFILE"]
-            else:
-                _path = "/tmp"
-        else:
-            _path = path
-        _path = Path(_path)
-        # check path exists
-        if _path.exists() and _path.is_dir():
-            self._path = _path
-        elif not _path.exists():
-            _path.mkdir()
-            self._path = _path
-        else:
-            raise TypeError(f"{path} is not found or can't be created")
 
     @property
     def allowed_chains(self) -> List[str]:
@@ -344,7 +326,7 @@ class HMMER:
             for seq_id, seq in sequences
         ]
         # Perform the alignments of the sequences to the hmm database
-        _alignments = self.hmmer_translator.hmmsearch(
+        _alignments = self.hmmer.hmmsearch(
             sequences=_sequences,
             species=self.allowed_species,
             chains=self.allowed_chains,
@@ -355,7 +337,7 @@ class HMMER:
         )
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Modify alignments in-place
-        self.hmmer_translator.check_for_j(
+        self.hmmer.check_for_j(
             sequences=_sequences,
             alignments=_alignments,
             species=self.allowed_species,
@@ -452,7 +434,7 @@ class HMMER:
 
         if self.run_multiproc:
             # split a list into evenly sized chunks
-            def chunks(list_to_split, n):
+            def chunks(list_to_split: List[Any], n: int):
                 return [list_to_split[i : i + n] for i in range(0, len(list_to_split), n)]
 
             try:
