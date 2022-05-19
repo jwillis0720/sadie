@@ -19,7 +19,9 @@ class HMMER:
     """
 
     g3 = G3()
-    numbering = NumberingTranslator()  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
+    numbering = (
+        NumberingTranslator()
+    )  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
 
     def __init__(self, use_numbering_hmms: bool = False):
         # Force Numbering local HMMs to be used -- mostely for primiary testing
