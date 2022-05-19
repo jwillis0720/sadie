@@ -1,4 +1,4 @@
-__version__ = "0.4.13"
+__version__ = "0.4.14"
 from .hmmer import HMMER
 from .exception import NumberingDuplicateIdError
 from .numbering_translator import NumberingTranslator
