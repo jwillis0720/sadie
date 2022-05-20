@@ -6,8 +6,8 @@ import os
 from typing import Union, Any, List
 import click
 
-# HMMER
-from sadie.hmmer import HMMER
+# Renumbering
+from sadie.renumbering import Renumbering
 
 # airr
 from sadie.airr import Airr
@@ -118,9 +118,9 @@ def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> L
     columns = [c.strip() for c in value.split(",")]
     param_name = param.human_readable_name
     if param_name == "allowed_species":
-        avail_columns = HMMER.get_allowed_species()
+        avail_columns = Renumbering.get_allowed_species()
     elif param_name == "allowed_chains":
-        avail_columns = HMMER.get_allowed_chains()
+        avail_columns = Renumbering.get_allowed_chains()
     else:
         raise ValueError(f"{param.human_readable_name} not recognized as a valid param")
     for c in columns:
@@ -149,7 +149,7 @@ def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> L
     "-s",
     is_flag=False,
     default="imgt",
-    type=click.Choice(HMMER.get_available_numbering_schemes()),
+    type=click.Choice(Renumbering.get_available_numbering_schemes()),
     show_default=True,
     help="The numbering scheme to use.",
 )
@@ -158,7 +158,7 @@ def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> L
     "-r",
     is_flag=False,
     default="imgt",
-    type=click.Choice(HMMER.get_available_region_definitions()),
+    type=click.Choice(Renumbering.get_available_region_definitions()),
     show_default=True,
     help="The framework and cdr defition to use",
 )
@@ -166,7 +166,7 @@ def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> L
     "--allowed-species",
     "-a",
     is_flag=False,
-    default=",".join(HMMER.get_allowed_species()),
+    default=",".join(Renumbering.get_allowed_species()),
     show_default=True,
     callback=_validate_numbering_objects,
     help="A comma seperated list of species to align against",
@@ -175,7 +175,7 @@ def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> L
     "--allowed-chains",
     "-c",
     is_flag=False,
-    default=",".join(HMMER.get_allowed_chains()),
+    default=",".join(Renumbering.get_allowed_chains()),
     show_default=True,
     callback=_validate_numbering_objects,
     help="A comma seperated list of species to align against",
@@ -216,14 +216,14 @@ def renumbering(
 
     # No reason to use click echo over print except to show e can
     click.echo(f"Logging with level=>{logging.getLevelName(logger.getEffectiveLevel())}")
-    logger.info(f"Running HMMER on renumbering: {query}")
+    logger.info(f"Running Renumbering on renumbering: {query}")
     logger.info(f"Allowed-species {allowed_species}")
     logger.info(f"Allowed-chains: {allowed_chains}")
     logger.info(f"Numbering: {scheme}")
     logger.info(f"Region Def: {region}")
 
     # setup object
-    hmmer_api = HMMER(
+    renumbering_api = Renumbering(
         scheme=scheme,
         region_assign=region,
         allowed_chain=allowed_chains,
@@ -233,13 +233,13 @@ def renumbering(
     )
 
     # # run file on query
-    hmmer_results = hmmer_api.run_file(query)
+    renumbering_results = renumbering_api.run_file(query)
 
     # deal with output
     # if no output file, name after input
     if out:
         out = Path(out)
-        segment_out = str(out.stem) + "_hmmer_results" + str(out.suffix)
+        segment_out = str(out.stem) + "_renumbering_results" + str(out.suffix)
         align_out = str(out.stem) + "_numbering_alignment" + str(out.suffix)
     else:
         input_path = Path(query)
@@ -254,18 +254,18 @@ def renumbering(
     # deal with file format
     # csv
     if file_format.lower() == "csv":
-        hmmer_results.to_csv(segment_out)
-        hmmer_results.get_alignment_table().to_csv(align_out)
+        renumbering_results.to_csv(segment_out)
+        renumbering_results.get_alignment_table().to_csv(align_out)
 
     # json
     elif file_format.lower() == "json":
-        hmmer_results.to_json(segment_out, orient="records")
-        hmmer_results.get_alignment_table().to_json(align_out, orient="records")
+        renumbering_results.to_json(segment_out, orient="records")
+        renumbering_results.get_alignment_table().to_json(align_out, orient="records")
 
     # feather
     elif file_format.lower() == "feather":
-        hmmer_results.reset_index(drop=True).to_feather(segment_out)
-        hmmer_results.get_alignment_table().reset_index().to_feather(align_out)
+        renumbering_results.reset_index(drop=True).to_feather(segment_out)
+        renumbering_results.get_alignment_table().reset_index().to_feather(align_out)
 
     # shouldn't get here, but if they specify a file format that is not recognized using an invoke method
     else:

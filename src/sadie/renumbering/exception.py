@@ -61,7 +61,7 @@ class NumberingDuplicateIdError(Error):
         return f"Duplicate Ids are found {self.ids} {self.found} times"
 
 
-class HmmerExecutionError(Error):
+class NumberingExecutionError(Error):
     """Exception raised for hmmscan not executin"""
 
     def __init__(self, path, msg):

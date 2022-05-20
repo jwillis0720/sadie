@@ -1,6 +1,6 @@
 import re
 
-from sadie.hmmer.clients import G3
+from sadie.renumbering.clients import G3
 
 
 def test_g3_hmm(fixture_setup):

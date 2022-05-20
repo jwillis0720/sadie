@@ -7,7 +7,7 @@ from pathlib import Path
 
 from click.testing import CliRunner
 from sadie.app import renumbering
-from sadie.hmmer import HMMER
+from sadie.renumbering import Renumbering
 
 logger = logging.getLogger()
 
@@ -30,7 +30,7 @@ def _run_cli(p_tuple):
             p_tuple[4],
             "-vvvvv",
         ]
-        if not HMMER.check_combination(p_tuple[3], p_tuple[4]):
+        if not Renumbering.check_combination(p_tuple[3], p_tuple[4]):
             logger.info(f"skipping {p_tuple[4]}-{p_tuple[3]}")
             return True
 

@@ -7,7 +7,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pandas.testing import assert_frame_equal
-from sadie.hmmer import HMMER, NumberingDuplicateIdError, NumberingResults
+from sadie.renumbering import Renumbering, NumberingDuplicateIdError, NumberingResults
 from sadie.numbering.schemes import number_imgt
 from sadie.numbering import Numbering
 
@@ -15,13 +15,17 @@ USE_CACHE = True  # TODO: make this an option in the config
 
 
 def test_long_seq():
-    hmmer_api = HMMER(scheme="chothia", region_assign="imgt", prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
-    hmmer_api.run_single(
+    renumbering_api = Renumbering(
+        scheme="chothia", region_assign="imgt", prioritize_cached_hmm=USE_CACHE, run_multiproc=True
+    )
+    renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
-    hmmer_api = HMMER(scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=USE_CACHE)
-    hmmer_api.run_single(
+    renumbering_api = Renumbering(
+        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=USE_CACHE
+    )
+    renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
@@ -29,15 +33,17 @@ def test_long_seq():
 
 def test_no_j_gene():
     """no j gene found"""
-    hmmer_api = HMMER(scheme="chothia", region_assign="imgt", allowed_species=["rat"], prioritize_cached_hmm=USE_CACHE)
-    hmmer_api.run_single(
+    renumbering_api = Renumbering(
+        scheme="chothia", region_assign="imgt", allowed_species=["rat"], prioritize_cached_hmm=USE_CACHE
+    )
+    renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
 
 
 def test_trouble_seqs():
-    numbering = HMMER(scheme="kabat", region_assign="imgt", run_multiproc=False, prioritize_cached_hmm=USE_CACHE)
+    numbering = Renumbering(scheme="kabat", region_assign="imgt", run_multiproc=False, prioritize_cached_hmm=USE_CACHE)
     # Legacy check. Id is sudo numbered in order so users cant just throw in a string
     # with pytest.warns(UserWarning):
     #     results = numbering.run_single(
@@ -63,15 +69,15 @@ def test_trouble_seqs():
 
     # Legacy check. Id is sudo numbered in order so users cant just throw in a string
     # can't capture this user warning with multiprocess
-    # numbering = HMMER(scheme="kabat", region_assign="imgt", run_multiproc=False)
+    # numbering = Renumbering(scheme="kabat", region_assign="imgt", run_multiproc=False)
     # with pytest.warns(UserWarning):
     #     results = numbering.run_multiple(seq_records)
     assert len(results) == 1
 
 
 def test_single_seq():
-    hmmer_api = HMMER(region_assign="imgt", prioritize_cached_hmm=USE_CACHE)
-    result = hmmer_api.run_single(
+    renumbering_api = Renumbering(region_assign="imgt", prioritize_cached_hmm=USE_CACHE)
+    result = renumbering_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     ).iloc[0]
@@ -95,20 +101,20 @@ def test_single_seq():
 
 
 def test_alternate_numbering():
-    hmmer_api = HMMER(scheme="chothia", region_assign="chothia", prioritize_cached_hmm=USE_CACHE)
-    hmmer_api.run_single(
+    renumbering_api = Renumbering(scheme="chothia", region_assign="chothia", prioritize_cached_hmm=USE_CACHE)
+    renumbering_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
-    hmmer_api = HMMER(scheme="chothia", region_assign="abm", prioritize_cached_hmm=USE_CACHE)
-    hmmer_api.run_single(
+    renumbering_api = Renumbering(scheme="chothia", region_assign="abm", prioritize_cached_hmm=USE_CACHE)
+    renumbering_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
 
 
 def test_numbering_multi_input():
-    hmmer_api = HMMER(prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
+    renumbering_api = Renumbering(prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
     seq_records = [
         SeqRecord(
             Seq(
@@ -123,7 +129,7 @@ def test_numbering_multi_input():
             id="DupulimabL",
         ),
     ]
-    results = hmmer_api.run_multiple(seq_records)
+    results = renumbering_api.run_multiple(seq_records)
     assert isinstance(results, NumberingResults)
     single_result_1 = results.query("Id=='DupulimabH'").iloc[0]
     single_result_2 = results.query("Id=='DupulimabL'").iloc[0]
@@ -147,8 +153,8 @@ def test_numbering_multi_input():
 def test_io(fixture_setup):
     """Test file io"""
     main_file = fixture_setup.get_dog_aa_seqs()
-    hmmer_api = HMMER(allowed_species=["dog", "cat"], prioritize_cached_hmm=USE_CACHE)
-    results = hmmer_api.run_file(main_file)
+    renumbering_api = Renumbering(allowed_species=["dog", "cat"], prioritize_cached_hmm=USE_CACHE)
+    results = renumbering_api.run_file(main_file)
     assert isinstance(results, NumberingResults)
     with tempfile.NamedTemporaryFile(suffix=".numbering.bz2") as temp:
         results.to_csv(temp.name)
@@ -157,8 +163,8 @@ def test_io(fixture_setup):
 
 
 def test_dog():
-    hmmer_api = HMMER(allowed_species=["dog"], prioritize_cached_hmm=USE_CACHE)
-    result = hmmer_api.run_single(
+    renumbering_api = Renumbering(allowed_species=["dog"], prioritize_cached_hmm=USE_CACHE)
+    result = renumbering_api.run_single(
         "V3-38_J4",
         "EVQLVESGGDLVKPGGTLRLSCVASGLSLTSNSMSWVRQSPGKGLQWVAVIWSNGGTYYADAVKGRFTISRDNAKNTLYLQMNSLRAEDTAVYYCASIYYYDADYLHWGQGTLVTVSS",
     ).iloc[0]
@@ -174,7 +180,7 @@ def test_dog():
     assert float(result.v_identity) == 0.88
     assert float(result.j_identity) == 0.79
 
-    result = hmmer_api.run_single(
+    result = renumbering_api.run_single(
         "V3-38_J4",
         "EIVMTQSPASLSLSQEEKVTITCRASEGISNSLAWYQQKPGQAPKLLIYATSNRATGVPSRFSGSGSGTDFSFTISSLEPEDVAVYYCQQGYKFPLTFGAGTKVELK",
     ).iloc[0]
@@ -192,8 +198,8 @@ def test_dog():
 
 
 def test_cat():
-    hmmer_api = HMMER(allowed_species=["cat"], prioritize_cached_hmm=USE_CACHE)
-    result = hmmer_api.run_single(
+    renumbering_api = Renumbering(allowed_species=["cat"], prioritize_cached_hmm=USE_CACHE)
+    result = renumbering_api.run_single(
         "CF-R01-D01",
         "DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF",
     ).iloc[0]
@@ -212,13 +218,13 @@ def test_cat():
 
 def test_bad_sequences():
     bad_sequence = "SEQLTQPESLTLRPGQPLTIRCQVSYSVSSTGYATHWIRQPDGRGLEWIGGIRIGWKGAKDSLSSQFSLAVDGSSKTITLQGQNMQPGDSAVYYCAR"
-    hmmer_api = HMMER(prioritize_cached_hmm=USE_CACHE)
-    result = hmmer_api.run_single("bad_sequence", bad_sequence)
+    renumbering_api = Renumbering(prioritize_cached_hmm=USE_CACHE)
+    result = renumbering_api.run_single("bad_sequence", bad_sequence)
     assert result.empty
 
 
 def test_duplicated_seq():
-    hmmer_api = HMMER(prioritize_cached_hmm=USE_CACHE)
+    renumbering_api = Renumbering(prioritize_cached_hmm=USE_CACHE)
     seq_records = [
         SeqRecord(
             Seq(
@@ -234,7 +240,7 @@ def test_duplicated_seq():
         ),
     ]
     with pytest.raises(NumberingDuplicateIdError):
-        hmmer_api.run_multiple(seq_records)
+        renumbering_api.run_multiple(seq_records)
 
 
 def test_df(fixture_setup):
@@ -242,7 +248,7 @@ def test_df(fixture_setup):
     df = pd.DataFrame(
         [{"id": x.id, "seq": x.seq, "description": x.description} for x in SeqIO.parse(test_file_heavy, "fasta")]
     )
-    numbering_obj = HMMER(prioritize_cached_hmm=USE_CACHE)
+    numbering_obj = Renumbering(prioritize_cached_hmm=USE_CACHE)
     numbering_results = numbering_obj.run_dataframe(df, "id", "seq")
     assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
 
@@ -873,7 +879,7 @@ def test_imgt():
 
 
 def benchmark_numbering_multi_on():
-    hmmer_api = HMMER(run_multiproc=True)
+    renumbering_api = Renumbering(run_multiproc=True)
     seq_records = []
     [
         seq_records.extend(
@@ -894,11 +900,11 @@ def benchmark_numbering_multi_on():
         )
         for i in range(500)
     ]
-    _ = hmmer_api.run_multiple(seq_records)
+    _ = renumbering_api.run_multiple(seq_records)
 
 
 def benchmark_numbering_multi_off():
-    hmmer_api = HMMER(run_multiproc=False)
+    renumbering_api = Renumbering(run_multiproc=False)
     seq_records = []
     [
         seq_records.extend(
@@ -919,7 +925,7 @@ def benchmark_numbering_multi_off():
         )
         for i in range(500)
     ]
-    _ = hmmer_api.run_multiple(seq_records)
+    _ = renumbering_api.run_multiple(seq_records)
 
 
 if __name__ == "__main__":
