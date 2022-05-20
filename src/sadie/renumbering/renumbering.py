@@ -306,7 +306,7 @@ class Renumbering:
             raise BadNumberingArgument(assign, bool)
         self._assign_germline = assign
 
-    def _run(self, sequences: List[Tuple[str,str]]):
+    def _run(self, sequences: List[Tuple[str, str]]):
         """
         private method to run Numbering
 
