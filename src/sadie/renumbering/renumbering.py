@@ -225,7 +225,7 @@ class Renumbering:
         self._allowed_chains = allowed_chains
 
     @staticmethod
-    def get_allowed_chains() -> List:
+    def get_allowed_chains() -> List[str]:
         """Get the allowed chains options. Which chains can you align against
 
         Returns
@@ -237,7 +237,7 @@ class Renumbering:
         return _allowed_chain
 
     @property
-    def allowed_species(self) -> list:
+    def allowed_species(self) -> List[str]:
         return self._allowed_species
 
     @allowed_species.setter
@@ -258,7 +258,7 @@ class Renumbering:
         self._allowed_species = allowed_species
 
     @staticmethod
-    def get_allowed_species() -> List:
+    def get_allowed_species() -> List[str]:
         """Get allowed species that we should align against.
 
         Returns
@@ -306,7 +306,7 @@ class Renumbering:
             raise BadNumberingArgument(assign, bool)
         self._assign_germline = assign
 
-    def _run(self, sequences: List[Tuple]):
+    def _run(self, sequences: List[Tuple[str,str]]):
         """
         private method to run Numbering
 

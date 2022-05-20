@@ -49,7 +49,7 @@
 
 **Source Code**: <a href="https://github.com/jwillis0720/sadie" target="_blank">https://github.com/jwillis0720/sadie</a>
 
-**Colab**: [https://colab.research.google.com/github/jwillis0720/sadie](https://colab.research.google.com/github/jwillis0720/sadie/blob/airr_c/notebooks/airr_c/SADIE_DEMO.ipynb)
+**Colab**: [https://colab.research.google.com/github/jwillis0720/sadie](https://colab.research.google.com/github/jwillis0720/sadie/blob/main/notebooks/airr_c/SADIE_DEMO.ipynb)
 
 ---
 
@@ -81,7 +81,6 @@ $ pip install sadie-antibody
 
 ### Development installation.
 
-!!! info
 Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
 
 ```console
@@ -129,4 +128,4 @@ airr_table = air_api.run_file("myfile.fasta")
 
 [![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
 
-- Copyright © Jordan R. Willis
+- Copyright © Jordan R. Willis and Troy Sincomb
