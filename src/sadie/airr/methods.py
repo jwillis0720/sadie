@@ -7,7 +7,7 @@ import pandas as pd
 
 # module/package level
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
-from sadie.hmmer import HMMER
+from sadie.renumbering import Renumbering
 
 logger = logging.getLogger("AirrMethod")
 
@@ -55,50 +55,54 @@ def run_mutational_analysis(
     if not airrtable.index.is_monotonic_increasing:
         raise IndexError(f"{airrtable.index} must be monotonic increasing")
 
-    # create HMMER api
-    logger.info("Running HMMER on germline alignment")
-    hmmer_api = HMMER(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)
+    # create Renumbering api
+    logger.info("Running Renumbering on germline alignment")
+    renumbering_api = Renumbering(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)
     airrtable = pd.DataFrame(airrtable)  # type: ignore[assignment]
-    germline_results_hmmer = hmmer_api.run_dataframe(
+    germline_results_renumbering = renumbering_api.run_dataframe(
         airrtable["germline_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,
         "germline_alignment_aa",
     )
-    logger.info("Running HMMER on mature alignment")
+    logger.info("Running Renumbering on mature alignment")
 
-    mature_results_hmmer = hmmer_api.run_dataframe(
+    mature_results_renumbering = renumbering_api.run_dataframe(
         airrtable["sequence_alignment_aa"].str.replace("-", "").to_frame().join(airrtable[key]),
         key,
         "sequence_alignment_aa",
     )
-    logger.info("Getting HMMER on alignment tables")
+    logger.info("Getting Renumbering on alignment tables")
     sets_of_lists = [
-        set(germline_results_hmmer["Id"]),
-        set(mature_results_hmmer["Id"]),
+        set(germline_results_renumbering["Id"]),
+        set(mature_results_renumbering["Id"]),
         set(airrtable[key].astype("str")),
     ]
     sets_of_lists = sorted(sets_of_lists, key=lambda x: len(x))
     common_results = set.intersection(*sets_of_lists)
 
     logger.info(f"Can run mutational analysis on {len(common_results)} out of {len(airrtable)} results")
-    germline_results_hmmer = germline_results_hmmer.loc[germline_results_hmmer["Id"].isin(common_results), :]
-    germline_results_hmmer_at = germline_results_hmmer.get_alignment_table()
-    mature_results_hmmer = mature_results_hmmer.loc[mature_results_hmmer["Id"].isin(common_results), :]
-    mature_results_hmmer_at = mature_results_hmmer.get_alignment_table()
+    germline_results_renumbering = germline_results_renumbering.loc[
+        germline_results_renumbering["Id"].isin(common_results), :
+    ]
+    germline_results_renumbering_at = germline_results_renumbering.get_alignment_table()
+    mature_results_renumbering = mature_results_renumbering.loc[
+        mature_results_renumbering["Id"].isin(common_results), :
+    ]
+    mature_results_renumbering_at = mature_results_renumbering.get_alignment_table()
     lookup_dataframe = (
-        mature_results_hmmer_at.drop(["chain_type", "scheme"], axis=1)
+        mature_results_renumbering_at.drop(["chain_type", "scheme"], axis=1)
         .set_index("Id")
         .transpose()
         .join(
-            germline_results_hmmer_at.drop(["chain_type", "scheme"], axis=1).set_index("Id").transpose(),
+            germline_results_renumbering_at.drop(["chain_type", "scheme"], axis=1).set_index("Id").transpose(),
             lsuffix="_mature",
             rsuffix="_germ",
         )
     )
     lookup_dataframe = lookup_dataframe[sorted(lookup_dataframe.columns)].fillna("-")
     mutation_arrays = []
-    logger.info(f"Finding mutations on {len(mature_results_hmmer)} sequences")
-    for x in mature_results_hmmer["Id"]:
+    logger.info(f"Finding mutations on {len(mature_results_renumbering)} sequences")
+    for x in mature_results_renumbering["Id"]:
         germ_tag = x + "_germ"
         mat_tag = x + "_mature"
 
@@ -115,11 +119,13 @@ def run_mutational_analysis(
             mutation_array = mutation_array.to_list()
         mutation_arrays.append(mutation_array)
 
-    mature_results_hmmer["mutations"] = mutation_arrays
+    mature_results_renumbering["mutations"] = mutation_arrays
     return AirrTable(
         pd.DataFrame(airrtable)
         .astype({key: "str"})
-        .merge(pd.DataFrame(mature_results_hmmer).rename({"Id": key}, axis=1)[[key, "scheme", "mutations"]], on=key),
+        .merge(
+            pd.DataFrame(mature_results_renumbering).rename({"Id": key}, axis=1)[[key, "scheme", "mutations"]], on=key
+        ),
         key_column=key,
     )
 
