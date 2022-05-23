@@ -382,6 +382,18 @@ class ReferenceFixtures:
             ["human", "imgt", "IGHV2-70*08"],
         ]
 
+    def get_duplicated_yaml(self) -> Path:
+        """get a file path for a yaml file that has duplicated entries"""
+        return self.reference_data / Path("duplicated_in_source.yml")
+
+    def get_duplicated_diff_source_yaml(self) -> Path:
+        """get a file path for a yaml file that has duplicated entries"""
+        return self.reference_data / Path("duplicated_inter_source.yml")
+
+    def get_shortened_yaml(self) -> Path:
+        """get a file path for a yaml file that is pretty short"""
+        return self.reference_data / Path("short_reference.yml")
+
 
 class NumberingFixtures:
     def __init__(self, tmp_path: Path, base_datadir: Path):
