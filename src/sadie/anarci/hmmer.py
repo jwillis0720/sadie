@@ -293,7 +293,10 @@ class HMMER:
                 "species",
                 "chain_type",
             ]
-            best_results = [result[0] for result in best_results if result]  # Anarci only expects best result per query
+            # we want to keep every empty results as well for Anarci
+            best_results = [
+                result[0] if result else None for result in best_results
+            ]  # Anarci only expects best result per query
             if not best_results:
                 return [default_out]
             return [
@@ -303,6 +306,7 @@ class HMMER:
                     [result],
                 )
                 # if result['query_start'] < 4 and for_j_region is False else default_out
+                if result else default_out
                 for result in best_results
             ]
 
