@@ -18,7 +18,7 @@ from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
 from sadie.utility.util import get_verbosity_level, get_project_root
 
 # reference
-from sadie.reference import Reference
+from sadie.reference.reference import References
 
 
 @click.group()
@@ -325,7 +325,7 @@ def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None
     click.echo(f"Getting G3 genes from {reference}")
 
     # read in yaml file with all statric reference data
-    reference_object = Reference.parse_yaml(reference)
+    reference_object = References.from_yaml(reference)
     germline_path = reference_object.make_airr_database(outpath)
     click.echo(f"Wrote germline database to {germline_path}")
     click.echo("Done!")
