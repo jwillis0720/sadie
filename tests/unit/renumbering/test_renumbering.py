@@ -1,6 +1,6 @@
 import tempfile
 
-from pyinstrument import Profiler
+# from pyinstrument import Profiler
 import pandas as pd
 import pytest
 from Bio import SeqIO
@@ -878,60 +878,60 @@ def test_imgt():
     print(number_imgt(state_vector, sequence))
 
 
-def benchmark_numbering_multi_on():
-    renumbering_api = Renumbering(run_multiproc=True)
-    seq_records = []
-    [
-        seq_records.extend(
-            [
-                SeqRecord(
-                    Seq(
-                        "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
-                    ),
-                    id=f"DupulimabH{i}",
-                ),
-                SeqRecord(
-                    Seq(
-                        "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
-                    ),
-                    id=f"DupulimabL{i}",
-                ),
-            ]
-        )
-        for i in range(500)
-    ]
-    _ = renumbering_api.run_multiple(seq_records)
+# def benchmark_numbering_multi_on():
+#     renumbering_api = Renumbering(run_multiproc=True)
+#     seq_records = []
+#     [
+#         seq_records.extend(
+#             [
+#                 SeqRecord(
+#                     Seq(
+#                         "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
+#                     ),
+#                     id=f"DupulimabH{i}",
+#                 ),
+#                 SeqRecord(
+#                     Seq(
+#                         "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
+#                     ),
+#                     id=f"DupulimabL{i}",
+#                 ),
+#             ]
+#         )
+#         for i in range(500)
+#     ]
+#     _ = renumbering_api.run_multiple(seq_records)
 
 
-def benchmark_numbering_multi_off():
-    renumbering_api = Renumbering(run_multiproc=False)
-    seq_records = []
-    [
-        seq_records.extend(
-            [
-                SeqRecord(
-                    Seq(
-                        "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
-                    ),
-                    id=f"DupulimabH{i}",
-                ),
-                SeqRecord(
-                    Seq(
-                        "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
-                    ),
-                    id=f"DupulimabL{i}",
-                ),
-            ]
-        )
-        for i in range(500)
-    ]
-    _ = renumbering_api.run_multiple(seq_records)
+# def benchmark_numbering_multi_off():
+#     renumbering_api = Renumbering(run_multiproc=False)
+#     seq_records = []
+#     [
+#         seq_records.extend(
+#             [
+#                 SeqRecord(
+#                     Seq(
+#                         "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
+#                     ),
+#                     id=f"DupulimabH{i}",
+#                 ),
+#                 SeqRecord(
+#                     Seq(
+#                         "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
+#                     ),
+#                     id=f"DupulimabL{i}",
+#                 ),
+#             ]
+#         )
+#         for i in range(500)
+#     ]
+#     _ = renumbering_api.run_multiple(seq_records)
 
 
-if __name__ == "__main__":
-    for f in [benchmark_numbering_multi_on, benchmark_numbering_multi_off]:
-        profiler = Profiler()
-        profiler.start()
-        f()
-        profiler.stop()
-        profiler.print(show_all=True)
+# if __name__ == "__main__":
+#     for f in [benchmark_numbering_multi_on, benchmark_numbering_multi_off]:
+#         profiler = Profiler()
+#         profiler.start()
+#         f()
+#         profiler.stop()
+#         profiler.print(show_all=True)
