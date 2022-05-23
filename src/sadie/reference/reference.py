@@ -417,7 +417,7 @@ class References:
         ----------
         outpath : Path
             The output path to. example -> path/to/output.
-            Then the database will dump to path/to/output/aux_db/{name}.aux
+            Then the database will dump to path/to/output/aux_db/{scheme}/{name}.aux
 
         Raises
         ------
@@ -431,7 +431,9 @@ class References:
             raise ValueError("No J-REGION found in reference object...make sure to add J def")
 
         # group by source
-        receptor_aux_dir = Path(outpath).joinpath("aux_db/")
+        # for now we only have one scheme
+        scheme = "imgt"
+        receptor_aux_dir = Path(outpath).joinpath(f"aux_db/{scheme}")
         if not receptor_aux_dir.exists():
             logger.info(f"Creating {receptor_aux_dir}")
             receptor_aux_dir.mkdir(parents=True)
