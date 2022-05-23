@@ -13,13 +13,10 @@ import pandas as pd
 import requests
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from sklearn.cluster import k_means
-import yaml
 
-from sadie.reference.blast import write_blast_db
-from sadie.reference.models import GeneEntries, GeneEntry, Source
+from sadie.reference.models import GeneEntries, GeneEntry
 from sadie.reference.yaml import YamlRef
-from sadie.reference.util import write_out_fasta
+from sadie.reference.util import make_blast_db_for_internal, write_out_fasta, write_blast_db
 
 # reference logger
 logger = logging.getLogger("Reference")
@@ -241,7 +238,30 @@ class References:
             # insert name at beggining
             _df.insert(0, "name", name)  # type: ignore
             names_dataframe.append(_df)
-        return pd.concat(names_dataframe).reset_index(drop=True)
+        # concat all the dataframes
+        concat_df = pd.concat(names_dataframe).reset_index(drop=True)
+
+        # groupby names
+        concat_df_groupby_name = concat_df.groupby("name")  # type: ignore
+
+        # within names, check how many species are there
+        chimeric_gb = concat_df_groupby_name.apply(lambda x: len(x["common"].unique()) > 1)
+
+        list_of_chimera: List[str] = chimeric_gb[chimeric_gb].index.to_list()
+        logger.info(f"{list_of_chimera} are chimeric")
+
+        # get the indexes which contain names that are to be chimerized
+        indexes_to_chimera = concat_df[concat_df["name"].isin(list_of_chimera)].index
+
+        # set all cherics to false
+        concat_df["chimera"] = False
+        concat_df.loc[indexes_to_chimera, "chimera"] = True
+
+        # change the gene to common|gene
+        concat_df.loc[indexes_to_chimera, "gene"] = concat_df.loc[indexes_to_chimera, ["common", "gene"]].apply(
+            lambda x: "|".join(x), axis=1
+        )
+        return concat_df
 
     @staticmethod
     def from_yaml(yaml_path: Optional[Path] = None) -> "References":
@@ -278,204 +298,151 @@ class References:
             references_object.add_reference(name, reference_object)
         return references_object
 
-    # def _make_igblast_ref_database(self, outpath: Union[Path, str]) -> None:
-    #     """Generate the IgBlast reference database from the reference object
+    def _make_igblast_ref_database(self, outpath: Union[Path, str]) -> None:
+        """Generate the IgBlast reference database from the reference object
 
-    #     Parameters
-    #     ----------
-    #     outpath : Union[Path, str]
-    #         The output path to. example -> path/to/output.
-    #         Then the database will dump to path/to/output/{custom,imgt}/{Ig,TCR}/blastdb
-    #     """
-    #     # The blast DB groups by V,D and J
-    #     logger.debug("Generating from IMGT Internal Database File")
+        Parameters
+        ----------
+        outpath : Union[Path, str]
+            The output path to. example -> path/to/output.
+            Then the database will dump to path/to/output/{Ig,TCR}/{name}/blastdb
+        """
 
-    #     # get the database as a dataframe
-    #     database = self.get_dataframe()
+        # The blast DB groups by V,D and J
+        logger.debug("Generating from IMGT Internal Database File")
 
-    #     # first source, i.e. imgt, custom
-    #     for group, group_df in database.groupby("source"):
-    #         # second group is species, i.e. human, mouse
-    #         for species, species_df in group_df.groupby("species"):
-    #             receptor_blast_dir = Path(outpath) / Path(f"{group}/Ig/blastdb/")
-    #             sub_species_keys = species_df["sub_species"].unique()
-    #             if not receptor_blast_dir.exists():
-    #                 receptor_blast_dir.mkdir()
-    #             for segment, segment_df in species_df.groupby("gene_segment"):
-    #                 chimera = False
-    #                 if len(sub_species_keys) > 1:
-    #                     chimera = True
-    #                 else:
-    #                     chimera = False
+        # get the database as a dataframe
+        database = self.get_dataframe()
 
-    #                 out_segment = os.path.join(receptor_blast_dir, f"{species}_{segment}")
-    #                 if chimera:
-    #                     # if chimera, join species and sub species with '|'
-    #                     seqs = segment_df.apply(
-    #                         lambda x: SeqRecord(Seq(str(x["sequence"])), name=x["sub_species"] + "|" + x["gene"]),
-    #                         axis=1,
-    #                     ).to_list()
-    #                 else:
-    #                     seqs = segment_df.apply(
-    #                         lambda x: SeqRecord(Seq(str(x["sequence"])), name=x["gene"]), axis=1
-    #                     ).to_list()
+        # first name, i.e. "human" or "se09"
+        groupby_dataframe = database.groupby("name")
+        for name, group_df in groupby_dataframe:
+            receptor_blast_dir = Path(outpath) / Path(f"Ig/{name}/blastdb/")
+            if not receptor_blast_dir.exists():
+                receptor_blast_dir.mkdir(parents=True)
+            for segment, segment_df in group_df.groupby("gene_segment"):
+                out_segment = os.path.join(receptor_blast_dir, f"{name}_{segment}")
+                seqs: List[SeqRecord] = segment_df.apply(
+                    lambda x: SeqRecord(Seq(str(x["sequence"])), name=x["gene"]), axis=1
+                ).to_list()
 
-    #                 # write this to a fasta file
-    #                 fasta_file = write_out_fasta(seqs, out_segment)
+                # write this to a fasta file
+                fasta_file = write_out_fasta(seqs, out_segment)
 
-    #                 # Convert fasta file to blast db
-    #                 write_blast_db(fasta_file, Path(str(fasta_file).split(".fasta")[0]))
-    #                 logger.info(f"Wrote blast for {fasta_file}")
+                # Convert fasta file to blast db
+                write_blast_db(fasta_file, Path(str(fasta_file).split(".fasta")[0]))
+                logger.info(f"Wrote blast for {fasta_file}")
 
-    # def _make_auxillary_file(self, outpath: Path) -> None:
-    #     """Generate the auxillary file for the IgBlast reference database
+    def _make_auxillary_file(self, outpath: Path) -> None:
+        """Generate the auxillary file for the IgBlast reference database
 
-    #     Parameters
-    #     ----------
-    #     outpath : Path
-    #         The output path to. example -> path/to/output.
-    #         Then the database will dump to path/to/output/{custom,imgt}/aux_db/{species}.aux
+        Parameters
+        ----------
+        outpath : Path
+            The output path to. example -> path/to/output.
+            Then the database will dump to path/to/output/aux_db/{name}.aux
 
-    #     Raises
-    #     ------
-    #     ValueError
-    #         if the J region hasn't been added to the database, we refuse to make the aux file
-    #     """
+        Raises
+        ------
+        ValueError
+            if the J region hasn't been added to the database, we refuse to make the aux file
+        """
 
-    #     # get dataframe
-    #     database = self.get_dataframe()
-    #     if database[database.label == "J-REGION"].empty:
-    #         raise ValueError("No J-REGION found in reference object...make sure to add J def")
+        # get dataframe
+        database = self.get_dataframe()
+        if database[database.label == "J-REGION"].empty:
+            raise ValueError("No J-REGION found in reference object...make sure to add J def")
 
-    #     # group by source
-    #     for group, group_df in database.groupby("source"):
-    #         receptor_aux_dir = Path(outpath).joinpath(f"{group}/aux_db")
-    #         if not receptor_aux_dir.exists():
-    #             logger.info(f"Creating {receptor_aux_dir}")
-    #             receptor_aux_dir.mkdir(parents=True)
-    #         # next group by species
-    #         for species, species_df in group_df.groupby("species"):
-    #             sub_species_keys = species_df["sub_species"].unique()
-    #             chimera = False
-    #             if len(sub_species_keys) > 1:
-    #                 chimera = True
+        # group by source
+        receptor_aux_dir = Path(outpath).joinpath("aux_db/")
+        if not receptor_aux_dir.exists():
+            logger.info(f"Creating {receptor_aux_dir}")
+            receptor_aux_dir.mkdir(parents=True)
+        for group, group_df in database.groupby("name"):
+            aux_file_name = Path(str(receptor_aux_dir) + str(f"/{group}_gl.aux"))
+            # get a DF with just common species name
+            common_df = group_df[group_df["gene_segment"] == "J"].copy()
+            # make sure we don't have any dangling J-REGION
+            bad_remainders = common_df[(common_df["imgt.remainder"].isna())]
+            if not bad_remainders.empty:
+                logger.warning(f"Had to drop {bad_remainders.shape[0]} rows due to bad remainder for {group}")
+                common_df.drop(bad_remainders.index, inplace=True)
 
-    #             aux_file_species = Path(str(receptor_aux_dir) + str(f"/{species}_gl.aux"))
-    #             # get a DF with just common species name
-    #             common_df = species_df[species_df["gene_segment"] == "J"].copy()
-    #             # make sure we don't have any dangling J-REGION
-    #             bad_remainders = common_df[(common_df["imgt.remainder"].isna())]
-    #             if not bad_remainders.empty:
-    #                 logger.warning(
-    #                     f"Had to drop {bad_remainders.shape[0]} rows due to bad remainder for {group}-{species}"
-    #                 )
-    #                 common_df.drop(bad_remainders.index, inplace=True)
+            # make columns of an aux databaee common_df = common_df[(common_df["imgt.cdr3_end"] != "")]
+            common_df.loc[:, "reading_frame"] = common_df["imgt.reading_frame"].astype(int)
+            common_df.loc[:, "left_over"] = common_df["imgt.remainder"].astype(int)
+            common_df.loc[:, "end"] = common_df["imgt.cdr3_end"].astype(int) - 1
 
-    #             # make columns of an aux databaee
-    #             common_df = common_df[(common_df["imgt.cdr3_end"] != "")]
-    #             common_df.loc[:, "reading_frame"] = common_df["imgt.reading_frame"].astype(int)
-    #             common_df.loc[:, "left_over"] = common_df["imgt.remainder"].astype(int)
-    #             common_df.loc[:, "end"] = common_df["imgt.cdr3_end"].astype(int) - 1
-    #             common_df["marker"] = common_df["gene"].str.split("-").str.get(0).str[0:4].str[::-1].str[:2]
-    #             if chimera:
-    #                 # if chimera add '|' to the species name
-    #                 common_df["gene"] = common_df["common"] + "|" + common_df["gene"]
+            # JH, JK, JL
+            common_df["marker"] = (
+                common_df["gene"].str.split("|").str.get(-1).str.split("-").str.get(0).str[0:4].str[::-1].str[:2]
+            )
 
-    #             # write out the aux file with derived columns
-    #             common_df[["gene", "reading_frame", "marker", "end", "left_over"]].to_csv(
-    #                 aux_file_species, sep="\t", header=None, index=False
-    #             )
-    #             logger.info(f"Wrote aux to {aux_file_species}")
+            # write out the aux file with derived columns
+            common_df[["gene", "reading_frame", "marker", "end", "left_over"]].to_csv(
+                aux_file_name, sep="\t", header=None, index=False
+            )
+            logger.info(f"Wrote aux to {aux_file_name}")
 
-    # def _make_blast_db_for_internal(self, df: pd.DataFrame, dboutput: Union[str, Path]) -> None:
-    #     """Make a blast database from dataframe"""
-    #     out_fasta = Path(dboutput).with_suffix(".fasta")
-    #     logger.debug("Writing fasta to {}".format(out_fasta))
-    #     with open(out_fasta, "w") as f:
-    #         for id_, seq in zip(df["gene"], df["sequence"]):
-    #             f.write(">{}\n{}\n".format(id_, seq))
-    #     # get basename
-    #     write_blast_db(out_fasta, dboutput)
+    def _make_internal_annotaion_file(self, outpath: Path) -> None:
+        """Generate the internal database file for IgBlast
 
-    # def _make_internal_annotaion_file(self, outpath: Path) -> None:
-    #     """Generate the internal database file for IgBlast
+        Parameters
+        ----------
+        outpath : Path
+            The output path to. example -> path/to/output.
+            Then the database will dump to path/to/output/{Ig,TCR}/internal_data/{name}/{name}.ndm.imgt
+        """
+        logger.debug(f"Generating internal annotation file at {outpath}")
+        # The internal data file structure goes Ig/internal_path/{name}/
 
-    #     Parameters
-    #     ----------
-    #     outpath : Path
-    #         The output path to. example -> path/to/output.
-    #         Then the database will dump to path/to/output/{custom,imgt}/{Ig,TCR}/internal_data/{species}/{species}.ndm.imgt
+        database = self.get_dataframe()
+        for name, group_df in database.groupby("name"):
+            # get a filtered database for V genes
+            filtered_data = group_df.loc[group_df["gene_segment"] == "V"].copy()
 
-    #     """
-    #     logger.debug(f"Generating internal annotation file at {outpath}")
-    #     # The internal data file structure goes {db_type}/Ig/internal_path/{species}/
+            # the species is the actual entity we are using for the annotation, e.g se09 or human
+            name_internal_df_path = Path(outpath).joinpath(Path(f"Ig/internal_data/{name}/"))
+            if not name_internal_df_path.exists():
+                logger.info(f"Creating {name_internal_df_path}")
+                name_internal_df_path.mkdir(parents=True)
 
-    #     database = self.get_dataframe()
-    #     for group, group_df in database.groupby("source"):
-    #         # db_type eg. cutom, imgt
+            # subselect and order
+            index_df = filtered_data[
+                [
+                    "gene",
+                    "imgt.fwr1_start",
+                    "imgt.fwr1_end",
+                    "imgt.cdr1_start",
+                    "imgt.cdr1_end",
+                    "imgt.fwr2_start",
+                    "imgt.fwr2_end",
+                    "imgt.cdr2_start",
+                    "imgt.cdr2_end",
+                    "imgt.fwr3_start",
+                    "imgt.fwr3_end",
+                ]
+            ].copy()
 
-    #         # get a filtered database for V genes
-    #         filtered_data = group_df.loc[group_df["gene_segment"] == "V"]
+            # makes everything an integer. sets gene to index so its not affected
+            # add +1 to so we get 1-based indexing
+            index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
 
-    #         # the species is the actual entity we are using for the annotation, e.g se09 or human
-    #         for species, species_df in filtered_data.groupby("species"):
-    #             # species level database
-    #             species_internal_db_path = Path(os.path.join(outpath, group, "Ig", "internal_data", species))
-    #             logger.debug(f"Found species {species}, using {group} database file")
-    #             if not species_internal_db_path.exists():
-    #                 logger.info(f"Creating {species_internal_db_path}")
-    #                 species_internal_db_path.mkdir(parents=True)
+            # drop anything where there is an na in the annotation idnex
+            index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
+            scheme = "imgt"
+            internal_annotations_file_path = name_internal_df_path.joinpath(f"{name}.ndm.{scheme}")
 
-    #             # maybe we requested a chimeric speicies that has more than one sub species, e.g a mouse model
-    #             sub_species_keys = species_df["sub_species"].unique()
-
-    #             # if we have hybrid species we shall name them with <species>|gene
-    #             gene_df = species_df.copy()
-    #             if len(sub_species_keys) > 1:
-    #                 gene_df["gene"] = gene_df["common"] + "|" + gene_df["gene"]
-
-    #             # subselect and order
-    #             index_df = gene_df[
-    #                 [
-    #                     "gene",
-    #                     "imgt.fwr1_start",
-    #                     "imgt.fwr1_end",
-    #                     "imgt.cdr1_start",
-    #                     "imgt.cdr1_end",
-    #                     "imgt.fwr2_start",
-    #                     "imgt.fwr2_end",
-    #                     "imgt.cdr2_start",
-    #                     "imgt.cdr2_end",
-    #                     "imgt.fwr3_start",
-    #                     "imgt.fwr3_end",
-    #                 ]
-    #             ].copy()
-
-    #             # makes everything an integer. sets gene to index so its not affected
-    #             # add +1 to so we get 1-based indexing
-    #             index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
-
-    #             # drop anything where there is an na in the annotation idnex
-    #             index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
-    #             scheme = "imgt"
-    #             internal_annotations_file_path = os.path.join(species_internal_db_path, f"{species}.ndm.{scheme}")
-
-    #             # the segment key goes in a weird order
-    #             if len(sub_species_keys) > 1:
-    #                 segment = [i.split("|")[-1].split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
-    #             else:
-    #                 segment = [i.split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
-    #             index_df["segment"] = segment
-    #             index_df["weird_buffer"] = 0
-    #             logger.info("Writing to annotation file {}".format(internal_annotations_file_path))
-    #             index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
-    #             logger.info("Wrote to annotation file {}".format(internal_annotations_file_path))
-
-    #             # blast reads these suffixes depending on receptor
-    #             suffix = "V"
-    #             db_outpath = Path(str(species_internal_db_path) + f"/{species}_{suffix}")
-    #             # Pass the dataframe and write out the blast database
-    #             self._make_blast_db_for_internal(gene_df, db_outpath)
+            segment = [i.split("|")[-1].split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
+            index_df["segment"] = segment
+            index_df["weird_buffer"] = 0
+            logger.info(f"Writing to annotation file {internal_annotations_file_path}")
+            index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
+            # blast reads these suffixes depending on receptor
+            suffix = "V"
+            db_outpath = Path(str(name_internal_df_path) + f"/{name}_{suffix}")
+            # Pass the dataframe and write out the blast database
+            make_blast_db_for_internal(group_df, db_outpath)
 
     # @staticmethod
     # def read_file(path: Path | str, type: str = "csv") -> "Reference":

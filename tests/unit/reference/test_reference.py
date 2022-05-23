@@ -2,16 +2,17 @@
  Working directly with reference functions to create custom or trimmed databases. Also tests G3 intereaction
 """
 
-from pathlib import Path, PosixPath
-from typing import Dict, List
-from black import assert_stable
+# from pathlib import Path, PosixPath
+from typing import List
 
 import pandas as pd
-import yaml
-from sadie.reference.reference import Reference, G3Error, References
-from sadie.reference.util import write_out_fasta
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
+
+# import yaml
+from sadie.reference.reference import References
+
+# from sadie.reference.util import write_out_fasta
+# from Bio.Seq import Seq
+# from Bio.SeqRecord import SeqRecord
 import pytest
 from sadie.reference.yaml import YamlRef
 from tests.conftest import SadieFixture
@@ -36,10 +37,13 @@ def test_yaml(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixt
         YamlRef(fixture_setup.get_duplicated_diff_source_yaml())
 
 
-def test_load_reference_from_yml(fixture_setup: SadieFixture) -> None:
+def test_load_reference_from_yml(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixture) -> None:
     shortened_yaml = fixture_setup.get_shortened_yaml()
     references: References = References().from_yaml(shortened_yaml)
-    print(references.__repr__())
+    outpath = tmp_path_factory.mktemp("test_load_reference_from_yml")
+    references._make_igblast_ref_database(outpath)
+    references._make_internal_annotaion_file(outpath)
+    references._make_auxillary_file(outpath)
 
 
 # def test_reference_class(tmp_path_factory: pytest.TempPathFactory) -> None:
