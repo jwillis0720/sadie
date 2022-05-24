@@ -44,9 +44,7 @@ def _test_internal_data_file_structure(tmpdir: Path, fixture_setup: SadieFixture
         # df.insert(1, "db_type", "imgt")  # pylint: disable=maybe-no-member
         my_internal_path_df.append(df)
 
-    my_internal_path_df = (
-        pd.concat(my_internal_path_df).reset_index(drop=True).groupby(["name", "gene"]).head(1)
-    )
+    my_internal_path_df = pd.concat(my_internal_path_df).reset_index(drop=True).groupby(["name", "gene"]).head(1)
     my_internal_path_df = my_internal_path_df.set_index(["name", "gene"])
 
     # read in expected internal db files
@@ -84,8 +82,8 @@ def _test_internal_data_file_structure(tmpdir: Path, fixture_setup: SadieFixture
 
     ref_internal_path_df = pd.concat(ref_internal_path_df).reset_index(drop=True)
     # only get first occurance
-    ref_internal_path_df = ref_internal_path_df.groupby(["name",  "gene"]).head(1)
-    ref_internal_path_df = ref_internal_path_df.set_index(["name",  "gene"])
+    ref_internal_path_df = ref_internal_path_df.groupby(["name", "gene"]).head(1)
+    ref_internal_path_df = ref_internal_path_df.set_index(["name", "gene"])
 
     # get common index
     common_index = my_internal_path_df.index.intersection(ref_internal_path_df.index)

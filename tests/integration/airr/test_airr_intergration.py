@@ -345,6 +345,6 @@ def test_cli(caplog: pytest.LogCaptureFixture, fixture_setup: SadieFixture) -> N
             assert test_success
 
 
-def test_edge_cases(fixture_setup:SadieFixture):
-    airr_api = Airr("macaque",  adaptable=False)
+def test_edge_cases(fixture_setup: SadieFixture):
+    airr_api = Airr("macaque", adaptable=False)
     airr_api.run_single("bad_seq", fixture_setup.get_monkey_edge_seq())

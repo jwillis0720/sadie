@@ -50,7 +50,7 @@ class GermlineData:
         self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
         self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
         self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
-        
+
         # the literal 'internal_data/{name}` must be discovered by IgBLAST
         self.igdata = self.base_dir / f"{receptor}/"
 
