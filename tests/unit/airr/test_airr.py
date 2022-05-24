@@ -458,7 +458,7 @@ def test_runtime_reference(fixture_setup: SadieFixture) -> None:
     airr_crazy = Airr("crazy_mouse", references=references, adaptable=True)
     with pytest.raises(BadDataSet):
         # we used wrong name
-        airr_mighty = Airr("mighty_mouse", references=references, adaptable=True)
+        Airr("mighty_mouse", references=references, adaptable=True)
 
     airr_table = airr_crazy.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
     assert airr_table.reference_name.iloc[0] == "crazy_mouse"

@@ -449,7 +449,6 @@ class Airr:
             not a fasta file
         """
 
-        _identity_corrected = False
         if isinstance(file, Path):
             # cast to str
             file = str(file)

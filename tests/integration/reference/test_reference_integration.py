@@ -1,7 +1,7 @@
 import glob
 import os
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
 import pandas as pd
 import pytest

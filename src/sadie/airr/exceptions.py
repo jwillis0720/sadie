@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, List, Set, Union, Tuple
+from typing import Any, List, Set, Union
 
 
 class Error(Exception):

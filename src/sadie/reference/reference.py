@@ -3,12 +3,10 @@ from __future__ import annotations
 
 
 import logging
-import os
 from pathlib import Path
 from time import sleep
 from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import quote as url_quote
-import warnings
 
 import pandas as pd
 import requests
