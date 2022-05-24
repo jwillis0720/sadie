@@ -1,4 +1,6 @@
-from typing import List, Optional, Tuple, Union
+from __future__ import annotations
+
+from typing import Optional, Set
 import warnings
 from pathlib import Path
 
@@ -24,10 +26,10 @@ class GermlineData:
 
     def __init__(
         self,
-        species: str,
-        database: str = "imgt",
+        name: str,
         receptor: str = "Ig",
-        database_dir: Union[Optional[str], Optional[Path]] = None,
+        database_dir: Optional[str | Path] = None,
+        scheme: str = "imgt",
     ):
         """
 
@@ -38,17 +40,19 @@ class GermlineData:
         receptor : str, optional
             the receptor type, by default "Ig"
         """
-        self.species = species
+        self.name = name
         if database_dir:
             self.base_dir = Path(database_dir).absolute()
         else:
             self.base_dir = Path(__file__).absolute().parent / "../data/germlines/"
-        self.blast_dir = Path(str(self.base_dir) + f"/{database}/{receptor}/blastdb/{species}_")
+        self.blast_dir = Path(str(self.base_dir) + f"/{receptor}/blastdb/{name}/{name}_")
         self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
         self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
         self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
-        self.aux_path = self.base_dir / f"{database}/aux_db/{species}_gl.aux"
-        self.igdata = self.base_dir / f"{database}/{receptor}/"
+        self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
+
+        # the literal 'internal_data/{name}` must be discovered by IgBLAST
+        self.igdata = self.base_dir / f"{receptor}/"
 
     @property
     def base_dir(self) -> Path:
@@ -62,7 +66,7 @@ class GermlineData:
         return self._base_dir
 
     @base_dir.setter
-    def base_dir(self, directory: Union[str, Path]) -> None:
+    def base_dir(self, directory: str | Path) -> None:
         _path = Path(directory)
         if not _path.exists():
             raise FileNotFoundError(f"Base directory, {directory} not found")
@@ -73,7 +77,7 @@ class GermlineData:
         return self._blast_dir
 
     @blast_dir.setter
-    def blast_dir(self, directory: Union[str, Path]) -> None:
+    def blast_dir(self, directory: str | Path) -> None:
         # Must be a parent since this is not a valid path yet
         if not Path(directory).parent.exists():
             raise FileNotFoundError(f"Blast directory, {directory} not found")
@@ -92,7 +96,7 @@ class GermlineData:
         return self._v_gene_dir
 
     @v_gene_dir.setter
-    def v_gene_dir(self, directory: Union[Path, str]) -> None:
+    def v_gene_dir(self, directory: str | Path) -> None:
         _path = Path(directory)
         if not ensure_prefix_to(_path):
             raise FileNotFoundError(f"V gene directory glob, {directory} not found")
@@ -111,10 +115,10 @@ class GermlineData:
         return self._d_gene_dir
 
     @d_gene_dir.setter
-    def d_gene_dir(self, directory: Union[str, Path]) -> None:
+    def d_gene_dir(self, directory: str | Path) -> None:
         _path = Path(directory)
         if not ensure_prefix_to(_path):
-            warnings.warn(f"D gene directory not found for {self.species}", UserWarning)
+            warnings.warn(f"D gene directory not found for {self.name}", UserWarning)
         self._d_gene_dir = _path
 
     @property
@@ -130,7 +134,7 @@ class GermlineData:
         return self._j_gene_dir
 
     @j_gene_dir.setter
-    def j_gene_dir(self, directory: Union[str, Path]) -> None:
+    def j_gene_dir(self, directory: str | Path) -> None:
         _path = Path(directory)
         if not ensure_prefix_to(_path):
             raise FileNotFoundError(f"J gene directory glob, {directory} not found")
@@ -144,12 +148,12 @@ class GermlineData:
         -------
         Path
            the fully qualified path to the species auxilary data
-           ex:/Users/jwillis/repos/sadie/airr/data/germlines/aux_data/human_gl.aux
+           ex:/Users/jwillis/repos/sadie/airr/data/germlines/aux_data/{scheme}/human_gl.aux
         """
         return self._aux_path
 
     @aux_path.setter
-    def aux_path(self, directory: Union[str, Path]) -> None:
+    def aux_path(self, directory: str | Path) -> None:
         _path = Path(directory)
         if not _path.exists():
             raise FileNotFoundError(f"J gene directory glob, {directory} not found")
@@ -167,18 +171,13 @@ class GermlineData:
         self._igdata = _path
 
     @staticmethod
-    def get_available_datasets() -> List[Tuple[str, str]]:
+    def get_available_datasets() -> Set[str]:
         """A static non-instantiated method to get a list of avaialble species with the builtin data
 
         Returns
         -------
         list
-           available datasets (common_name, custom|imgt, functional|all)
+            a list of tuples of the form (name, database)
         """
         y = YamlRef()
-        db_types: List[Tuple[str, str]] = []
-        for database_type in y.yaml:
-            for common in y.yaml[database_type]:
-                if (common, database_type) not in db_types:
-                    db_types.append((common, database_type))
-        return db_types
+        return y.get_names()
