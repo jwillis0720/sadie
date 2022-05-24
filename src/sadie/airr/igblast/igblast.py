@@ -3,6 +3,7 @@
 You probably only want to interact with this module through airr as the database files are extremely tricky to get right
 
 """
+from __future__ import annotations
 import glob
 import logging
 import os
@@ -521,7 +522,7 @@ class IgBLASTN:
         return self._aux_path
 
     @aux_path.setter
-    def aux_path(self, aux_path: Path) -> None:
+    def aux_path(self, aux_path: Path | str) -> None:
         if isinstance(aux_path, str):
             aux_path = Path(aux_path)
         if not aux_path.exists():
@@ -539,7 +540,7 @@ class IgBLASTN:
         return self._germline_db_v
 
     @germline_db_v.setter
-    def germline_db_v(self, path: str) -> None:
+    def germline_db_v(self, path: str | Path) -> None:
         abs_path = ensure_prefix_to(path)
         if not abs_path:
             raise BadIgBLASTArgument(path, "Valid path to V Database")
@@ -556,7 +557,7 @@ class IgBLASTN:
         return self._germline_db_d
 
     @germline_db_d.setter
-    def germline_db_d(self, path: str) -> None:
+    def germline_db_d(self, path: str | Path) -> None:
         abs_path = ensure_prefix_to(path)
         if not abs_path:
             warnings.warn(f"{path} is not found, No D gene segment", UserWarning)
@@ -576,7 +577,7 @@ class IgBLASTN:
         return self._germline_db_j
 
     @germline_db_j.setter
-    def germline_db_j(self, path: Union[str, Path]) -> None:
+    def germline_db_j(self, path: str | Path) -> None:
 
         abs_path = ensure_prefix_to(path)
         if not abs_path:
@@ -790,7 +791,7 @@ class IgBLASTN:
                 _cmd += kv
         return _cmd
 
-    def _pre_check(self) -> None:
+    def pre_check(self) -> None:
         """Ensures we have set everything right
 
         Raises
@@ -853,7 +854,7 @@ class IgBLASTN:
         cmd += ["-query", str(file)]
 
         # run a precheck to make sure everything passed was working
-        self._pre_check()
+        self.pre_check()
 
         # while we can certainly do this as an output stream on stdout,
         # It's probably best to take advantage of IGblast output and tempfile
@@ -870,6 +871,9 @@ class IgBLASTN:
             logger.debug(f"{tmpfile.name} was not deleted after it exited scope")
             Path(tmpfile.name).unlink()
 
+        df["v_identity"] = df["v_identity"] / 100
+        df["d_identity"] = df["d_identity"] / 100
+        df["j_identity"] = df["j_identity"] / 100
         return df
 
     def __repr__(self) -> str:

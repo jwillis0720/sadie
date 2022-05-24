@@ -16,98 +16,11 @@ from sadie.airr import exceptions as airr_exceptions
 from sadie.airr import igblast
 from sadie.airr import methods as airr_methods
 from sadie.reference import Reference
+from sadie.reference.reference import References
+from tests.conftest import SadieFixture
 
 
-def test_antibody_igblast_setup():
-    """
-    testing if we can manually setup IgBlast databases
-    """
-
-    system = platform.system().lower()
-    executable = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{system}/igblastn")
-
-    ig_blast = igblast.IgBLASTN(executable)
-    assert ig_blast.version == semantic_version.Version("1.17.1")
-    germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
-    assert os.path.exists(germline_ref)
-
-    # Set data
-    for species in ["human", "mouse", "rat", "dog"]:
-        db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
-        internal_ref = os.path.join(germline_ref, "imgt/Ig/")
-        aux_ref = os.path.join(germline_ref, "imgt/aux_db/")
-        assert os.path.exists(db_ref)
-        ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(species))
-        ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(species))
-        ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(species))
-
-        aux_ref = os.path.join(aux_ref, f"{species}_gl.aux")
-        ig_blast.aux_path = aux_ref
-        ig_blast.organism = species
-        ig_blast.igdata = internal_ref
-        ig_blast._pre_check()
-    assert os.path.exists(germline_ref)
-
-    # bad germeline ref
-    germline_ref = "reference/germlines/"
-
-    # Set data
-    with pytest.raises(airr_exceptions.BadIgDATA):
-        ig_blast.igdata = germline_ref
-        ig_blast._pre_check()
-    for species in ["human", "mouse", "rat", "dog"]:
-        db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
-        internal_ref = os.path.join(germline_ref, "imgt/Ig/")
-        aux_ref = os.path.join(germline_ref, "imgt/aux_db/")
-        with pytest.raises(airr_exceptions.BadIgBLASTArgument):
-            ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(species))
-        with pytest.warns(UserWarning):
-            ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(species))
-        with pytest.raises(airr_exceptions.BadIgBLASTArgument):
-            ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(species))
-        with pytest.raises(airr_exceptions.BadIgBLASTArgument):
-            ig_blast.aux_path = aux_ref
-
-    with pytest.raises(airr_exceptions.BadIgBLASTExe):
-        # pass an executable that is not igblast
-        igblast.IgBLASTN("find")
-
-
-def test_antibody_igblast_file_run(fixture_setup):
-    """
-    testing if we can manually run igblast withou airr abstraction
-    """
-
-    # this should be fixture
-    system = platform.system().lower()
-    executable = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{system}/igblastn")
-
-    ig_blast = igblast.IgBLASTN(executable)
-    germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
-    db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
-    aux_path = os.path.join(germline_ref, "imgt/aux_db/")
-
-    # Set data
-    ig_blast.igdata = os.path.join(germline_ref, "imgt/Ig")
-
-    # Grab from fixtures
-    query = fixture_setup.get_pg9_heavy_fasta()
-    ig_blast.germline_db_v = os.path.join(db_ref, "human_V")
-    ig_blast.germline_db_d = os.path.join(db_ref, "human_D")
-    ig_blast.germline_db_j = os.path.join(db_ref, "human_J")
-    ig_blast.aux_path = os.path.join(aux_path, "human_gl.aux")
-    ig_blast.organism = "human"
-    ig_blast._pre_check()
-    # have to make this -1 to get a more specifc j gene match
-    ig_blast.j_penalty = -1
-    csv_dataframe = ig_blast.run_file(query).fillna("")
-
-    query = fixture_setup.get_pg9_heavy_fasta()
-    csv_dataframe = ig_blast.run_file(query)
-    csv_dataframe["d_call"] = csv_dataframe["d_call"].fillna("")
-
-
-def test_germline_init():
+def test_germline_init() -> None:
     """Germline Data in airr module"""
     gd = GermlineData("human")
     with pytest.raises(FileNotFoundError):
@@ -126,9 +39,103 @@ def test_germline_init():
         gd.d_gene_dir = "/non/existant/path"
 
 
-def test_airr_init(tmpdir, monkeypatch):
+def test_antibody_igblast_setup() -> None:
+    """
+    testing if we can manually setup IgBlast databases
+    """
+
+    system = platform.system().lower()
+    executable = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{system}/igblastn")
+
+    ig_blast = igblast.IgBLASTN(executable)
+    assert ig_blast.version == semantic_version.Version("1.17.1")
+    germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
+    assert os.path.exists(germline_ref)
+
+    # Set data
+    for name in ["human", "mouse", "rat", "dog"]:
+        db_ref = os.path.join(germline_ref, f"Ig/blastdb/{name}")
+        internal_ref = os.path.join(germline_ref, f"Ig/internal_data/{name}")
+        aux_ref = os.path.join(germline_ref, "aux_db/imgt/")
+        assert os.path.exists(db_ref)
+        ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(name))
+        ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(name))
+        ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(name))
+
+        aux_ref = os.path.join(aux_ref, f"{name}_gl.aux")
+        ig_blast.aux_path = aux_ref
+        ig_blast.organism = name
+        ig_blast.igdata = internal_ref
+        ig_blast.pre_check()
+    assert os.path.exists(germline_ref)
+
+    # bad germeline ref
+    germline_ref = "reference/germlines/"
+
+    # Set data
+    with pytest.raises(airr_exceptions.BadIgDATA):
+        ig_blast.igdata = germline_ref
+        ig_blast.pre_check()
+    for species in ["human", "mouse", "rat", "dog"]:
+        db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
+        internal_ref = os.path.join(germline_ref, "imgt/Ig/")
+        aux_ref = os.path.join(germline_ref, "imgt/aux_db/")
+        with pytest.raises(airr_exceptions.BadIgBLASTArgument):
+            ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(species))
+        with pytest.warns(UserWarning):
+            ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(species))
+        with pytest.raises(airr_exceptions.BadIgBLASTArgument):
+            ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(species))
+        with pytest.raises(airr_exceptions.BadIgBLASTArgument):
+            ig_blast.aux_path = aux_ref
+
+    with pytest.raises(airr_exceptions.BadIgBLASTExe):
+        # pass an executable that is not igblast
+        igblast.IgBLASTN("find")
+
+
+def test_antibody_igblast_file_run(fixture_setup: SadieFixture) -> None:
+    """
+    testing if we can manually run igblast withou airr abstraction
+    """
+
+    # this should be fixture
+    system = platform.system().lower()
+    executable = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{system}/igblastn")
+
+    ig_blast = igblast.IgBLASTN(executable)
+    germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
+    db_ref = os.path.join(germline_ref, "Ig/blastdb/human/")
+    aux_path = os.path.join(germline_ref, "aux_db/imgt/")
+
+    # Set data
+    # internal_data/human/human_V must be discoverd by IgBLAST
+    ig_blast.igdata = os.path.join(germline_ref, "Ig/")
+
+    # Grab from fixtures
+    query = fixture_setup.get_pg9_heavy_fasta()
+    ig_blast.germline_db_v = os.path.join(db_ref, "human_V")
+    ig_blast.germline_db_d = os.path.join(db_ref, "human_D")
+    ig_blast.germline_db_j = os.path.join(db_ref, "human_J")
+    ig_blast.aux_path = os.path.join(aux_path, "human_gl.aux")
+    ig_blast.organism = "human"
+    ig_blast.pre_check()
+
+    # have to make this -1 to get a more specifc j gene match
+    ig_blast.j_penalty = -1
+    csv_dataframe = ig_blast.run_file(query).fillna("")
+
+    query = fixture_setup.get_pg9_heavy_fasta()
+    csv_dataframe = ig_blast.run_file(query)
+    csv_dataframe["d_call"] = csv_dataframe["d_call"].fillna("")
+
+
+def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test if we can init airr"""
-    monkeypatch.setenv("TMPDIR", str(tmpdir / "monkeyairr"))
+
+    tmpdir = tmp_path_factory.mktemp("test_airr_init")
+    # this will make our tmpdir discoverable by the AIRR
+    monkeypatch.setenv("TMPDIR", str(tmpdir / Path("monkeyairr")))
     for species in ["human", "mouse", "rat", "dog"]:
         air_api = Airr(species)
         air_api.get_available_datasets()
@@ -184,7 +191,7 @@ def test_custom_mice_init():
     Airr("se09")
 
 
-def test_airr_single_sequence(fixture_setup):
+def test_airr_single_sequence(fixture_setup: SadieFixture) -> None:
     """Test we can run a single sequence."""
     pg9_heavy_seq = fixture_setup.get_pg9_heavy_sequence().seq.__str__()
     pg9_light_seq = fixture_setup.get_pg9_light_sequence().seq.__str__()
@@ -213,9 +220,9 @@ def test_airr_single_sequence(fixture_setup):
     assert seq_id == "PG9"
 
     # will def change based on penalties, so be careful
-    assert round(v_mutation, 2) == 13.99
-    assert round(d_mutation, 2) == 17.86
-    assert round(j_mutation, 2) == 11.32
+    assert round(v_mutation, 2) == 0.14
+    assert round(d_mutation, 2) == 0.18
+    assert round(j_mutation, 2) == 0.11
     with pytest.raises(TypeError):
         # id must be str
         airr_table = air_api.run_single(9, pg9_heavy_seq)
@@ -229,7 +236,7 @@ def test_airr_single_sequence(fixture_setup):
     airr_table = air_api.run_single("PG9", pg9_heavy_seq)
 
 
-def test_run_multiple(fixture_setup):
+def test_run_multiple(fixture_setup: SadieFixture) -> None:
     """Test we can run with seq records biopython instances"""
     airr = Airr("human", adaptable=False)
 
@@ -251,7 +258,7 @@ def test_run_multiple(fixture_setup):
 # assert isinstance(results, LinkedAirrTable)
 
 
-def test_airr_from_dataframe(fixture_setup):
+def test_airr_from_dataframe(fixture_setup: SadieFixture) -> None:
     """Test we can pass a dataframe to runtime"""
     dog_df = pd.read_csv(fixture_setup.get_dog_airrtable(), sep="\t")
     airr_api = Airr("dog")
@@ -271,7 +278,7 @@ def test_airr_from_dataframe(fixture_setup):
         airr_api.run_dataframe(fixture_setup.get_dog_airrtable_with_missing_sequences(), "sequence_id", "sequence")
 
 
-def test_airr_from_file(fixture_setup):
+def test_airr_from_file(fixture_setup: SadieFixture) -> None:
     """Test we can pass a fasta file to runtime"""
     f = str(fixture_setup.get_pg9_heavy_multiple_fasta())
     airr_api = Airr("human")
@@ -301,7 +308,7 @@ def test_airr_from_file(fixture_setup):
         airr_api.run_fasta("a_non_existant_directory/a_non_existant_file.fasta")
 
 
-def test_vdj_overlap(fixture_setup):
+def test_vdj_overlap(fixture_setup: SadieFixture) -> None:
     """Test if we can allow vdj_overlap"""
     air_api = Airr("human", allow_vdj_overlap=True, adaptable=False)
     air_api.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
@@ -312,7 +319,7 @@ def test_vdj_overlap(fixture_setup):
         air_api = Airr("human", allow_vdj_overlap=True, adaptable=True)
 
 
-def test_adaptable_penalty(fixture_setup):
+def test_adaptable_penalty(fixture_setup: SadieFixture) -> None:
     """Test we can run adapatable pentalty methods"""
     test_sequence = fixture_setup.get_adaptable_pentalty_test_seq()
 
@@ -362,7 +369,7 @@ def test_adaptable_penalty(fixture_setup):
     assert isinstance(airr_table, LinkedAirrTable)
 
 
-def test_adaptable_correction(fixture_setup):
+def test_adaptable_correction(fixture_setup: SadieFixture) -> None:
     air_api = Airr("human", adaptable=False)
 
     # these sequences are liable.
@@ -380,7 +387,7 @@ def test_adaptable_correction(fixture_setup):
     assert liable_mix["liable"].value_counts().to_dict() == {True: 30, False: 24}
 
 
-def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
+def test_mutational_analysis(heavy_catnap_airrtable: AirrTable, light_catnap_airrtable: AirrTable) -> None:
     """Test we can run mutational analysis post hoc method"""
 
     # run on heavy from fixture of airr
@@ -403,7 +410,7 @@ def test_mutational_analysis(heavy_catnap_airrtable, light_catnap_airrtable):
     )
     assert "mutations_heavy" in joined_airr_table_with_analysis.columns
     assert "mutations_light" in joined_airr_table_with_analysis.columns
-    return heavy_airrtable_with_analysis, light_airrtable_with_analysis, joined_airr_table_with_analysis
+    # return heavy_airrtable_with_analysis, light_airrtable_with_analysis, joined_airr_table_with_analysis
 
 
 def test_igl_assignment(heavy_catnap_airrtable, light_catnap_airrtable):
@@ -421,44 +428,54 @@ def test_igl_assignment(heavy_catnap_airrtable, light_catnap_airrtable):
     assert "iGL_light" in joined_airr_table_with_analysis.columns
 
 
-def test_runtime_reference(fixture_setup):
+def test_runtime_reference(fixture_setup: SadieFixture) -> None:
     """Test JIT reference generation"""
     reference = Reference()
-    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
-    reference.add_gene({"species": "custom", "sub_species": "macaque", "gene": "IGHV1-105*01", "database": "custom"})
+    reference.add_gene({"species": "human", "gene": "IGHV1-2*01", "source": "imgt"})
+    reference.add_gene({"species": "macaque", "gene": "IGHV1-105*01", "source": "custom"})
+    references = References()
+    references.add_reference("silly_monkey", reference)
 
     # make sure we add a J gene
     with pytest.raises(ValueError):
-        airr_api = Airr(reference, adaptable=True)
-    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
+        airr_api = Airr("silly_monkey", references=references, adaptable=True)
+    reference.add_gene({"species": "human", "gene": "IGHJ6*01", "source": "imgt"})
 
-    # make sure that we don't accept heterogenous database types
+    # no D gene
     with pytest.raises(ValueError):
-        airr_api = Airr(reference, adaptable=True)
+        airr_api = Airr("silly_monkey", references=references, adaptable=True)
+
+    reference.add_gene({"species": "human", "gene": "IGHD3-3*01", "source": "imgt"})
+    references.add_reference("silly_monkey", reference, overwrite=True)
+    airr_api = Airr("silly_monkey", references=references, adaptable=True)
+    at = airr_api.run_fasta(fixture_setup.get_pg9_heavy_fasta())
+    assert (at["reference_name"] == "silly_monkey").all()
+    reference.add_gene({"species": "human", "gene": "IGHV1-2*01", "source": "imgt"})
+    reference.add_gene({"species": "human", "gene": "IGHV3-15*01", "source": "imgt"})
+    reference.add_gene({"species": "human", "gene": "IGHJ6*01", "source": "imgt"})
+    reference.add_gene({"species": "mouse", "gene": "IGHV1-11*01", "source": "imgt"})
+    references.add_reference("crazy_mouse", reference, overwrite=True)
+    airr_crazy = Airr("crazy_mouse", references=references, adaptable=True)
+    with pytest.raises(BadDataSet):
+        # we used wrong name
+        Airr("mighty_mouse", references=references, adaptable=True)
+
+    airr_table = airr_crazy.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
+    assert airr_table.reference_name.iloc[0] == "crazy_mouse"
+    assert airr_table.v_call_top.iloc[0] == "human|IGHV3-15*01"
 
     reference = Reference()
-    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
-    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV3-15*01", "database": "imgt"})
-    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
-    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
-    airr_api = Airr(reference, adaptable=True)
+    reference.add_gene({"species": "human", "gene": "IGHV1-2*01", "source": "imgt"})
+    reference.add_gene({"species": "human", "gene": "IGHJ6*01", "source": "imgt"})
+    reference.add_gene({"species": "human", "gene": "IGHD3-3*01", "source": "imgt"})
+    references.add_reference("normal_human", reference, overwrite=True)
+    airr_api = Airr("normal_human", references=references, adaptable=True)
     airr_table = airr_api.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
-    assert airr_table.species.iloc[0] == "custom"
-    assert airr_table.v_call_top.iloc[0] == "IGHV3-15*01"
-    assert airr_table.species.iloc[0] == "custom"
-
-    reference = Reference()
-    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHV1-2*01", "database": "imgt"})
-    reference.add_gene({"species": "custom", "sub_species": "dog", "gene": "IGHV1-15*01", "database": "imgt"})
-    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHJ6*01", "database": "imgt"})
-    reference.add_gene({"species": "custom", "sub_species": "human", "gene": "IGHD3-3*01", "database": "imgt"})
-    airr_api = Airr(reference, adaptable=True)
-    airr_table = airr_api.run_single("PG9", fixture_setup.get_pg9_heavy_sequence().seq.__str__())
-    assert airr_table.species.iloc[0] == "custom"
-    assert airr_table.v_call_top.iloc[0] == "human|IGHV1-2*01"
+    assert airr_table.reference_name.iloc[0] == "normal_human"
+    assert airr_table.v_call_top.iloc[0] == "IGHV1-2*01"
 
 
-def test_airrtable_init(fixture_setup):
+def test_airrtable_init(fixture_setup: SadieFixture) -> None:
     test_tsv = fixture_setup.get_dog_airrtable()
     airr_table = AirrTable.read_airr(test_tsv)
     assert not airr_table.empty
@@ -500,7 +517,7 @@ def test_airrtable_init(fixture_setup):
     assert e.value.__str__()
 
 
-def test_indel_correction(fixture_setup):
+def test_indel_correction(fixture_setup: SadieFixture) -> None:
     test_csv = fixture_setup.get_dog_airrtable()
     # Test we can initllize with staic meathod
     airr_table = AirrTable.read_airr(test_csv)
@@ -543,10 +560,10 @@ def test_indel_correction(fixture_setup):
 #     assert rebuild_data.suffixes == ["_h", "_l"]
 
 
-def test_write_and_check_airr(fixture_setup):
+def test_write_and_check_airr(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixture) -> None:
     """Check that the offical airr can validate our airr tables"""
     catnap_heavy = fixture_setup.get_catnap_heavy_nt()
-    output_file = fixture_setup.tmp_path / Path("test_write_and_check_airr.tsv")
+    output_file = tmp_path_factory.mktemp("tmp_dir") / Path("output.tsv")
     airr_api = Airr("human")
     airr_table = airr_api.run_fasta(catnap_heavy)
     assert isinstance(airr_table, AirrTable)
@@ -563,7 +580,7 @@ def test_write_and_check_airr(fixture_setup):
         airr.load_rearrangement(output_file, debug=True, validate=True)
 
 
-def test_airr_series(fixture_setup):
+def test_airr_series(fixture_setup: SadieFixture):
     """Test that we can create an airr series"""
     df = pd.read_feather(fixture_setup.get_catnap_heavy_airrtable())
     series = AirrSeries(df.iloc[0])
