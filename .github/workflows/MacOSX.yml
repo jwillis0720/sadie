@@ -3,8 +3,8 @@
 name: MacOS Build and Test
 on:
   push:
-    tags:
-    - '*'
+    # tags:
+    # - '*'
     branches: ['main']
   pull_request:
     branches: [ 'main', 'update_doc', 'development' ]
