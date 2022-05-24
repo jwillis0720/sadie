@@ -179,7 +179,7 @@ class AirrSequences:
 
     def get_dog_aa_seqs(self) -> Path:
         "A fasta file path containing random canine AA sequences"
-        return self.fasta_inputs / "random_dog_contigs_aa.fasta"
+        return self.fasta_inputs / "random_dog_contigs_aa.fasta.gz"
 
     def get_fasta_files(self) -> List[Path]:
         """Get a list of different fasta files for CLI testing. scfv, pg9_h, pg9_h_multi, pg9_l, pg9_l_multi"""

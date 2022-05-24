@@ -1,14 +1,9 @@
 """The NUMBERING Abstraction to make it usuable"""
 
 # Std library
-import bz2
 import gzip
 import logging
 import multiprocessing
-import filetype
-import os
-import shutil
-import tempfile
 
 import warnings
 from multiprocessing import cpu_count
@@ -27,7 +22,6 @@ from sadie.numbering import Numbering
 from .exception import (
     NumberingDuplicateIdError,
     BadNumberingArgument,
-    BadRequstedFileType,
 )
 from .result import NumberingResults
 from .constants import NUMBERING_RESULTS
@@ -279,33 +273,6 @@ class Renumbering:
         ]
         return _allowed_species
 
-    @property
-    def assign_germline(self) -> bool:
-        """Should Numbering try to assign germline
-
-        Returns
-        -------
-        bool
-        """
-        return self._assign_germline
-
-    @assign_germline.setter
-    def assign_germline(self, assign: bool):
-        """Should numbering try to assign germline
-
-        Parameters
-        ----------
-        assign : bool
-
-        Raises
-        ------
-        BadNumberingArgument
-            if not a bool
-        """
-        if not isinstance(assign, bool):
-            raise BadNumberingArgument(assign, bool)
-        self._assign_germline = assign
-
     def _run(self, sequences: List[Tuple[str, str]]):
         """
         private method to run Numbering
@@ -523,30 +490,15 @@ class Renumbering:
             if file is not fasta
 
         """
-        if isinstance(file, Path):
-            if not file.exists():
-                raise FileExistsError(f"{file} does not exist")
-            file = str(file)
-        _filetype = filetype.guess(file)
-        if not os.path.exists(file):
-            raise FileExistsError(f"{file} not found")
-        if _filetype:
-            logger.info("Guess File Type is %s ", _filetype.extension)
-            with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
-                if _filetype.extension == "gz":
-                    logger.info("File type is compressed gzip")
-                    file_buffer = gzip.open(file)
-                elif _filetype.extension == "bz2":
-                    logger.info("File type is compressed bzip2")
-                    file_buffer = bz2.open(file)
-                else:
-                    raise BadRequstedFileType(_filetype, ["bzip2", "gzip"])
-                shutil.copyfileobj(file_buffer, tmpfile)
-                file = Path(tmpfile.name)
+        file = Path(file)
+        if file.is_file() is False:
+            raise FileNotFoundError(f"{file} not found")
 
-        # run on fasta
-        _results = self.run_multiple(list(SeqIO.parse(file, "fasta")))
-        # if we had a file delete it
-        if _filetype:
-            os.unlink(tmpfile.name)
-        return _results
+        if file.suffix == ".gz":
+            with gzip.open(file, "rt") as handle:
+                seqs = list(SeqIO.parse(handle, "fasta"))
+        # Biopython natively handles bz2
+        else:
+            seqs = list(SeqIO.parse(file, "fasta"))
+
+        return self.run_multiple(seqs)
