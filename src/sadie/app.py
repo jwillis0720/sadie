@@ -18,7 +18,7 @@ from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
 from sadie.utility.util import get_verbosity_level, get_project_root
 
 # reference
-from sadie.reference import Reference
+from sadie.reference.reference import References
 
 
 @click.group()
@@ -36,13 +36,12 @@ def sadie(ctx: click.Context) -> None:
     help="Vebosity level, ex. -vvvvv for debug level logging",
 )
 @click.option(
-    "--species",
-    "-s",
+    "--name",
+    "-n",
     type=click.Choice(Airr.get_available_species()),
     help="Species to annotate",
     default="human",
 )
-@click.option("--db-type", type=click.Choice(["imgt", "custom"]), default="imgt", show_default=True)
 @click.option("--skip-igl", is_flag=True, help="Skip the igl assignment")
 @click.option("--skip-mutation", is_flag=True, help="Skip the somewhat time instansive mutational analysis")
 @click.argument(
@@ -68,8 +67,7 @@ def sadie(ctx: click.Context) -> None:
 )
 def airr(
     verbose: int,
-    species: str,
-    db_type: str,
+    name: str,
     skip_igl: bool,
     skip_mutation: bool,
     input_path: Path,
@@ -78,7 +76,7 @@ def airr(
 
     numeric_level = get_verbosity_level(verbose)
     logging.basicConfig(level=numeric_level)
-    airr = Airr(species=species, database=db_type)
+    airr = Airr(name)
     if not output_path:
         output_path = "stdout"
     else:
@@ -110,7 +108,6 @@ def airr(
         sys.stdout.write(output_str)
     else:
         airr_table.to_output(output_object)
-    # handle output
 
 
 def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> List[str]:
@@ -325,7 +322,7 @@ def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None
     click.echo(f"Getting G3 genes from {reference}")
 
     # read in yaml file with all statric reference data
-    reference_object = Reference.parse_yaml(reference)
+    reference_object = References.from_yaml(reference)
     germline_path = reference_object.make_airr_database(outpath)
     click.echo(f"Wrote germline database to {germline_path}")
     click.echo("Done!")

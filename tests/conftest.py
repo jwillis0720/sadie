@@ -5,7 +5,7 @@ import json
 import glob
 import shutil
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import pytest
 import pandas as pd
@@ -313,7 +313,7 @@ class ReferenceFixtures:
         return self.reference_data / "reference_object_dataframe.csv.gz"
 
     def get_aux_files(self) -> List[str]:
-        """get a glob of aux files to make sure generated aux matches"""
+        """get a glob of aux files that come directly from imgt to make sure generated aux matches"""
         path = self.reference_data / "igblast_aux"
         return glob.glob(str(path / "**.aux"))
 
@@ -322,65 +322,77 @@ class ReferenceFixtures:
         path = self.reference_data / "igblast_internal"
         return glob.glob(str(path / "**.imgt"))
 
-    def get_known_blast_dir_structure(self) -> List:
+    def get_known_blast_dir_structure(self) -> List[str]:
         """get a list of names that should be in blast dir ref generation"""
         path = self.reference_data / "blast_dir.json"
         return sorted(json.load(open(path)))
 
-    def get_known_internal_dir_structure(self) -> List:
+    def get_known_internal_dir_structure(self) -> List[str]:
         """get a list of names that should be in internal dir ref generation"""
         path = self.reference_data / "internal.json"
         return sorted(json.load(open(path)))
 
-    def get_known_aux_dir_structure(self) -> List:
+    def get_known_aux_dir_structure(self) -> List[str]:
         """get a list of names that should be in aux dir ref generation"""
         path = self.reference_data / "aux.json"
         return sorted(json.load(open(path)))
 
-    def get_known_nhd_dir_structure(self) -> List:
+    def get_known_nhd_dir_structure(self) -> List[str]:
         """get a list of names that should be in nhd (blast format files) dir ref generation"""
         path = self.reference_data / "nhd.json"
         return sorted(json.load(open(path)))
 
-    def get_aux_exceptions(self) -> Dict:
-        """get a dict of aux files that are known exceptions"""
+    def get_aux_exceptions(self) -> Dict[Tuple[str, str], str]:
+        """get a dict of aux files that are known exceptions in the IgBlast aux dir"""
         return {
-            ("mouse", "imgt", "IGLJ4*01"): "igblast has wrong number of c-term remaining",
-            ("rabbit", "imgt", "IGHJ3*02"): "igblast has wrong reading frame",
+            ("mouse", "IGLJ4*01"): "igblast has wrong number of c-term remaining",
+            ("rabbit", "IGHJ3*02"): "igblast has wrong reading frame",
         }
 
-    def get_internal_db_excetions(self) -> List[List]:
+    def get_internal_db_excetions(self) -> List[List[str]]:
         """get a list of known exceptions from IMGT"""
         return [
-            ["rat", "imgt", "IGHV1S62*01"],
-            ["rat", "imgt", "IGHV2S1*01"],
-            ["rat", "imgt", "IGHV2S12*01"],
-            ["rat", "imgt", "IGHV2S13*01"],
-            ["rat", "imgt", "IGHV2S18*01"],
-            ["rat", "imgt", "IGHV2S30*01"],
-            ["rat", "imgt", "IGHV2S35*01"],
-            ["rat", "imgt", "IGHV2S54*01"],
-            ["rat", "imgt", "IGHV2S61*01"],
-            ["rat", "imgt", "IGHV2S63*01"],
-            ["rat", "imgt", "IGHV2S75*01"],
-            ["rat", "imgt", "IGHV2S78*01"],
-            ["rat", "imgt", "IGHV2S8*01"],
-            ["rat", "imgt", "IGHV5S10*01"],
-            ["rat", "imgt", "IGHV5S11*01"],
-            ["rat", "imgt", "IGHV5S13*01"],
-            ["rat", "imgt", "IGHV5S14*01"],
-            ["rat", "imgt", "IGHV5S23*01"],
-            ["rat", "imgt", "IGHV5S47*01"],
-            ["rat", "imgt", "IGHV5S54*01"],
-            ["rat", "imgt", "IGHV5S8*01"],
-            ["rat", "imgt", "IGHV8S18*01"],
-            ["rat", "imgt", "IGHV9S3*01"],
-            ["human", "imgt", "IGHV2-70*02"],
-            ["human", "imgt", "IGHV2-70*03"],
-            ["human", "imgt", "IGHV2-70*06"],
-            ["human", "imgt", "IGHV2-70*07"],
-            ["human", "imgt", "IGHV2-70*08"],
+            ["rat", "IGHV1S62*01"],
+            ["rat", "IGHV2S1*01"],
+            ["rat", "IGHV2S12*01"],
+            ["rat", "IGHV2S13*01"],
+            ["rat", "IGHV2S18*01"],
+            ["rat", "IGHV2S30*01"],
+            ["rat", "IGHV2S35*01"],
+            ["rat", "IGHV2S54*01"],
+            ["rat", "IGHV2S61*01"],
+            ["rat", "IGHV2S63*01"],
+            ["rat", "IGHV2S75*01"],
+            ["rat", "IGHV2S78*01"],
+            ["rat", "IGHV2S8*01"],
+            ["rat", "IGHV5S10*01"],
+            ["rat", "IGHV5S11*01"],
+            ["rat", "IGHV5S13*01"],
+            ["rat", "IGHV5S14*01"],
+            ["rat", "IGHV5S23*01"],
+            ["rat", "IGHV5S47*01"],
+            ["rat", "IGHV5S54*01"],
+            ["rat", "IGHV5S8*01"],
+            ["rat", "IGHV8S18*01"],
+            ["rat", "IGHV9S3*01"],
+            ["human", "IGHV2-70*02"],
+            ["human", "IGHV2-70*03"],
+            ["human", "IGHV2-70*06"],
+            ["human", "IGHV2-70*07"],
+            ["human", "IGHV2-70*08"],
         ]
+
+    def get_duplicated_yaml(self) -> Path:
+        """get a file path for a yaml file that has duplicated entries"""
+        return self.reference_data / Path("duplicated_in_source.yml")
+
+    def get_duplicated_diff_source_yaml(self) -> Path:
+        """get a file path for a yaml file that has duplicated entries"""
+        return self.reference_data / Path("duplicated_inter_source.yml")
+
+    def get_shortened_yaml(self) -> Path:
+        """get a file path for a yaml file that is pretty short"""
+        return self.reference_data / Path("short_reference.yml")
 
 
 class NumberingFixtures:
@@ -416,12 +428,12 @@ class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures, NumberingFixtur
 
 
 @pytest.fixture(scope="session", autouse=True)
-def fixture_setup(tmp_path_factory):
+def fixture_setup(tmp_path_factory: pytest.TempPathFactory):
     return SadieFixture(tmp_path_factory)
 
 
 @pytest.fixture(scope="session", autouse=False)
-def heavy_catnap_airrtable(fixture_setup) -> AirrTable:
+def heavy_catnap_airrtable(fixture_setup: SadieFixture) -> AirrTable:
     """A permanant fixture of the catnap heavy airr table run through adaptable airrtable"""
     airr_api = Airr("human", adaptable=True)
     airrtable_heavy = airr_api.run_fasta(fixture_setup.get_catnap_heavy_nt())
@@ -430,7 +442,7 @@ def heavy_catnap_airrtable(fixture_setup) -> AirrTable:
 
 
 @pytest.fixture(scope="session", autouse=False)
-def light_catnap_airrtable(fixture_setup) -> AirrTable:
+def light_catnap_airrtable(fixture_setup: SadieFixture) -> AirrTable:
     """A permanant fixture of the catnap light airr table run through adaptable airrtable"""
     airr_api = Airr("human", adaptable=True)
     airrtable_light = airr_api.run_fasta(fixture_setup.get_catnap_light_nt())

@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, List, Set, Union, Tuple
+from typing import Any, List, Set, Union
 
 
 class Error(Exception):
@@ -120,7 +120,7 @@ class BadDataSet(Error):
     Attributes:
     """
 
-    def __init__(self, requested_type: Tuple[str, str], accepted_types: List[Tuple[str, str]]):
+    def __init__(self, requested_type: str, accepted_types: List[str]):
         super().__init__()
         self.requested_type = requested_type
         self.accepted_types = accepted_types
