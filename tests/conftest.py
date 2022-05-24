@@ -427,12 +427,12 @@ class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures, NumberingFixtur
 
 
 @pytest.fixture(scope="session", autouse=True)
-def fixture_setup(tmp_path_factory):
+def fixture_setup(tmp_path_factory: pytest.TempPathFactory):
     return SadieFixture(tmp_path_factory)
 
 
 @pytest.fixture(scope="session", autouse=False)
-def heavy_catnap_airrtable(fixture_setup) -> AirrTable:
+def heavy_catnap_airrtable(fixture_setup: SadieFixture) -> AirrTable:
     """A permanant fixture of the catnap heavy airr table run through adaptable airrtable"""
     airr_api = Airr("human", adaptable=True)
     airrtable_heavy = airr_api.run_fasta(fixture_setup.get_catnap_heavy_nt())
@@ -441,7 +441,7 @@ def heavy_catnap_airrtable(fixture_setup) -> AirrTable:
 
 
 @pytest.fixture(scope="session", autouse=False)
-def light_catnap_airrtable(fixture_setup) -> AirrTable:
+def light_catnap_airrtable(fixture_setup: SadieFixture) -> AirrTable:
     """A permanant fixture of the catnap light airr table run through adaptable airrtable"""
     airr_api = Airr("human", adaptable=True)
     airrtable_light = airr_api.run_fasta(fixture_setup.get_catnap_light_nt())

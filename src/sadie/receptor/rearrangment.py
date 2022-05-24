@@ -241,7 +241,7 @@ class PrimaryAnnotations(BaseModel):
     j_call_top_gene: Optional[str] = None
     j_call_top_allele: Optional[str] = None
     c_call_allele: Optional[str] = None
-    species: Optional[str] = None
+    reference_name: Optional[str] = None
     category: Optional[RearrargmentCategory] = RearrargmentCategory(category="primary_annotations")
 
     @staticmethod
@@ -253,7 +253,7 @@ class PrimaryAnnotations(BaseModel):
             "stop_codon",
             "complete_vdj",
             "locus",
-            "species",
+            "reference_name",
             "v_call",
             "d_call",
             "j_call",
@@ -801,7 +801,7 @@ class ReceptorChain(BaseModel):
     def from_single(
         sequence_id: str,
         sequence: Union[str, Seq],
-        species: str = "human",
+        reference_name: str = "human",
         database: str = "imgt",
     ) -> "ReceptorChain":
         """
@@ -822,7 +822,7 @@ class ReceptorChain(BaseModel):
         from sadie.airr import Airr
         from sadie.airr.airrtable import AirrSeries, AirrTable
 
-        airr_api = Airr(species=species, database=database)
+        airr_api = Airr(reference_name)
         result: AirrTable = airr_api.run_single(sequence_id, str(sequence))
         result_sliced: AirrSeries = result.iloc[0]
 

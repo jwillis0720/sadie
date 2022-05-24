@@ -1,4 +1,6 @@
 """SADIE Airr module"""
+from __future__ import annotations
+
 # Std library
 import itertools
 import logging
@@ -9,7 +11,7 @@ import tempfile
 import warnings
 from pathlib import Path
 from types import GeneratorType
-from typing import Generator, Iterator, List, Tuple, Union
+from typing import Generator, Iterator, List, Optional, Set, Union
 from multiprocessing import cpu_count
 
 
@@ -25,7 +27,7 @@ from Bio.SeqRecord import SeqRecord
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.airr.igblast import IgBLASTN, GermlineData
 from sadie.airr.exceptions import BadIgBLASTExe, BadDataSet, BadRequstedFileType
-from sadie.reference import Reference
+from sadie.reference.reference import References
 
 logger = logging.getLogger("AIRR")
 warnings.filterwarnings("ignore", "Partial codon")
@@ -72,47 +74,45 @@ class Airr:
 
     def __init__(
         self,
-        species: Union[str, Reference],
-        igblast_exe: Union[Path, str] = "",
+        reference_name: str,
+        igblast_exe: Path | str = "",
         adaptable: bool = False,
-        database: str = "imgt",
         v_gene_penalty: int = -1,
         d_gene_penalty: int = -1,
         j_gene_penalty: int = -2,
         allow_vdj_overlap: bool = False,
         correct_indel: bool = True,
-        temp_directory: Union[str, Path, None] = None,
+        temp_directory: Optional[str | Path] = None,
         num_cpus: int = -1,
+        receptor: str = "Ig",
+        scheme: str = "imgt",
+        references: Optional[References] = None,
     ):
         """Airr constructor
 
         Parameters
         ----------
-        species : str
-            the species to annotate against, ex. 'human
-        igblast_exe : str, optional
+        reference_name : str | Reference
+            the reference name to run annotate against. These can be composed of IMGT or custom database genes, ex 'human'
+            or you can pass the Reference object from a custom database.
+        igblast_exe : str
             override sadie package executable has to be in $PATH
-        adaptable : bool, optional
+        adaptable : bool
             turn on adaptable penalties, by default True
-        database : str, optional
-            run on custom or imgt database, by default "imgt"
-        v_gene_penalty : int, optional
+        v_gene_penalty : int
             the penalty for mismatched v gene nt, by default -1
-        d_gene_penalty : int, optional
+        d_gene_penalty : int
             the penalty for mismatched d gene nt, by default -1
-        j_gene_penalty : int, optional
+        j_gene_penalty : int
             the penalty for mismatched j gene nt, by default -2
-        allow_vdj_overlap : bool, optional
+        allow_vdj_overlap : bool
             allow vdj overlap genes, by default False
         correct_indel : bool, optional
             correct the indel gaps in the gemrline_aa vs mature_aa alignments in the airrtable
-        temp_directory : Union[str,Path,None], optional
+        temp_directory : str|Path|None
             the temporary working directory, by default uses your enviroments tempdir
-
-        Raises
-        ------
-        BadSpecies
-            If you ask for a species that does not have a reference dataset, ex. robot or database=custom,species=human
+        references: Optional[References] = None
+            A refernces class with custom references in it. If None, will default to SADIE shipped references
         """
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
@@ -178,42 +178,34 @@ class Airr:
 
         # Properties that will be passed to germline Data Class.
         # Pass theese as private since germline class will handle setter logic
-        if isinstance(species, Reference):
-            self._species = "custom"
+        self._name = reference_name
+        if isinstance(references, References):
+            _custom_avail = list(references.get_dataframe()["name"].unique())
+            if self.name not in _custom_avail:
+                raise BadDataSet(self.name, _custom_avail)
 
-            # set custom directory path
-            custom_directory = self.temp_directory / "custom/"
-            full_out_path = Path(species.make_airr_database(custom_directory))
-
-            # what database type did they pass?
-            database_names = species.get_database_types()
-
-            # only can handle homogoneous data sources at the moment
-            if len(database_names) > 1:
-                raise ValueError(f"Can only pass a single databae type, datbaes: {database_names}")
+            # always make
+            out_data_path = references.make_airr_database(self.temp_directory / "germlines/")
 
             # set the germline database
-            self.germline_data = GermlineData("custom", database_names[0], "Ig", full_out_path)
+            self.germline_data = GermlineData(reference_name, receptor, out_data_path)
         else:
-            self._species = species
-            self._database = database
+            self._name = reference_name
 
             # Check if this requested dataset is available
             _available_datasets = GermlineData.get_available_datasets()
-            _chosen_datasets = (species.lower(), database.lower())
-            if _chosen_datasets not in _available_datasets:
-                raise BadDataSet(_chosen_datasets, _available_datasets)
+            if reference_name not in _available_datasets:
+                raise BadDataSet(reference_name, list(_available_datasets))
 
-            # set the germline data
-            self.germline_data = GermlineData(self.species, database=database)
-
+            # set the germline data, None will use default germline
+            self.germline_data = GermlineData(self.name, receptor, None, scheme)
         # This will set all the igblast params given the Germline Data class whcih validates them
         self.igblast.igdata = self.germline_data.igdata
         self.igblast.germline_db_v = self.germline_data.v_gene_dir
         self.igblast.germline_db_d = self.germline_data.d_gene_dir
         self.igblast.germline_db_j = self.germline_data.j_gene_dir
         self.igblast.aux_path = self.germline_data.aux_path
-        self.igblast.organism = self.species
+        self.igblast.organism = self.name
 
         if num_cpus == -1:
             self.igblast.num_threads = cpu_count()
@@ -228,11 +220,11 @@ class Airr:
 
         # set airr specific attributes
         self.correct_indel = correct_indel
-        self.liable_seqs: List[Union[str, int]] = []
+        self.liable_seqs: List[str | int] = []
 
         # Init pre run check to make sure everything is good
         # We don't have to do this now as it happens at execution.
-        self.igblast._pre_check()
+        self.igblast.pre_check()
 
     @property
     def adapt_penalty(self) -> bool:
@@ -245,15 +237,15 @@ class Airr:
         self._adapt_penalty = adapt_penalty
 
     @property
-    def species(self) -> str:
-        return self._species
+    def name(self) -> str:
+        return self._name
 
     @property
     def temp_directory(self) -> Path:
         return self._temp_directory
 
     @temp_directory.setter
-    def temp_directory(self, temp_directory: Union[str, Path]) -> None:
+    def temp_directory(self, temp_directory: str | Path) -> None:
         if not isinstance(temp_directory, (str, Path)):
             raise TypeError(f"temp_directory must be str or Path, not {type(temp_directory)}")
 
@@ -457,6 +449,7 @@ class Airr:
             not a fasta file
         """
 
+        _identity_corrected = False
         if isinstance(file, Path):
             # cast to str
             file = str(file)
@@ -474,7 +467,7 @@ class Airr:
             logger.info("scfv file was passed")
             scfv_airr = self._run_scfv(file)
             if not scfv_airr.empty:
-                scfv_airr.insert(2, "species", pd.Series([self.species] * len(scfv_airr)))  #
+                scfv_airr.insert(2, "reference_name", pd.Series([self.name] * len(scfv_airr)))  #
             if self.correct_indel:
                 scfv_airr.correct_indel()
             return scfv_airr
@@ -485,7 +478,7 @@ class Airr:
             logger.info(f"Ran blast on  {file}")
 
             # this is worthless since query
-            result.insert(2, "species", pd.Series([self.species] * len(result)))
+            result.insert(2, "reference_name", pd.Series([self.name] * len(result)))
             result = AirrTable(result)
             result["v_penalty"] = self._v_gene_penalty
             result["d_penalty"] = self._d_gene_penalty
@@ -503,9 +496,8 @@ class Airr:
                                 logger.info("Corrected all liabilities")
                                 break
                             adaptable_api = Airr(
-                                self.species,
+                                self.name,
                                 igblast_exe=self.executable,
-                                database=self._database,
                                 v_gene_penalty=v_penalty,
                                 d_gene_penalty=self._d_gene_penalty,
                                 j_gene_penalty=j_penalty,
@@ -535,9 +527,8 @@ class Airr:
                         logger.info("Corrected all liabilities")
                     else:
                         adaptable_api = Airr(
-                            self.species,
+                            self.name,
                             igblast_exe=self.executable,
-                            database=self._database,
                             d_gene_penalty=self._d_gene_penalty,
                             allow_vdj_overlap=True,
                             correct_indel=self.correct_indel,
@@ -559,6 +550,7 @@ class Airr:
 
         if self.correct_indel:
             result.correct_indel()
+
         return result
 
     # private run methods
@@ -661,7 +653,7 @@ class Airr:
         return Path(os.path.dirname(os.path.abspath(__file__))) / "bin" / system / executable
 
     @staticmethod
-    def get_available_datasets() -> List[Tuple[str, str]]:
+    def get_available_datasets() -> Set[str]:
         return GermlineData.get_available_datasets()
 
     @staticmethod
@@ -673,7 +665,7 @@ class Airr:
         list
             Available species
         """
-        return list(set(map(lambda x: x[0], GermlineData.get_available_datasets())))
+        return list(GermlineData.get_available_datasets())
 
     def __repr__(self) -> str:
         return self.igblast.__repr__()

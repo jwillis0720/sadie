@@ -8,6 +8,7 @@ from pathlib import Path
 from time import sleep
 from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import quote as url_quote
+import warnings
 
 import pandas as pd
 import requests
@@ -290,6 +291,7 @@ class Reference:
 class References:
     def __init__(self) -> None:
         self.references: Dict[str, Reference] = {}
+        self.airr_db = None
 
     def add_reference(self, name: str, reference: Reference, overwrite: bool = False) -> None:
         if name in self.references.keys():
@@ -384,12 +386,13 @@ class References:
             The output path to. example -> path/to/output.
             Then the database will dump to path/to/output/{Ig,TCR}/blastdb/{name}
         """
-
         # The blast DB groups by V,D and J
         logger.debug("Generating from IMGT Internal Database File")
 
         # get the database as a dataframe
         database = self.get_dataframe()
+        if database[database.label == "D-REGION"].empty:
+            raise ValueError("No D-REGION found in reference object...make sure to add D gene")
 
         # first name, i.e. "human" or "se09"
         groupby_dataframe = database.groupby("name")
@@ -583,6 +586,9 @@ class References:
         # dataframe to igblast aux structure
         self._make_auxillary_file(output_path)
         logger.info(f"Generated Aux Data {output_path}/aux_db")
+        if self.airr_db:
+            warnings.warn("Overwriting existing database", UserWarning)
+        self.airr_db = output_path
         return output_path
 
     @staticmethod

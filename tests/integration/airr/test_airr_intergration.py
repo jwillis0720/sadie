@@ -3,12 +3,15 @@ import os
 from distutils.version import StrictVersion
 from itertools import product
 from math import nan
+from typing import List
 
 import pandas as pd
 from click.testing import CliRunner
 from sadie.airr import Airr, AirrTable
 from sadie.airr.airrtable import constants
 from sadie.app import airr as sadie_airr
+from tests.conftest import SadieFixture
+import pytest
 
 
 def fillna(df, fill_value=""):
@@ -215,8 +218,8 @@ def _make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def test_imgt_integration(fixture_setup):
-    # 1 of 2 major airr integerations. Checks that we match imgt
+def test_imgt_integration(fixture_setup: SadieFixture) -> None:
+    # 1 of 2 major airr integerations. Checks that we match imgt on the ones we care about
     ignore = [
         48,
         67,
@@ -258,7 +261,7 @@ def test_imgt_integration(fixture_setup):
     ]
 
     file = fixture_setup.get_oas_fasta()
-    airr_api = Airr(species="human", database="imgt", adaptable=True)
+    airr_api = Airr("human", adaptable=True)
     sadie_airr = airr_api.run_fasta(file)
     sadie_comparable = _make_sadie_comparable(sadie_airr)[check_these]
     sadie_comparable = sadie_comparable.drop(pd.Index(ignore))
@@ -274,11 +277,11 @@ def test_imgt_integration(fixture_setup):
 
 
 # @pytest.mark.skip(reason="integration tests will change under this active development")
-def test_catnap_integration(fixture_setup):
+def test_catnap_integration(fixture_setup: SadieFixture) -> None:
     # 2 of 2 major integrations. Make sure our catnap calls dont change from last time we ran it
     heavy_file = fixture_setup.get_catnap_heavy_nt()
     light_file = fixture_setup.get_catnap_light_nt()
-    airr_api = Airr(species="human", database="imgt", adaptable=True)
+    airr_api = Airr("human", adaptable=True)
     heavy_at = AirrTable(pd.read_feather(fixture_setup.get_catnap_heavy_airrtable()))
     light_at = AirrTable(pd.read_feather(fixture_setup.get_catnap_light_airrtable()))
     catnap_heavy = airr_api.run_fasta(heavy_file)
@@ -293,7 +296,7 @@ def test_catnap_integration(fixture_setup):
     pd.testing.assert_frame_equal(heavy_at, catnap_heavy, check_dtype=False, rtol=0.5)
 
 
-def _run_cli(args, tmpfile):
+def _run_cli(args: List[str], tmpfile):
     runner = CliRunner(echo_stdin=True)
     result = runner.invoke(sadie_airr, args)
     if result.exit_code != 0:
@@ -304,7 +307,7 @@ def _run_cli(args, tmpfile):
     return True
 
 
-def test_cli(caplog, fixture_setup):
+def test_cli(caplog: pytest.LogCaptureFixture, fixture_setup: SadieFixture) -> None:
     """Confirm the CLI works as expecte"""
 
     # we need this fixture because... well i don't know
@@ -313,16 +316,14 @@ def test_cli(caplog, fixture_setup):
     # IMGT DB
     queries = fixture_setup.get_fasta_files()
     species = ["rat", "human", "mouse", "macaque", "se09"]
-    products = product(species, ["imgt"], queries)
+    products = product(species, queries)
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
         # run 1 with mutational analysis
         cli_input = [
             "-v",
-            "--species",
+            "--name",
             "human",
-            "--db-type",
-            "imgt",
             str(fixture_setup.get_pg9_heavy_fasta()),
             tmpfile.name,
         ]
@@ -333,11 +334,9 @@ def test_cli(caplog, fixture_setup):
         for p_tuple in products:
             cli_input = [
                 "-v",
-                "--species",
+                "--name",
                 p_tuple[0],
-                "--db-type",
-                p_tuple[1],
-                str(p_tuple[2]),
+                str(p_tuple[1]),
                 tmpfile.name,
                 "--skip-mutation",
             ]
@@ -346,51 +345,6 @@ def test_cli(caplog, fixture_setup):
             assert test_success
 
 
-def test_cli_custom(caplog, fixture_setup):
-    queries = fixture_setup.get_fasta_files()
-    species = ["macaque"]
-    products = product(species, ["custom"], queries)
-    caplog.set_level(200000)
-
-    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
-        for p_tuple in products:
-            cli_input = [
-                "-v",
-                "--species",
-                p_tuple[0],
-                "--db-type",
-                p_tuple[1],
-                str(p_tuple[2]),
-                tmpfile.name,
-                "--skip-mutation",
-            ]
-            print(f"CLI input {' '.join(cli_input)}")
-            test_success = _run_cli(cli_input, tmpfile)
-            assert test_success
-
-
-def test_cli_scfv(caplog, fixture_setup):
-    queries = str(fixture_setup.get_scfv_fasta())
-    species = ["human"]
-    caplog.set_level(200000)
-    products = product(species, ["imgt"], [queries])
-    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
-        for p_tuple in products:
-            cli_input = [
-                "-v",
-                "--species",
-                p_tuple[0],
-                "--db-type",
-                p_tuple[1],
-                str(p_tuple[2]),
-                tmpfile.name,
-                "--skip-mutation",
-            ]
-            print(f"CLI input {' '.join(cli_input)}")
-            test_success = _run_cli(cli_input, tmpfile)
-            assert test_success
-
-
-def test_edge_cases(fixture_setup):
-    airr_api = Airr("macaque", database="custom", adaptable=False)
+def test_edge_cases(fixture_setup:SadieFixture):
+    airr_api = Airr("macaque",  adaptable=False)
     airr_api.run_single("bad_seq", fixture_setup.get_monkey_edge_seq())

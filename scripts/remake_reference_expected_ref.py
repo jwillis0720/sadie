@@ -1,3 +1,5 @@
+# Use this script if you ever have changes with major structure of the reference database that are expected in the integration tests
+
 # import os
 import json
 from glob import glob
