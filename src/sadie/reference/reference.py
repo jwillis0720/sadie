@@ -291,7 +291,6 @@ class Reference:
 class References:
     def __init__(self) -> None:
         self.references: Dict[str, Reference] = {}
-        self.airr_db = None
 
     def add_reference(self, name: str, reference: Reference, overwrite: bool = False) -> None:
         if name in self.references.keys():
@@ -321,7 +320,7 @@ class References:
         concat_df = pd.concat(names_dataframe).reset_index(drop=True)
 
         # groupby names
-        concat_df_groupby_name = concat_df.groupby("name")  # type: ignore
+        concat_df_groupby_name = concat_df.groupby("name")
 
         # within names, check how many species are there
         chimeric_gb = concat_df_groupby_name.apply(lambda x: len(x["common"].unique()) > 1)
@@ -586,9 +585,6 @@ class References:
         # dataframe to igblast aux structure
         self._make_auxillary_file(output_path)
         logger.info(f"Generated Aux Data {output_path}/aux_db")
-        if self.airr_db:
-            warnings.warn("Overwriting existing database", UserWarning)
-        self.airr_db = output_path
         return output_path
 
     @staticmethod
