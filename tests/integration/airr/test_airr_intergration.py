@@ -1,15 +1,10 @@
-import tempfile
-import os
 from distutils.version import StrictVersion
-from itertools import product
 from math import nan
 
 import pandas as pd
 from sadie.airr import Airr, AirrTable
 from sadie.airr.airrtable import constants
-from sadie.app import airr as sadie_airr
 from tests.conftest import SadieFixture
-import pytest
 
 
 def fillna(df, fill_value=""):
