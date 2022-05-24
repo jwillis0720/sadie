@@ -3,7 +3,12 @@ import re
 from sadie.renumbering.clients import G3
 
 
-def test_g3_hmm(fixture_setup):
+def test_sources():
+    g3 = G3()
+    assert g3.sources == ["custom", "imgt"]
+
+
+def test_stockholm_pairs(fixture_setup):
     g3 = G3()
 
     species_list = [

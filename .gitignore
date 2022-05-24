@@ -106,3 +106,4 @@ notebooks/refactor/Untitled.ipynb
 notebooks/Testing/vquest_airr.tsv
 notebooks/airr_clone-pass.tsv
 .gitignore
+cov.xml

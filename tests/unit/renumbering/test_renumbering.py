@@ -7,11 +7,49 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pandas.testing import assert_frame_equal
-from sadie.renumbering import Renumbering, NumberingDuplicateIdError, NumberingResults
+from sadie.renumbering import Renumbering, NumberingDuplicateIdError, NumberingResults, BadNumberingArgument
 from sadie.numbering.schemes import number_imgt
 from sadie.numbering import Numbering
 
 USE_CACHE = True  # TODO: make this an option in the config
+
+
+def test_long_seq_from_src():
+    renumbering_api = Renumbering(
+        scheme="chothia", region_assign="imgt", prioritize_cached_hmm=False, run_multiproc=True
+    )
+    renumbering_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
+    renumbering_api = Renumbering(
+        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=False
+    )
+    renumbering_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
+
+
+def test_long_seq_from_empty_src(fixture_setup):
+    # Delete human hmm to force it rebuild
+    hmms_folder = fixture_setup.hmm_data
+    (hmms_folder / "human_H.hmm").unlink(missing_ok=False)
+
+    renumbering_api = Renumbering(
+        scheme="chothia", region_assign="imgt", prioritize_cached_hmm=True, run_multiproc=True
+    )
+    renumbering_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
+    renumbering_api = Renumbering(
+        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=True
+    )
+    renumbering_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
 
 
 def test_long_seq():
@@ -153,13 +191,29 @@ def test_numbering_multi_input():
 def test_io(fixture_setup):
     """Test file io"""
     main_file = fixture_setup.get_dog_aa_seqs()
-    renumbering_api = Renumbering(allowed_species=["dog", "cat"], prioritize_cached_hmm=USE_CACHE)
-    results = renumbering_api.run_file(main_file)
-    assert isinstance(results, NumberingResults)
-    with tempfile.NamedTemporaryFile(suffix=".numbering.bz2") as temp:
-        results.to_csv(temp.name)
-        other_results = NumberingResults.read_csv(temp.name).fillna("")
-        assert_frame_equal(other_results, results)
+    for scheme in ["imgt", "chothia", "kabat", "martin", "aho"]:
+        for region in ["imgt", "chothia", "kabat"]:
+            if scheme in ["martin", "aho"]:
+                with pytest.raises(BadNumberingArgument):
+                    renumbering_api = Renumbering(
+                        allowed_species=["human", "dog", "cat"],
+                        prioritize_cached_hmm=USE_CACHE,
+                        scheme=scheme,
+                        region_assign=region,
+                    )
+                continue
+            renumbering_api = Renumbering(
+                allowed_species=["human", "dog", "cat"],
+                prioritize_cached_hmm=USE_CACHE,
+                scheme=scheme,
+                region_assign=region,
+            )
+            results = renumbering_api.run_file(main_file)
+            assert isinstance(results, NumberingResults)
+            with tempfile.NamedTemporaryFile(suffix=".numbering.bz2") as temp:
+                results.to_csv(temp.name)
+                other_results = NumberingResults.read_csv(temp.name).fillna("")
+                assert_frame_equal(other_results, results)
 
 
 def test_dog():

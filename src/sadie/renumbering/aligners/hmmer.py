@@ -80,8 +80,6 @@ class HMMER:
                         limit=None,
                         prioritize_cached_hmm=prioritize_cached_hmm,
                     )
-                    if not hmm:
-                        continue
                     hmms.append(hmm)
 
         return hmms

@@ -160,8 +160,8 @@ class Renumbering:
         accepted: imgt, kabat, chotia, martin
 
         """
-        __future_schemes = ["martin"]
-        if scheme.lower() not in self.get_available_region_definitions():
+        __future_schemes = ["martin", "aho"]
+        if scheme.lower() not in ["imgt", "chothia", "kabat"]:
             logger.warning(f"need support for {__future_schemes} numbering schemes. See abysis")
             raise BadNumberingArgument(scheme, self.get_available_region_definitions())
         self._scheme = scheme.lower()
