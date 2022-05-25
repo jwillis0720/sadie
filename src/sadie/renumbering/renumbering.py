@@ -285,16 +285,16 @@ class Renumbering:
                                      ("seq2","DIVMTQSQKFMSTSV ...")
         """
         # TODO: downstream expects tuples so we convert them to seqrecords for hmmer
-        _sequences = [
-            SeqRecord(
-                Seq(seq),
-                id=seq_id,
-            )
-            for seq_id, seq in sequences
-        ]
+        # _sequences = [
+        #     SeqRecord(
+        #         Seq(seq),
+        #         id=seq_id,
+        #     )
+        #     for seq_id, seq in sequences
+        # ]
         # Perform the alignments of the sequences to the hmm database
         _alignments = self.hmmer.hmmsearch(
-            sequences=_sequences,
+            sequences=sequences,
             species=self.allowed_species,
             chains=self.allowed_chains,
             bit_score_threshold=self.threshold_bit,
@@ -305,7 +305,7 @@ class Renumbering:
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Modify alignments in-place
         self.hmmer.check_for_j(
-            sequences=_sequences,
+            sequences=sequences,
             alignments=_alignments,
             species=self.allowed_species,
             chains=self.allowed_chains,

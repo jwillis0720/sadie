@@ -175,7 +175,10 @@ class HMMER:
             if isinstance(seq_obj, SeqRecord):
                 sequences.append(self.__digitize_seq(name=seq_obj.id, seq=seq_obj.seq))
                 continue
-
+            if isinstance(seq_obj, tuple):
+                seq_id, seq = seq_obj
+                sequences.append(self.__digitize_seq(name=seq_id, seq=seq))
+                continue
             raise ValueError(f"seq_obj {seq_obj} is not a valid sequence or path")
 
         if not sequences:
@@ -515,6 +518,16 @@ class HMMER:
         if query_end is None:
             query_end = len(query_seq) - query_seq.count("-")
 
+        if hmm_start < 5:
+            n_extend = hmm_start
+            if hmm_start > query_start:
+                n_extend = min(query_start, hmm_start - query_start)
+            # state_string = "8" * n_extend + state_string
+            query_seq = query_seq + "8" * n_extend
+            hmm_seq = hmm_seq + "x" * n_extend
+            query_start = query_start - n_extend
+            hmm_start = hmm_start - n_extend
+
         vector_state = []
 
         hmm_step = hmm_start  # real world index starting at 1 to match HMMER output
@@ -581,6 +594,7 @@ class HMMER:
                                 chains=chains,
                                 bit_score_threshold=10,
                                 prioritize_cached_hmm=prioritize_cached_hmm,
+                                for_numbering=True,
                             )[0]
 
                             # Check if a J region was detected in the remaining sequence.
