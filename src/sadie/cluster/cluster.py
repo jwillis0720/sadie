@@ -1,3 +1,4 @@
+import re
 import pandas as pd
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
@@ -25,6 +26,7 @@ class Cluster:
         groupby: Optional[str] = None,
         lookup: List[str] = ["cdr1_aa", "cdr2_aa", "cdr3_aa"],
         pad_somatic: bool = False,
+        include_only_v_gene: bool = False,
     ):
         """Initialize the clustering class.
 
@@ -47,6 +49,7 @@ class Cluster:
         if not isinstance(airrtable, (AirrTable, LinkedAirrTable)):
             raise TypeError("airrtable table must be a AirrTable or LinkedAirrTable")
 
+        self.include_only_v_gene = include_only_v_gene
         if lookup == ["cdr1_aa", "cdr2_aa", "cdr3_aa"] and isinstance(airrtable, LinkedAirrTable):
             lookup = [i + "_heavy" for i in lookup] + [i + "_light" for i in lookup]
 
@@ -87,10 +90,24 @@ class Cluster:
         else:
             self._type = "unlinked"
 
+    def _get_v_gene_only(self,row):
+        row = list(row)
+        if row:
+            return [i for i in row if int(re.findall(r"\d+", i)[0]) < 94]
+        return row    
+
+
     def _get_distance_df(self, df: pd.DataFrame) -> Any:
         """Given a dataframe, get the N x N pairwise distances using Levenshtein distance of the lookup"""
         if self.pad_somatic:
             _lookup = self.lookup + self.pad_somatic_values
+            if self.include_only_v_gene:
+                logger.info(f"Including only V genes for {len(df)} rows")
+                if self._type == "linked":
+                    df['mutations_heavy'] = df['mutations_heavy'].apply(self._get_v_gene_only)
+                    df['mutations_light'] = df['mutations_light'].apply(self._get_v_gene_only)
+                else:
+                    df['mutations'] = df['mutations'].apply(self._get_v_gene_only)
         else:
             _lookup = self.lookup
         df_lookup = df[_lookup].to_dict(orient="index")
@@ -140,6 +157,7 @@ class Cluster:
         else:
             cluster_catcher = []
             for g, g_df in self.airrtable.groupby(self.groupby):
+                logger.info(f"Clustering group {g}")
                 # sub_df = g_df
                 sub_df = g_df.copy()
                 self.distance_df = self._get_distance_df(sub_df)
