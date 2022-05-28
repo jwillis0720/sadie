@@ -292,8 +292,8 @@ def test_catnap_integration(fixture_setup: SadieFixture) -> None:
     diffs = catnap_heavy.columns.symmetric_difference(heavy_at.columns)
     if not diffs.empty:
         raise AssertionError(f"Heavy table has the following different columns {diffs}")
-    pd.testing.assert_frame_equal(light_at, catnap_light, check_dtype=False, rtol=0.5)
-    pd.testing.assert_frame_equal(heavy_at, catnap_heavy, check_dtype=False, rtol=0.5)
+    pd.testing.assert_frame_equal(light_at, catnap_light, check_dtype=False, rtol=0.15)
+    pd.testing.assert_frame_equal(heavy_at, catnap_heavy, check_dtype=False, rtol=0.15)
 
 
 def _run_cli(args: List[str], tmpfile):
