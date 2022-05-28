@@ -1,5 +1,5 @@
-import re
 from __future__ import annotations
+import re
 import pandas as pd
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
