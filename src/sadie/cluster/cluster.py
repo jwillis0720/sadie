@@ -1,10 +1,11 @@
+from __future__ import annotations
 import re
 import pandas as pd
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
 from Levenshtein._levenshtein import distance as lev_distance
 from sadie.airr import AirrTable, LinkedAirrTable
-from typing import Any, List, Optional, Union
+from typing import Any, Iterable, List, Optional, Union
 import numpy as np
 import logging
 import numpy.typing as npt
@@ -90,12 +91,11 @@ class Cluster:
         else:
             self._type = "unlinked"
 
-    def _get_v_gene_only(self,row):
+    def _get_v_gene_only(self, row: Iterable[str]) -> List[str]:
         row = list(row)
         if row:
             return [i for i in row if int(re.findall(r"\d+", i)[0]) < 94]
-        return row    
-
+        return row
 
     def _get_distance_df(self, df: pd.DataFrame) -> Any:
         """Given a dataframe, get the N x N pairwise distances using Levenshtein distance of the lookup"""
@@ -104,10 +104,10 @@ class Cluster:
             if self.include_only_v_gene:
                 logger.info(f"Including only V genes for {len(df)} rows")
                 if self._type == "linked":
-                    df['mutations_heavy'] = df['mutations_heavy'].apply(self._get_v_gene_only)
-                    df['mutations_light'] = df['mutations_light'].apply(self._get_v_gene_only)
+                    df["mutations_heavy"] = df["mutations_heavy"].apply(self._get_v_gene_only)
+                    df["mutations_light"] = df["mutations_light"].apply(self._get_v_gene_only)
                 else:
-                    df['mutations'] = df['mutations'].apply(self._get_v_gene_only)
+                    df["mutations"] = df["mutations"].apply(self._get_v_gene_only)
         else:
             _lookup = self.lookup
         df_lookup = df[_lookup].to_dict(orient="index")
