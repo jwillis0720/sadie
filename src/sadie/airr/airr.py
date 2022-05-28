@@ -117,6 +117,7 @@ class Airr:
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
+        self.references = references
 
         # check for package executable, then path igblastn in path
         if not igblast_exe:
@@ -504,6 +505,7 @@ class Airr:
                                 correct_indel=self.correct_indel,
                                 temp_directory=self.temp_directory,
                                 adaptable=False,
+                                references=self.references,
                             )
                             adapt_results = pd.DataFrame(adaptable_api.run_dataframe(_start_df, "index", "sequence"))
                             adapt_results = pd.DataFrame(
@@ -533,6 +535,7 @@ class Airr:
                             correct_indel=self.correct_indel,
                             temp_directory=self.temp_directory,
                             adaptable=False,
+                            references=self.references,
                         )
                         adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
                         adapt_results = (
