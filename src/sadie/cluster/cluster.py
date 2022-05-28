@@ -1,10 +1,11 @@
 import re
+from __future__ import annotations
 import pandas as pd
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
 from Levenshtein._levenshtein import distance as lev_distance
 from sadie.airr import AirrTable, LinkedAirrTable
-from typing import Any, List, Optional, Union
+from typing import Any, Iterable, List, Optional, Union
 import numpy as np
 import logging
 import numpy.typing as npt
@@ -90,7 +91,7 @@ class Cluster:
         else:
             self._type = "unlinked"
 
-    def _get_v_gene_only(self, row):
+    def _get_v_gene_only(self, row: Iterable[str]) -> List[str]:
         row = list(row)
         if row:
             return [i for i in row if int(re.findall(r"\d+", i)[0]) < 94]
