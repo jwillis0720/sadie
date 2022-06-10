@@ -7,8 +7,8 @@ MM    no
 CONS  yes
 CS    no
 MAP   yes
-DATE  Tue May 24 16:14:09 2022
-COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest --cov=. tests/ --cov-report xml:cov.xml
+DATE  Fri Jun 10 13:29:33 2022
+COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest -ssvvv tests/unit/
 NSEQ  3679
 EFFN  0.943805
 CKSUM 1643542238

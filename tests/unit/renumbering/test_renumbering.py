@@ -343,8 +343,8 @@ def test_df(fixture_setup):
     numbering_obj = Renumbering(prioritize_cached_hmm=USE_CACHE)
     numbering_results = numbering_obj.run_dataframe(df, "id", "seq")
     assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
-    numbering_results = numbering_obj.run_dataframe(df, "id", "seq", return_join=True)
-    assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
+    # numbering_results = numbering_obj.run_dataframe(df, "id", "seq", return_join=True)
+    # assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
 
 
 def test_numbering_seqs():

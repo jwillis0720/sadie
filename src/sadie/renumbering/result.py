@@ -37,9 +37,9 @@ class NumberingResults(pd.DataFrame):
         for index in range(len(self)):
             all_dataframes.append(self._pivot_alignment(self.iloc[index]))
         all_dataframes = pd.concat(all_dataframes)
-        all_dataframes = all_dataframes.sort_index(axis=1, level=[0, 1])
         all_dataframes.columns = list(map(lambda x: str(x[0]) + x[1], all_dataframes.columns.values))
         all_dataframes = all_dataframes.reset_index()
+
         return self[["Id", "chain_type", "scheme"]].merge(all_dataframes, on="Id").copy()
 
     def _get_region(self, row, start, end, segment_name):

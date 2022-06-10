@@ -400,6 +400,7 @@ class NumberingFixtures:
         self.base_datadir = base_datadir
         self.tmp_path = tmp_path
         self.numbering_data = self.base_datadir / "anarci/curated_alignments"
+        self.alignment_data = self.base_datadir / "anarci/alignments"
         self.hmm_data = self.base_datadir.parent.parent.parent / "src/sadie/renumbering/data/hmms"
 
 

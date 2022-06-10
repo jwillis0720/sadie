@@ -302,6 +302,7 @@ class Renumbering:
             prioritize_cached_hmm=self.prioritize_cached_hmm,
             for_numbering=True,
         )
+
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Modify alignments in-place
         self.hmmer.check_for_j(
@@ -344,7 +345,7 @@ class Renumbering:
             logger.warning(
                 f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated"
             )
-            numbering_results = numbering_results.sort_values("score").groupby("Id").head(1)
+            numbering_results = numbering_results.sort_values("score", ascending=False).groupby("Id").head(1)
 
         # segment the region
         # numbering_results = numbering_results.add_segment_regions()
@@ -501,4 +502,4 @@ class Renumbering:
         else:
             seqs = list(SeqIO.parse(file, "fasta"))
 
-        return self.run_multiple(seqs)
+        return self.run_multiple(seqs[:50])
