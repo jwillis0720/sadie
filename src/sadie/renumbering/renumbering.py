@@ -325,6 +325,7 @@ class Renumbering:
 
         _summary = self.numbering.parsed_output(sequences, _numbered, _alignment_details)
         numbering_results = pd.DataFrame(_summary)
+
         if numbering_results.empty:
             return NumberingResults()
 
@@ -502,4 +503,4 @@ class Renumbering:
         else:
             seqs = list(SeqIO.parse(file, "fasta"))
 
-        return self.run_multiple(seqs[:50])
+        return self.run_multiple(seqs)

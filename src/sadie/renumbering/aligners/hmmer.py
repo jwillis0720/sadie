@@ -297,6 +297,8 @@ class HMMER:
                     }
                 )
 
+        # print(results['G00159022_V05_P07_E02'])
+
         # Sort by bitscore and limit results
         best_results = []
         for query_id in results.keys():
@@ -338,6 +340,7 @@ class HMMER:
 
     def get_vector_state(
         self,
+        query: str,
         order: int,
         n: int,
         hmm_seq: str,
@@ -543,7 +546,7 @@ class HMMER:
         hmm_length = 128  # hardcoded since this is the length of the HMM for an antibody
 
         # print(n, hmm_length, hmm_start, hmm_end, query_start, query_end)
-        if n == 1 and query_end < len(query_seq) and (123 < hmm_end < hmm_length):  # Extend forwards
+        if n == 1 and query_end < query_length and (123 < hmm_end < hmm_length):  # Extend forwards
             # print(hmm_length, hmm_start, hmm_end, query_start, query_end)
             n_extend = min(hmm_length - hmm_end, query_length - query_end)
             query_seq += "8" * n_extend
@@ -556,6 +559,8 @@ class HMMER:
         all_reference_states = list(range(1, 129))
         hmm_step = hmm_start  # real world index starting at 1 to match HMMER output
         query_step = query_start  # pythonic index starting at 0
+
+        # print(len(hmm_seq), hmm_seq)
 
         for i in range(len(hmm_seq)):
             # HMM seq insertion

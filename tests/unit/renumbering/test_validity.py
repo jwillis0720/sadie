@@ -1,5 +1,7 @@
 import json
 
+import pandas as pd
+
 from sadie.renumbering import Renumbering
 
 
@@ -42,48 +44,24 @@ def test_alignments(fixture_setup):
 
 
 # TODO: the alignment changes with mutiple need to have a seperate ANARCI align to a complete fasta
-# def test_alignments_file(fixture_setup):
+def test_alignments_file(fixture_setup):
 
-#     renumbering_api = Renumbering(
-#         use_numbering_hmms=True,
-#         allowed_species=["alpaca", "human", "mouse", "pig", "rabbit", "rat", "rhesus"],
-#         run_multiproc=False
-#     )
+    anarci_table = pd.read_csv(fixture_setup.alignment_data / "anarci-ali-complete.csv")
+    anarci_table = anarci_table[anarci_table.domain_no == 0].iloc[:, [0, *list(range(13, len(anarci_table.columns)))]]
 
-#     with open(fixture_setup.alignment_data / "anarci-alignments.json") as f:
-#         alignments = json.load(f)
+    renumbering_api = Renumbering(
+        use_numbering_hmms=True,
+        allowed_species=["alpaca", "human", "mouse", "pig", "rabbit", "rat", "rhesus"],
+        run_multiproc=False,
+    )
 
-#     renumbering_results = renumbering_api.run_file(fixture_setup.alignment_data / "anarci-ali.fasta")
-#     # from IPython import embed; embed()
-#     # print(renumbering_results.get_alignment_table().head(1).to_dict('records'))
-#     renumbering_alignments_obj = renumbering_results.get_alignment_table().fillna('').drop(['chain_type', 'scheme'], axis=1).to_dict("records")
+    renumbering_results = renumbering_api.run_file(fixture_setup.alignment_data / "anarci-ali.fasta")
+    renumbering_table = renumbering_results.get_alignment_table()
+    renumbering_table = renumbering_table.iloc[:, [0, *list(range(3, len(renumbering_table.columns)))]]
 
-#     renumbering_alignments = {}
-#     for renumbering_align in renumbering_alignments_obj:
-#         seq_id = renumbering_align.pop('Id')
-#         renumbering_align = renumbering_align.items()
-#         renumbering_alignments[seq_id] = renumbering_align
+    anarci_table = anarci_table.sort_values("Id").reset_index(drop=True)
+    renumbering_table = renumbering_table.sort_values("Id").reset_index(drop=True)
 
-#     for seq_id, align_seq in alignments.items():
-#         anarci_align = align_seq['align']
-#         # seq = align_seq['seq']
-
-#         renumbering_align = renumbering_alignments.get(seq_id)
-#         # for debugging
-#         if not renumbering_align:
-#             continue
-
-#         print(seq_id)
-
-#         anarci_p = "".join([position for position, _ in anarci_align])
-#         anarci_s = "".join([seq for _, seq in anarci_align])
-
-#         renumber_p = "".join([position for position, _ in renumbering_align])
-#         renumber_s = "".join([seq for _, seq in renumbering_align])
-
-#         print(anarci_s)
-#         print(renumber_s)
-
-#         # dataframe will append '-' to the end of the sequence so we have to trim them off
-#         assert anarci_s == renumber_s[:len(anarci_s)]
-#         assert anarci_p == renumber_p[:len(anarci_p)]
+    pd.testing.assert_frame_equal(
+        anarci_table, renumbering_table, check_dtype=False, check_index_type=False, check_frame_type=False
+    )
