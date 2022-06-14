@@ -1,5 +1,6 @@
 import json
 
+from Bio import SeqIO
 import pandas as pd
 
 from sadie.renumbering import Renumbering
@@ -12,12 +13,14 @@ def test_alignments(fixture_setup):
         allowed_species=["alpaca", "human", "mouse", "pig", "rabbit", "rat", "rhesus"],
     )
 
-    with open(fixture_setup.alignment_data / "anarci-alignments.json") as f:
-        alignments = json.load(f)
+    with open(fixture_setup.alignment_data / "catnap_aa_heavy_sample_mutually-exclusive.json") as f:
+        anarci_alignments = json.load(f)
 
-    for _seq_id, align_seq in alignments.items():
-        anarci_align = align_seq["align"]
-        seq = align_seq["seq"]
+    for seqrecord in SeqIO.parse(fixture_setup.fasta_inputs / "catnap_aa_heavy_sample.fasta", format='fasta'):
+        seq_id = seqrecord.id
+        seq = str(seqrecord.seq)
+
+        anarci_align = anarci_alignments[seq_id]
 
         renumber_align = [
             list(v)
@@ -46,7 +49,8 @@ def test_alignments(fixture_setup):
 # TODO: the alignment changes with mutiple need to have a seperate ANARCI align to a complete fasta
 def test_alignments_file(fixture_setup):
 
-    anarci_table = pd.read_csv(fixture_setup.alignment_data / "anarci-ali-complete.csv")
+    anarci_table = pd.read_csv(fixture_setup.alignment_data / "catnap_aa_heave_sample_H.csv")
+    anarci_table['Id'] = anarci_table['Id'].str.replace('<unknown description>', '').str.strip()
     anarci_table = anarci_table[anarci_table.domain_no == 0].iloc[:, [0, *list(range(13, len(anarci_table.columns)))]]
 
     renumbering_api = Renumbering(
@@ -55,7 +59,7 @@ def test_alignments_file(fixture_setup):
         run_multiproc=False,
     )
 
-    renumbering_results = renumbering_api.run_file(fixture_setup.alignment_data / "anarci-ali.fasta")
+    renumbering_results = renumbering_api.run_file(fixture_setup.fasta_inputs / "catnap_aa_heavy_sample.fasta")
     renumbering_table = renumbering_results.get_alignment_table()
     renumbering_table = renumbering_table.iloc[:, [0, *list(range(3, len(renumbering_table.columns)))]]
 
