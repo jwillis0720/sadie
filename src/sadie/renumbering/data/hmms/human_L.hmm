@@ -7,15 +7,15 @@ MM    no
 CONS  yes
 CS    no
 MAP   yes
-DATE  Fri May 13 20:29:33 2022
-COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest -sv tests/unit/airr/test_airr.py::test_mutational_analysis
+DATE  Mon Jun 13 17:23:30 2022
+COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest -sv tests/unit/
 NSEQ  750
 EFFN  1.078606
 CKSUM 1772094465
 STATS LOCAL MSV      -10.3142  0.71224
 STATS LOCAL VITERBI  -11.0733  0.71224
 STATS LOCAL FORWARD   -4.1267  0.71224
-HMM          A        C        D        E        F        G        H        I        K        L        M        N        P        Q        R        S        T        V        W        Y
+HMM          A        C        D        E        F        G        H        I        K        L        M        N        P        Q        R        S        T        V        W        Y   
             m->m     m->i     m->d     i->m     i->i     d->m     d->d
   COMPO   2.55270  3.86688  2.99289  2.76109  3.44355  2.62621  3.87699  2.97453  2.79966  2.55613  3.85272  3.19589  3.28081  2.91094  3.05708  2.42097  2.70659  2.68158  4.37565  3.33870
           2.68618  4.42225  2.77519  2.73123  3.46354  2.40513  3.72494  3.29354  2.67741  2.69355  4.24690  2.90347  2.73739  3.18146  2.89801  2.37887  2.77519  2.98518  4.58477  3.61503

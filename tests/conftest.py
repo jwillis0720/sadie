@@ -179,7 +179,7 @@ class AirrSequences:
 
     def get_dog_aa_seqs(self) -> Path:
         "A fasta file path containing random canine AA sequences"
-        return self.fasta_inputs / "random_dog_contigs_aa.fasta"
+        return self.fasta_inputs / "random_dog_contigs_aa.fasta.gz"
 
     def get_fasta_files(self) -> List[Path]:
         """Get a list of different fasta files for CLI testing. scfv, pg9_h, pg9_h_multi, pg9_l, pg9_l_multi"""
@@ -399,7 +399,9 @@ class NumberingFixtures:
     def __init__(self, tmp_path: Path, base_datadir: Path):
         self.base_datadir = base_datadir
         self.tmp_path = tmp_path
-        self.numbering_data = self.base_datadir / "Numbering/curated_alignments"
+        self.numbering_data = self.base_datadir / "anarci/curated_alignments"
+        self.alignment_data = self.base_datadir / "anarci/alignments"
+        self.hmm_data = self.base_datadir.parent.parent.parent / "src/sadie/renumbering/data/hmms"
 
 
 class SadieFixture(AirrSequences, AirrTables, ReferenceFixtures, NumberingFixtures):

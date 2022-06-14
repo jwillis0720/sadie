@@ -1,11 +1,8 @@
 """Unit tests for analysis interface."""
-from itertools import product
 import os
 import platform
 import shutil
 from pathlib import Path
-import tempfile
-from typing import List
 
 import pandas as pd
 import pytest
@@ -21,8 +18,6 @@ from sadie.airr import methods as airr_methods
 from sadie.reference import Reference
 from sadie.reference.reference import References
 from tests.conftest import SadieFixture
-from sadie.app import airr as sadie_airr
-from click.testing import CliRunner
 
 
 def test_germline_init() -> None:
@@ -592,57 +587,3 @@ def test_airr_series(fixture_setup: SadieFixture):
     assert isinstance(series, AirrSeries)
     table = AirrTable([series, series])
     assert isinstance(table, AirrTable)
-
-
-def _run_cli(args: List[str], tmpfile: str) -> bool:
-    runner = CliRunner(echo_stdin=True)
-    result = runner.invoke(sadie_airr, args)
-    if result.exit_code != 0:
-        print(f"Exception - {result.exception.__str__()}")
-        print(f"{args} produces error")
-    assert result.exit_code == 0
-    assert os.path.exists(tmpfile)
-    return True
-
-
-def test_cli(caplog: pytest.LogCaptureFixture, fixture_setup: SadieFixture) -> None:
-    """Confirm the CLI works as expecte"""
-
-    # we need this fixture because... well i don't know
-    # https://github.com/pallets/click/issues/824
-    caplog.set_level(200000)
-    # IMGT DB
-    queries = fixture_setup.get_fasta_files()
-    species = ["rat", "human", "mouse", "macaque", "se09"]
-    products = product(species, queries)
-
-    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
-        # run 1 with mutational analysis
-        cli_input = [
-            "-v",
-            "--name",
-            "human",
-            str(fixture_setup.get_pg9_heavy_fasta()),
-            tmpfile.name,
-        ]
-        print(f"CLI input {' '.join(cli_input)}")
-        test_success = _run_cli(cli_input, tmpfile.name)
-        assert test_success
-
-        for p_tuple in products:
-            cli_input = [
-                "-v",
-                "--name",
-                p_tuple[0],
-                str(p_tuple[1]),
-                tmpfile.name,
-                "--skip-mutation",
-            ]
-            print(f"CLI input {' '.join(cli_input)}")
-            test_success = _run_cli(cli_input, tmpfile.name)
-            assert test_success
-
-
-def test_edge_cases(fixture_setup: SadieFixture):
-    airr_api = Airr("macaque", adaptable=False)
-    airr_api.run_single("bad_seq", fixture_setup.get_monkey_edge_seq())

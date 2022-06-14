@@ -3,7 +3,12 @@ import re
 from sadie.renumbering.clients import G3
 
 
-def test_g3_hmm(fixture_setup):
+def test_sources():
+    g3 = G3()
+    assert g3.sources == ["custom", "imgt"]
+
+
+def test_stockholm_pairs(fixture_setup):
     g3 = G3()
 
     species_list = [
@@ -23,11 +28,7 @@ def test_g3_hmm(fixture_setup):
     for species in species_list:
         for chain in chains:
 
-            try:
-                stockholm_pairs = g3.get_stockholm_pairs(species=species, chain=chain)
-            except ValueError:
-                print(f"G3 cannot find this species/chain, {species} {chain}")
-                continue
+            stockholm_pairs = g3.get_stockholm_pairs(species=species, chain=chain)
 
             print(f"{species} {chain}")
 

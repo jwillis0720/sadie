@@ -80,8 +80,6 @@ class HMMER:
                         limit=None,
                         prioritize_cached_hmm=prioritize_cached_hmm,
                     )
-                    if not hmm:
-                        continue
                     hmms.append(hmm)
 
         return hmms
@@ -177,7 +175,10 @@ class HMMER:
             if isinstance(seq_obj, SeqRecord):
                 sequences.append(self.__digitize_seq(name=seq_obj.id, seq=seq_obj.seq))
                 continue
-
+            if isinstance(seq_obj, tuple):
+                seq_id, seq = seq_obj
+                sequences.append(self.__digitize_seq(name=seq_id, seq=seq))
+                continue
             raise ValueError(f"seq_obj {seq_obj} is not a valid sequence or path")
 
         if not sequences:
@@ -250,9 +251,11 @@ class HMMER:
         List[List[Dict[str, Union[str, int]]]]
             List of HMMER hits for NUMBERING numbering.
         """
-
         # Convert sequences to Easel sequences
         sequences = self.__transform_seq(sequences)
+
+        # Multiprocessing might scramble actual seq from order
+        seq_name_2_seq = {seq.name.decode(): seq.textize().sequence for seq in sequences}
         # Load Models by species
         hmms = self.get_hmm_models(
             species=species, chains=chains, source=source, prioritize_cached_hmm=prioritize_cached_hmm
@@ -261,8 +264,8 @@ class HMMER:
         # Maintain order of sequences since pyhmmer is async
         results = {seq.name.decode(): [] for seq in sequences}
 
-        for top_hits in pyhmmer.hmmsearch(hmms, sequences):
-            for hit in top_hits:
+        for top_hits in pyhmmer.hmmsearch(hmms, sequences, cpus=10):
+            for _i, hit in enumerate(top_hits):
 
                 domain = hit.best_domain
                 ali = hit.best_domain.alignment
@@ -272,9 +275,13 @@ class HMMER:
 
                 results[hit.name.decode()].append(
                     {
+                        "order": 0,  # best domain always has order 0
+                        # "order": _i,  # no need for it unless we allow multiple domain hits
+                        "n": len(hit.domains),
                         "query": hit.name.decode(),
+                        "query_length": len(seq_name_2_seq[hit.name.decode()]),
                         "hmm_seq": ali.hmm_sequence,
-                        "hmm_start": ali.hmm_from,  # hmm seq starts with 1 and not 0
+                        "hmm_start": ali.hmm_from - 1,  # hmm seq starts with 1 and not 0
                         "hmm_end": ali.hmm_to,
                         "id": ali.hmm_name.decode(),
                         "description": hit.description or "",
@@ -282,13 +289,14 @@ class HMMER:
                         # "bitscore": round(hit.score, 1),  # TODO: numbering doesnt use hit score, but domain score; maybe use this as an option later?
                         "bitscore": round(domain.score, 1),
                         "bias": round(hit.bias, 1),
-                        "query_seq": ali.target_sequence,
+                        "query_seq": ali.target_sequence.upper(),
                         "query_start": ali.target_from - 1,  # target seq starts on pythonic index
                         "query_end": ali.target_to,
                         "species": ali.hmm_name.decode().split("_")[0],
                         "chain_type": ali.hmm_name.decode().split("_")[1],
                     }
                 )
+
         # Sort by bitscore and limit results
         best_results = []
         for query_id in results.keys():
@@ -309,6 +317,7 @@ class HMMER:
                 "chain_type",
             ]
             # we want to keep every empty results as well for Numbering
+            # TODO: this is per sequence so in the future we would want to expand this to no limit once the check_for_j is rooted out.
             best_results = [
                 result[0] if result else None for result in best_results
             ]  # Numbering only expects best result per query
@@ -329,8 +338,12 @@ class HMMER:
 
     def get_vector_state(
         self,
+        query: str,
+        order: int,
+        n: int,
         hmm_seq: str,
         query_seq: str,
+        query_length: int,
         hmm_start: Optional[int] = None,
         hmm_end: Optional[int] = None,
         query_start: Optional[int] = None,
@@ -509,7 +522,7 @@ class HMMER:
 
         # Allowing the user simple numbering if they already have alignments
         if hmm_start is None:
-            hmm_start = 1
+            hmm_start = 0
         if hmm_end is None:
             hmm_end = len(hmm_seq) - hmm_seq.count(".")
         if query_start is None:
@@ -517,23 +530,42 @@ class HMMER:
         if query_end is None:
             query_end = len(query_seq) - query_seq.count("-")
 
+        if (order == 0) and (0 < hmm_start < 5):
+            n_extend = hmm_start
+            if hmm_start > query_start:
+                n_extend = min(query_start, hmm_start - query_start)
+            query_seq = "8" * n_extend + query_seq
+            hmm_seq = "x" * n_extend + hmm_seq
+            query_start -= n_extend
+            hmm_start -= n_extend
+
+        hmm_length = 128  # hardcoded since this is the length of the HMM for an antibody
+
+        if n == 1 and query_end < query_length and (123 < hmm_end < hmm_length):  # Extend forwards
+            n_extend = min(hmm_length - hmm_end, query_length - query_end)
+            query_seq += "8" * n_extend
+            hmm_seq += "x" * n_extend
+            query_end += n_extend
+            hmm_end += n_extend
+
         vector_state = []
 
+        all_reference_states = list(range(1, 129))
         hmm_step = hmm_start  # real world index starting at 1 to match HMMER output
         query_step = query_start  # pythonic index starting at 0
 
         for i in range(len(hmm_seq)):
             # HMM seq insertion
             if hmm_seq[i] == ".":
-                vector_state.append(((hmm_step, "i"), query_step))
+                vector_state.append(((all_reference_states[hmm_step], "i"), query_step))
                 query_step += 1
             # Query seq deletion
             elif query_seq[i] == "-":
-                vector_state.append(((hmm_step, "d"), None))
+                vector_state.append(((all_reference_states[hmm_step], "d"), None))
                 hmm_step += 1
             # match or accepted missmatch
             else:
-                vector_state.append(((hmm_step, "m"), query_step))
+                vector_state.append(((all_reference_states[hmm_step], "m"), query_step))
                 hmm_step += 1
                 query_step += 1
 
@@ -576,13 +608,13 @@ class HMMER:
                             cys_ai = ali.index(((104, "m"), cys_si))
 
                             # Try to identify a J region in the remaining sequence after the 104. A low bit score threshold is used.
-                            # print([(sequences[i][0], sequences[i][1][cys_si + 1 :])])
                             _, re_states, re_details = self.hmmsearch(
                                 sequences=[(sequences[i][0], sequences[i][1][cys_si + 1 :])],
                                 species=species,
                                 chains=chains,
                                 bit_score_threshold=10,
                                 prioritize_cached_hmm=prioritize_cached_hmm,
+                                for_numbering=True,
                             )[0]
 
                             # Check if a J region was detected in the remaining sequence.
