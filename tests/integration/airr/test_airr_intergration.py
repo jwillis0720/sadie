@@ -1,23 +1,15 @@
-import tempfile
-import os
 from distutils.version import StrictVersion
-from itertools import product
 from math import nan
-from typing import List
 
 import pandas as pd
-from click.testing import CliRunner
 from sadie.airr import Airr, AirrTable
 from sadie.airr.airrtable import constants
-from sadie.app import airr as sadie_airr
 from tests.conftest import SadieFixture
-import pytest
 
 
 def fillna(df, fill_value=""):
     """
     Replace null values with `fill_value`.
-
     Also replaces in categorical columns.
     """
     for col in df.dtypes[df.dtypes == "category"].index:
@@ -95,11 +87,9 @@ check_these = [
 
 def _make_sadie_comparable(df):
     """Takes sadie df and makes it comparable wiht IMGT
-
     Parameters
     ----------
     df : AirrTable
-
     Returns
     -------
     pd.DataFrame
@@ -142,11 +132,9 @@ def _make_sadie_comparable(df):
 def _make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
 
     """Takes Hi-Vquest and return a compariable dataframe
-
     Parameters
     ----------
     df : pd.Dataframe
-
     Returns
     -------
     pd.Dataframe
@@ -292,59 +280,5 @@ def test_catnap_integration(fixture_setup: SadieFixture) -> None:
     diffs = catnap_heavy.columns.symmetric_difference(heavy_at.columns)
     if not diffs.empty:
         raise AssertionError(f"Heavy table has the following different columns {diffs}")
-    pd.testing.assert_frame_equal(light_at, catnap_light, check_dtype=False, rtol=0.5)
-    pd.testing.assert_frame_equal(heavy_at, catnap_heavy, check_dtype=False, rtol=0.5)
-
-
-def _run_cli(args: List[str], tmpfile):
-    runner = CliRunner(echo_stdin=True)
-    result = runner.invoke(sadie_airr, args)
-    if result.exit_code != 0:
-        print(f"Exception - {result.exception.__str__()}")
-        print(f"{args} produces error")
-    assert result.exit_code == 0
-    assert os.path.exists(tmpfile.name)
-    return True
-
-
-def test_cli(caplog: pytest.LogCaptureFixture, fixture_setup: SadieFixture) -> None:
-    """Confirm the CLI works as expecte"""
-
-    # we need this fixture because... well i don't know
-    # https://github.com/pallets/click/issues/824
-    caplog.set_level(200000)
-    # IMGT DB
-    queries = fixture_setup.get_fasta_files()
-    species = ["rat", "human", "mouse", "macaque", "se09"]
-    products = product(species, queries)
-
-    with tempfile.NamedTemporaryFile(suffix=".csv") as tmpfile:
-        # run 1 with mutational analysis
-        cli_input = [
-            "-v",
-            "--name",
-            "human",
-            str(fixture_setup.get_pg9_heavy_fasta()),
-            tmpfile.name,
-        ]
-        print(f"CLI input {' '.join(cli_input)}")
-        test_success = _run_cli(cli_input, tmpfile)
-        assert test_success
-
-        for p_tuple in products:
-            cli_input = [
-                "-v",
-                "--name",
-                p_tuple[0],
-                str(p_tuple[1]),
-                tmpfile.name,
-                "--skip-mutation",
-            ]
-            print(f"CLI input {' '.join(cli_input)}")
-            test_success = _run_cli(cli_input, tmpfile)
-            assert test_success
-
-
-def test_edge_cases(fixture_setup: SadieFixture):
-    airr_api = Airr("macaque", adaptable=False)
-    airr_api.run_single("bad_seq", fixture_setup.get_monkey_edge_seq())
+    pd.testing.assert_frame_equal(light_at, catnap_light, check_dtype=False, rtol=0.15)
+    pd.testing.assert_frame_equal(heavy_at, catnap_heavy, check_dtype=False, rtol=0.15)

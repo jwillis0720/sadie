@@ -11,6 +11,7 @@ from Levenshtein._levenshtein import distance
 from numpy import nan
 from Bio import SeqRecord, SeqIO
 from Bio.Seq import Seq
+import numpy as np
 
 # module/package
 from sadie.airr.airrtable.constants import IGBLAST_AIRR
@@ -383,7 +384,9 @@ class AirrTable(pd.DataFrame):
                 ].apply(lambda x: self._get_aa_distance(x), axis=1)
 
                 # do the same for D and J gene segment portions
-                self.loc[:, f"d_mutation{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: (1 - x))
+                self.loc[:, f"d_mutation{suffix}"] = self[f"d_identity{suffix}"].apply(
+                    lambda x: (1 - x) if x else np.nan
+                )
                 # self.loc[:, f"d_identity{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: x / 100)
 
                 self.loc[:, f"d_mutation_aa{suffix}"] = self[
@@ -417,7 +420,7 @@ class AirrTable(pd.DataFrame):
             )
 
             # do the same for D and J gene segment portions
-            self.loc[:, "d_mutation"] = self["d_identity"].apply(lambda x: (1 - x))
+            self.loc[:, "d_mutation"] = self["d_identity"].apply(lambda x: (1 - x) if x else np.nan)
             # self.loc[:, "d_identity"] = self["d_identity"].apply(lambda x: x / 100)
             self.loc[:, "d_mutation_aa"] = self[["d_sequence_alignment_aa", "d_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
@@ -437,7 +440,7 @@ class AirrTable(pd.DataFrame):
             return nan
         d: int = distance(first, second)
         max_len: int = max(len(first), len(second))
-        a: float = float(d / max_len) * 100.0
+        a: float = float(d / max_len)
         return a
 
     def _set_boolean(self, columns: List[str]) -> None:

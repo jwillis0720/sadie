@@ -38,6 +38,8 @@ def test_cluster_with_somatic_pad(fixture_setup):
     cluster_api = Cluster(joined_airrtable, pad_somatic=True)
     cluster_df_with_pad = cluster_api.cluster(5)
     assert len(cluster_df_with_pad[cluster_df_with_pad["cellid"].str.startswith("CH0")]["cluster"].unique()) == 1
-    # cluster_df_with_pad.merge(
-    # cluster_df_ithout[["cellid", "cluster"]], on="cellid", suffixes=["_with_pad", "_without_pad"]
-    # ).to_excel("cluster.xlsx")
+
+    # test somatic pad with v_gene_only
+    cluster_api = Cluster(joined_airrtable, pad_somatic=True, include_only_v_gene=True)
+    cluster_df_with_pad = cluster_api.cluster(5)
+    assert len(cluster_df_with_pad[cluster_df_with_pad["cellid"].str.startswith("CH0")]["cluster"].unique()) == 1
