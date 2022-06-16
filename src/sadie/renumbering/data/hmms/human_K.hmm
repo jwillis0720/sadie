@@ -7,8 +7,8 @@ MM    no
 CONS  yes
 CS    no
 MAP   yes
-DATE  Fri May 13 20:29:29 2022
-COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest -sv tests/unit/airr/test_airr.py::test_mutational_analysis
+DATE  Mon Jun 13 17:23:30 2022
+COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest -sv tests/unit/
 NSEQ  522
 EFFN  0.800491
 CKSUM 2145771981

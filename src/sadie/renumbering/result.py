@@ -37,9 +37,9 @@ class NumberingResults(pd.DataFrame):
         for index in range(len(self)):
             all_dataframes.append(self._pivot_alignment(self.iloc[index]))
         all_dataframes = pd.concat(all_dataframes)
-        all_dataframes = all_dataframes.sort_index(axis=1, level=[0, 1])
         all_dataframes.columns = list(map(lambda x: str(x[0]) + x[1], all_dataframes.columns.values))
         all_dataframes = all_dataframes.reset_index()
+
         return self[["Id", "chain_type", "scheme"]].merge(all_dataframes, on="Id").copy()
 
     def _get_region(self, row, start, end, segment_name):
@@ -127,9 +127,9 @@ class NumberingResults(pd.DataFrame):
         )
         return pivoted_df
 
-    def get_sanatized_antibodies(self):
-        # drop sequences that don't start at the first amino acid and dont end at the last amino acid.
-        return self[(self["seqstart_index"] == 0) & (self["seqend_index"] == self["sequence"].str.len() - 1)]
+    # def get_sanatized_antibodies(self):
+    #     # drop sequences that don't start at the first amino acid and dont end at the last amino acid.
+    #     return self[(self["seqstart_index"] == 0) & (self["seqend_index"] == self["sequence"].str.len() - 1)]
 
     @staticmethod
     def read_csv(*args, **kwargs):
@@ -143,5 +143,5 @@ class NumberingResults(pd.DataFrame):
             )
         )
 
-    def drop_bad_numbering(self) -> "NumberingResults":
-        return self[(self["seqstart_index"] == 0) & (self["seqend_index"] == self["sequence"].str.len() - 1)]
+    # def drop_bad_numbering(self) -> "NumberingResults":
+    #     return self[(self["seqstart_index"] == 0) & (self["seqend_index"] == self["sequence"].str.len() - 1)]

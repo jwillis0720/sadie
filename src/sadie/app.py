@@ -137,9 +137,16 @@ def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> L
 @click.option(
     "--query",
     "-q",
-    required=True,
+    required=False,
     type=click.Path(exists=True, file_okay=True, readable=True, resolve_path=True),
     help="""The input file can be compressed or uncompressed file of fasta""",
+)
+@click.option(
+    "--seq",
+    "-i",
+    required=False,
+    type=str,
+    help="""The input seq""",
 )
 @click.option(
     "--scheme",
@@ -199,6 +206,7 @@ def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> L
 def renumbering(
     verbose: bool,
     query: Path,
+    seq: str,
     scheme: str,
     region: str,
     allowed_species: List[str],
@@ -226,11 +234,14 @@ def renumbering(
         allowed_chain=allowed_chains,
         allowed_species=allowed_species,
         prioritize_cached_hmm=True,
-        use_numbering_hmms=False,
+        use_numbering_hmms=True,
     )
 
     # # run file on query
-    renumbering_results = renumbering_api.run_file(query)
+    if query is not None:
+        renumbering_results = renumbering_api.run_file(query)
+    else:
+        renumbering_results = renumbering_api.run_single(seq_id="0", seq=seq)
 
     # deal with output
     # if no output file, name after input
@@ -239,7 +250,7 @@ def renumbering(
         segment_out = str(out.stem) + "_renumbering_results" + str(out.suffix)
         align_out = str(out.stem) + "_numbering_alignment" + str(out.suffix)
     else:
-        input_path = Path(query)
+        input_path = Path(query) if query else Path("query")
         if compress and file_format.lower() != "feather":
             # feather can't be compressed
             compress = "." + compress

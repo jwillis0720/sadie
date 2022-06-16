@@ -10,7 +10,6 @@ from tests.conftest import SadieFixture
 def fillna(df, fill_value=""):
     """
     Replace null values with `fill_value`.
-
     Also replaces in categorical columns.
     """
     for col in df.dtypes[df.dtypes == "category"].index:
@@ -88,11 +87,9 @@ check_these = [
 
 def _make_sadie_comparable(df):
     """Takes sadie df and makes it comparable wiht IMGT
-
     Parameters
     ----------
     df : AirrTable
-
     Returns
     -------
     pd.DataFrame
@@ -135,11 +132,9 @@ def _make_sadie_comparable(df):
 def _make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
 
     """Takes Hi-Vquest and return a compariable dataframe
-
     Parameters
     ----------
     df : pd.Dataframe
-
     Returns
     -------
     pd.Dataframe
