@@ -1,17 +1,55 @@
 import tempfile
 
-from pyinstrument import Profiler
+# from pyinstrument import Profiler
 import pandas as pd
 import pytest
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pandas.testing import assert_frame_equal
-from sadie.renumbering import Renumbering, NumberingDuplicateIdError, NumberingResults
+from sadie.renumbering import Renumbering, NumberingDuplicateIdError, NumberingResults, BadNumberingArgument
 from sadie.numbering.schemes import number_imgt
 from sadie.numbering import Numbering
 
 USE_CACHE = True  # TODO: make this an option in the config
+
+
+def test_long_seq_from_src():
+    renumbering_api = Renumbering(
+        scheme="chothia", region_assign="imgt", prioritize_cached_hmm=False, run_multiproc=True
+    )
+    renumbering_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
+    renumbering_api = Renumbering(
+        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=False
+    )
+    renumbering_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
+
+
+def test_long_seq_from_empty_src(fixture_setup):
+    # Delete human hmm to force it rebuild
+    hmms_folder = fixture_setup.hmm_data
+    (hmms_folder / "human_H.hmm").unlink(missing_ok=False)
+
+    renumbering_api = Renumbering(
+        scheme="chothia", region_assign="imgt", prioritize_cached_hmm=True, run_multiproc=True
+    )
+    renumbering_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
+    renumbering_api = Renumbering(
+        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=True
+    )
+    renumbering_api.run_single(
+        "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+        "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+    )
 
 
 def test_long_seq():
@@ -152,14 +190,36 @@ def test_numbering_multi_input():
 
 def test_io(fixture_setup):
     """Test file io"""
-    main_file = fixture_setup.get_dog_aa_seqs()
-    renumbering_api = Renumbering(allowed_species=["dog", "cat"], prioritize_cached_hmm=USE_CACHE)
-    results = renumbering_api.run_file(main_file)
-    assert isinstance(results, NumberingResults)
-    with tempfile.NamedTemporaryFile(suffix=".numbering.bz2") as temp:
-        results.to_csv(temp.name)
-        other_results = NumberingResults.read_csv(temp.name).fillna("")
-        assert_frame_equal(other_results, results)
+    dog_file = fixture_setup.get_dog_aa_seqs()
+    cat_file = fixture_setup.get_catnap_heavy_aa()
+    fake_file = "fakefile.fasta"
+    for file in [cat_file, dog_file]:
+        for scheme in ["imgt", "chothia", "kabat", "martin", "aho"]:
+            for region in ["imgt", "chothia", "kabat"]:
+                if scheme in ["martin", "aho"]:
+                    with pytest.raises(BadNumberingArgument):
+                        renumbering_api = Renumbering(
+                            allowed_species=["human", "dog", "cat"],
+                            prioritize_cached_hmm=USE_CACHE,
+                            scheme=scheme,
+                            region_assign=region,
+                        )
+                    continue
+                renumbering_api = Renumbering(
+                    allowed_species=["human", "dog", "cat"],
+                    prioritize_cached_hmm=USE_CACHE,
+                    scheme=scheme,
+                    region_assign=region,
+                )
+                results = renumbering_api.run_file(file)
+                assert isinstance(results, NumberingResults)
+                with tempfile.NamedTemporaryFile(suffix=".numbering.bz2") as temp:
+                    results.to_csv(temp.name)
+                    other_results = NumberingResults.read_csv(temp.name).fillna("")
+                    assert_frame_equal(other_results, results)
+
+    with pytest.raises(FileNotFoundError):
+        renumbering_api.run_file(fake_file)
 
 
 def test_dog():
@@ -243,6 +303,38 @@ def test_duplicated_seq():
         renumbering_api.run_multiple(seq_records)
 
 
+def test_bad_species(fixture_setup):
+    with pytest.raises(BadNumberingArgument):
+        Renumbering(allowed_species=["bad_species"])
+
+
+def test_good_species(fixture_setup):
+    allowed_species = [
+        "human",
+        "mouse",
+        "rat",
+        "rabbit",
+        "rhesus",
+        "pig",
+        "alpaca",
+        "dog",
+        "cat",
+    ]
+    for species in allowed_species:
+        Renumbering(allowed_species=[species])
+
+
+def test_bad_chain(fixture_setup):
+    with pytest.raises(BadNumberingArgument):
+        Renumbering(allowed_chain=["X"])
+
+
+def test_good_chain(fixture_setup):
+    allowed_chain = ["H", "K", "L", "A", "B", "G", "D"]
+    for chain in allowed_chain:
+        Renumbering(allowed_chain=[chain])
+
+
 def test_df(fixture_setup):
     test_file_heavy = fixture_setup.get_catnap_heavy_aa()
     df = pd.DataFrame(
@@ -251,6 +343,8 @@ def test_df(fixture_setup):
     numbering_obj = Renumbering(prioritize_cached_hmm=USE_CACHE)
     numbering_results = numbering_obj.run_dataframe(df, "id", "seq")
     assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
+    # numbering_results = numbering_obj.run_dataframe(df, "id", "seq", return_join=True)
+    # assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
 
 
 def test_numbering_seqs():
@@ -878,60 +972,60 @@ def test_imgt():
     print(number_imgt(state_vector, sequence))
 
 
-def benchmark_numbering_multi_on():
-    renumbering_api = Renumbering(run_multiproc=True)
-    seq_records = []
-    [
-        seq_records.extend(
-            [
-                SeqRecord(
-                    Seq(
-                        "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
-                    ),
-                    id=f"DupulimabH{i}",
-                ),
-                SeqRecord(
-                    Seq(
-                        "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
-                    ),
-                    id=f"DupulimabL{i}",
-                ),
-            ]
-        )
-        for i in range(500)
-    ]
-    _ = renumbering_api.run_multiple(seq_records)
+# def benchmark_numbering_multi_on():
+#     renumbering_api = Renumbering(run_multiproc=True)
+#     seq_records = []
+#     [
+#         seq_records.extend(
+#             [
+#                 SeqRecord(
+#                     Seq(
+#                         "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
+#                     ),
+#                     id=f"DupulimabH{i}",
+#                 ),
+#                 SeqRecord(
+#                     Seq(
+#                         "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
+#                     ),
+#                     id=f"DupulimabL{i}",
+#                 ),
+#             ]
+#         )
+#         for i in range(500)
+#     ]
+#     _ = renumbering_api.run_multiple(seq_records)
 
 
-def benchmark_numbering_multi_off():
-    renumbering_api = Renumbering(run_multiproc=False)
-    seq_records = []
-    [
-        seq_records.extend(
-            [
-                SeqRecord(
-                    Seq(
-                        "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
-                    ),
-                    id=f"DupulimabH{i}",
-                ),
-                SeqRecord(
-                    Seq(
-                        "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
-                    ),
-                    id=f"DupulimabL{i}",
-                ),
-            ]
-        )
-        for i in range(500)
-    ]
-    _ = renumbering_api.run_multiple(seq_records)
+# def benchmark_numbering_multi_off():
+#     renumbering_api = Renumbering(run_multiproc=False)
+#     seq_records = []
+#     [
+#         seq_records.extend(
+#             [
+#                 SeqRecord(
+#                     Seq(
+#                         "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS"
+#                     ),
+#                     id=f"DupulimabH{i}",
+#                 ),
+#                 SeqRecord(
+#                     Seq(
+#                         "DIVMTQSPLSLPVTPGEPASISCRSSQSLLYSIGYNYLDWYLQKSGQSPQLLIYLGSNRASGVPDRFSGSGSGTDFTLKISRVEAEDVGFYYCMQALQTPYTFGQGTKLEIK"
+#                     ),
+#                     id=f"DupulimabL{i}",
+#                 ),
+#             ]
+#         )
+#         for i in range(500)
+#     ]
+#     _ = renumbering_api.run_multiple(seq_records)
 
 
-if __name__ == "__main__":
-    for f in [benchmark_numbering_multi_on, benchmark_numbering_multi_off]:
-        profiler = Profiler()
-        profiler.start()
-        f()
-        profiler.stop()
-        profiler.print(show_all=True)
+# if __name__ == "__main__":
+#     for f in [benchmark_numbering_multi_on, benchmark_numbering_multi_off]:
+#         profiler = Profiler()
+#         profiler.start()
+#         f()
+#         profiler.stop()
+#         profiler.print(show_all=True)

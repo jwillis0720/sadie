@@ -10,7 +10,6 @@ from tests.conftest import SadieFixture
 def fillna(df, fill_value=""):
     """
     Replace null values with `fill_value`.
-
     Also replaces in categorical columns.
     """
     for col in df.dtypes[df.dtypes == "category"].index:
@@ -88,11 +87,9 @@ check_these = [
 
 def _make_sadie_comparable(df):
     """Takes sadie df and makes it comparable wiht IMGT
-
     Parameters
     ----------
     df : AirrTable
-
     Returns
     -------
     pd.DataFrame
@@ -135,11 +132,9 @@ def _make_sadie_comparable(df):
 def _make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
 
     """Takes Hi-Vquest and return a compariable dataframe
-
     Parameters
     ----------
     df : pd.Dataframe
-
     Returns
     -------
     pd.Dataframe
@@ -285,5 +280,5 @@ def test_catnap_integration(fixture_setup: SadieFixture) -> None:
     diffs = catnap_heavy.columns.symmetric_difference(heavy_at.columns)
     if not diffs.empty:
         raise AssertionError(f"Heavy table has the following different columns {diffs}")
-    pd.testing.assert_frame_equal(light_at, catnap_light, check_dtype=False, rtol=0.5)
-    pd.testing.assert_frame_equal(heavy_at, catnap_heavy, check_dtype=False, rtol=0.5)
+    pd.testing.assert_frame_equal(light_at, catnap_light, check_dtype=False, rtol=0.15)
+    pd.testing.assert_frame_equal(heavy_at, catnap_heavy, check_dtype=False, rtol=0.15)

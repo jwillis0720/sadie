@@ -57,9 +57,6 @@ class G3:
         segment: str = "V",
         limit: Optional[int] = None,
     ) -> str:
-        segment = segment.upper()
-        if segment not in self.segments:
-            raise ValueError(f"{segment} is not a valid segment from {self.segments}")
         params = {
             "source": source,
             "common": species,
@@ -99,13 +96,8 @@ class G3:
             v_seg = merge[0]
             j_seg = merge[1]
 
-            if v_seg["receptor"] not in ["IG"]:
-                continue
-
             functional = v_seg["imgt"]["imgt_functional"]
             v_part = v_seg["imgt"]["sequence_gapped_aa"].replace(".", "-")[:108].ljust(108).replace(" ", "-")
-            # if v_part[0] == "-":
-            #     continue
             cdr3_part = j_seg["imgt"]["cdr3_aa"]
             fwr4_part = j_seg["imgt"]["fwr4_aa"]
             v_name = v_seg["gene"]
@@ -118,9 +110,9 @@ class G3:
                 continue
 
             # H rules
-            if chain.strip().lower() in "H":
-                if len(cdr3_part[-3:] + fwr4_part) == 13:
-                    fwr4_part += "-"
+            # if chain.strip().lower() in "h":
+            #     if len(cdr3_part[-3:] + fwr4_part) == 13:
+            #         fwr4_part += "-"
 
             # K rules
             if chain.strip().lower() in "k":
@@ -189,8 +181,6 @@ class G3:
         sto_path = self.data_folder / f"stockholms/{species}_{chain}.sto"
 
         sto_pairs = self.get_stockholm_pairs(source=source, chain=chain, species=species, limit=limit)
-        if not sto_pairs:
-            return
 
         head = f"# STOCKHOLM 1.0\n#=GF ID {species}_{chain}\n"
         body = "\n".join([f"{name}\t{ali}" for name, ali in sto_pairs])
@@ -202,7 +192,7 @@ class G3:
 
         return sto_path
 
-    @lru_cache(maxsize=None)
+    # @lru_cache(maxsize=None)
     def build_hmm(
         self,
         source: Source = "imgt",
@@ -211,8 +201,6 @@ class G3:
         limit: Optional[int] = None,
     ) -> Path:
         sto_path = self.build_stockholm(source=source, chain=chain, species=species, limit=limit)
-        if not sto_path:
-            return
 
         hmm_path = self.data_folder / f"hmms/{species}_{chain}.hmm"
 
@@ -225,7 +213,7 @@ class G3:
 
         return hmm_path
 
-    @lru_cache(maxsize=None)
+    # @lru_cache(maxsize=None)
     def get_hmm(
         self,
         source: Source = "imgt",
@@ -241,9 +229,6 @@ class G3:
                 hmm_path = self.build_hmm(source=source, chain=chain, species=species, limit=limit)
         else:
             hmm_path = self.build_hmm(source=source, chain=chain, species=species, limit=limit)
-
-        if not hmm_path:
-            return
 
         with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
             hmm = next(hmm_file)
