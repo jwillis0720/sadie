@@ -62,6 +62,9 @@ class HMMER:
                     or single_species not in self.g3.species
                     or self.use_numbering_hmms is True
                 ):
+                    # Legacy HMMs have rhesus as the species for macaque
+                    if single_species.strip() == "macaque":
+                        single_species = "rhesus"
                     # If not in Numbering -- ignore
                     if (single_species, chain) not in self.numbering.species_chain_to_paths:
                         continue
@@ -519,6 +522,7 @@ class HMMER:
             List of NUMBERING state_vector objects.
         """
         assert len(hmm_seq) == len(query_seq), "The 2 seqs should be alignments of eachother"
+        hmm_length = 128  # hardcoded since this is the length of the HMM for an antibody
 
         # Allowing the user simple numbering if they already have alignments
         if hmm_start is None:
@@ -530,7 +534,10 @@ class HMMER:
         if query_end is None:
             query_end = len(query_seq) - query_seq.count("-")
 
+        # print('0', hmm_length, hmm_start, hmm_end, query_length, query_start, query_end)
+
         if (order == 0) and (0 < hmm_start < 5):
+            # print('prefix', hmm_length, hmm_start, hmm_end, query_length, query_start, query_end)
             n_extend = hmm_start
             if hmm_start > query_start:
                 n_extend = min(query_start, hmm_start - query_start)
@@ -538,15 +545,16 @@ class HMMER:
             hmm_seq = "x" * n_extend + hmm_seq
             query_start -= n_extend
             hmm_start -= n_extend
-
-        hmm_length = 128  # hardcoded since this is the length of the HMM for an antibody
+        # print('1', hmm_length, hmm_start, hmm_end, query_length, query_start, query_end)
 
         if n == 1 and query_end < query_length and (123 < hmm_end < hmm_length):  # Extend forwards
+            # print('suffix', hmm_length, hmm_start, hmm_end, query_length, query_start, query_end)
             n_extend = min(hmm_length - hmm_end, query_length - query_end)
             query_seq += "8" * n_extend
             hmm_seq += "x" * n_extend
             query_end += n_extend
             hmm_end += n_extend
+        # print('2', hmm_length, hmm_start, hmm_end, query_length, query_start, query_end)
 
         vector_state = []
 
@@ -568,6 +576,8 @@ class HMMER:
                 vector_state.append(((all_reference_states[hmm_step], "m"), query_step))
                 hmm_step += 1
                 query_step += 1
+
+        # print(vector_state)
 
         return vector_state
 
