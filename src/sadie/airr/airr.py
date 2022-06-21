@@ -117,7 +117,7 @@ class Airr:
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
-
+        self.references = references
         # check for package executable, then path igblastn in path
         if not igblast_exe:
             try:
@@ -485,8 +485,7 @@ class Airr:
             if result["liable"].any():
                 # If we allow adaption,
                 if self.adapt_penalty:
-                    # copy_instance: Airr = copy.deepcopy(self)
-                    # copy_instance.adapt_penalty = False
+                    # recurse
                     for v_penalty in range(-2, -4, -1):
                         for j_penalty in range(-1, -3, -1):
                             _start_df = pd.DataFrame(result[result["liable"]].copy().reset_index()).astype(
@@ -495,10 +494,19 @@ class Airr:
                             if _start_df.empty:
                                 logger.info("Corrected all liabilities")
                                 break
-                            self._v_gene_penalty = v_penalty
-                            self._j_gene_penalty = j_penalty
-                            self.adapt_penalty = False
-                            adapt_results = pd.DataFrame(self.run_dataframe(_start_df, "index", "sequence"))
+                            adaptable_api = Airr(
+                                self.name,
+                                igblast_exe=self.executable,
+                                v_gene_penalty=v_penalty,
+                                d_gene_penalty=self._d_gene_penalty,
+                                j_gene_penalty=j_penalty,
+                                allow_vdj_overlap=False,
+                                correct_indel=self.correct_indel,
+                                temp_directory=self.temp_directory,
+                                adaptable=False,
+                                references=self.references,
+                            )
+                            adapt_results = pd.DataFrame(adaptable_api.run_dataframe(_start_df, "index", "sequence"))
                             adapt_results = pd.DataFrame(
                                 adapt_results.rename({"sequence_id": "index"}, axis=1)
                                 .astype({"index": int})
@@ -518,9 +526,17 @@ class Airr:
                     if _start_df.empty:
                         logger.info("Corrected all liabilities")
                     else:
-                        self._allow_vdj_overlap = True
-                        self.adapt_penalty = False
-                        adapt_results = self.run_dataframe(_start_df, "index", "sequence")
+                        adaptable_api = Airr(
+                            self.name,
+                            igblast_exe=self.executable,
+                            d_gene_penalty=self._d_gene_penalty,
+                            allow_vdj_overlap=True,
+                            correct_indel=self.correct_indel,
+                            temp_directory=self.temp_directory,
+                            adaptable=False,
+                            references=self.references,
+                        )
+                        adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
                         adapt_results = (
                             pd.DataFrame(adapt_results.rename({"sequence_id": "index"}, axis=1))
                             .astype({"index": int})
