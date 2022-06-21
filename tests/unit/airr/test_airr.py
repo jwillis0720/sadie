@@ -387,6 +387,14 @@ def test_adaptable_correction(fixture_setup: SadieFixture) -> None:
     assert liable_mix["liable"].value_counts().to_dict() == {True: 30, False: 24}
 
 
+def test_single_adaptable(fixture_setup: SadieFixture) -> None:
+    seq = "GACATCCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACAGAGTCACCATCACTTGCCAGGCGAGTCAGGACATTAGCAACTATTTAAATTGGTATCAGCAGAAACCAGGGAAAGCCCCTAAGCTCCTGATCTACGATGCATCCAATTTGGAAACAGGGGTCCCATCAAGGTTCAGTGGAAGTGGATCTGGGACAGATTTTACTTTCACCATCAGCAGCCTGCAGCCTGAAGATATTGCAACATATTACTGTCAACAGTATGAGACTTTCGGCCCTGGGACCAAAGTGGATATCAAAC"
+    name = "test"
+    airr_api = Airr("human", adaptable=True)
+    result = airr_api.run_single(name, seq)
+    assert isinstance(result["cdr3_aa"].iloc[0], str)
+
+
 def test_mutational_analysis(heavy_catnap_airrtable: AirrTable, light_catnap_airrtable: AirrTable) -> None:
     """Test we can run mutational analysis post hoc method"""
 
