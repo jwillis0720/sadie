@@ -204,6 +204,7 @@ class Airr:
         self.igblast.germline_db_v = self.germline_data.v_gene_dir
         self.igblast.germline_db_d = self.germline_data.d_gene_dir
         self.igblast.germline_db_j = self.germline_data.j_gene_dir
+        self.igblast.germline_db_c = self.germline_data.c_gene_dir
         self.igblast.aux_path = self.germline_data.aux_path
         self.igblast.organism = self.name
 

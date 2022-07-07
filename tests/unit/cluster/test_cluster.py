@@ -2,6 +2,8 @@ from sadie.cluster import Cluster
 from sadie.airr import AirrTable, LinkedAirrTable
 import pandas as pd
 
+from tests.conftest import SadieFixture
+
 
 def test_cluster(heavy_catnap_airrtable, light_catnap_airrtable):
     for table in [heavy_catnap_airrtable, light_catnap_airrtable]:
@@ -24,7 +26,7 @@ def test_cluster(heavy_catnap_airrtable, light_catnap_airrtable):
     assert "cluster" in cluster_df_linked.columns
 
 
-def test_cluster_with_somatic_pad(fixture_setup):
+def test_cluster_with_somatic_pad(fixture_setup:SadieFixture):
     light_airrtable = AirrTable(pd.read_feather(fixture_setup.get_catnap_light_with_mutational_analysis()))
     cluster_api = Cluster(light_airrtable, pad_somatic=True)
     cluster_df_with_pad = cluster_api.cluster(5)

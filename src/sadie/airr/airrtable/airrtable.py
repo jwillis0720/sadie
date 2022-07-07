@@ -14,7 +14,7 @@ from Bio.Seq import Seq
 import numpy as np
 
 # module/package
-from sadie.airr.airrtable.constants import IGBLAST_AIRR
+from sadie.airr.airrtable.constants import IGBLAST_AIRR, CONSTANTS_AIRR
 from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
 from sadie.airr.exceptions import MissingAirrColumns
 from sadie.utility.io import SadieOutput
@@ -305,8 +305,15 @@ class AirrTable(pd.DataFrame):
         #     self[f"sequence_aa"] = self["sequence"].apply(_get_seq_aa)
         missing_columns = set(self.compliant_cols).difference(self.columns)
         if missing_columns:
+            # _non_constnat_columns = missing_columns.difference(set(CONSTANTS_AIRR.keys()))
+            # if _non_constnat_columns:
             raise MissingAirrColumns(missing_columns)
-
+            # else:
+            #     for col in CONSTANTS_AIRR:
+            #         # add constnat airr if not in there
+            #         if col not in self.columns:
+            #             logger.debug(f"Adding missing column {col}")
+            #             self[col] = ""
         # drop any unnamed columns
         self.drop([i for i in self.columns if "Unnamed" in i], axis=1, inplace=True)
 

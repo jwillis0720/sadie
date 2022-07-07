@@ -18,6 +18,20 @@ clk:
       - IGLV2-11*01
       - IGLJ1*01
     mouse:
+      - IGHA*01
+      - IGHD*01
+      - IGHE*01
+      - IGHG1*01
+      - IGHG2A*01
+      - IGHG2B*01
+      - IGHG2C*01
+      - IGHG3*01
+      - IGHM*01
+      - IGKC*01
+      - IGLC1*01
+      - IGLC2*01
+      - IGLC3*01
+      - IGLC5*01
       - IGHV1-11*01
       - IGHV1-12*01
       - IGHV1-13*01
@@ -859,6 +873,20 @@ dog:
     - IGLJ7*01
     - IGLJ8*01
     - IGLJ9*01
+    - IGHA*01
+    - IGHE*01
+    - IGHG2*01
+    - IGHM*01
+    - IGKC*01
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC4*01
+    - IGLC5*01
+    - IGLC6*01
+    - IGLC7*01
+    - IGLC8*01
+    - IGLC9*01
 human:
   imgt:
     human:
@@ -1327,9 +1355,36 @@ human:
     - IGLV9-49*01
     - IGLV9-49*02
     - IGLV9-49*03
+    - IGHA1*01
+    - IGHA2*01
+    - IGHE*01
+    - IGHG1*01
+    - IGHG2*01
+    - IGHG3*01
+    - IGHG4*01
+    - IGHM*01
+    - IGKC*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC6*01
+    - IGLC7*01
 mouse:
   imgt:
     mouse:
+    - IGHA*01
+    - IGHD*01
+    - IGHE*01
+    - IGHG1*01
+    - IGHG2A*01
+    - IGHG2B*01
+    - IGHG2C*01
+    - IGHG3*01
+    - IGHM*01
+    - IGKC*01
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC5*01
     - IGHV1-11*01
     - IGHV1-12*01
     - IGHV1-13*01
@@ -1954,6 +2009,29 @@ mouse:
 rabbit:
   imgt:
     rabbit:
+      - IGHA1*01
+      - IGHA10*01
+      - IGHA11*01
+      - IGHA12*01
+      - IGHA13*01
+      - IGHA14*01
+      - IGHA2*01
+      - IGHA3*01
+      - IGHA4*01
+      - IGHA5*01
+      - IGHA6*01
+      - IGHA7*01
+      - IGHA8*01
+      - IGHA9*01
+      - IGHM*01
+      - IGKC1*01
+      - IGKC2*01
+      - IGLC1*01
+      - IGLC2*01
+      - IGLC3*01
+      - IGLC4*01
+      - IGLC5*01
+      - IGLC6*01
       - IGHV1S1*01
       - IGHV1S13*01
       - IGHV1S17*01
@@ -2149,6 +2227,18 @@ rabbit:
 rat:
   imgt:
     rat:
+    - IGHA*01
+    - IGHD*01
+    - IGHE*01
+    - IGHG1*01
+    - IGHG2A*01
+    - IGHG2B*01
+    - IGHG2C*01
+    - IGHM*01
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC4*01
     - IGHV1-10*01
     - IGHV1-11*01
     - IGHV1-12*01
@@ -2605,6 +2695,20 @@ se09:
     - IGKV1-33*01
     - IGHJ2*01
     mouse:
+    - IGHA*01
+    - IGHD*01
+    - IGHE*01
+    - IGHG1*01
+    - IGHG2A*01
+    - IGHG2B*01
+    - IGHG2C*01
+    - IGHG3*01
+    - IGHM*01
+    - IGKC*01
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC5*01
     - IGHV1-11*01
     - IGHV1-12*01
     - IGHV1-13*01
@@ -3227,6 +3331,18 @@ se09:
     - IGLJ4*01
     - IGLJ5*01
 macaque:
+  imgt:
+    macaque:
+    - IGHA*01
+    - IGHE*01
+    - IGHG1*01
+    - IGKC*01
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC2A*01
+    - IGLC3*01
+    - IGLC6*01
+    - IGLC7*01
   custom:
     macaque:
     - IGHV1-105*01

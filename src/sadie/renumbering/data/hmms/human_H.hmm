@@ -7,15 +7,15 @@ MM    no
 CONS  yes
 CS    no
 MAP   yes
-DATE  Mon Jun 13 17:23:30 2022
-COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest -sv tests/unit/
+DATE  Thu Jul  7 00:12:29 2022
+COM   [1] /Users/jordanwillis/minicondax86/envs/sadie-dev/bin/pytest -s --log-cli-level DEBUG -x tests/
 NSEQ  3679
 EFFN  0.943805
 CKSUM 1643542238
 STATS LOCAL MSV      -10.0745  0.71216
 STATS LOCAL VITERBI  -10.7696  0.71216
 STATS LOCAL FORWARD   -4.0955  0.71216
-HMM          A        C        D        E        F        G        H        I        K        L        M        N        P        Q        R        S        T        V        W        Y
+HMM          A        C        D        E        F        G        H        I        K        L        M        N        P        Q        R        S        T        V        W        Y   
             m->m     m->i     m->d     i->m     i->i     d->m     d->d
   COMPO   2.53278  3.99652  3.08091  2.84403  3.48793  2.70218  3.94891  2.91561  2.76161  2.48409  3.64756  3.21709  3.54910  3.03119  3.03590  2.41123  2.66310  2.55990  3.92360  3.41949
           2.68618  4.42225  2.77519  2.73123  3.46354  2.40513  3.72494  3.29354  2.67741  2.69355  4.24690  2.90347  2.73739  3.18146  2.89801  2.37887  2.77519  2.98518  4.58477  3.61503

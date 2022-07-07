@@ -18,14 +18,14 @@ def test_yaml(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixt
     # load the default yaml file
     yaml_object = YamlRef()
     assert yaml_object.get_names() == {"clk", "dog", "human", "mouse", "rabbit", "se09", "rat", "macaque"}
-    assert len(yaml_object.get_genes("human", "imgt", "human")) == 465
+    assert len(yaml_object.get_genes("human", "imgt", "human")) == 478
     v_genes: List[str] = yaml_object.get_gene_segment("human", "imgt", "human", "V")
     assert all([x[3] == "V" for x in v_genes])
     assert isinstance(yaml_object.get_yaml_as_dataframe(), pd.DataFrame)
     assert yaml_object.__repr__()
     assert set([i for i in yaml_object]) == {"clk", "dog", "human", "mouse", "rabbit", "se09", "rat", "macaque"}
     assert yaml_object["human"]
-    assert len(yaml_object) == 4689
+    assert len(yaml_object) == 4803
 
     with pytest.raises(ValueError):
         YamlRef(fixture_setup.get_duplicated_yaml())
