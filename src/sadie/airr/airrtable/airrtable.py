@@ -14,7 +14,7 @@ from Bio.Seq import Seq
 import numpy as np
 
 # module/package
-from sadie.airr.airrtable.constants import IGBLAST_AIRR, CONSTANTS_AIRR
+from sadie.airr.airrtable.constants import IGBLAST_AIRR
 from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
 from sadie.airr.exceptions import MissingAirrColumns
 from sadie.utility.io import SadieOutput
