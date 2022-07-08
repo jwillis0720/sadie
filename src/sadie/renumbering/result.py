@@ -42,7 +42,7 @@ class NumberingResults(pd.DataFrame):
 
         return self[["Id", "chain_type", "scheme"]].merge(all_dataframes, on="Id").copy()
 
-    def _get_region(self, row, start, end, segment_name):
+    def _get_region(self, row, start: int, end: int, segment_name) -> pd.Series:
         with_segment = "".join(
             list(
                 map(
