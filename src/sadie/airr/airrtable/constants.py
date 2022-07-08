@@ -94,3 +94,19 @@ IGBLAST_AIRR = {
     "np2": "object",
     "np2_length": "Int16",
 }
+
+CONSTANTS_AIRR = {
+    "c_call": "object",
+    "c_cigar": "object",
+    "c_germline_alignment": "object",
+    "c_germline_alignment_aa": "object",
+    "c_germline_start": "Int16",
+    "c_germline_end": "Int16",
+    "c_identity": "float32",
+    "c_score": "float32",
+    "c_sequence_alignment": "object",
+    "c_sequence_alignment_aa": "object",
+    "c_sequence_start": "Int16",
+    "c_sequence_end": "Int16",
+    "c_support": "float64",
+}

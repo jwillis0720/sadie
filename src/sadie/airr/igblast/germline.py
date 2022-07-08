@@ -49,6 +49,7 @@ class GermlineData:
         self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
         self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
         self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
+        self.c_gene_dir = Path(self.blast_dir.__str__() + "C")
         self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
 
         # the literal 'internal_data/{name}` must be discovered by IgBLAST
@@ -139,6 +140,25 @@ class GermlineData:
         if not ensure_prefix_to(_path):
             raise FileNotFoundError(f"J gene directory glob, {directory} not found")
         self._j_gene_dir = _path
+
+    @property
+    def c_gene_dir(self) -> Path:
+        """The C gene directory prefix for the species of interest
+
+        Returns
+        -------
+        str
+           this is not a qualified path but a glob path.
+           ex: human_C does not exists but it's the prefix to human_C.nod and other files used by blast
+        """
+        return self._c_gene_dir
+
+    @c_gene_dir.setter
+    def c_gene_dir(self, directory: str | Path) -> None:
+        _path = Path(directory)
+        if not ensure_prefix_to(_path):
+            warnings.warn(f"C gene directory not found for {self.name}", UserWarning)
+        self._c_gene_dir = _path
 
     @property
     def aux_path(self) -> Path:
