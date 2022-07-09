@@ -11,6 +11,7 @@ from io import TextIOWrapper
 from pathlib import Path
 import shutil
 from typing import List
+from tests.conftest import SadieFixture
 
 import pytest
 
@@ -88,7 +89,7 @@ def test_io_methods(fixture_setup):
         get_sequence_file_iter(fixture_setup.get_phy_file(), "phy")
 
 
-def test_sadie_input(fixture_setup):
+def test_sadie_input(fixture_setup: SadieFixture):
     multi_fastq: Path = fixture_setup.get_multiple_fastq()
     multi_fastq_gz: Path = fixture_setup.get_multiple_fastq_compressed("gz")
     multi_fastq_bz: Path = fixture_setup.get_multiple_fastq_compressed("bz2")

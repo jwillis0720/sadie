@@ -34,13 +34,15 @@ from sadie.receptor.rearrangment import (
 logger = logging.getLogger("AIRRTable")
 
 
+def get_reverse_compliment(seq: Seq) -> Seq:
+    return Seq(seq.reverse_complement())
+
+
 def _get_raw_seq(row: pd.Series) -> str:
-    seq = row["sequence"]
-    rev_comp = row["rev_comp"]
+    seq: Seq = Seq(row["sequence"])
+    rev_comp: bool = row["rev_comp"]
     if rev_comp:
-        seq = Seq(seq).reverse_complement()
-    else:
-        seq = seq
+        seq = get_reverse_compliment(seq)
     return str(seq)
 
 
@@ -278,7 +280,7 @@ class AirrTable(pd.DataFrame):
             for _, row in self.iterrows():
                 f.write(f">{row[id_field]}\n{row[sequence_field]}\n")
 
-    def get_genbank(self) -> List[GenBank]:
+    def get_genbank(self) -> List[SeqRecord.SeqRecord]:
         _genbanks = []
         # go through as an iterator
         for row in self.iterrows():

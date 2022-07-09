@@ -1,3 +1,4 @@
+from __future__ import annotations
 import glob
 from pathlib import Path
 from pprint import pformat
@@ -133,7 +134,12 @@ def get_sequence_file_iter(
     """Get a sequence file iterator from SeqIO module"""
     if file_type not in ["fasta", "fastq", "abi", "abi-trim"]:
         raise NotImplementedError(f"{file_type} is not a supported sequence file type")
-    return SeqIO.parse(file, file_type)
+    if file_type in ["abi", "abi-trim"]:
+        return AbiIterator(file)
+    elif file_type == "fasta":
+        return FastaIterator(file)
+    else:
+        return FastqPhredIterator(file)
 
 
 class SadieInputFile:
@@ -144,8 +150,8 @@ class SadieInputFile:
         input_path: Union[Path, str],
         input_format: str = "infer",
         compression_format: Union[str, None] = "infer",
-    ):
-        self.input = input_path
+    ) -> None:
+        self.input: Path | str = input_path
         self.compression_format_inferred = False
         self.file_type_inferred = False
 

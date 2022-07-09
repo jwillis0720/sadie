@@ -1,3 +1,4 @@
+from __future__ import annotations
 import bz2
 import gzip
 import logging
@@ -129,30 +130,31 @@ def split_fasta(
     # get file_counter and base name of fasta_file
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    counter = 1
-    encoding, _open = SadieInputFile(parent_file)
-    if not encoding:
-        encoding = "Uncompressed"
+    counter: int = 1
+    sadie_handle: SadieInputFile = SadieInputFile(parent_file)
+    compression_format: str | None = sadie_handle.compression_format
+    if not compression_format:
+        compression_format = "Uncompressed"
     # click.echo(f"Detected {encoding} filetype")
     # our first file name
-    if encoding == "gzip":
+    if compression_format == "gzip":
         parent_file_base_name = ".".join(os.path.basename(parent_file).split(".")[0:-2])
         suffix = f".{filetype}.gz"
-    elif encoding == "bzip":
+    elif compression_format == "bzip":
         parent_file_base_name = ".".join(os.path.basename(parent_file).split(".")[0:-2])
         suffix = f".{filetype}.bz2"
     else:
         parent_file_base_name = os.path.basename(parent_file).split(f".{filetype}")[0]
         suffix = f".{filetype}"
 
-    file = parent_file_base_name + "_" + str(counter) + suffix
+    file: str = parent_file_base_name + "_" + str(counter) + suffix
     file = os.path.join(outdir, file)
     # click.echo(f"Detected {encoding} filetype")
     # carries all of our records to be written
     joiner = []
 
     # _open will . handle all
-    with _open(parent_file) as parent_file_handle:
+    with sadie_handle.open_input as parent_file_handle:
         for num, record in enumerate(SeqIO.parse(parent_file_handle, f"{filetype}"), start=1):
 
             # append records to our list holder
@@ -162,12 +164,12 @@ def split_fasta(
             # record holder
             if num % how_many == 0:
                 joiner.append("")
-                if encoding == "gzip":
+                if compression_format == "gzip":
                     with gzip.open(file, "wb") as f:
                         # print(file)
                         f.write("\n".join(joiner).encode("utf-8"))
                     # print(file)
-                elif encoding == "bzip":
+                elif compression_format == "bzip":
                     with bz2.open(file, "wb") as f:
                         f.write("\n".join(joiner).encode("utf-8"))
                 else:
@@ -183,10 +185,10 @@ def split_fasta(
         if joiner:
             # click.echo(f"writing final file")
             joiner.append("")
-            if encoding == "gzip":
+            if compression_format == "gzip":
                 with gzip.open(file, "wb") as f:
                     f.write("\n".join(joiner).encode("utf-8"))
-            elif encoding == "bzip":
+            elif compression_format == "bzip":
                 with bz2.open(file, "wb") as f:
                     f.write("\n".join(joiner).encode("utf-8"))
             else:

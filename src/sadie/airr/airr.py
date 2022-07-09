@@ -386,7 +386,9 @@ class Airr:
             return self.run_records(_get_seq_generator(), scfv=scfv)
 
     def run_records(
-        self, seqrecords: Union[List[SeqRecord], SequenceIterator, Generator[SeqRecord, None, None]], scfv: bool = False
+        self,
+        seqrecords: Union[List[SeqRecord], SequenceIterator, Iterator[SeqRecord], Generator[SeqRecord, None, None]],
+        scfv: bool = False,
     ) -> Union[AirrTable, LinkedAirrTable]:
         """Run Airr annotation on seq records
 
@@ -577,11 +579,11 @@ class Airr:
         remaining_id = result_a["sequence_id"]
 
         # Make some seqeuncing records
-        seq_records = [SeqRecord(Seq(x), id=str(name)) for x, name in zip(remaining_seq, remaining_id)]
+        seq_records: List[SeqRecord] = [SeqRecord(Seq(x), id=str(name)) for x, name in zip(remaining_seq, remaining_id)]
         with tempfile.NamedTemporaryFile() as tmpfile:
             SeqIO.write(seq_records, tmpfile.name, "fasta")
             # Now run airr again, but this time on the remaining sequencess
-            result_b = self.igblast.run_file(tmpfile.name)
+            result_b: pd.DataFrame = self.igblast.run_file(tmpfile.name)
 
         airr_table_a = AirrTable(result_a)
         airr_table_b = AirrTable(result_b)
