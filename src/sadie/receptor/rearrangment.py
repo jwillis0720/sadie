@@ -824,7 +824,7 @@ class ReceptorChain(BaseModel):
 
         airr_api = Airr(reference_name)
         result: AirrTable = airr_api.run_single(sequence_id, str(sequence))
-        result_sliced: AirrSeries = result.iloc[0]
+        result_sliced: AirrSeries = result.iloc[0]  # type: ignore
 
         # my py won't stop complaining unless I pass the sliced object back through itself
         return ReceptorChain(**result_sliced.to_receptor_chain_object().__dict__)

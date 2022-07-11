@@ -589,7 +589,7 @@ class Airr:
         airr_table_b = AirrTable(result_b)
 
         # since we removed the seqeunce out of result B to run it, lets adjust the numerical columns
-        adjuster = airr_table_a["sequence"].str.len() - airr_table_b["sequence"].str.len()
+        adjuster = airr_table_a["sequence"].str.len() - airr_table_b["sequence"].str.len()  # type: ignore
         for column in [
             "v_sequence_start",
             "v_sequence_end",

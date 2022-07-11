@@ -38,19 +38,19 @@ def get_reverse_compliment(seq: Seq) -> Seq:
     return Seq(seq.reverse_complement())
 
 
-def _get_raw_seq(row: pd.Series) -> str:
-    seq: Seq = Seq(row["sequence"])
-    rev_comp: bool = row["rev_comp"]
-    if rev_comp:
-        seq = get_reverse_compliment(seq)
-    return str(seq)
+# def _get_raw_seq(row: pd.Series) -> str: # type:
+#     seq: Seq = Seq(row["sequence"])
+#     rev_comp: bool = row["rev_comp"]
+#     if rev_comp:
+#         seq = get_reverse_compliment(seq)
+#     return str(seq)
 
 
-def _get_seq_aa(seq: str) -> str:
-    return str(Seq(seq).translate())
+# def _get_seq_aa(seq: str) -> str:
+#     return str(Seq(seq).translate())
 
 
-class AirrSeries(pd.Series):
+class AirrSeries(pd.Series):  # type: ignore
     @property
     def _constructor(self) -> Type["AirrSeries"]:
         return AirrSeries
@@ -182,7 +182,7 @@ class AirrTable(pd.DataFrame):
     _metadata = ["_suffixes", "_islinked"]
 
     def __init__(self, data: Any = None, key_column: str = "sequence_id", copy: bool = False):
-        super(AirrTable, self).__init__(data=data, copy=copy)
+        super(AirrTable, self).__init__(data=data, copy=copy)  # type: ignore
         if not isinstance(data, pd.core.internals.managers.BlockManager):
             if self.__class__ is AirrTable:
                 self._islinked: bool = False

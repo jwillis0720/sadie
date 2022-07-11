@@ -1,4 +1,7 @@
-IGBLAST_AIRR = {
+from typing import Dict, Any
+
+
+IGBLAST_AIRR: Dict[Any, str] = {
     "sequence_id": "object",
     "sequence": "object",
     "locus": "object",
