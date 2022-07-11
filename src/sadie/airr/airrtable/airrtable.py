@@ -34,21 +34,23 @@ from sadie.receptor.rearrangment import (
 logger = logging.getLogger("AIRRTable")
 
 
-def _get_raw_seq(row: pd.Series) -> str:
-    seq = row["sequence"]
-    rev_comp = row["rev_comp"]
-    if rev_comp:
-        seq = Seq(seq).reverse_complement()
-    else:
-        seq = seq
-    return str(seq)
+def get_reverse_compliment(seq: Seq) -> Seq:
+    return Seq(seq.reverse_complement())
 
 
-def _get_seq_aa(seq: str) -> str:
-    return str(Seq(seq).translate())
+# def _get_raw_seq(row: pd.Series) -> str: # type:
+#     seq: Seq = Seq(row["sequence"])
+#     rev_comp: bool = row["rev_comp"]
+#     if rev_comp:
+#         seq = get_reverse_compliment(seq)
+#     return str(seq)
 
 
-class AirrSeries(pd.Series):
+# def _get_seq_aa(seq: str) -> str:
+#     return str(Seq(seq).translate())
+
+
+class AirrSeries(pd.Series):  # type: ignore
     @property
     def _constructor(self) -> Type["AirrSeries"]:
         return AirrSeries
@@ -180,7 +182,7 @@ class AirrTable(pd.DataFrame):
     _metadata = ["_suffixes", "_islinked"]
 
     def __init__(self, data: Any = None, key_column: str = "sequence_id", copy: bool = False):
-        super(AirrTable, self).__init__(data=data, copy=copy)
+        super(AirrTable, self).__init__(data=data, copy=copy)  # type: ignore
         if not isinstance(data, pd.core.internals.managers.BlockManager):
             if self.__class__ is AirrTable:
                 self._islinked: bool = False
@@ -278,7 +280,7 @@ class AirrTable(pd.DataFrame):
             for _, row in self.iterrows():
                 f.write(f">{row[id_field]}\n{row[sequence_field]}\n")
 
-    def get_genbank(self) -> List[GenBank]:
+    def get_genbank(self) -> List[SeqRecord.SeqRecord]:
         _genbanks = []
         # go through as an iterator
         for row in self.iterrows():
@@ -305,8 +307,15 @@ class AirrTable(pd.DataFrame):
         #     self[f"sequence_aa"] = self["sequence"].apply(_get_seq_aa)
         missing_columns = set(self.compliant_cols).difference(self.columns)
         if missing_columns:
+            # _non_constnat_columns = missing_columns.difference(set(CONSTANTS_AIRR.keys()))
+            # if _non_constnat_columns:
             raise MissingAirrColumns(missing_columns)
-
+            # else:
+            #     for col in CONSTANTS_AIRR:
+            #         # add constnat airr if not in there
+            #         if col not in self.columns:
+            #             logger.debug(f"Adding missing column {col}")
+            #             self[col] = ""
         # drop any unnamed columns
         self.drop([i for i in self.columns if "Unnamed" in i], axis=1, inplace=True)
 

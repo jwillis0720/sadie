@@ -219,7 +219,7 @@ class AirrSequences:
         """Get a list of different abi files for io testing"""
         return list(self.abi_inputs.glob("*ab1"))
 
-    def get_compressed_abi_files(self, compression) -> List[Path]:
+    def get_compressed_abi_files(self, compression: str) -> List[Path]:
         """Get a list of different compressed abi files for io testing"""
         return [_get_file_compressed(self.tmp_path, abi_file, compression) for abi_file in self.get_abi_files()]
 
@@ -232,6 +232,10 @@ class AirrSequences:
         fwd = self.abi_inputs / "fwd_read.ab1"
         rev = self.abi_inputs / "rev_read.ab1"
         return [fwd, rev]
+
+    def get_fasta_with_constant(self) -> Path:
+        """Get a fasta file with a constant sequence"""
+        return self.fasta_inputs / "HD_w_constant.fasta"
 
 
 class AirrTables:

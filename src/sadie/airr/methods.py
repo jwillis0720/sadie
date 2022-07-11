@@ -82,11 +82,11 @@ def run_mutational_analysis(
 
     logger.info(f"Can run mutational analysis on {len(common_results)} out of {len(airrtable)} results")
     germline_results_renumbering = germline_results_renumbering.loc[
-        germline_results_renumbering["Id"].isin(common_results), :
+        germline_results_renumbering["Id"].isin(common_results), :  # type: ignore
     ]
     germline_results_renumbering_at = germline_results_renumbering.get_alignment_table()
-    mature_results_renumbering = mature_results_renumbering.loc[
-        mature_results_renumbering["Id"].isin(common_results), :
+    mature_results_renumbering = mature_results_renumbering.loc[  # type ignore
+        mature_results_renumbering["Id"].isin(common_results), :  # type: ignore
     ]
     mature_results_renumbering_at = mature_results_renumbering.get_alignment_table()
     lookup_dataframe = (
@@ -130,7 +130,7 @@ def run_mutational_analysis(
     )
 
 
-def _get_igl(row: pd.Series) -> Union[str, float]:
+def _get_igl(row: pd.Series) -> Union[str, float]:  # type: ignore
     """Get infered germline sequences from Airr Row
 
     Parameters

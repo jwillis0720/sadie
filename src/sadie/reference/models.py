@@ -57,8 +57,8 @@ class GeneEntries(BaseModel):
     @validator("genes", each_item=True)
     def check_vgene(cls, v: str, values: Dict[str, str]) -> str:
         # pylint: disable=no-self-argument
-        if v[3] not in ["V", "D", "J"]:
-            raise ValueError(f"gene must contain V,D or J at 3rd index, current have {v[3]} in {v} ")
+        if v[3] not in ["V", "D", "J", "C", "A", "G", "M", "E"]:
+            raise ValueError(f"gene must contain V,D,J or C at 3rd index, current have {v[3]} in {v} ")
         return v
 
     @validator("source")

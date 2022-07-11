@@ -235,6 +235,7 @@ class IgBLASTN:
         "_germline_db_v",
         "_germline_db_d",
         "_germline_db_j",
+        "_germline_db_c",
         "_aux_path",
         "_igdata",
         "_temp_dir",
@@ -567,6 +568,25 @@ class IgBLASTN:
             self._germline_db_d = IgBLASTArgument("germline_db_d", "germline_db_D", path, True)
 
     @property
+    def germline_db_c(self) -> ArgumentType:
+        """Path to C gene database prefix
+
+        Returns
+        -------
+        IgBLASTArgument
+        """
+        return self._germline_db_c
+
+    @germline_db_c.setter
+    def germline_db_c(self, path: str | Path) -> None:
+        abs_path = ensure_prefix_to(path)
+        if not abs_path:
+            warnings.warn(f"{path} is not found, No C gene segment", UserWarning)
+            self._germline_db_c = IgBLASTArgument("c_region_db", "c_region_db", "", False)
+        else:
+            self._germline_db_c = IgBLASTArgument("c_region_db", "c_region_db", path, True)
+
+    @property
     def germline_db_j(self) -> ArgumentType:
         """Path to J gene database prefix
 
@@ -766,6 +786,7 @@ class IgBLASTN:
             self.germline_db_v,  # type: ignore
             self.germline_db_d,  # type: ignore
             self.germline_db_j,  # type: ignore
+            self.germline_db_c,  # type: ignore
             self.aux_path,  # type: ignore
             self.outfmt,  # type: ignore
             self.nomenclature,  # type: ignore
@@ -866,7 +887,7 @@ class IgBLASTN:
                 raise IgBLASTRunTimeError(process.stderr)
             # we read the dataframe from the tempfile, it should always be in .TSV.
             # We can also cast it to IGBLAST_AIRR dtypes to save memory
-            df = pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)
+            df = pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)  # type: ignore
         if Path(tmpfile.name).exists():
             logger.debug(f"{tmpfile.name} was not deleted after it exited scope")
             Path(tmpfile.name).unlink()
