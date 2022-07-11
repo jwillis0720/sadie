@@ -18,4 +18,4 @@ jobs:
           pip install .
           pip install types-requests types-PyYAML pandas-stubs
           pip install mypy==0.941
-      - run: sh ./scripts/check_mypy.sh
+      - run: mypy src/sadie

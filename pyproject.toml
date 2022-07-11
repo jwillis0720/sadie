@@ -1,5 +1,0 @@
-[tool.pyright]
-exclude = ['src/sadie/renumbering/*', 'src/sadie/numbering/*']
-include = ['src/sadie']
-reportUnnecessaryIsInstance = false
-stubsPath = 'src/stubs'
