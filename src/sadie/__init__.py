@@ -1,4 +1,4 @@
-__version__ = "0.4.24"
+__version__ = "0.4.25"
 from . import renumbering, airr, reference, antibody, numbering
 
 
