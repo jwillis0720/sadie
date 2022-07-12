@@ -163,12 +163,15 @@ def _get_igl(row: pd.Series) -> Union[str, float]:  # type: ignore
 
     iGL_cdr3 = ""
     for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
-        if germline == "X" or germline == "-":
+        if germline == "X" or germline == "-" or germline == "*":
             iGL_cdr3 += mature
             continue
         iGL_cdr3 += germline
 
+    # remove insertions from seq
     full_igl: str = v_germline.replace("-", "") + iGL_cdr3.replace("-", "")
+    if "*" in full_igl:
+        raise ValueError(f"{row.name} - strange iGL has * in it")
     return full_igl
 
 
