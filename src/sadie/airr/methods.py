@@ -1,13 +1,15 @@
-from typing import Union
+from typing import Any, List, Union
 import logging
 import numpy as np
 
 # third party
 import pandas as pd
+from Bio.Seq import Seq
 
 # module/package level
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.renumbering import Renumbering
+from Levenshtein._levenshtein import distance
 
 logger = logging.getLogger("AirrMethod")
 
@@ -130,7 +132,7 @@ def run_mutational_analysis(
     )
 
 
-def _get_igl(row: pd.Series) -> Union[str, float]:  # type: ignore
+def _get_igl_aa(row: pd.Series) -> Union[str, float]:  # type: ignore
     """Get infered germline sequences from Airr Row
 
     Parameters
@@ -146,6 +148,7 @@ def _get_igl(row: pd.Series) -> Union[str, float]:  # type: ignore
     # get germline components
     v_germline = row.v_germline_alignment_aa
     full_germline = row.germline_alignment_aa
+
     if isinstance(v_germline, float):
         return np.nan
     cdr3_j_germline = full_germline[len(v_germline) :]
@@ -153,6 +156,7 @@ def _get_igl(row: pd.Series) -> Union[str, float]:  # type: ignore
     # get mature components
     v_mature = row.v_sequence_alignment_aa
     full_mature = row.sequence_alignment_aa
+
     cdr3_j_mature = full_mature[len(v_mature) :]
 
     # if the mature and cdr3 are not the same size
@@ -175,6 +179,145 @@ def _get_igl(row: pd.Series) -> Union[str, float]:  # type: ignore
     return full_igl
 
 
+codon_table = {
+    "A": ("GCT", "GCC", "GCA", "GCG"),
+    "C": ("TGT", "TGC"),
+    "D": ("GAT", "GAC"),
+    "E": ("GAA", "GAG"),
+    "F": ("TTT", "TTC"),
+    "G": ("GGT", "GGC", "GGA", "GGG"),
+    "I": ("ATT", "ATC", "ATA"),
+    "H": ("CAT", "CAC"),
+    "K": ("AAA", "AAG"),
+    "L": ("TTA", "TTG", "CTT", "CTC", "CTA", "CTG"),
+    "M": ("ATG",),
+    "N": ("AAT", "AAC"),
+    "P": ("CCT", "CCC", "CCA", "CCG"),
+    "Q": ("CAA", "CAG"),
+    "R": ("CGT", "CGC", "CGA", "CGG", "AGA", "AGG"),
+    "S": ("TCT", "TCC", "TCA", "TCG", "AGT", "AGC"),
+    "T": ("ACT", "ACC", "ACA", "ACG"),
+    "V": ("GTT", "GTC", "GTA", "GTG"),
+    "W": ("TGG",),
+    "Y": ("TAT", "TAC"),
+    "*": ("TAA", "TAG", "TGA"),
+}
+
+
+def _get_3mers(string: str) -> List[str]:
+    parts = [string[i : i + 3] for i in range(0, len(string), 3)]
+    return parts
+    # return list(filter(lambda x: len(x) == 3, parts))
+
+
+def _find_best_codon(codon: str, aa: str) -> str:
+    # first arg is a partial codon, second arg is an aa.
+    if len(codon) == 3:
+        return codon
+    candidates = codon_table[aa]
+
+    def best_dist(x: str) -> Any:
+        return distance(x, codon)
+
+    best_codon: str = sorted(candidates, key=best_dist)[0]
+    return best_codon
+
+
+def _get_igl_nt(row: pd.Series) -> Union[str, float]:  # type: ignore
+    """Get infered germline sequences from Airr Row
+
+    Parameters
+    ----------
+    row : pd.Series
+        A row from the airr table
+    Returns
+    -------
+    str
+        the igl sequecne
+    """
+
+    # this will be our germline iGL nt
+    germline_igl = ""
+
+    # grab the alignment that has hopefully been corrected
+    germline_alignment_aa = row["germline_alignment_aa"]
+    sequence_alignment_aa = row["sequence_alignment_aa"]
+
+    # make sure to take out the indels so we can just get the codond
+    germline_alignment_codons = _get_3mers(row["germline_alignment"].replace("-", ""))
+    sequence_alignment_codons = _get_3mers(row["sequence_alignment"].replace("-", ""))
+
+    if isinstance(germline_alignment_aa, float) or isinstance(sequence_alignment_aa, float):
+        return np.nan
+
+    if len(germline_alignment_aa) != len(sequence_alignment_aa):
+        raise ValueError(
+            f"{row.index} - germline aa alignment is not the same length as the sequence aa alignment {len(germline_alignment_aa)} != {len(sequence_alignment_aa)}"
+        )
+
+    # indexer
+    germline_index, sequence_index = 0, 0
+
+    # iterate over bot alignments
+    for (germline_aa, sequence_aa) in zip(germline_alignment_aa, sequence_alignment_aa):
+
+        # we can't have both - in germ and sequence
+        if germline_aa == "-" and sequence_aa == "-":
+            raise Exception("this is not possible")
+
+        # if germline == sequence, take the germline codon
+        if germline_aa == sequence_aa:
+            codon = sequence_alignment_codons[sequence_index]
+            germline_igl += codon
+            germline_index += 1
+            sequence_index += 1
+
+        # if germline is -, only increment sequence but not take a "codon"
+        elif germline_aa == "-":
+            if germline_index == len(germline_alignment_aa) - 1:
+                # we are at the end so pad it with sequence
+                # print('here',germline_igl)
+                partial_codon = sequence_alignment_codons[sequence_index]
+                best_codon = _find_best_codon(partial_codon, sequence_aa)
+                logger.debug(f"Partial codon:{partial_codon} for mature {sequence_aa} choosing {best_codon}")
+                germline_igl += best_codon
+
+            sequence_index += 1
+
+        # if sequence is - (a deletion), increment the germline codon and take it
+        elif sequence_aa == "-":
+            germline_igl += germline_alignment_codons[germline_index]
+            germline_index += 1
+        else:
+            # finally, deal with the cases where the germline and sequence do not equal each other but are not idnesl
+            # if gerline is X or *, take mature codon
+            if germline_aa == "X" or germline_aa == "*":
+                germline_igl += sequence_alignment_codons[sequence_index]
+
+            # else take germline
+            else:
+                codon = germline_alignment_codons[germline_index]
+                germline_igl += codon
+            sequence_index += 1
+            germline_index += 1
+    real_igl = row["iGL_aa"]
+    contrived_igl = str(Seq(germline_igl).translate())
+    if real_igl != contrived_igl:
+        if real_igl[:-1] == contrived_igl:
+            ending_codon = _find_best_codon(sequence_alignment_codons[-1], real_igl[-1])
+            germline_igl = germline_igl[: -(len(germline_igl) % 3)] + ending_codon
+            # we are trying to fix it
+            if real_igl != str(Seq(germline_igl).translate()):
+                if row["productive"]:
+                    raise ValueError(
+                        f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}"
+                    )
+        else:
+            if row["productive"]:
+                raise ValueError(f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}")
+    return germline_igl
+
+
 def run_igl_assignment(airrtable: Union[AirrTable, LinkedAirrTable]) -> Union[AirrTable, LinkedAirrTable]:
     if not isinstance(airrtable, AirrTable):
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
@@ -190,5 +333,6 @@ def run_igl_assignment(airrtable: Union[AirrTable, LinkedAirrTable]) -> Union[Ai
         r_suffix = airrtable.suffixes[1]
         return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
 
-    airrtable["iGL"] = airrtable.apply(_get_igl, axis=1)
+    airrtable["iGL_aa"] = airrtable.apply(_get_igl_aa, axis=1)
+    airrtable["iGL"] = airrtable.apply(_get_igl_nt, axis=1)
     return airrtable
