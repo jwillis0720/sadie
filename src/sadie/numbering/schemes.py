@@ -838,331 +838,331 @@ def get_imgt_cdr(length, maxlength, start, end):
     return annotations
 
 
-# Aho #
+# Aho # TODO
 # Heuristic regapping based on the AHo specification as detailed on AAAAA website. Gap order depends on the chain type
-def number_aho(state_vector, sequence, chain_type):
-    """
-    Apply the Aho numbering scheme
+# def number_aho(state_vector, sequence, chain_type):
+#     """
+#     Apply the Aho numbering scheme
 
-    Rules should be implemented using two strings - the state string and the region string.
+#     Rules should be implemented using two strings - the state string and the region string.
 
-    There are 128 states in the HMMs. Treat X as a direct match in IMGT scheme, I is an insertion. (All X's for IMGT)
+#     There are 128 states in the HMMs. Treat X as a direct match in IMGT scheme, I is an insertion. (All X's for IMGT)
 
-    XXXXXXX XXX XXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXX XXXXXXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXX XXXXXXXXXXXXX XXXXXXXXXXX
-    AAAAAAA BBB CCCCCCCCCCCCCC DDDDDDDDDDDDDDDD EEEEEEEEEEEEEEE FFFFFFFFFFFFFFFFFFFF HHHHHHHHHHHHHHHH IIIIIIIIIIIII JJJJJJJJJJJJJ KKKKKKKKKKK
+#     XXXXXXX XXX XXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXX XXXXXXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXX XXXXXXXXXXXXX XXXXXXXXXXX
+#     AAAAAAA BBB CCCCCCCCCCCCCC DDDDDDDDDDDDDDDD EEEEEEEEEEEEEEE FFFFFFFFFFFFFFFFFFFF HHHHHHHHHHHHHHHH IIIIIIIIIIIII JJJJJJJJJJJJJ KKKKKKKKKKK
 
 
-    Regions - (N.B These do not match up with any particular definition of CDR)
-    A. EMPTY (now included in B)
-    B. 1-10 inclusive. Indel occurs at 8
-    C. 11-24 inclusive.
-    D. 25-42 inclusive (deletion surround 28) 32-42 inclusive (deletions surround 36)
-    E. 43-57 inclusive
-    F. 58-77 inclusive (deletions surround 63). Alpha chains have deletions at 74,75
-    G. EMPTY (now included in H)
-    H. 78-93 inclusive  gaps on 86 then 85, insertions on 85 linearly
-    I. 94-106 inclusive
-    J. 107-138 inclusive gaps on 123 symetrically.
-    K. 139-149 inclusive.
+#     Regions - (N.B These do not match up with any particular definition of CDR)
+#     A. EMPTY (now included in B)
+#     B. 1-10 inclusive. Indel occurs at 8
+#     C. 11-24 inclusive.
+#     D. 25-42 inclusive (deletion surround 28) 32-42 inclusive (deletions surround 36)
+#     E. 43-57 inclusive
+#     F. 58-77 inclusive (deletions surround 63). Alpha chains have deletions at 74,75
+#     G. EMPTY (now included in H)
+#     H. 78-93 inclusive  gaps on 86 then 85, insertions on 85 linearly
+#     I. 94-106 inclusive
+#     J. 107-138 inclusive gaps on 123 symetrically.
+#     K. 139-149 inclusive.
 
-    """
+#     """
 
-    # Set up the numbering
+#     # Set up the numbering
 
-    # State string - 'X' means the imgt position exists in the scheme. 'I' means that it should be treated as an insertion of the previous number
-    state_string = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+#     # State string - 'X' means the imgt position exists in the scheme. 'I' means that it should be treated as an insertion of the previous number
+#     state_string = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
-    # Region string - regions that should be treated separately in putting the numbering together
-    region_string = "BBBBBBBBBBCCCCCCCCCCCCCCDDDDDDDDDDDDDDDDEEEEEEEEEEEEEEEFFFFFFFFFFFFFFFFFFFFHHHHHHHHHHHHHHHHIIIIIIIIIIIIIJJJJJJJJJJJJJKKKKKKKKKKK"
-    #                     1         2             3               4              5                   7               8            9            10
+#     # Region string - regions that should be treated separately in putting the numbering together
+#     region_string = "BBBBBBBBBBCCCCCCCCCCCCCCDDDDDDDDDDDDDDDDEEEEEEEEEEEEEEEFFFFFFFFFFFFFFFFFFFFHHHHHHHHHHHHHHHHIIIIIIIIIIIIIJJJJJJJJJJJJJKKKKKKKKKKK"
+#     #                     1         2             3               4              5                   7               8            9            10
 
-    region_index_dict = dict(list(zip("ABCDEFGHIJK", list(range(11)))))
+#     region_index_dict = dict(list(zip("ABCDEFGHIJK", list(range(11)))))
 
-    # Define how the scheme's numbering differs from IMGT at the start of each region.
-    # This is updated in the loop below
-    rels = {0: 0, 1: 0, 2: 0, 3: 0, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 21}
+#     # Define how the scheme's numbering differs from IMGT at the start of each region.
+#     # This is updated in the loop below
+#     rels = {0: 0, 1: 0, 2: 0, 3: 0, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 21}
 
-    n_regions = 11
+#     n_regions = 11
 
-    exclude_deletions = [1, 3, 4, 5, 7, 9]
+#     exclude_deletions = [1, 3, 4, 5, 7, 9]
 
-    _regions, startindex, endindex = _number_regions(
-        sequence,
-        state_vector,
-        state_string,
-        region_string,
-        region_index_dict,
-        rels,
-        n_regions,
-        exclude_deletions,
-    )
+#     _regions, startindex, endindex = _number_regions(
+#         sequence,
+#         state_vector,
+#         state_string,
+#         region_string,
+#         region_index_dict,
+#         rels,
+#         n_regions,
+#         exclude_deletions,
+#     )
 
-    # Renumbering #
+#     # Renumbering #
 
-    _numbering = [
-        _regions[0],
-        _regions[1],
-        _regions[2],
-        [],
-        _regions[4],
-        [],
-        _regions[6],
-        [],
-        _regions[8],
-        _regions[9],
-        _regions[10],
-    ]
+#     _numbering = [
+#         _regions[0],
+#         _regions[1],
+#         _regions[2],
+#         [],
+#         _regions[4],
+#         [],
+#         _regions[6],
+#         [],
+#         _regions[8],
+#         _regions[9],
+#         _regions[10],
+#     ]
 
-    # Move the indel in fw 1 onto 8  #
+#     # Move the indel in fw 1 onto 8  #
 
-    # Place indels on 8
-    # Find the first recognised residue and change the expected length of the stretch given the starting point.
-    # This prevents n terminal deletions being placed at 8 incorrectly.
-    length = len(_regions[1])
-    if length > 0:
-        start = _regions[1][0][0][0]
-        stretch_len = 10 - (start - 1)
-        if length > stretch_len:  # Insertions are present. Place on 8
-            annotations = (
-                [(_, " ") for _ in range(start, 9)]
-                + [(8, alphabet[_]) for _ in range(length - stretch_len)]
-                + [(9, " "), (10, " ")]
-            )
-        else:
-            ordered_deletions = [(8, " ")] + [(_, " ") for _ in range(start, 11) if _ != 8]
-            annotations = sorted(ordered_deletions[max(stretch_len - length, 0) :])
-        _numbering[1] = [(annotations[i], _regions[1][i][1]) for i in range(length)]
+#     # Place indels on 8
+#     # Find the first recognised residue and change the expected length of the stretch given the starting point.
+#     # This prevents n terminal deletions being placed at 8 incorrectly.
+#     length = len(_regions[1])
+#     if length > 0:
+#         start = _regions[1][0][0][0]
+#         stretch_len = 10 - (start - 1)
+#         if length > stretch_len:  # Insertions are present. Place on 8
+#             annotations = (
+#                 [(_, " ") for _ in range(start, 9)]
+#                 + [(8, alphabet[_]) for _ in range(length - stretch_len)]
+#                 + [(9, " "), (10, " ")]
+#             )
+#         else:
+#             ordered_deletions = [(8, " ")] + [(_, " ") for _ in range(start, 11) if _ != 8]
+#             annotations = sorted(ordered_deletions[max(stretch_len - length, 0) :])
+#         _numbering[1] = [(annotations[i], _regions[1][i][1]) for i in range(length)]
 
-    # CDR 1 # - divided in two parts in the Aho scheme.
-    # - gaps at 28 depending on the chain type.
+#     # CDR 1 # - divided in two parts in the Aho scheme.
+#     # - gaps at 28 depending on the chain type.
 
-    # "VH domains, as well as the majority of the VA domains, have a one-residue gap in position 28, VK and VB domains a two-residue
-    # gap in position 27 and 28."
+#     # "VH domains, as well as the majority of the VA domains, have a one-residue gap in position 28, VK and VB domains a two-residue
+#     # gap in position 27 and 28."
 
-    # We use the link below as the reference for the scheme.
-    # https://www.bioc.uzh.ch/plueckthun/antibody/Numbering/Alignment.html
+#     # We use the link below as the reference for the scheme.
+#     # https://www.bioc.uzh.ch/plueckthun/antibody/Numbering/Alignment.html
 
-    # Some of the header lines in these images are offset by one (VH)! The gaps really are centered at 28 and 36
-    # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VK.html
-    # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VL.html
-    # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VH.html
-    # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VA.html
-    # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VB.html
-    # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VG.html
-    # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VD.html
+#     # Some of the header lines in these images are offset by one (VH)! The gaps really are centered at 28 and 36
+#     # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VK.html
+#     # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VL.html
+#     # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VH.html
+#     # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VA.html
+#     # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VB.html
+#     # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VG.html
+#     # https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VD.html
 
-    # We gap the CDR1 in a heuristic way using the gaps.
-    # This means that CDR1 gapping will not always be correct. For example if one grafts a Kappa CDR1 loop onto a Lambda framework
-    # the gapping patter might now be incorrect.
-    # Not a fan of being so prescriptive.
+#     # We gap the CDR1 in a heuristic way using the gaps.
+#     # This means that CDR1 gapping will not always be correct. For example if one grafts a Kappa CDR1 loop onto a Lambda framework
+#     # the gapping patter might now be incorrect.
+#     # Not a fan of being so prescriptive.
 
-    # The CDR1 region included here ranges from AHo 25 to AHo 42 inclusive
+#     # The CDR1 region included here ranges from AHo 25 to AHo 42 inclusive
 
-    # The order in which the two loops are gapped is dependent on the chain type (see alignments in URLs above).
-    # Not all lengths are defined as not all lengths were crystallised in 2001 (or today). Where no example of the length was
-    # available the rule followed is to continue gapping the C terminal 'loop', then the N terminal 'loop', then 31 then the fw.
-    # In all cases I have commented where the gapping is undefined. Note that for alpha chains the gapping rules are inconsistent.
+#     # The order in which the two loops are gapped is dependent on the chain type (see alignments in URLs above).
+#     # Not all lengths are defined as not all lengths were crystallised in 2001 (or today). Where no example of the length was
+#     # available the rule followed is to continue gapping the C terminal 'loop', then the N terminal 'loop', then 31 then the fw.
+#     # In all cases I have commented where the gapping is undefined. Note that for alpha chains the gapping rules are inconsistent.
 
-    _L = 28, 36, 35, 37, 34, 38, 27, 29, 33, 39, 32, 40, 26, 30, 25, 31, 41, 42
-    #                           |-> undefined by AHo. Gapping C terminal loop then N terminal then 31, then fw.
-    _K = 28, 27, 36, 35, 37, 34, 38, 33, 39, 32, 40, 29, 26, 30, 25, 31, 41, 42
-    #                                 |-> undefined by AHo. Gapping C terminal loop then N terminal then fw.
-    _H = 28, 36, 35, 37, 34, 38, 27, 33, 39, 32, 40, 29, 26, 30, 25, 31, 41, 42
-    #                        |-> undefined by AHo. Gapping C terminal loop then N terminal then fw.
-    #                            N.B. The header on the alignment image for PDB_VH is offset by 1!
-    _A = 28, 36, 35, 37, 34, 38, 33, 39, 27, 32, 40, 29, 26, 30, 25, 31, 41, 42
-    #                              |-> undefined by AHo. Gapping C terminal loop then N terminal then fw.
-    #                            N.B The gapping is inconsistent for alpha chains. I follow the paper's statement that most VA have
-    #                                one gap at 28 and remove 28 and 27 before removing 40.
-    _B = 28, 36, 35, 37, 34, 38, 33, 39, 27, 32, 40, 29, 26, 30, 25, 31, 41, 42
-    #                              |-> undefined by AHo. Gapping C terminal loop then N terminal then 31, then fw.
-    _D = 28, 36, 35, 37, 34, 38, 27, 33, 39, 32, 40, 29, 26, 30, 25, 31, 41, 42
-    #                         |-> undefined by AHo. Gapping C terminal loop then N terminal then 31, then fw.
-    #                         N.B only two sequence patterns available.
-    _G = 28, 36, 35, 37, 34, 38, 27, 33, 39, 32, 40, 29, 26, 30, 25, 31, 41, 42
-    #                         |-> undefined by AHo. Gapping C terminal loop then N terminal then 31, then fw.
-    #                         N.B only one sequence patterns available. Delta copied.
+#     _L = 28, 36, 35, 37, 34, 38, 27, 29, 33, 39, 32, 40, 26, 30, 25, 31, 41, 42
+#     #                           |-> undefined by AHo. Gapping C terminal loop then N terminal then 31, then fw.
+#     _K = 28, 27, 36, 35, 37, 34, 38, 33, 39, 32, 40, 29, 26, 30, 25, 31, 41, 42
+#     #                                 |-> undefined by AHo. Gapping C terminal loop then N terminal then fw.
+#     _H = 28, 36, 35, 37, 34, 38, 27, 33, 39, 32, 40, 29, 26, 30, 25, 31, 41, 42
+#     #                        |-> undefined by AHo. Gapping C terminal loop then N terminal then fw.
+#     #                            N.B. The header on the alignment image for PDB_VH is offset by 1!
+#     _A = 28, 36, 35, 37, 34, 38, 33, 39, 27, 32, 40, 29, 26, 30, 25, 31, 41, 42
+#     #                              |-> undefined by AHo. Gapping C terminal loop then N terminal then fw.
+#     #                            N.B The gapping is inconsistent for alpha chains. I follow the paper's statement that most VA have
+#     #                                one gap at 28 and remove 28 and 27 before removing 40.
+#     _B = 28, 36, 35, 37, 34, 38, 33, 39, 27, 32, 40, 29, 26, 30, 25, 31, 41, 42
+#     #                              |-> undefined by AHo. Gapping C terminal loop then N terminal then 31, then fw.
+#     _D = 28, 36, 35, 37, 34, 38, 27, 33, 39, 32, 40, 29, 26, 30, 25, 31, 41, 42
+#     #                         |-> undefined by AHo. Gapping C terminal loop then N terminal then 31, then fw.
+#     #                         N.B only two sequence patterns available.
+#     _G = 28, 36, 35, 37, 34, 38, 27, 33, 39, 32, 40, 29, 26, 30, 25, 31, 41, 42
+#     #                         |-> undefined by AHo. Gapping C terminal loop then N terminal then 31, then fw.
+#     #                         N.B only one sequence patterns available. Delta copied.
 
-    ordered_deletions = {"L": _L, "K": _K, "H": _H, "A": _A, "B": _B, "D": _D, "G": _G}
+#     ordered_deletions = {"L": _L, "K": _K, "H": _H, "A": _A, "B": _B, "D": _D, "G": _G}
 
-    length = len(_regions[3])
+#     length = len(_regions[3])
 
-    annotations = [(i, " ") for i in sorted(ordered_deletions[chain_type][max(18 - length, 0) :])]
+#     annotations = [(i, " ") for i in sorted(ordered_deletions[chain_type][max(18 - length, 0) :])]
 
-    # Insertions are not described in the AHo scheme but must be included as there is a significant number of CDRH1s that are
-    # longer than the number of positions.
-    insertions = max(length - 18, 0)
-    if insertions > 26:
-        return [], startindex, endindex  # Too many insertions. Do not apply numbering.
-    elif insertions > 0:
-        # They are placed on residue 36 alphabetically.
-        insertat = annotations.index((36, " ")) + 1  # Always 12
-        assert insertat == 12, "AHo numbering failed"
-        annotations = annotations[:insertat] + [(36, alphabet[a]) for a in range(insertions)] + annotations[insertat:]
+#     # Insertions are not described in the AHo scheme but must be included as there is a significant number of CDRH1s that are
+#     # longer than the number of positions.
+#     insertions = max(length - 18, 0)
+#     if insertions > 26:
+#         return [], startindex, endindex  # Too many insertions. Do not apply numbering.
+#     elif insertions > 0:
+#         # They are placed on residue 36 alphabetically.
+#         insertat = annotations.index((36, " ")) + 1  # Always 12
+#         assert insertat == 12, "AHo numbering failed"
+#         annotations = annotations[:insertat] + [(36, alphabet[a]) for a in range(insertions)] + annotations[insertat:]
 
-    _numbering[3] = [(annotations[i], _regions[3][i][1]) for i in range(length)]
+#     _numbering[3] = [(annotations[i], _regions[3][i][1]) for i in range(length)]
 
-    # CDR 2 #
-    # Gaps are placed symetically at 63.
-    # For VA a second gap is placed at 74 and 75 according to the text in the paper. However, all the reference sequences show a
-    # gap at 73 and 74 see:
-    #      https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VA.html
-    # and
-    #      https://www.bioc.uzh.ch/plueckthun/antibody/Numbering/Alignment.html
-    # Either I am mis-interpreting the text in the paper or there is something a little inconsistent here...
-    # Given that *all* the numbered examples show the VA gap at 73 and 74 on the AAAAA website I have decided to implement this.
-    #
+#     # CDR 2 #
+#     # Gaps are placed symetically at 63.
+#     # For VA a second gap is placed at 74 and 75 according to the text in the paper. However, all the reference sequences show a
+#     # gap at 73 and 74 see:
+#     #      https://www.bioc.uzh.ch/plueckthun/antibody/Sequences/Rearranged/PDB_VA.html
+#     # and
+#     #      https://www.bioc.uzh.ch/plueckthun/antibody/Numbering/Alignment.html
+#     # Either I am mis-interpreting the text in the paper or there is something a little inconsistent here...
+#     # Given that *all* the numbered examples show the VA gap at 73 and 74 on the AAAAA website I have decided to implement this.
+#     #
 
-    # This region describes 58 to 77 inclusive
+#     # This region describes 58 to 77 inclusive
 
-    if chain_type == "A":
-        ordered_deletions = [
-            74,
-            73,
-            63,
-            62,
-            64,
-            61,
-            65,
-            60,
-            66,
-            59,
-            67,
-            58,
-            68,
-            69,
-            70,
-            71,
-            72,
-            75,
-            76,
-            77,
-        ]
-    else:
-        ordered_deletions = [
-            63,
-            62,
-            64,
-            61,
-            65,
-            60,
-            66,
-            59,
-            67,
-            58,
-            68,
-            69,
-            70,
-            71,
-            72,
-            73,
-            74,
-            75,
-            76,
-            77,
-        ]
+#     if chain_type == "A":
+#         ordered_deletions = [
+#             74,
+#             73,
+#             63,
+#             62,
+#             64,
+#             61,
+#             65,
+#             60,
+#             66,
+#             59,
+#             67,
+#             58,
+#             68,
+#             69,
+#             70,
+#             71,
+#             72,
+#             75,
+#             76,
+#             77,
+#         ]
+#     else:
+#         ordered_deletions = [
+#             63,
+#             62,
+#             64,
+#             61,
+#             65,
+#             60,
+#             66,
+#             59,
+#             67,
+#             58,
+#             68,
+#             69,
+#             70,
+#             71,
+#             72,
+#             73,
+#             74,
+#             75,
+#             76,
+#             77,
+#         ]
 
-    length = len(_regions[5])
+#     length = len(_regions[5])
 
-    annotations = [(i, " ") for i in sorted(ordered_deletions[max(20 - length, 0) :])]
+#     annotations = [(i, " ") for i in sorted(ordered_deletions[max(20 - length, 0) :])]
 
-    # Insertions are not described in the AHo scheme but must be included.
-    insertions = max(length - 20, 0)
-    if insertions > 26:
-        return [], startindex, endindex  # Too many insertions. Do not apply numbering.
-    elif insertions > 0:
-        # They are placed on residue 63 alphabetically.
-        insertat = annotations.index((63, " ")) + 1  # Always 6
-        assert insertat == 6, "AHo numbering failed"
-        annotations = annotations[:insertat] + [(63, alphabet[a]) for a in range(insertions)] + annotations[insertat:]
+#     # Insertions are not described in the AHo scheme but must be included.
+#     insertions = max(length - 20, 0)
+#     if insertions > 26:
+#         return [], startindex, endindex  # Too many insertions. Do not apply numbering.
+#     elif insertions > 0:
+#         # They are placed on residue 63 alphabetically.
+#         insertat = annotations.index((63, " ")) + 1  # Always 6
+#         assert insertat == 6, "AHo numbering failed"
+#         annotations = annotations[:insertat] + [(63, alphabet[a]) for a in range(insertions)] + annotations[insertat:]
 
-    _numbering[5] = [(annotations[i], _regions[5][i][1]) for i in range(length)]
+#     _numbering[5] = [(annotations[i], _regions[5][i][1]) for i in range(length)]
 
-    # FW3
-    # Move deletions onto 86 then 85. Insertions on 85 #
-    ordered_deletions = [86, 85, 87, 84, 88, 83, 89, 82, 90, 81, 91, 80, 92, 79, 93, 78]
-    length = len(_regions[7])
+#     # FW3
+#     # Move deletions onto 86 then 85. Insertions on 85 #
+#     ordered_deletions = [86, 85, 87, 84, 88, 83, 89, 82, 90, 81, 91, 80, 92, 79, 93, 78]
+#     length = len(_regions[7])
 
-    annotations = [(i, " ") for i in sorted(ordered_deletions[max(16 - length, 0) :])]
+#     annotations = [(i, " ") for i in sorted(ordered_deletions[max(16 - length, 0) :])]
 
-    # Insertions are not described in the AHo scheme but must be included.
-    insertions = max(length - 16, 0)
-    if insertions > 26:
-        return [], startindex, endindex  # Too many insertions. Do not apply numbering.
-    elif insertions > 0:
-        # They are placed on residue 85 alphabetically.
-        insertat = annotations.index((85, " ")) + 1  # Always 8
-        assert insertat == 8, "AHo numbering failed"
-        annotations = annotations[:insertat] + [(85, alphabet[a]) for a in range(insertions)] + annotations[insertat:]
+#     # Insertions are not described in the AHo scheme but must be included.
+#     insertions = max(length - 16, 0)
+#     if insertions > 26:
+#         return [], startindex, endindex  # Too many insertions. Do not apply numbering.
+#     elif insertions > 0:
+#         # They are placed on residue 85 alphabetically.
+#         insertat = annotations.index((85, " ")) + 1  # Always 8
+#         assert insertat == 8, "AHo numbering failed"
+#         annotations = annotations[:insertat] + [(85, alphabet[a]) for a in range(insertions)] + annotations[insertat:]
 
-    _numbering[7] = [(annotations[i], _regions[7][i][1]) for i in range(length)]
+#     _numbering[7] = [(annotations[i], _regions[7][i][1]) for i in range(length)]
 
-    # CDR 3 #
-    # Deletions on 123.
-    # Point of the Aho scheme is that they have accounted for all possible positions.
-    # Assumption is that no more insertions will occur....
-    # We'll put insertions on 123 linearly.(i.e.ABCDEF...) if they ever do.
+#     # CDR 3 #
+#     # Deletions on 123.
+#     # Point of the Aho scheme is that they have accounted for all possible positions.
+#     # Assumption is that no more insertions will occur....
+#     # We'll put insertions on 123 linearly.(i.e.ABCDEF...) if they ever do.
 
-    ordered_deletions = [
-        123,
-        124,
-        122,
-        125,
-        121,
-        126,
-        120,
-        127,
-        119,
-        128,
-        118,
-        129,
-        117,
-        130,
-        116,
-        131,
-        115,
-        132,
-        114,
-        133,
-        113,
-        134,
-        112,
-        135,
-        111,
-        136,
-        110,
-        137,
-        109,
-        138,
-        108,
-        107,
-    ]
+#     ordered_deletions = [
+#         123,
+#         124,
+#         122,
+#         125,
+#         121,
+#         126,
+#         120,
+#         127,
+#         119,
+#         128,
+#         118,
+#         129,
+#         117,
+#         130,
+#         116,
+#         131,
+#         115,
+#         132,
+#         114,
+#         133,
+#         113,
+#         134,
+#         112,
+#         135,
+#         111,
+#         136,
+#         110,
+#         137,
+#         109,
+#         138,
+#         108,
+#         107,
+#     ]
 
-    length = len(_regions[9])
+#     length = len(_regions[9])
 
-    annotations = [(i, " ") for i in sorted(ordered_deletions[max(32 - length, 0) :])]
+#     annotations = [(i, " ") for i in sorted(ordered_deletions[max(32 - length, 0) :])]
 
-    # Insertions are not described in the AHo scheme but must be included.
-    insertions = max(length - 32, 0)
-    if insertions > 26:
-        return [], startindex, endindex  # Too many insertions. Do not apply numbering.
-    elif insertions > 0:
-        # They are placed on residue 123 alphabetically.
-        insertat = annotations.index((123, " ")) + 1  # Always 17
-        assert insertat == 17, "AHo numbering failed"
-        annotations = annotations[:insertat] + [(123, alphabet[a]) for a in range(insertions)] + annotations[insertat:]
+#     # Insertions are not described in the AHo scheme but must be included.
+#     insertions = max(length - 32, 0)
+#     if insertions > 26:
+#         return [], startindex, endindex  # Too many insertions. Do not apply numbering.
+#     elif insertions > 0:
+#         # They are placed on residue 123 alphabetically.
+#         insertat = annotations.index((123, " ")) + 1  # Always 17
+#         assert insertat == 17, "AHo numbering failed"
+#         annotations = annotations[:insertat] + [(123, alphabet[a]) for a in range(insertions)] + annotations[insertat:]
 
-    _numbering[9] = [(annotations[i], _regions[9][i][1]) for i in range(length)]
+#     _numbering[9] = [(annotations[i], _regions[9][i][1]) for i in range(length)]
 
-    # AHo includes one extra position than IMGT in what it considers the variable domain for light chains.
-    # If the last state is 148 and there is at least one more residue left, then add the residue to the numbering.
-    numbering = gap_missing(_numbering)
-    if len(numbering) > 0:
-        if numbering[-1][0] == (148, " ") and numbering[-1][1] != "-" and endindex + 1 < len(sequence):
-            numbering.append(((149, " "), sequence[endindex + 1]))
-            endindex += 1
+#     # AHo includes one extra position than IMGT in what it considers the variable domain for light chains.
+#     # If the last state is 148 and there is at least one more residue left, then add the residue to the numbering.
+#     numbering = gap_missing(_numbering)
+#     if len(numbering) > 0:
+#         if numbering[-1][0] == (148, " ") and numbering[-1][1] != "-" and endindex + 1 < len(sequence):
+#             numbering.append(((149, " "), sequence[endindex + 1]))
+#             endindex += 1
 
-    return numbering, startindex, endindex
+#     return numbering, startindex, endindex
 
 
 # Chothia #
@@ -1658,173 +1658,173 @@ def number_kabat_light(state_vector, sequence):
     return gap_missing(_numbering), startindex, endindex
 
 
-# Martin (extended Chothia) #
+# Martin (extended Chothia) # TODO
 
 # Heavy chains
-def number_martin_heavy(state_vector, sequence):
-    """
-    Apply the Martin (extended Chothia) numbering scheme for heavy chains
+# def number_martin_heavy(state_vector, sequence):
+#     """
+#     Apply the Martin (extended Chothia) numbering scheme for heavy chains
 
-    Rules should be implemented using two strings - the state string and the region string.
+#     Rules should be implemented using two strings - the state string and the region string.
 
-    There are 128 states in the HMMs. Treat X as a direct match in Martin scheme, I is an insertion.
-    XXXXXXXXXI XXXXXXXXXXXXXXXXXXXX IIIIXX XXXXXXXXXXXXXXXXXXXX XIXII XXXXXXXXXXXIXXXXXXXXIIIXXXXXXXXXXXXXXXXXXXXXX XXXXXXIII XXXXXXXXXXXXX
-    1111111111 22222222222222222222 333333 44444444444444444444 55555 666666666666666666666666666666666666666666666 777777777 8888888888888
-
-
-    Regions - (N.B These do not match up with any particular definition of CDR)
-     1  -  Put the insertions at Chothia position 8
-     2  -  Simple mapping (treat "I" states as inserts and not own match states)
-     3  -  CDRH1 - 30 (inc) to 34 (exc) put insertions on 31
-     4  -  Simple mapping (treat "I" states as inserts and not own match states)
-     5  -  CDRH2 - 52 (inc) 58 (exc) put insertions on 52
-     6  -  Simple mapping (treat "I" states as inserts and not own match states)
-     7  -  CDRH3 93 (inc) to 103 (exc) put insertion on 100
-     8  -  Simple mapping (treat "I" states as inserts and not own match states)
+#     There are 128 states in the HMMs. Treat X as a direct match in Martin scheme, I is an insertion.
+#     XXXXXXXXXI XXXXXXXXXXXXXXXXXXXX IIIIXX XXXXXXXXXXXXXXXXXXXX XIXII XXXXXXXXXXXIXXXXXXXXIIIXXXXXXXXXXXXXXXXXXXXXX XXXXXXIII XXXXXXXXXXXXX
+#     1111111111 22222222222222222222 333333 44444444444444444444 55555 666666666666666666666666666666666666666666666 777777777 8888888888888
 
 
-    Regions 1,3,5 and 7 are renumbered
-
-    """
-
-    # Set up the numbering
-
-    # State string - 'X' means the imgt position exists in the scheme. 'I' means that it should be treated as an insertion of the previous number
-    state_string = "XXXXXXXXXIXXXXXXXXXXXXXXXXXXXXIIIIXXXXXXXXXXXXXXXXXXXXXXXIXIIXXXXXXXXXXXIXXXXXXXXIIIXXXXXXXXXXXXXXXXXXXXXXXXXXXXIIIXXXXXXXXXXXXX"
-
-    # Region string - regions that should be treated separately in putting the numbering together
-    region_string = "11111111112222222222222333333333333333444444444444444455555555555666666666666666666666666666666666666666777777777777788888888888"
-
-    region_index_dict = {"1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 5, "7": 6, "8": 7}
-
-    # Define how the scheme's numbering differs from IMGT at the start of each region.
-    # This is updated in the loop below
-    rels = {0: 0, 1: -1, 2: -1, 3: -5, 4: -5, 5: -8, 6: -12, 7: -15}
-
-    n_regions = 8
-
-    exclude_deletions = [2, 4, 5, 6]
-
-    _regions, startindex, endindex = _number_regions(
-        sequence,
-        state_vector,
-        state_string,
-        region_string,
-        region_index_dict,
-        rels,
-        n_regions,
-        exclude_deletions,
-    )
-
-    # Renumbering #
-
-    # Renumbering required for 0, 2, 4, 6 regions in Chothia heavy
-
-    _numbering = [[], _regions[1], [], _regions[3], [], _regions[5], [], _regions[7]]
-
-    # Chothia H region 1 (index 0)
-    # Insertions are placed at Chothia position 8.
-    # Count how many we recognised as insertion by the hmm
-    insertions = len([1 for _ in _regions[0] if _[0][1] != " "])
-    # We will place all insertion in this region at Chothia position 8.
-    if insertions:
-        start = _regions[0][0][0][
-            0
-        ]  # The starting Chothia number as found by the HMM (could easily start from 2 for example)
-        # I have a feeling this may be a source of a bug in very unusual cases. Can't break for now. Will catch mistakes in a validate function.
-        length = len(_regions[0])
-        annotations = [(_, " ") for _ in range(start, 9)] + [(8, alphabet[_]) for _ in range(insertions)] + [(9, " ")]
-        _numbering[0] = [(annotations[i], _regions[0][i][1]) for i in range(length)]
-    else:
-        _numbering[0] = _regions[0]
-
-    # CDR1
-    # Chothia H region 3 (index 2)
-    # put insertions onto 31
-    length = len(_regions[2])
-    insertions = max(length - 11, 0)  # Pulled back to the cysteine as heavily engineered cdr1's are not playing nicely
-    if insertions:
-        annotations = (
-            [(_, " ") for _ in range(23, 32)] + [(31, alphabet[i]) for i in range(insertions)] + [(32, " "), (33, " ")]
-        )
-    else:
-        annotations = [(_, " ") for _ in range(23, 32)][: length - 2] + [
-            (32, " "),
-            (33, " "),
-        ][:length]
-    _numbering[2] = [(annotations[i], _regions[2][i][1]) for i in range(length)]
-
-    # CDR2
-    # Chothia H region 5 (index 4)
-    # put insertions onto 52
-    length = len(_regions[4])
-    # 50 to 57 inclusive
-    insertions = max(length - 8, 0)  # Eight positions can be accounted for, the remainder are insertions
-    # Delete in the order, 52, 51, 50,53, 54 ,55, 56, 57
-    annotations = [(50, " "), (51, " "), (52, " ")][: max(0, length - 5)]
-    annotations += [(52, alphabet[i]) for i in range(insertions)]
-    annotations += [(53, " "), (54, " "), (55, " "), (56, " "), (57, " ")][abs(min(0, length - 5)) :]
-    _numbering[4] = [(annotations[i], _regions[4][i][1]) for i in range(length)]
-
-    # FW3
-    # Place all insertions on 72 explicitly.
-    # This is in contrast to Chothia implementation where 3 insertions are on 82 and then further insertions are placed by the
-    # alignment
-    # Gaps are placed according to the alignment.
-    length = len(_regions[5])
-    insertions = max(length - 35, 0)
-    if insertions > 0:  # Insertions on 72
-        annotations = (
-            [(i, " ") for i in range(58, 73)]
-            + [(72, alphabet[i]) for i in range(insertions)]
-            + [(i, " ") for i in range(73, 93)]
-        )
-        _numbering[5] = [(annotations[i], _regions[5][i][1]) for i in range(length)]
-    else:  # Deletions - all alignment to place them.
-        _numbering[4] = _regions[4]
-
-    # CDR3
-    # Chothia H region 7 (index 6)
-    # put insertions onto 100
-    length = len(_regions[6])
-    if length > 36:
-        raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[5]))), "martin")
-    annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="heavy")
-    _numbering[6] = [(annotations[i], _regions[6][i][1]) for i in range(length)]
-
-    # Return the full vector and the start and end indices of the numbered region of the sequence
-    return gap_missing(_numbering), startindex, endindex
+#     Regions - (N.B These do not match up with any particular definition of CDR)
+#      1  -  Put the insertions at Chothia position 8
+#      2  -  Simple mapping (treat "I" states as inserts and not own match states)
+#      3  -  CDRH1 - 30 (inc) to 34 (exc) put insertions on 31
+#      4  -  Simple mapping (treat "I" states as inserts and not own match states)
+#      5  -  CDRH2 - 52 (inc) 58 (exc) put insertions on 52
+#      6  -  Simple mapping (treat "I" states as inserts and not own match states)
+#      7  -  CDRH3 93 (inc) to 103 (exc) put insertion on 100
+#      8  -  Simple mapping (treat "I" states as inserts and not own match states)
 
 
-# Light chains
-def number_martin_light(state_vector, sequence):
-    """
-    Apply the Martin numbering scheme for light chains
+#     Regions 1,3,5 and 7 are renumbered
 
-    Rules should be implemented using two strings - the state string and the region string.
+#     """
 
-    There are 128 states in the HMMs. Treat X as a direct match in Martin scheme, I is an insertion.
-    XXXXXXXXXXXXXXXXXXXXXXXXXXXXX IIIIIIX XXXXXXXXXXXXXXXXXXXX XIIIIIIIXXX XXXXXIXXXXXXXIIXXXXXXXXXXXXXXXXXXXXXX XXXXXIIIIXX XXXXXXXXXXXXX
-    11111111111111111111111111111 2222222 33333333333333333333 44444444444 5555555555555555555555555555555555555 66666666666 7777777777777
+#     # Set up the numbering
+
+#     # State string - 'X' means the imgt position exists in the scheme. 'I' means that it should be treated as an insertion of the previous number
+#     state_string = "XXXXXXXXXIXXXXXXXXXXXXXXXXXXXXIIIIXXXXXXXXXXXXXXXXXXXXXXXIXIIXXXXXXXXXXXIXXXXXXXXIIIXXXXXXXXXXXXXXXXXXXXXXXXXXXXIIIXXXXXXXXXXXXX"
+
+#     # Region string - regions that should be treated separately in putting the numbering together
+#     region_string = "11111111112222222222222333333333333333444444444444444455555555555666666666666666666666666666666666666666777777777777788888888888"
+
+#     region_index_dict = {"1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 5, "7": 6, "8": 7}
+
+#     # Define how the scheme's numbering differs from IMGT at the start of each region.
+#     # This is updated in the loop below
+#     rels = {0: 0, 1: -1, 2: -1, 3: -5, 4: -5, 5: -8, 6: -12, 7: -15}
+
+#     n_regions = 8
+
+#     exclude_deletions = [2, 4, 5, 6]
+
+#     _regions, startindex, endindex = _number_regions(
+#         sequence,
+#         state_vector,
+#         state_string,
+#         region_string,
+#         region_index_dict,
+#         rels,
+#         n_regions,
+#         exclude_deletions,
+#     )
+
+#     # Renumbering #
+
+#     # Renumbering required for 0, 2, 4, 6 regions in Chothia heavy
+
+#     _numbering = [[], _regions[1], [], _regions[3], [], _regions[5], [], _regions[7]]
+
+#     # Chothia H region 1 (index 0)
+#     # Insertions are placed at Chothia position 8.
+#     # Count how many we recognised as insertion by the hmm
+#     insertions = len([1 for _ in _regions[0] if _[0][1] != " "])
+#     # We will place all insertion in this region at Chothia position 8.
+#     if insertions:
+#         start = _regions[0][0][0][
+#             0
+#         ]  # The starting Chothia number as found by the HMM (could easily start from 2 for example)
+#         # I have a feeling this may be a source of a bug in very unusual cases. Can't break for now. Will catch mistakes in a validate function.
+#         length = len(_regions[0])
+#         annotations = [(_, " ") for _ in range(start, 9)] + [(8, alphabet[_]) for _ in range(insertions)] + [(9, " ")]
+#         _numbering[0] = [(annotations[i], _regions[0][i][1]) for i in range(length)]
+#     else:
+#         _numbering[0] = _regions[0]
+
+#     # CDR1
+#     # Chothia H region 3 (index 2)
+#     # put insertions onto 31
+#     length = len(_regions[2])
+#     insertions = max(length - 11, 0)  # Pulled back to the cysteine as heavily engineered cdr1's are not playing nicely
+#     if insertions:
+#         annotations = (
+#             [(_, " ") for _ in range(23, 32)] + [(31, alphabet[i]) for i in range(insertions)] + [(32, " "), (33, " ")]
+#         )
+#     else:
+#         annotations = [(_, " ") for _ in range(23, 32)][: length - 2] + [
+#             (32, " "),
+#             (33, " "),
+#         ][:length]
+#     _numbering[2] = [(annotations[i], _regions[2][i][1]) for i in range(length)]
+
+#     # CDR2
+#     # Chothia H region 5 (index 4)
+#     # put insertions onto 52
+#     length = len(_regions[4])
+#     # 50 to 57 inclusive
+#     insertions = max(length - 8, 0)  # Eight positions can be accounted for, the remainder are insertions
+#     # Delete in the order, 52, 51, 50,53, 54 ,55, 56, 57
+#     annotations = [(50, " "), (51, " "), (52, " ")][: max(0, length - 5)]
+#     annotations += [(52, alphabet[i]) for i in range(insertions)]
+#     annotations += [(53, " "), (54, " "), (55, " "), (56, " "), (57, " ")][abs(min(0, length - 5)) :]
+#     _numbering[4] = [(annotations[i], _regions[4][i][1]) for i in range(length)]
+
+#     # FW3
+#     # Place all insertions on 72 explicitly.
+#     # This is in contrast to Chothia implementation where 3 insertions are on 82 and then further insertions are placed by the
+#     # alignment
+#     # Gaps are placed according to the alignment.
+#     length = len(_regions[5])
+#     insertions = max(length - 35, 0)
+#     if insertions > 0:  # Insertions on 72
+#         annotations = (
+#             [(i, " ") for i in range(58, 73)]
+#             + [(72, alphabet[i]) for i in range(insertions)]
+#             + [(i, " ") for i in range(73, 93)]
+#         )
+#         _numbering[5] = [(annotations[i], _regions[5][i][1]) for i in range(length)]
+#     else:  # Deletions - all alignment to place them.
+#         _numbering[4] = _regions[4]
+
+#     # CDR3
+#     # Chothia H region 7 (index 6)
+#     # put insertions onto 100
+#     length = len(_regions[6])
+#     if length > 36:
+#         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[5]))), "martin")
+#     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="heavy")
+#     _numbering[6] = [(annotations[i], _regions[6][i][1]) for i in range(length)]
+
+#     # Return the full vector and the start and end indices of the numbered region of the sequence
+#     return gap_missing(_numbering), startindex, endindex
 
 
-    Regions - (N.B These do not match up with any particular definition of CDR)
-     1  -  Simple mapping (treat "I" states as inserts and not own match states)
-     2  -  CDRL1 - 30 (inc) to 31 (exc) put insertions on 30
-     3  -  Simple mapping (treat "I" states as inserts and not own match states)
-     4  -  CDRL2 - 51 (inc) 55 (exc) put insertions on 52
-     5  -  Simple mapping (treat "I" states as inserts and not own match states)
-     6  -  CDRL3 89 (inc) to 96 (exc) put insertion on 95
-     7  -  Simple mapping (treat "I" states as inserts and not own match states)
+# # Light chains
+# def number_martin_light(state_vector, sequence):
+#     """
+#     Apply the Martin numbering scheme for light chains
 
-    Region 2, 3 and 5 are renumbered
+#     Rules should be implemented using two strings - the state string and the region string.
 
-    """
+#     There are 128 states in the HMMs. Treat X as a direct match in Martin scheme, I is an insertion.
+#     XXXXXXXXXXXXXXXXXXXXXXXXXXXXX IIIIIIX XXXXXXXXXXXXXXXXXXXX XIIIIIIIXXX XXXXXIXXXXXXXIIXXXXXXXXXXXXXXXXXXXXXX XXXXXIIIIXX XXXXXXXXXXXXX
+#     11111111111111111111111111111 2222222 33333333333333333333 44444444444 5555555555555555555555555555555555555 66666666666 7777777777777
 
-    # The Martin and Chothia specification for light chains are very similar. Martin is more explicit in the location of indels
-    # but unlike the heavy chain these are additional instead of changes to the Chothia scheme. Thus, Chothia light is implemented
-    # as martin light.
-    return number_chothia_light(state_vector, sequence)
+
+#     Regions - (N.B These do not match up with any particular definition of CDR)
+#      1  -  Simple mapping (treat "I" states as inserts and not own match states)
+#      2  -  CDRL1 - 30 (inc) to 31 (exc) put insertions on 30
+#      3  -  Simple mapping (treat "I" states as inserts and not own match states)
+#      4  -  CDRL2 - 51 (inc) 55 (exc) put insertions on 52
+#      5  -  Simple mapping (treat "I" states as inserts and not own match states)
+#      6  -  CDRL3 89 (inc) to 96 (exc) put insertion on 95
+#      7  -  Simple mapping (treat "I" states as inserts and not own match states)
+
+#     Region 2, 3 and 5 are renumbered
+
+#     """
+
+#     # The Martin and Chothia specification for light chains are very similar. Martin is more explicit in the location of indels
+#     # but unlike the heavy chain these are additional instead of changes to the Chothia scheme. Thus, Chothia light is implemented
+#     # as martin light.
+#     return number_chothia_light(state_vector, sequence)
 
 
 def gap_missing(numbering):

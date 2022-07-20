@@ -16,10 +16,10 @@ from .schemes import (
     number_kabat_light,
     number_chothia_heavy,
     number_chothia_light,
-    number_martin_heavy,
-    number_martin_light,
+    # number_martin_heavy,
+    # number_martin_light,
     number_imgt,
-    number_aho,
+    # number_aho,
 )
 
 logger = logging.getLogger("NUMBERING")
@@ -126,17 +126,18 @@ class Numbering:
                 return number_kabat_light(state_vector, sequence)
             else:
                 raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
-        elif scheme == "martin":
-            if chain_type == "H":
-                return number_martin_heavy(state_vector, sequence)
-            elif chain_type in "KL":
-                return number_martin_light(state_vector, sequence)
-            else:
-                raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
-        elif scheme == "aho":
-            return number_aho(
-                state_vector, sequence, chain_type
-            )  # requires the chain type to heuristically put the CDR1 gap in position.
+        # TODO: need scheme.py update for these formats
+        # elif scheme == "martin":
+        #     if chain_type == "H":
+        #         return number_martin_heavy(state_vector, sequence)
+        #     elif chain_type in "KL":
+        #         return number_martin_light(state_vector, sequence)
+        #     else:
+        #         raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
+        # elif scheme == "aho":
+        #     return number_aho(
+        #         state_vector, sequence, chain_type
+        #     )  # requires the chain type to heuristically put the CDR1 gap in position.
         else:
             raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
 
