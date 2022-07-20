@@ -206,6 +206,7 @@ def test_io(fixture_setup):
                             region_assign=region,
                         )
                     continue
+                print(scheme, region)
                 renumbering_api = Renumbering(
                     allowed_species=["human", "dog", "cat"],
                     prioritize_cached_hmm=USE_CACHE,

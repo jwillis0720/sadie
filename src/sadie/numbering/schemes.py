@@ -625,6 +625,7 @@ def _number_regions(
             _regions[region].append(((previous_state_id + rels[region], alphabet[insertion]), sequence[si]))
             if start_index is None:
                 start_index = si
+                print(si, start_index)
             end_index = si
 
             previous_state_type = state_type
