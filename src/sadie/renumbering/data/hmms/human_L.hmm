@@ -7,7 +7,7 @@ MM    no
 CONS  yes
 CS    no
 MAP   yes
-DATE  Wed Jul 20 12:05:52 2022
+DATE  Thu Jul 21 15:30:42 2022
 COM   [1] /Users/tmsincomb/anaconda3/envs/sadie/bin/pytest --cov=sadie tests/unit/renumbering/test_renumbering.py --cov-report=html
 NSEQ  750
 EFFN  1.078606

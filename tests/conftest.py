@@ -177,6 +177,10 @@ class AirrSequences:
         """Get a random 1000 subsample fasta file path of the OAS data set."""
         return self.fasta_inputs / "OAS_subsample_1000.fasta"
 
+    def get_scheme_edgecase_aa(self) -> Path:
+        """Get a fasta manually created to test edge cases in the scheme"""
+        return self.fasta_inputs / "edgecase.fasta"
+
     def get_dog_aa_seqs(self) -> Path:
         "A fasta file path containing random canine AA sequences"
         return self.fasta_inputs / "random_dog_contigs_aa.fasta.gz"

@@ -79,6 +79,7 @@ Other schemes can be implemented following the template above.
 
 from sadie.antibody.exception import LongHCDR3Error
 
+SEQ = ""
 
 # Alphabet used for insertion (last (-1th) is a blank space for no insertion)
 alphabet = [
@@ -485,6 +486,7 @@ def smooth_insertions(state_vector):
             if nins > 0:  # We have insertions
 
                 if reg == -1:  # FW1, only adjust if there are the same or more N terminal deletions than insertions
+
                     nt_dels = state_buffer[0][0][0] - 1  # Missing states
                     for (_id, _type), _si in state_buffer:  # Explicit deletion states.
                         if _type == "d" or _si is None:
@@ -574,6 +576,8 @@ def _number_regions(
     @return: A list of lists where each region has been numbered according to the scheme. Some regions will need renumbering. This should be taken care of after the function called.
 
     """
+    global SEQ
+    SEQ = sequence[:]
 
     state_vector = smooth_insertions(state_vector)
 
@@ -618,14 +622,13 @@ def _number_regions(
 
             previous_state_type = state_type
 
-        elif state_type == "i":  # It is an insertion
+        if state_type == "i":  # It is an insertion
             insertion += 1  # Increment the insertion annotation index
 
             # Add the numbering annotation to the appropriate region list
             _regions[region].append(((previous_state_id + rels[region], alphabet[insertion]), sequence[si]))
             if start_index is None:
                 start_index = si
-                print(si, start_index)
             end_index = si
 
             previous_state_type = state_type
@@ -767,6 +770,8 @@ def number_imgt(state_vector, sequence):
     cdr3seq = "".join([x[1] for x in _regions[5] if x[1] != "-"])
     cdr3length = len(cdr3seq)
     if cdr3length > 117:
+        print("773", SEQ)
+        return
         raise LongHCDR3Error(sequence, cdr3seq, "IMGT", [])
         # return [], startindex, endindex  # Too many insertions. Do not apply numbering.
     si = 0
@@ -1288,6 +1293,8 @@ def number_chothia_heavy(state_vector, sequence):
     # put insertions onto 100
     length = len(_regions[6])
     if length > 72:
+        print("1294", SEQ)
+        return
         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[6]))), "chothia")
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="heavy")
     _numbering[6] = [(annotations[i], _regions[6][i][1]) for i in range(length)]
@@ -1415,6 +1422,7 @@ def number_chothia_light(state_vector, sequence):
     length = len(_regions[5])
 
     if length > 35:
+        print("1421", SEQ)
         return [], startindex, endindex  # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="light")
     _numbering[5] = [(annotations[i], _regions[5][i][1]) for i in range(length)]
@@ -1538,6 +1546,8 @@ def number_kabat_heavy(state_vector, sequence):
     # put insertions onto 100
     length = len(_regions[6])
     if length > 72:
+        print("1544", SEQ)
+        return
         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[6]))), "kabat")
     #  Chothia and Kabat the same hereP
     annotations = get_cdr3_annotations(length, scheme="kabat", chain_type="heavy")
@@ -1652,6 +1662,7 @@ def number_kabat_light(state_vector, sequence):
     length = len(_regions[5])
 
     if length > 35:
+        print("1658", SEQ)
         return [], startindex, endindex  # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="kabat", chain_type="light")
     _numbering[5] = [(annotations[i], _regions[5][i][1]) for i in range(length)]
@@ -1845,38 +1856,39 @@ def gap_missing(numbering):
 # Annotation of CDR3 #
 
 
-def get_cdr3_annotations(length, scheme="imgt", chain_type=""):
+def get_cdr3_annotations(length: int, scheme: str, chain_type: str = ""):
     """
     Given a length of a cdr3 give back a list of the annotations that should be applied to the sequence.
 
     This function should be depreciated
     """
     az = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrztuvwxyz"
-    za = az[::-1]
 
-    if scheme == "imgt":
-        start, end = 105, 118  # start (inclusive) end (exclusive)
-        annotations = [None for _ in range(max(length, 13))]
-        front = 0
-        back = -1
-        assert (length - 13) < 50, "Too many insertions for numbering scheme to handle"  # We ran out of letters.
-        for i in range(min(length, 13)):
-            if i % 2:
-                annotations[back] = (end + back, " ")
-                back -= 1
-            else:
-                annotations[front] = (start + front, " ")
-                front += 1
-        for i in range(max(0, length - 13)):  # add insertions onto 111 and 112 in turn
-            if i % 2:
-                annotations[back] = (112, za[back + 6])
-                back -= 1
-            else:
-                annotations[front] = (111, az[front - 7])
-                front += 1
-        return annotations
+    # TODO: not used, but can be in future schemes
+    # za = az[::-1]
+    # if scheme == "imgt":
+    #     start, end = 105, 118  # start (inclusive) end (exclusive)
+    #     annotations = [None for _ in range(max(length, 13))]
+    #     front = 0
+    #     back = -1
+    #     assert (length - 13) < 50, "Too many insertions for numbering scheme to handle"  # We ran out of letters.
+    #     for i in range(min(length, 13)):
+    #         if i % 2:
+    #             annotations[back] = (end + back, " ")
+    #             back -= 1
+    #         else:
+    #             annotations[front] = (start + front, " ")
+    #             front += 1
+    #     for i in range(max(0, length - 13)):  # add insertions onto 111 and 112 in turn
+    #         if i % 2:
+    #             annotations[back] = (112, za[back + 6])
+    #             back -= 1
+    #         else:
+    #             annotations[front] = (111, az[front - 7])
+    #             front += 1
+    #     return annotations
 
-    elif scheme in ["chothia", "kabat"] and chain_type == "heavy":  # For chothia and kabat
+    if scheme in ["chothia", "kabat"] and chain_type == "heavy":  # For chothia and kabat
         # Number forwards from 93
         insertions = max(length - 10, 0)
         # assert insertions < 27, "Too many insertions for numbering scheme to handle"  # We ran out of letters.
