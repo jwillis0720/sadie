@@ -1291,8 +1291,6 @@ def number_chothia_heavy(state_vector, sequence):
     # put insertions onto 100
     length = len(_regions[6])
     if length > 72:
-        print("1294", SEQ)
-        return
         raise LongHCDR3Error("", "".join(list(map(lambda x: x[1], _regions[6]))), "chothia")
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="heavy")
     _numbering[6] = [(annotations[i], _regions[6][i][1]) for i in range(length)]
