@@ -197,6 +197,7 @@ def test_io(fixture_setup):
 
     fake_file = "fakefile.fasta"
     for file in [cat_heavy_file, cat_light_file, dog_file, edgecase_file]:
+        # for file in [edgecase_file]:
         for scheme in ["imgt", "chothia", "kabat", "martin", "aho"]:
             for region in ["imgt", "chothia", "kabat"]:
                 if scheme in ["martin", "aho"]:

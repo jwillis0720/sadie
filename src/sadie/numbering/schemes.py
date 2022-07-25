@@ -770,8 +770,6 @@ def number_imgt(state_vector, sequence):
     cdr3seq = "".join([x[1] for x in _regions[5] if x[1] != "-"])
     cdr3length = len(cdr3seq)
     if cdr3length > 117:
-        print("773", SEQ)
-        return
         raise LongHCDR3Error(sequence, cdr3seq, "IMGT", [])
         # return [], startindex, endindex  # Too many insertions. Do not apply numbering.
     si = 0
