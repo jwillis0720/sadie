@@ -193,8 +193,11 @@ def test_io(fixture_setup):
     dog_file = fixture_setup.get_dog_aa_seqs()
     cat_heavy_file = fixture_setup.get_catnap_heavy_aa()
     cat_light_file = fixture_setup.get_catnap_light_aa()
+    edgecase_file = fixture_setup.get_scheme_edgecase_aa()
+
     fake_file = "fakefile.fasta"
-    for file in [cat_heavy_file, cat_light_file, dog_file]:
+    for file in [cat_heavy_file, cat_light_file, dog_file, edgecase_file]:
+        # for file in [edgecase_file]:
         for scheme in ["imgt", "chothia", "kabat", "martin", "aho"]:
             for region in ["imgt", "chothia", "kabat"]:
                 if scheme in ["martin", "aho"]:

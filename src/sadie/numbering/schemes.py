@@ -79,6 +79,7 @@ Other schemes can be implemented following the template above.
 
 from sadie.antibody.exception import LongHCDR3Error
 
+SEQ = ""
 
 # Alphabet used for insertion (last (-1th) is a blank space for no insertion)
 alphabet = [
@@ -485,6 +486,7 @@ def smooth_insertions(state_vector):
             if nins > 0:  # We have insertions
 
                 if reg == -1:  # FW1, only adjust if there are the same or more N terminal deletions than insertions
+
                     nt_dels = state_buffer[0][0][0] - 1  # Missing states
                     for (_id, _type), _si in state_buffer:  # Explicit deletion states.
                         if _type == "d" or _si is None:
@@ -574,6 +576,8 @@ def _number_regions(
     @return: A list of lists where each region has been numbered according to the scheme. Some regions will need renumbering. This should be taken care of after the function called.
 
     """
+    global SEQ
+    SEQ = sequence[:]
 
     state_vector = smooth_insertions(state_vector)
 
@@ -618,14 +622,13 @@ def _number_regions(
 
             previous_state_type = state_type
 
-        elif state_type == "i":  # It is an insertion
+        if state_type == "i":  # It is an insertion
             insertion += 1  # Increment the insertion annotation index
 
             # Add the numbering annotation to the appropriate region list
             _regions[region].append(((previous_state_id + rels[region], alphabet[insertion]), sequence[si]))
             if start_index is None:
                 start_index = si
-                print(si, start_index)
             end_index = si
 
             previous_state_type = state_type
@@ -1413,14 +1416,12 @@ def number_chothia_light(state_vector, sequence):
     # Chothia L region 6 (index 5)
     # put insertions onto 95
     length = len(_regions[5])
-
     if length > 35:
         return [], startindex, endindex  # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="light")
     _numbering[5] = [(annotations[i], _regions[5][i][1]) for i in range(length)]
 
     # Return the full vector and the start and end indices of the numbered region of the sequence
-
     return gap_missing(_numbering), startindex, endindex
 
 
@@ -1650,7 +1651,6 @@ def number_kabat_light(state_vector, sequence):
     # Chothia L region 6 (index 5)
     # put insertions onto 95
     length = len(_regions[5])
-
     if length > 35:
         return [], startindex, endindex  # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="kabat", chain_type="light")
@@ -1845,15 +1845,16 @@ def gap_missing(numbering):
 # Annotation of CDR3 #
 
 
-def get_cdr3_annotations(length, scheme="imgt", chain_type=""):
+def get_cdr3_annotations(length: int, scheme: str, chain_type: str = ""):
     """
     Given a length of a cdr3 give back a list of the annotations that should be applied to the sequence.
 
     This function should be depreciated
     """
     az = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrztuvwxyz"
-    za = az[::-1]
 
+    # TODO: not used, but can be in future schemes
+    za = az[::-1]
     if scheme == "imgt":
         start, end = 105, 118  # start (inclusive) end (exclusive)
         annotations = [None for _ in range(max(length, 13))]
@@ -1876,7 +1877,7 @@ def get_cdr3_annotations(length, scheme="imgt", chain_type=""):
                 front += 1
         return annotations
 
-    elif scheme in ["chothia", "kabat"] and chain_type == "heavy":  # For chothia and kabat
+    if scheme in ["chothia", "kabat"] and chain_type == "heavy":  # For chothia and kabat
         # Number forwards from 93
         insertions = max(length - 10, 0)
         # assert insertions < 27, "Too many insertions for numbering scheme to handle"  # We ran out of letters.
