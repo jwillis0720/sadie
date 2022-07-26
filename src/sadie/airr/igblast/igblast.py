@@ -887,7 +887,7 @@ class IgBLASTN:
                 raise IgBLASTRunTimeError(process.stderr)
             # we read the dataframe from the tempfile, it should always be in .TSV.
             # We can also cast it to IGBLAST_AIRR dtypes to save memory
-            df = pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)  # type: ignore
+            df = pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)
         if Path(tmpfile.name).exists():
             logger.debug(f"{tmpfile.name} was not deleted after it exited scope")
             Path(tmpfile.name).unlink()

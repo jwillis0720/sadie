@@ -278,7 +278,7 @@ class Reference:
         reference = Reference()
 
         # get dict as lis tof records
-        input_list: List[Dict[Column, Any]] = input_df.to_dict(orient="records")  # type: ignore
+        input_list: List[Dict[Column, Any]] = input_df.to_dict(orient="records")
 
         # can't assign dirrectly so have to append to beat mypy
         for key in input_list:
@@ -312,7 +312,7 @@ class References:
             _df = _df.drop_duplicates("_id")
 
             # insert name at beggining
-            _df.insert(0, "name", name)
+            _df.insert(0, "name", name)  # type: ignore # pandas allows Any for value; mypy is mistaken
             names_dataframe.append(_df)
         # concat all the dataframes
         concat_df = pd.concat(names_dataframe).reset_index(drop=True)
@@ -544,7 +544,7 @@ class References:
         _data = pd.read_json(path, orient="records").astype(
             {"imgt.ignored": object, "imgt.not_implemented": object, "imgt.expression_match": object}
         )
-        return References.from_dataframe(_data)  # type: ignore
+        return References.from_dataframe(_data)
 
     def make_airr_database(self, output_path: Path) -> Path:
         """

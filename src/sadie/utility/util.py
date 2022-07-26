@@ -259,7 +259,7 @@ def is_tool(name: str) -> bool:
     return which(name) is not None
 
 
-def correct_alignment(X: pd.Series, field_1: str, field_2: str) -> pd.Series:  # type: ignore
+def correct_alignment(X: pd.Series, field_1: str, field_2: str) -> pd.Series:
     alignment_aa_1 = X[field_1]
     alignment_aa_2 = X[field_2]
     if any([isinstance(alignment_aa_1, float), isinstance(alignment_aa_2, float)]):
