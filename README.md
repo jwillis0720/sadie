@@ -5,10 +5,7 @@
 </div>
 
 <div class="flex-container" align="center">
-    <!-- <a href="https://github.com/jwillis0720/sadie/commits/master">
-    <img src="https://img.shields.io/github/commit-activity/y/jwillis0720/sadie?style=flat-square"
-         alt="GitHub commits"> -->
-    <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
+    <a href="https://lgtm.com/projects/g/jwillis0720/sadie/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/jwillis0720/sadie.svg?logo=lgtm&logoWidth=18"/></a>
     <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
          alt="Linux Build">
     <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
