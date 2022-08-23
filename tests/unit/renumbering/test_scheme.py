@@ -5,7 +5,7 @@ if the scheme is used directly.
 import pytest
 
 from sadie.antibody.exception import LongHCDR3Error
-from sadie.numbering.schemes import (
+from sadie.renumbering.schemes import (
     smooth_insertions,
     _number_regions,
     get_imgt_cdr,

@@ -8,8 +8,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pandas.testing import assert_frame_equal
 from sadie.renumbering import Renumbering, NumberingDuplicateIdError, NumberingResults, BadNumberingArgument
-from sadie.numbering.schemes import number_imgt
-from sadie.numbering import Numbering
+from sadie.renumbering.schemes import number_imgt
 
 USE_CACHE = True  # TODO: make this an option in the config
 
@@ -190,12 +189,34 @@ def test_numbering_multi_input():
 
 def test_io(fixture_setup):
     """Test file io"""
+    file = fixture_setup.get_dog_aa_seqs()
+    # INIT
+    renumbering_api = Renumbering(
+        allowed_species=["human", "dog", "cat"],
+        prioritize_cached_hmm=USE_CACHE,
+        scheme="imgt",
+        region_assign="imgt",
+    )
+    # Fake File
+    fake_file = "fakefile.fasta"
+    with pytest.raises(FileNotFoundError):
+        renumbering_api.run_file(fake_file)
+    # Real File Passing
+    results = renumbering_api.run_file(file)
+    assert isinstance(results, NumberingResults)
+    with tempfile.NamedTemporaryFile(suffix=".numbering.bz2") as temp:
+        results.to_csv(temp.name)
+        other_results = NumberingResults.read_csv(temp.name).fillna("")
+        assert_frame_equal(other_results, results)
+
+
+def test_scheme_region_combinations(fixture_setup):
+    """Test files against all possible combinations of schemes and regions"""
     dog_file = fixture_setup.get_dog_aa_seqs()
     cat_heavy_file = fixture_setup.get_catnap_heavy_aa()
     cat_light_file = fixture_setup.get_catnap_light_aa()
     edgecase_file = fixture_setup.get_scheme_edgecase_aa()
 
-    fake_file = "fakefile.fasta"
     for file in [cat_heavy_file, cat_light_file, dog_file, edgecase_file]:
         # for file in [edgecase_file]:
         for scheme in ["imgt", "chothia", "kabat", "martin", "aho"]:
@@ -222,9 +243,6 @@ def test_io(fixture_setup):
                     results.to_csv(temp.name)
                     other_results = NumberingResults.read_csv(temp.name).fillna("")
                     assert_frame_equal(other_results, results)
-
-    with pytest.raises(FileNotFoundError):
-        renumbering_api.run_file(fake_file)
 
 
 def test_dog():
@@ -529,7 +547,7 @@ def test_numbering_seqs():
     assign_germline = True
     allowed_species = ["cat"]
 
-    _numbered, _alignment_details, _hit_tables = Numbering().number_sequences_from_alignment(
+    _numbered, _alignment_details, _hit_tables = Renumbering().number_sequences_from_alignment(
         sequences,
         _alignments,
         scheme=scheme,
@@ -539,18 +557,19 @@ def test_numbering_seqs():
     )
 
 
-def test_simple_numbering_from_alignment():
-    _ = Numbering(scheme="imgt", region="imgt").numbering(
-        hmm_aln="qvqlvesGglGlvqpggslrlscaasGstftlltssyamswvrqaPGkglelvaaisldllgGstyyadsvklgrftisrdnakntlylqlnslkpedtavyycakllll.....llllldawGqGtlvtvss",
-        query_aln="EVQLVESGG-GLEQPGGSLRLSCAGSGFTF----RDYAMTWVRQAPGKGLEWVSSISGS--GGNTYYADSVK-GRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSitirpRYYGLDVWGQGTTVTVSS",
-        query_seq="AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
-        hmm_start=1,
-        hmm_end=128,
-        query_start=8,
-        query_end=133,
-    )
-    # assert len(numbered) == 128
-    # assert numbered.aa[0] == "D"
+# def test_numbering_from_alignment():
+#     _ = Numbering(scheme="imgt", region="imgt").numbering(
+#         hmm_aln="qvqlvesGglGlvqpggslrlscaasGstftlltssyamswvrqaPGkglelvaaisldllgGstyyadsvklgrftisrdnakntlylqlnslkpedtavyycakllll.....llllldawGqGtlvtvss",
+#         query_aln="EVQLVESGG-GLEQPGGSLRLSCAGSGFTF----RDYAMTWVRQAPGKGLEWVSSISGS--GGNTYYADSVK-GRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSitirpRYYGLDVWGQGTTVTVSS",
+#         query_seq="AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
+#         hmm_start=1,
+#         hmm_end=128,
+#         query_start=8,
+#         query_end=133,
+#     )
+
+# assert len(numbered) == 128
+# assert numbered.aa[0] == "D"
 
 
 def test_numbering_seq():
@@ -833,8 +852,7 @@ def test_numbering_seq():
     seq = "AAAAADVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF"
     scheme = "imgt"
     chain_type = "H"
-    print(Numbering().light)
-    numbered_seq = Numbering().number_sequence_from_alignment(state_vector, seq, scheme=scheme, chain_type=chain_type)
+    numbered_seq = Renumbering().number_sequence_from_alignment(state_vector, seq, scheme=scheme, chain_type=chain_type)
     print(numbered_seq)
 
 
