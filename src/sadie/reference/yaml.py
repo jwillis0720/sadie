@@ -125,7 +125,7 @@ class YamlRef:
 
         _df = pd.DataFrame(dataframe_loader).explode("genes").reset_index(drop=True)
         lookup: List[str] = ["name", "species", "genes"]
-        duplicated = _df.set_index(lookup).loc[_df.groupby(lookup).size() > 1]
+        duplicated = _df.set_index(lookup).loc[_df.groupby(lookup).size() > 1]  # type: ignore
         if not duplicated.empty:
             if len(duplicated["source"].unique()) == 1:
                 raise ValueError(f"{duplicated}\nappears twice")

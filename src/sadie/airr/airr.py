@@ -117,7 +117,7 @@ class Airr:
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
-
+        self.references = references
         # check for package executable, then path igblastn in path
         if not igblast_exe:
             try:
@@ -204,6 +204,7 @@ class Airr:
         self.igblast.germline_db_v = self.germline_data.v_gene_dir
         self.igblast.germline_db_d = self.germline_data.d_gene_dir
         self.igblast.germline_db_j = self.germline_data.j_gene_dir
+        self.igblast.germline_db_c = self.germline_data.c_gene_dir
         self.igblast.aux_path = self.germline_data.aux_path
         self.igblast.organism = self.name
 
@@ -385,7 +386,9 @@ class Airr:
             return self.run_records(_get_seq_generator(), scfv=scfv)
 
     def run_records(
-        self, seqrecords: Union[List[SeqRecord], SequenceIterator, Generator[SeqRecord, None, None]], scfv: bool = False
+        self,
+        seqrecords: Union[List[SeqRecord], SequenceIterator, Iterator[SeqRecord], Generator[SeqRecord, None, None]],
+        scfv: bool = False,
     ) -> Union[AirrTable, LinkedAirrTable]:
         """Run Airr annotation on seq records
 
@@ -504,6 +507,7 @@ class Airr:
                                 correct_indel=self.correct_indel,
                                 temp_directory=self.temp_directory,
                                 adaptable=False,
+                                references=self.references,
                             )
                             adapt_results = pd.DataFrame(adaptable_api.run_dataframe(_start_df, "index", "sequence"))
                             adapt_results = pd.DataFrame(
@@ -533,6 +537,7 @@ class Airr:
                             correct_indel=self.correct_indel,
                             temp_directory=self.temp_directory,
                             adaptable=False,
+                            references=self.references,
                         )
                         adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
                         adapt_results = (
@@ -574,17 +579,17 @@ class Airr:
         remaining_id = result_a["sequence_id"]
 
         # Make some seqeuncing records
-        seq_records = [SeqRecord(Seq(x), id=str(name)) for x, name in zip(remaining_seq, remaining_id)]
+        seq_records: List[SeqRecord] = [SeqRecord(Seq(x), id=str(name)) for x, name in zip(remaining_seq, remaining_id)]
         with tempfile.NamedTemporaryFile() as tmpfile:
             SeqIO.write(seq_records, tmpfile.name, "fasta")
             # Now run airr again, but this time on the remaining sequencess
-            result_b = self.igblast.run_file(tmpfile.name)
+            result_b: pd.DataFrame = self.igblast.run_file(tmpfile.name)
 
         airr_table_a = AirrTable(result_a)
         airr_table_b = AirrTable(result_b)
 
         # since we removed the seqeunce out of result B to run it, lets adjust the numerical columns
-        adjuster = airr_table_a["sequence"].str.len() - airr_table_b["sequence"].str.len()
+        adjuster = airr_table_a["sequence"].str.len() - airr_table_b["sequence"].str.len()  # type: ignore
         for column in [
             "v_sequence_start",
             "v_sequence_end",
