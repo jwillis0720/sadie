@@ -3,7 +3,7 @@ import re
 import pandas as pd
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
-from Levenshtein._levenshtein import distance as lev_distance
+from Levenshtein import distance as lev_distance
 from sadie.airr import AirrTable, LinkedAirrTable
 from typing import Any, Iterable, List, Optional, Union
 import numpy as np

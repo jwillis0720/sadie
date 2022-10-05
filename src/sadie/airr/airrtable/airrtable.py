@@ -7,7 +7,7 @@ import warnings
 
 # third party
 import pandas as pd
-from Levenshtein._levenshtein import distance
+from Levenshtein import distance
 from numpy import nan
 from Bio import SeqRecord, SeqIO
 from Bio.Seq import Seq
