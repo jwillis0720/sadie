@@ -3,8 +3,7 @@ import gzip
 import logging
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
-import sys
-from typing import Any, List, Tuple, Union, Generator
+from typing import Any, List, Tuple, Union
 import warnings
 
 from Bio import SeqIO
@@ -13,9 +12,8 @@ from Bio.SeqRecord import SeqRecord
 from numpy import nan
 import pandas as pd
 
-from sadie.antibody.exception import LongHCDR3Error, NumberingDecreasing
+from sadie.antibody.exception import NumberingDecreasing
 from sadie.renumbering.aligners import HMMER
-from sadie.renumbering.scheme_numbering import scheme_numbering
 from .exception import (
     NumberingDuplicateIdError,
     BadNumberingArgument,
@@ -110,14 +108,12 @@ class Renumbering:
         self.region_definition = region_assign
         self.allowed_chains = allowed_chain
         self.assign_germline = assign_germline
-        self.allowed_species = allowed_species
+        self.allowed_species = allowed_species or ["human"]
         self.num_cpus = num_cpus
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
         self.prioritize_cached_hmm = prioritize_cached_hmm
         self.hmmer.use_numbering_hmms = use_numbering_hmms
-        if not self.check_combination(self.scheme, self.region_definition):
-            raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
 
     @property
     def region_definition(self) -> str:
@@ -166,29 +162,6 @@ class Renumbering:
             raise BadNumberingArgument(scheme, self.get_available_region_definitions())
         self._scheme = scheme.lower()
 
-    @staticmethod
-    def get_available_numbering_schemes() -> List:
-        """Get currently available antibody numbering schemes
-
-        Returns
-        -------
-        List
-            a list of region defitions, ex. ["imgt", "kabat", "chothia"]
-
-        """
-        _accepted_schemes = ["imgt", "kabat", "chothia"]  #
-        return _accepted_schemes
-
-    @staticmethod
-    def check_combination(scheme: str, region: str) -> bool:
-        scheme_keys = scheme_numbering[scheme]
-        try:
-            scheme_keys["heavy"][region]
-            scheme_keys["light"][region]
-        except KeyError:
-            return False
-        return True
-
     @property
     def allowed_chains(self) -> List[str]:
         """The chain types to consider in the alignment,
@@ -233,7 +206,9 @@ class Renumbering:
         List
             A list of one letter codes that correspond to chains
         """
-        _allowed_chain = ["H", "K", "L", "A", "B", "G", "D"]
+        # TODO: region numbering only supports H, K, L -- germline and aligner allow all chains.
+        # _allowed_chain = ["H", "K", "L", "A", "B", "G", "D"]
+        _allowed_chain = ["H", "K", "L"]
         return _allowed_chain
 
     @property
@@ -325,15 +300,15 @@ class Renumbering:
                 return number_chothia_heavy(state_vector, sequence)
             elif chain_type in "KL":
                 return number_chothia_light(state_vector, sequence)
-            else:
-                raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
+            # else:
+            #     raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
         elif scheme == "kabat":
             if chain_type == "H":
                 return number_kabat_heavy(state_vector, sequence)
             elif chain_type in "KL":
                 return number_kabat_light(state_vector, sequence)
-            else:
-                raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
+            # else:
+            #     raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
         # TODO: need scheme.py update for these formats
         # elif scheme == "martin":
         #     if chain_type == "H":
@@ -346,8 +321,6 @@ class Renumbering:
         #     return number_aho(
         #         state_vector, sequence, chain_type
         #     )  # requires the chain type to heuristically put the CDR1 gap in position.
-        else:
-            raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
 
     @lru_cache(maxsize=None)
     def get_identity(self, state_sequence, germline_sequence):
@@ -365,8 +338,6 @@ class Renumbering:
                 m += 1
             n += 1
 
-        if not n:
-            return 0
         return float(m) / n
 
     def _run(self, sequences: List[Tuple[str, str]]):
@@ -430,11 +401,12 @@ class Renumbering:
         numbering_results["allowed_chains"] = ",".join(self.allowed_chains)
         numbering_results = numbering_results._add_segment_regions()
 
-        if len(numbering_results["Id"].unique()) != len(numbering_results):
-            logger.warning(
-                f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated"
-            )
-            numbering_results = numbering_results.sort_values("score", ascending=False).groupby("Id").head(1)
+        # TODO: Give multiple domain return options?
+        # if len(numbering_results["Id"].unique()) != len(numbering_results):
+        #     logger.warning(
+        #         f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated"
+        #     )
+        #     numbering_results = numbering_results.sort_values("score", ascending=False).groupby("Id").head(1)
 
         # segment the region
         # numbering_results = numbering_results.add_segment_regions()
@@ -475,12 +447,6 @@ class Renumbering:
         TypeError
             if you don't pass a list of SeqRecords
         """
-        if not isinstance(seqrecords, (list, type(SeqIO.FastaIO.FastaIterator), Generator)):
-            raise TypeError(f"seqrecords must be of type {list} pased {type(seqrecords)}")
-
-        if isinstance(seqrecords, list) and not all([type(i) is SeqRecord for i in seqrecords]):
-            raise TypeError("seqrecords argument must be of a list of Seqrecords")
-
         _sequences = []
         _seen = set()
         for seq in seqrecords:
@@ -545,17 +511,20 @@ class Renumbering:
             ):
                 yield SeqRecord(id=str(seq_id), name=str(seq_id), description="", seq=Seq(str(seq)))
 
-        if return_join:
-            dataframe[seq_id_field] = dataframe[seq_id_field].astype(str)
-            _df = self.run_multiple(_get_seq_generator())
-            # convert seq id field to stry stince sequence_id is cast to string
-            return dataframe.merge(
-                _df,
-                left_on=seq_id_field,
-                right_on="sequence_id",
-            )
-        else:
-            return self.run_multiple(_get_seq_generator())
+        # TODO: not used; seems to be more of a user end functionality that may not be common enough
+        # if return_join:
+        #     dataframe[seq_id_field] = dataframe[seq_id_field].astype(str)
+        #     _df = self.run_multiple(_get_seq_generator())
+        #     # convert seq id field to stry stince sequence_id is cast to string
+        #     return dataframe.merge(
+        #         _df,
+        #         left_on=seq_id_field,
+        #         right_on="sequence_id",
+        #     )
+        # else:
+        #     return self.run_multiple(_get_seq_generator())
+
+        return self.run_multiple(_get_seq_generator())
 
     def run_file(self, file: Path) -> "NumberingResults":
         """Run numbering annotator on a fasta file
@@ -628,46 +597,31 @@ class Renumbering:
 
                 # Only number things that are allowed. We still keep the alignment details and hit_table
                 if state_vector and details["chain_type"] in allow:
+                    # Do the numbering and validate (for development purposes)
                     try:
-                        # Do the numbering and validate (for development purposes)
-                        try:
-                            hit_numbered.append(
-                                self.validate_numbering(
-                                    self.number_sequence_from_alignment(
-                                        state_vector,
-                                        sequences[i][1],
-                                        scheme=scheme,
-                                        chain_type=details["chain_type"],
-                                    ),
-                                    sequences[i],
-                                )
+                        hit_numbered.append(
+                            self.validate_numbering(
+                                self.number_sequence_from_alignment(
+                                    state_vector,
+                                    sequences[i][1],
+                                    scheme=scheme,
+                                    chain_type=details["chain_type"],
+                                ),
+                                sequences[i],
                             )
-                        except LongHCDR3Error as e:
-                            e.sequence_name = details["query_name"]
-                            raise e
-                        except NumberingDecreasing:
-                            warnings.warn(f"Skipping {details['query_name']}", UserWarning)
-                            continue
-                            # raise e
-
-                        if assign_germline:
-                            details["germlines"] = self.run_germline_assignment(
-                                state_vector,
-                                sequences[i][1],
-                                details["chain_type"],
-                                allowed_species=allowed_species,
-                            )
-                        hit_details.append(details)
-                    except AssertionError as e:  # Handle errors. Those I have implemented should be assertion.
-                        print(str(e), file=sys.stderr)
-                        raise e  # Validation went wrong. Error message will go to stderr. Want this to be fatal during development.
-                    except Exception as e:
-                        print(
-                            "Error: Something really went wrong that has not been handled",
-                            file=sys.stderr,
                         )
-                        print(str(e), file=sys.stderr)
-                        raise e
+                    except NumberingDecreasing:
+                        warnings.warn(f"Skipping {details['query_name']}", UserWarning)
+                        continue
+
+                    if assign_germline:
+                        details["germlines"] = self.run_germline_assignment(
+                            state_vector,
+                            sequences[i][1],
+                            details["chain_type"],
+                            allowed_species=allowed_species,
+                        )
+                    hit_details.append(details)
 
             if hit_numbered:
                 numbered.append(hit_numbered)
@@ -751,12 +705,11 @@ class Renumbering:
 
                 # Iterate over the domains identified
                 for i, j in chain_types[cts]:
+                    j_gene = nan
+                    j_gene_score = nan
                     if details[i][j].get("germlines", {}).get("j_gene", [0])[0]:
                         j_gene = details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[0][1]
                         j_gene_score = "%.2f" % details[i][j].get("germlines", {}).get("j_gene", [["", ""], 0])[1]
-                    else:
-                        j_gene = nan
-                        j_gene_score = nan
                     line = [
                         sequences[i][0].replace(",", " "),
                         sequences[i][1],
@@ -804,20 +757,11 @@ class Renumbering:
         # Iterate over the v-germline sequences of the chain type of interest.
         # The maximum sequence identity is used to assign the germline
         if chain_type in all_germlines["V"]:
-            if allowed_species is not None:
-                _allowed = []
-                for sp in allowed_species:
-                    if sp not in all_germlines["V"][chain_type]:
-                        logger.debug(f"removeing {sp} from all types since it does not exists for {chain_type}")
-                        continue
-                    else:
-                        _allowed.append(sp)
-            else:
-                allowed_species = _allowed
+            _allowed = []
+            for sp in allowed_species:
+                _allowed.append(sp)
             seq_ids = {}
             for species in allowed_species:
-                if species not in all_germlines["V"][chain_type]:
-                    continue  # Previously bug.
                 for gene, germline_sequence in all_germlines["V"][chain_type][species].items():
                     seq_ids[(species, gene)] = self.get_identity(state_sequence, germline_sequence)
             genes["v_gene"][0] = max(seq_ids, key=lambda x: seq_ids[x])

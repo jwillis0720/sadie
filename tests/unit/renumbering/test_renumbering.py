@@ -13,6 +13,33 @@ from sadie.renumbering.schemes import number_imgt
 USE_CACHE = True  # TODO: make this an option in the config
 
 
+def test_init():
+    # Unsupported scheme
+    with pytest.raises(BadNumberingArgument):
+        _ = Renumbering(scheme="fake_assign", region_assign="imgt", prioritize_cached_hmm=USE_CACHE)
+    # Unsupported region assign
+    with pytest.raises(BadNumberingArgument):
+        _ = Renumbering(scheme="imgt", region_assign="fake_assign", prioritize_cached_hmm=USE_CACHE)
+    # Unsupported chain for scheme Chothia
+    with pytest.raises(BadNumberingArgument):
+        renumbering_api = Renumbering(
+            scheme="chothia", region_assign="imgt", prioritize_cached_hmm=USE_CACHE, allowed_chain=["A"], threshold=20
+        )
+        _ = renumbering_api.run_single(
+            "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+            "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+        )
+    # Unsupported chain for scheme Kabat
+    with pytest.raises(BadNumberingArgument):
+        renumbering_api = Renumbering(
+            scheme="kabat", region_assign="imgt", prioritize_cached_hmm=USE_CACHE, allowed_chain=["A"], threshold=20
+        )
+        _ = renumbering_api.run_single(
+            "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
+            "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
+        )
+
+
 def test_long_seq_from_src():
     renumbering_api = Renumbering(
         scheme="chothia", region_assign="imgt", prioritize_cached_hmm=False, run_multiproc=True
@@ -353,9 +380,12 @@ def test_bad_chain(fixture_setup):
 
 
 def test_good_chain(fixture_setup):
-    allowed_chain = ["H", "K", "L", "A", "B", "G", "D"]
+    allowed_chain = ["H", "K", "L"]
     for chain in allowed_chain:
         Renumbering(allowed_chain=[chain])
+    # allowed_chain = ["A", "B", "G", "D"]
+    # for chain in allowed_chain:
+    #     Renumbering(allowed_chain=[chain])
 
 
 def test_df(fixture_setup):
