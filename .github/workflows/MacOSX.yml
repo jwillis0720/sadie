@@ -42,10 +42,10 @@ jobs:
         uses: pre-commit/action@v2.0.3
       - name: Unit Testing
         run: |
-          pytest -x -n 2 -v tests/unit
+          pytest -xsv tests/unit
       - name: Integration Testing
         run: |
-          pytest -x -n0 -v tests/integration
+          pytest -xv tests/integration
       - name: Install Twine/Wheel
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
