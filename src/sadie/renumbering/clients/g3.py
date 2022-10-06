@@ -178,6 +178,9 @@ class G3:
         str
             stockholm file in string format
         """
+        if (self.data_folder / "stockholms").exists() is False:
+            (self.data_folder / "stockholms").mkdir(parents=True, exist_ok=True)
+
         sto_path = self.data_folder / f"stockholms/{species}_{chain}.sto"
 
         sto_pairs = self.get_stockholm_pairs(source=source, chain=chain, species=species, limit=limit)
@@ -202,6 +205,9 @@ class G3:
     ) -> Path:
         sto_path = self.build_stockholm(source=source, chain=chain, species=species, limit=limit)
 
+        if (self.data_folder / "hmms").exists() is False:
+            (self.data_folder / "hmms").mkdir(parents=True, exist_ok=True)
+
         hmm_path = self.data_folder / f"hmms/{species}_{chain}.hmm"
 
         with pyhmmer.easel.MSAFile(sto_path, digital=True, alphabet=self.alphabet, format="stockholm") as msa_file:
@@ -220,14 +226,10 @@ class G3:
         species: Species = "human",
         chain: Chain = "H",
         limit: Optional[int] = None,
-        prioritize_cached_hmm: bool = False,
     ):
         hmm_path = self.data_folder / f"hmms/{species}_{chain}.hmm"
 
-        if prioritize_cached_hmm is True:
-            if hmm_path.is_file() is False:
-                hmm_path = self.build_hmm(source=source, chain=chain, species=species, limit=limit)
-        else:
+        if hmm_path.is_file() is False:
             hmm_path = self.build_hmm(source=source, chain=chain, species=species, limit=limit)
 
         with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:

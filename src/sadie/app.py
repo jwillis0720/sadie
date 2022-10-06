@@ -233,7 +233,6 @@ def renumbering(
         region_assign=region,
         allowed_chain=allowed_chains,
         allowed_species=allowed_species,
-        prioritize_cached_hmm=True,
         use_numbering_hmms=True,
     )
 
