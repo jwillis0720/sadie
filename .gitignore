@@ -348,3 +348,7 @@ notebooks/catnap_fasta/VRC41.01_catnap_heavy.fasta
 notebooks/catnap_fasta/VRC41.02_catnap_heavy.fasta
 notebooks/RefactorRef.ipynb
 bin/
+notebooks/new_macaque/sequences.fasta.gz
+notebooks/new_macaque/small_test.fasta
+notebooks/new_macaque/test_new.ipynb
+notebooks/new_macaque/Untitled.ipynb
