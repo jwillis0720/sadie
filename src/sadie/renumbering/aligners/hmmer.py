@@ -35,7 +35,6 @@ class HMMER:
         species: Optional[Union[List[Species], Species]] = None,
         chains: Optional[Union[List[Chain], Chain]] = None,
         source: Source = "imgt",
-        prioritize_cached_hmm: bool = False,
     ) -> List[pyhmmer.plan7.HMMFile]:
         """
         Return a HMMER model for a given specie.
@@ -81,7 +80,6 @@ class HMMER:
                         chain=chain,
                         species=single_species,
                         limit=None,
-                        prioritize_cached_hmm=prioritize_cached_hmm,
                     )
                     hmms.append(hmm)
 
@@ -202,7 +200,6 @@ class HMMER:
         source: Source = "imgt",
         bit_score_threshold: int = 80,
         limit: Optional[int] = 1,
-        prioritize_cached_hmm: bool = True,
         for_numbering: bool = False,
     ) -> List[List[Dict[str, Union[str, int]]]]:
         """
@@ -260,9 +257,7 @@ class HMMER:
         # Multiprocessing might scramble actual seq from order
         seq_name_2_seq = {seq.name.decode(): seq.textize().sequence for seq in sequences}
         # Load Models by species
-        hmms = self.get_hmm_models(
-            species=species, chains=chains, source=source, prioritize_cached_hmm=prioritize_cached_hmm
-        )
+        hmms = self.get_hmm_models(species=species, chains=chains, source=source)
 
         # Maintain order of sequences since pyhmmer is async
         results = {seq.name.decode(): [] for seq in sequences}
@@ -587,7 +582,6 @@ class HMMER:
         alignments: List[List[Dict[str, Union[str, int]]]],
         species: Optional[List[Union[str, int]]] = None,
         chains: Optional[List[Union[str, int]]] = None,
-        prioritize_cached_hmm: bool = False,
     ):
         """
         As the length of CDR3 gets long (over 30ish) an alignment that does not include the J region becomes more favourable.
@@ -623,7 +617,6 @@ class HMMER:
                                 species=species,
                                 chains=chains,
                                 bit_score_threshold=10,
-                                prioritize_cached_hmm=prioritize_cached_hmm,
                                 for_numbering=True,
                             )[0]
 

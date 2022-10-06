@@ -53,7 +53,6 @@ class Renumbering:
         threshold: int = 80,
         run_multiproc: bool = True,
         num_cpus: int = cpu_count(),
-        prioritize_cached_hmm: bool = True,
         use_numbering_hmms: bool = False,
         *args,
         **kwargs,
@@ -87,9 +86,6 @@ class Renumbering:
             notes: Each sequence in a fasta file give is run in parallel in the order given.
         num_cpus : int, optional
             number of cpus to use if multiple inputs are given, by default all cpus.
-        prioritize_cached_hmm : bool, optional
-            if True, will use cached hmms if they exist, by default True
-            notes: A queried species and chain will be pulled from G3 if it exists, otherwise it will check a local backup before failing.
         use_numbering_hmms : bool, optional
             if True, will use only backup hmms, by default False
             note: these backup hmms are legacy from the ANARCI team and are not updated.
@@ -108,7 +104,6 @@ class Renumbering:
         self.num_cpus = num_cpus
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
-        self.prioritize_cached_hmm = prioritize_cached_hmm
         self.hmmer.use_numbering_hmms = use_numbering_hmms
         if not self.check_combination(self.scheme, self.region_definition):
             raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
@@ -291,7 +286,6 @@ class Renumbering:
             chains=self.allowed_chains,
             bit_score_threshold=self.threshold_bit,
             limit=1,
-            prioritize_cached_hmm=self.prioritize_cached_hmm,
             for_numbering=True,
         )
 
@@ -302,7 +296,6 @@ class Renumbering:
             alignments=_alignments,
             species=self.allowed_species,
             chains=self.allowed_chains,
-            prioritize_cached_hmm=self.prioritize_cached_hmm,
         )
 
         # Apply the desired numbering scheme to all sequences

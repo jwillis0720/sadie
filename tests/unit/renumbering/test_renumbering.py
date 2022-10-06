@@ -15,37 +15,28 @@ USE_CACHE = True  # TODO: make this an option in the config
 
 
 def test_long_seq_from_src():
-    renumbering_api = Renumbering(
-        scheme="chothia", region_assign="imgt", prioritize_cached_hmm=False, run_multiproc=True
-    )
+    renumbering_api = Renumbering(scheme="chothia", region_assign="imgt", run_multiproc=True)
     renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
-    renumbering_api = Renumbering(
-        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=False
-    )
+    renumbering_api = Renumbering(scheme="kabat", region_assign="imgt", allowed_species=["human"])
     renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
 
 
-def test_long_seq_from_empty_src(fixture_setup):
-    # Delete human hmm to force it rebuild
-    hmms_folder = fixture_setup.hmm_data
-    (hmms_folder / "human_H.hmm").unlink(missing_ok=False)
+def test_long_seq_from_empty_src(tmp_path):
+    # Hack to force G3 to repopulate hmm in temp and use it for HMMER
+    Renumbering.hmmer.g3.data_folder = tmp_path
 
-    renumbering_api = Renumbering(
-        scheme="chothia", region_assign="imgt", prioritize_cached_hmm=True, run_multiproc=True
-    )
+    renumbering_api = Renumbering(scheme="chothia", region_assign="imgt", run_multiproc=True)
     renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
-    renumbering_api = Renumbering(
-        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=True
-    )
+    renumbering_api = Renumbering(scheme="kabat", region_assign="imgt", allowed_species=["human"])
     renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
@@ -53,16 +44,12 @@ def test_long_seq_from_empty_src(fixture_setup):
 
 
 def test_long_seq():
-    renumbering_api = Renumbering(
-        scheme="chothia", region_assign="imgt", prioritize_cached_hmm=USE_CACHE, run_multiproc=True
-    )
+    renumbering_api = Renumbering(scheme="chothia", region_assign="imgt", run_multiproc=True)
     renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
     )
-    renumbering_api = Renumbering(
-        scheme="kabat", region_assign="imgt", allowed_species=["human"], prioritize_cached_hmm=USE_CACHE
-    )
+    renumbering_api = Renumbering(scheme="kabat", region_assign="imgt", allowed_species=["human"])
     renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
@@ -71,9 +58,7 @@ def test_long_seq():
 
 def test_no_j_gene():
     """no j gene found"""
-    renumbering_api = Renumbering(
-        scheme="chothia", region_assign="imgt", allowed_species=["rat"], prioritize_cached_hmm=USE_CACHE
-    )
+    renumbering_api = Renumbering(scheme="chothia", region_assign="imgt", allowed_species=["rat"])
     renumbering_api.run_single(
         "VRC26.27_KT371104_Homo_sapiens_anti-HIV-1_immunoglobulin",
         "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS",
@@ -81,7 +66,7 @@ def test_no_j_gene():
 
 
 def test_trouble_seqs():
-    numbering = Renumbering(scheme="kabat", region_assign="imgt", run_multiproc=False, prioritize_cached_hmm=USE_CACHE)
+    numbering = Renumbering(scheme="kabat", region_assign="imgt", run_multiproc=False)
     # Legacy check. Id is sudo numbered in order so users cant just throw in a string
     # with pytest.warns(UserWarning):
     #     results = numbering.run_single(
@@ -114,7 +99,7 @@ def test_trouble_seqs():
 
 
 def test_single_seq():
-    renumbering_api = Renumbering(region_assign="imgt", prioritize_cached_hmm=USE_CACHE)
+    renumbering_api = Renumbering(region_assign="imgt")
     result = renumbering_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
@@ -139,12 +124,12 @@ def test_single_seq():
 
 
 def test_alternate_numbering():
-    renumbering_api = Renumbering(scheme="chothia", region_assign="chothia", prioritize_cached_hmm=USE_CACHE)
+    renumbering_api = Renumbering(scheme="chothia", region_assign="chothia")
     renumbering_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
     )
-    renumbering_api = Renumbering(scheme="chothia", region_assign="abm", prioritize_cached_hmm=USE_CACHE)
+    renumbering_api = Renumbering(scheme="chothia", region_assign="abm")
     renumbering_api.run_single(
         "MySweetAntibody",
         "AAAADAFAEVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSSRRRESV",
@@ -152,7 +137,7 @@ def test_alternate_numbering():
 
 
 def test_numbering_multi_input():
-    renumbering_api = Renumbering(prioritize_cached_hmm=USE_CACHE, run_multiproc=True)
+    renumbering_api = Renumbering(run_multiproc=True)
     seq_records = [
         SeqRecord(
             Seq(
@@ -200,14 +185,12 @@ def test_io(fixture_setup):
                     with pytest.raises(BadNumberingArgument):
                         renumbering_api = Renumbering(
                             allowed_species=["human", "dog", "cat"],
-                            prioritize_cached_hmm=USE_CACHE,
                             scheme=scheme,
                             region_assign=region,
                         )
                     continue
                 renumbering_api = Renumbering(
                     allowed_species=["human", "dog", "cat"],
-                    prioritize_cached_hmm=USE_CACHE,
                     scheme=scheme,
                     region_assign=region,
                 )
@@ -223,7 +206,7 @@ def test_io(fixture_setup):
 
 
 def test_dog():
-    renumbering_api = Renumbering(allowed_species=["dog"], prioritize_cached_hmm=USE_CACHE)
+    renumbering_api = Renumbering(allowed_species=["dog"])
     result = renumbering_api.run_single(
         "V3-38_J4",
         "EVQLVESGGDLVKPGGTLRLSCVASGLSLTSNSMSWVRQSPGKGLQWVAVIWSNGGTYYADAVKGRFTISRDNAKNTLYLQMNSLRAEDTAVYYCASIYYYDADYLHWGQGTLVTVSS",
@@ -258,7 +241,7 @@ def test_dog():
 
 
 def test_cat():
-    renumbering_api = Renumbering(allowed_species=["cat"], prioritize_cached_hmm=USE_CACHE)
+    renumbering_api = Renumbering(allowed_species=["cat"])
     result = renumbering_api.run_single(
         "CF-R01-D01",
         "DVQLVESGGDLAKPGGSLRLTCVASGLSVTSNSMSWVRQAPGKGLRWVSTIWSKGGTYYADSVKGRFTVSRDSAKNTLYLQMDSLATEDTATYYCASIYHYDADYLHWYFDFWGQGALVTVSF",
@@ -278,13 +261,13 @@ def test_cat():
 
 def test_bad_sequences():
     bad_sequence = "SEQLTQPESLTLRPGQPLTIRCQVSYSVSSTGYATHWIRQPDGRGLEWIGGIRIGWKGAKDSLSSQFSLAVDGSSKTITLQGQNMQPGDSAVYYCAR"
-    renumbering_api = Renumbering(prioritize_cached_hmm=USE_CACHE)
+    renumbering_api = Renumbering()
     result = renumbering_api.run_single("bad_sequence", bad_sequence)
     assert result.empty
 
 
 def test_duplicated_seq():
-    renumbering_api = Renumbering(prioritize_cached_hmm=USE_CACHE)
+    renumbering_api = Renumbering()
     seq_records = [
         SeqRecord(
             Seq(
@@ -340,7 +323,7 @@ def test_df(fixture_setup):
     df = pd.DataFrame(
         [{"id": x.id, "seq": x.seq, "description": x.description} for x in SeqIO.parse(test_file_heavy, "fasta")]
     )
-    numbering_obj = Renumbering(prioritize_cached_hmm=USE_CACHE)
+    numbering_obj = Renumbering()
     numbering_results = numbering_obj.run_dataframe(df, "id", "seq")
     assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
     # numbering_results = numbering_obj.run_dataframe(df, "id", "seq", return_join=True)

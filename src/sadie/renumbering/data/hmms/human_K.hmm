@@ -7,8 +7,8 @@ MM    no
 CONS  yes
 CS    no
 MAP   yes
-DATE  Thu Jul  7 00:12:29 2022
-COM   [1] /Users/jordanwillis/minicondax86/envs/sadie-dev/bin/pytest -s --log-cli-level DEBUG -x tests/
+DATE  Wed Oct  5 21:07:59 2022
+COM   [1] /Users/tmsincomb/miniforge3-rose/envs/sadie/bin/pytest -sv tests/unit/renumbering/test_renumbering.py
 NSEQ  522
 EFFN  0.800491
 CKSUM 2145771981
