@@ -1,4 +1,4 @@
-__version__ = "0.4.28"
+__version__ = "0.4.29"
 
 from .airr import Airr
 from sadie.airr.igblast import GermlineData
