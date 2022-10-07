@@ -19,4 +19,4 @@ jobs:
           pip install poetry
           poetry lock --no-update
           poetry install --with dev
-      - run: mypy src/sadie
+          mypy src/sadie
