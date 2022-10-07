@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sadie"
+name = "sadie-antibody"
 version = "0.4.29"
 license = "MIT"
 description = "\"The Complete Antibody Library\""
@@ -27,7 +27,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 packages = [
-    { include = "src" },
+    { include = "sadie", from = "src" },
 ]
 
 [tool.poetry.urls]
@@ -52,7 +52,6 @@ pyhmmer = ">=0.5.0"
 scikit-learn = "^1.1.2"
 openpyxl = "^3.0.10"
 yarl = "^1.8.1"
-
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.0"
