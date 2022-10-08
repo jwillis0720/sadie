@@ -25,7 +25,7 @@ def test_yaml(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixt
     assert yaml_object.__repr__()
     assert set([i for i in yaml_object]) == {"clk", "dog", "human", "mouse", "rabbit", "se09", "rat", "macaque"}
     assert yaml_object["human"]
-    assert len(yaml_object) == 4987
+    assert len(yaml_object) == 4975
 
     with pytest.raises(ValueError):
         YamlRef(fixture_setup.get_duplicated_yaml())
