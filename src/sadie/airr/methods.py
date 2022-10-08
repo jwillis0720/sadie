@@ -9,7 +9,7 @@ from Bio.Seq import Seq
 # module/package level
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.renumbering import Renumbering
-from Levenshtein._levenshtein import distance
+from Levenshtein import distance
 
 logger = logging.getLogger("AirrMethod")
 
