@@ -16,53 +16,33 @@ jobs:
       matrix:
         os: [macos-latest]
         python-version: [3.8, 3.9, "3.10"]
+        poetry-version: [1.2.1]
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Install w/dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install poetry
-          poetry lock --no-update
-          poetry install --with dev
-      - name: Cache PIP
-        uses: actions/cache@v2
-        with:
-          path: ~/Library/Caches/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
       - name: PreCommit
-        uses: pre-commit/action@v2.0.3
+        uses: pre-commit/action@v3
+      - name: Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: Install dependencies
+        run: poetry install --with dev
       - name: Unit Testing
         run: |
-          pytest -xsv tests/unit
+          poetry run pytest -xsv tests/unit
       - name: Integration Testing
         run: |
-          pytest -xv tests/integration
-      - name: Install Twine/Wheel
-        if: startsWith(github.ref, 'refs/tags/v')
+          poetry run pytest -xv tests/integration
+      - name: Build and publish
         run: |
-          pip install wheel twine setuptools
-          python setup.py sdist bdist_wheel
-      - name: Publish source to PyPI
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        if: startsWith(github.ref, 'refs/tags/v') && matrix.python-version == '3.8'
-        run: |
-          twine upload --repository pypi dist/*.tar.gz
-      - name: Publish wheel
-        if: startsWith(github.ref, 'refs/tags/v')
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          twine upload --repository pypi dist/*.whl
+          poetry version $(git describe --tags --abbrev=0)
+          poetry build
+          poetry publish --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }}
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}

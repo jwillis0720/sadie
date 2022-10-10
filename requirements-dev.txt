@@ -3,7 +3,7 @@ pylint==2.12.2
 pre-commit==2.16.0
 coverage==6.2
 pytest
-airr
+airr>=1.4.0
 black==22.3.0
 pyinstrument
 bump2version==1.0.1

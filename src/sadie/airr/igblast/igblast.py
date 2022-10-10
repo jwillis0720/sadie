@@ -881,7 +881,7 @@ class IgBLASTN:
         # It's probably best to take advantage of IGblast output and tempfile
         with tempfile.NamedTemporaryFile(dir=self.temp_dir, suffix="_igblast.tsv") as tmpfile:
             cmd += ["-out", tmpfile.name]
-
+            print(cmd)
             process = subprocess.run(cmd, env=local_env, capture_output=True)
             if process.stderr:
                 raise IgBLASTRunTimeError(process.stderr)

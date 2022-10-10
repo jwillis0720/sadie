@@ -1,0 +1,40 @@
+name: Linux Build and Test
+on:
+  push:
+    tags:
+      - "*"
+    branches: ["main"]
+  pull_request:
+    branches: ["main", "development"]
+jobs:
+  linux-build-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, "macos-latest"]
+        python-version: ["3.10"]
+        poetry-version: [1.2.1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          # cache: "poetry"
+      - name: PreCommit
+        uses: pre-commit/action@v3.0.0
+      # - name: Poetry Install
+      #   uses: abatilo/actions-poetry@v2
+      #   with:
+      #     poetry-version: ${{ matrix.poetry-version }}
+      - name: Install dependencies
+        run: |
+          # pip install poetry
+          pip install -r requirements.txt
+          pip install . pytest
+          # poetry install --with dev
+      - name: Unit Testing
+        run: pytest -xsv tests/unit
+      # - name: Integration Testing
+      #   run: poetry run pytest -xv tests/integration
