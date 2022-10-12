@@ -97,7 +97,7 @@ A development installation is available by running the following command:
     ```console
     $ git clone git@github.com/jwillis0720/sadie.git
     ---> 100%
-    $ pip install -e .[dev]
+    $ poetry install --with dev
     ---> 100%
     ```
 
