@@ -1,0 +1,46 @@
+name: Coverage Report
+
+on:
+  push:
+    tags:
+      - "*"
+    branches: ["main"]
+  pull_request:
+    branches: ["main", "update_doc", "development"]
+
+jobs:
+  coverage:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10"]
+        os: [ubuntu-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install --with dev
+      - name: Test
+        run: |
+          poetry run coverage run --source=sadie -m pytest tests/unit/
+          poetry run coverage html
+          poetry run coverage xml
+          poetry run coverage report
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report
+          path: ./coverage
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          directory: ./coverage/reports/xml
+          name: codecov-umbrella
+          verbose: true
