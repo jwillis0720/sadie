@@ -1,11 +1,11 @@
-name: Linux Build and Test
+name: Build and Test using Pytest
 on:
   push:
     tags:
       - "*"
     branches: ["main"]
   pull_request:
-    branches: ["main", "development"]
+    branches: ["main", "update_doc", "development"]
 jobs:
   pytest:
     runs-on: ${{ matrix.os }}

@@ -1,11 +1,13 @@
-name: Static Type Check
+name: Static Type Check Using MYPY
+
 on:
   push:
     branches: ["main"]
   pull_request:
-    branches: ["main", "development"]
+    branches: ["main", "update_doc", "development"]
+
 jobs:
-  check_static:
+  mypy:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
