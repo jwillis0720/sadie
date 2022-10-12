@@ -1,4 +1,4 @@
-name: Static Type Check Using MYPY
+name: Static Type Check
 
 on:
   push:

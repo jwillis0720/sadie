@@ -1,4 +1,4 @@
-name: Build and Test using Pytest
+name: Build and Test
 on:
   push:
     tags:
