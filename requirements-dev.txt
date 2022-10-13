@@ -22,3 +22,4 @@ markdown-include==0.6.0
 mdx-include==1.4.1
 jinja2==3.0.3
 pytest>=7.1.0
+pyright>=1.1.275

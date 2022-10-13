@@ -2,13 +2,15 @@
 import re
 import warnings
 
+from Bio.Align import MultipleSeqAlignment
+from Bio.pairwise2 import align
 
 # Third Party
 from Bio.Seq import Seq
-from Bio.pairwise2 import align
 from Bio.SeqRecord import SeqRecord
-from Bio.Align import MultipleSeqAlignment
 from numpy import isnan
+
+from sadie.utility.util import format_alignment
 
 # Lib Level
 from .exception import (
@@ -17,8 +19,6 @@ from .exception import (
     BadNTSequenceError,
     BadNTSequenceWarning,
 )
-
-from sadie.utility.util import format_alignment
 
 # Common amino acids
 STANDARD_AMINO_ACIDS = "ACDEFGHIKLMNPQRSTVYW"

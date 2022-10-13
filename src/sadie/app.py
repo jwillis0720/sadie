@@ -1,24 +1,25 @@
 """This is our main entry point"""
 import logging
-from pathlib import Path
-import sys
 import os
-from typing import Union, Any, List
-import click
+import sys
+from pathlib import Path
+from typing import Any, List, Union
 
-# Renumbering
-from sadie.renumbering import Renumbering
+import click
 
 # airr
 from sadie.airr import Airr
 from sadie.airr.methods import run_igl_assignment, run_mutational_analysis
 
-# utility
-from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
-from sadie.utility.util import get_verbosity_level, get_project_root
-
 # reference
 from sadie.reference.reference import References
+
+# Renumbering
+from sadie.renumbering import Renumbering
+
+# utility
+from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
+from sadie.utility.util import get_project_root, get_verbosity_level
 
 
 @click.group()

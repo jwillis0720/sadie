@@ -1,14 +1,15 @@
 from pprint import pprint
+
 from sadie.airr import Airr
 from sadie.receptor.rearrangment import (
-    InputSequence,
-    PrimaryAnnotations,
     AlignmentAnnotations,
     AlignmentPositions,
-    RegionSequences,
-    RegionPositions,
+    InputSequence,
     JunctionLengths,
+    PrimaryAnnotations,
     ReceptorChain,
+    RegionPositions,
+    RegionSequences,
 )
 
 

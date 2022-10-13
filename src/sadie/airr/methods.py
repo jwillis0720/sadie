@@ -1,15 +1,16 @@
-from typing import Any, List, Union
 import logging
+from typing import Any, List, Union
+
 import numpy as np
 
 # third party
 import pandas as pd
 from Bio.Seq import Seq
+from Levenshtein import distance
 
 # module/package level
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.renumbering import Renumbering
-from Levenshtein import distance
 
 logger = logging.getLogger("AirrMethod")
 

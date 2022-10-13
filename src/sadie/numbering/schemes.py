@@ -79,7 +79,6 @@ Other schemes can be implemented following the template above.
 
 from sadie.antibody.exception import LongHCDR3Error
 
-
 # Alphabet used for insertion (last (-1th) is a blank space for no insertion)
 alphabet = [
     "A",

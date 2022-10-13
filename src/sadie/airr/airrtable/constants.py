@@ -1,5 +1,4 @@
-from typing import Dict, Any
-
+from typing import Any, Dict
 
 IGBLAST_AIRR: Dict[Any, str] = {
     "sequence_id": "object",

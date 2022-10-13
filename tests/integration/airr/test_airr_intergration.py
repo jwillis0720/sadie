@@ -2,6 +2,7 @@ from distutils.version import StrictVersion
 from math import nan
 
 import pandas as pd
+
 from sadie.airr import Airr, AirrTable
 from sadie.airr.airrtable import constants
 from tests.conftest import SadieFixture

@@ -7,7 +7,7 @@ on:
     branches: ["main", "update_doc", "development"]
 
 jobs:
-  mypy:
+  pyright:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -26,4 +26,4 @@ jobs:
           pip install poetry
           poetry install --with dev
       - name: Static Type Check
-        run: poetry run mypy src/sadie
+        run: poetry run pyright

@@ -77,6 +77,7 @@ Jinja2 = "3.0.3"
 mypy = "0.982"
 bump2version = "1.0.1"
 Markdown = "3.3.7"
+pyright = ">=1.1.275"
 
 [build-system]
 requires = ["poetry-core"]
@@ -108,73 +109,26 @@ directory = "coverage/reports/html/"
 [tool.coverage.xml]
 output = "coverage/reports/xml/coverage.xml"
 
-[tool.mypy]
-plugins = ["pydantic.mypy"]
-# these are explicit strict defs
-disallow_any_generics = true
-warn_unused_configs = true
-disallow_subclassing_any = true
-disallow_untyped_calls = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_return_any = true
-no_implicit_reexport = true
-strict_equality = true
-follow_imports = "silent"
-pretty = true
-show_error_codes = true
+[tool.pyright]
+include = ["src"]
+exclude = [
+    "tests",
+    "coverage",
+]
+reportMissingTypeStubs = false
+reportUnkownVariableType = false
+reportOptionalIterable = false
+# private imports should be allowed. ignore it
+reportPrivateImportUsage = false
+# TODO: mostly pandas and unknown lists being used
+reportGeneralTypeIssues = false
+# TODO: list of Nones being used -- should fix this logic
+reportOptionalSubscript = false
+# TODO: operations being done on list of Nones -- should fix this logic
+reportOptionalOperand = false
+# TODO: old anacri code using short one time variables
+reportUnboundVariable = false
 
-[[tool.mypy.overrides]]
-module = ["semantic_version.*"]
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = ["filetype.*"]
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = ["Levenshtein.*"]
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = ["sadie.airr.*"]
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = ["sadie.cluster.*"]
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = ["sadie.reference.*"]
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = ["sadie.renumbering.*"]
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = ["sadie.antibody.*"]
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = ["sadie.numbering.*"]
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = ["Bio.*"]
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = ["sklearn.*"]
-ignore_missing_imports = true
-
-[tool.pydantic-mypy] # https://pydantic-docs.helpmanual.io/mypy_plugin/#enabling-the-plugin
-init_forbid_extra = true
-init_typed = true
-warn_required_dynamic_aliases = true
-warn_untyped_fields = true
+[tool.isort]
+profile = "black"
+known_third_party = ["Bio"]

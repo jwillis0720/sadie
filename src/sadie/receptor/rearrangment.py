@@ -6,8 +6,9 @@ import re
 from functools import lru_cache
 from typing import Any, List, Optional, Set, Union
 from uuid import UUID, uuid4
-from pandas._libs.missing import NAType
+
 from Bio.Seq import Seq
+from pandas._libs.missing import NAType
 from pydantic import BaseModel, validator
 
 

@@ -1,7 +1,6 @@
 """This module houses the main Refernce object to manipulate the backend references"""
 from __future__ import annotations
 
-
 import logging
 from pathlib import Path
 from time import sleep
@@ -14,8 +13,12 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from sadie.reference.models import GeneEntries, GeneEntry
+from sadie.reference.util import (
+    make_blast_db_for_internal,
+    write_blast_db,
+    write_out_fasta,
+)
 from sadie.reference.yaml import YamlRef
-from sadie.reference.util import make_blast_db_for_internal, write_out_fasta, write_blast_db
 
 # reference logger
 logger = logging.getLogger("Reference")

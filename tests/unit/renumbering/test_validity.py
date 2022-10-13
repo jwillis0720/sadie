@@ -1,7 +1,7 @@
 import json
 
-from Bio import SeqIO
 import pandas as pd
+from Bio import SeqIO
 
 from sadie.renumbering import Renumbering
 

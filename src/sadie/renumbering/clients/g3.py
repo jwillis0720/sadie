@@ -1,14 +1,14 @@
 from functools import lru_cache
 from itertools import product
 from pathlib import Path
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
 
-from pydantic import validate_arguments
 import pyhmmer
 import requests as r
+from pydantic import validate_arguments
 from yarl import URL
 
-from sadie.typing import Species, Chain, Source
+from sadie.typing import Chain, Source, Species
 
 
 class G3:
@@ -215,7 +215,7 @@ class G3:
             hmm, _, _ = self.builder.build_msa(msa, self.background)
 
         with open(hmm_path, "wb") as output_file:
-            hmm.write(output_file)
+            hmm.write(output_file)  # type: ignore
 
         return hmm_path
 
@@ -235,4 +235,4 @@ class G3:
         with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
             hmm = next(hmm_file)
 
-        return hmm
+        return hmm  # type: ignore

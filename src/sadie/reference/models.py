@@ -1,5 +1,6 @@
-from pydantic import BaseModel, validator
 from typing import Dict, List
+
+from pydantic import BaseModel, validator
 
 
 class Species(BaseModel):

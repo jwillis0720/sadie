@@ -1,23 +1,27 @@
 from __future__ import annotations
+
+import bz2
 import glob
+import gzip
+import warnings
 from pathlib import Path
 from pprint import pformat
-import warnings
-from filetype import guess
-from filetype.types.base import Type
-from filetype.types.archive import Gz, Bz2
-import gzip
-import bz2
-from typing import IO, Dict, Iterator, List, TextIO, Union, Any
+from typing import IO, Any, Dict, Iterator, List, TextIO, Union
 
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 from Bio.SeqIO.AbiIO import AbiIterator
 from Bio.SeqIO.FastaIO import FastaIterator
 from Bio.SeqIO.QualityIO import FastqPhredIterator
+from Bio.SeqRecord import SeqRecord
+from filetype import guess
+from filetype.types.archive import Bz2, Gz
+from filetype.types.base import Type
 
-# exceptions handled in own file
-from sadie.utility.exception import NotAValidSequenceFile, NotAValidCompression, DirectoryExistsError
+from sadie.utility.exception import (
+    DirectoryExistsError,
+    NotAValidCompression,
+    NotAValidSequenceFile,
+)
 
 
 def guess_input_compression(input_path: Union[str, Path]) -> Union[str, None]:

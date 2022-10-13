@@ -1,7 +1,7 @@
-from sadie.cluster import Cluster
-from sadie.airr import AirrTable, LinkedAirrTable
 import pandas as pd
 
+from sadie.airr import AirrTable, LinkedAirrTable
+from sadie.cluster import Cluster
 from tests.conftest import SadieFixture
 
 

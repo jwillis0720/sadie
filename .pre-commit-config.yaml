@@ -1,21 +1,30 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
-    hooks:
-    -   id: check-yaml
-        args: ['--unsafe']
-    -   id: end-of-file-fixer
-    -   id: trailing-whitespace
-        exclude: docs/img/
--   repo: https://github.com/psf/black
-    rev: 22.3.0
-    hooks:
-    -   id: black
-        args: ["-l","120"]
--   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.0
-    hooks:
-    -   id: flake8
-        exclude: (^src/sadie/anarci/aa/|notebooks/)
-        additional_dependencies: [flake8-bugbear]
-        args: ["--ignore=W503,E501,E203,B006,B008,B019, B023"]
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v3.3.0
+      hooks:
+          - id: check-yaml
+            args: ["--unsafe"]
+          - id: end-of-file-fixer
+          - id: trailing-whitespace
+            exclude: docs/img/
+    - repo: https://github.com/psf/black
+      rev: 22.10.0
+      hooks:
+          - id: black
+            files: "(src|tests).*py"
+            args: ["-l", "120"]
+    - repo: https://github.com/PyCQA/isort
+      rev: 5.10.1
+      hooks:
+          - id: isort
+            name: isort (python)
+            args: ["-m", "3", "--tc"]
+    - repo: local
+      hooks:
+          - id: pyright
+            name: pyright
+            entry: poetry run pyright
+            language: node
+            pass_filenames: false
+            types: [python]
+            additional_dependencies: ["pyright@latest"]
