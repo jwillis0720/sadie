@@ -74,8 +74,9 @@ mkdocs-redirects = "1.0.3"
 mkdocs = "1.2.3"
 markdown-include = "0.6.0"
 Jinja2 = "3.0.3"
-mypy = "^0.982"
+mypy = "0.982"
 bump2version = "1.0.1"
+Markdown = "3.3.7"
 
 [build-system]
 requires = ["poetry-core"]

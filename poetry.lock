@@ -430,11 +430,11 @@ rapidfuzz = ">=2.3.0,<3.0.0"
 
 [[package]]
 name = "Markdown"
-version = "3.4.1"
+version = "3.3.7"
 description = "Python implementation of Markdown."
 category = "dev"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.6"
 
 [package.dependencies]
 importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
@@ -1299,7 +1299,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "65ed7c7364801810405339abc3148d64d65d4dd899f2a124eb3a9bc567e7d466"
+content-hash = "5b577c13fbb5af4ed6a9e1346570f724cd1ae4a8e5d853622f0523331c29e76e"
 
 [metadata.files]
 airr = [
@@ -1675,8 +1675,8 @@ Levenshtein = [
     {file = "Levenshtein-0.20.5.tar.gz", hash = "sha256:cc5cfce70b40e4ccbcadbeac3fc10c14db18766822c9d671f6d9cbc7c6dd031c"},
 ]
 Markdown = [
-    {file = "Markdown-3.4.1-py3-none-any.whl", hash = "sha256:08fb8465cffd03d10b9dd34a5c3fea908e20391a2a90b88d66362cb05beed186"},
-    {file = "Markdown-3.4.1.tar.gz", hash = "sha256:3b809086bb6efad416156e00a0da66fe47618a5d6918dd688f53f40c8e4cfeff"},
+    {file = "Markdown-3.3.7-py3-none-any.whl", hash = "sha256:f5da449a6e1c989a4cea2631aa8ee67caa5a2ef855d551c88f9e309f4634c621"},
+    {file = "Markdown-3.3.7.tar.gz", hash = "sha256:cbb516f16218e643d8e0a95b309f77eb118cb138d39a4f27851e6a63581db874"},
 ]
 markdown-include = [
     {file = "markdown-include-0.6.0.tar.gz", hash = "sha256:6f5d680e36f7780c7f0f61dca53ca581bd50d1b56137ddcd6353efafa0c3e4a2"},
