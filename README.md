@@ -82,7 +82,8 @@ Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/
 
 ```console
 $ git clone git@github.com/jwillis0720/sadie.git
-$ pip install -e .[dev]
+$ pip install poetry
+$ poetry install --with dev
 ```
 
 ## The Littlest Usage
