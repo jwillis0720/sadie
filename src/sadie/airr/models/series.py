@@ -1,7 +1,7 @@
-from typing import Optional, Any, Dict
-from pydantic import BaseModel, root_validator
+from typing import Any, Dict, Optional
 
 import pandas as pd
+from pydantic import BaseModel, root_validator
 
 
 class AirrSeriesModel(BaseModel):

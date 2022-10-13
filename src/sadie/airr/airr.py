@@ -9,11 +9,10 @@ import platform
 import shutil
 import tempfile
 import warnings
+from multiprocessing import cpu_count
 from pathlib import Path
 from types import GeneratorType
 from typing import Generator, Iterator, List, Optional, Set, Union
-from multiprocessing import cpu_count
-
 
 # third party
 import pandas as pd
@@ -22,11 +21,10 @@ from Bio.Seq import Seq
 from Bio.SeqIO.Interfaces import SequenceIterator
 from Bio.SeqRecord import SeqRecord
 
-
 # package/module level
 from sadie.airr.airrtable import AirrTable, LinkedAirrTable
-from sadie.airr.igblast import IgBLASTN, GermlineData
-from sadie.airr.exceptions import BadIgBLASTExe, BadDataSet, BadRequstedFileType
+from sadie.airr.exceptions import BadDataSet, BadIgBLASTExe, BadRequstedFileType
+from sadie.airr.igblast import GermlineData, IgBLASTN
 from sadie.reference.reference import References
 
 logger = logging.getLogger("AIRR")

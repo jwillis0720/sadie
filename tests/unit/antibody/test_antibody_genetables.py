@@ -1,9 +1,11 @@
 """Unit tests for antibody."""
 
 import logging
-import pytest
+
 import pandas as pd
+import pytest
 from pkg_resources import resource_filename
+
 from sadie import antibody
 from sadie.antibody import exception, genetable, segment
 

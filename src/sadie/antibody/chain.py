@@ -1,31 +1,33 @@
 """higher level antibody objects"""
 import json
 
+from Bio.Align import MultipleSeqAlignment
+
 # Third Party
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio.Align import MultipleSeqAlignment
 
+from sadie.utility.util import format_alignment
+
+from .genetable import JGene, VGene
 
 # Lib level
 from .segment import (
-    FrameWork1NT,
-    FrameWork2NT,
-    FrameWork3NT,
-    FrameWork4NT,
-    FrameWork1AA,
-    FrameWork2AA,
-    FrameWork3AA,
-    FrameWork4AA,
-    CDR1NT,
-    CDR2NT,
-    CDR3NT,
     CDR1AA,
+    CDR1NT,
     CDR2AA,
+    CDR2NT,
     CDR3AA,
+    CDR3NT,
+    FrameWork1AA,
+    FrameWork1NT,
+    FrameWork2AA,
+    FrameWork2NT,
+    FrameWork3AA,
+    FrameWork3NT,
+    FrameWork4AA,
+    FrameWork4NT,
 )
-from sadie.utility.util import format_alignment
-from .genetable import VGene, JGene
 
 
 class AntibodyChainAA:

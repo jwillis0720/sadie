@@ -1,7 +1,6 @@
 # Use this script if you ever have changes with major integration changes
 from sadie.airr import Airr
 
-
 input_heavy = "tests/data/fixtures/fasta_inputs/catnap_nt_heavy.fasta"
 input_light = "tests/data/fixtures/fasta_inputs/catnap_nt_light.fasta"
 output_heavy = "tests/data/fixtures/airr_tables/catnap_heavy_airrtable.feather"

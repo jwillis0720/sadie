@@ -1,6 +1,7 @@
+import tempfile
+
 from sadie.reference import Reference
 from sadie.reference.yaml import YamlRef
-import tempfile
 
 # enter no file to use reference.yml
 yml_ref = YamlRef()

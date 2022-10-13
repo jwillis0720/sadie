@@ -1,25 +1,26 @@
+import logging
+import sys
+import warnings
 from collections import namedtuple
 from functools import lru_cache
-import logging
-import warnings
-import sys
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
 
 import pandas as pd
 from numpy import nan
 
 from sadie.antibody.exception import LongHCDR3Error, NumberingDecreasing
 from sadie.numbering.scheme_numbering import scheme_numbering
+
 from .germlines import all_germlines
 from .schemes import (
-    number_kabat_heavy,
-    number_kabat_light,
+    number_aho,
     number_chothia_heavy,
     number_chothia_light,
+    number_imgt,
+    number_kabat_heavy,
+    number_kabat_light,
     number_martin_heavy,
     number_martin_light,
-    number_imgt,
-    number_aho,
 )
 
 logger = logging.getLogger("NUMBERING")

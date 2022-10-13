@@ -2,13 +2,14 @@
 This file contains objects to represent the rearrangemnt scheme
 https://docs.airr-community.org/en/stable/datarep/rearrangements.html
 """
-from functools import lru_cache
-import warnings
-from pydantic import BaseModel, validator
-from typing import Any, Dict, List, Optional, Union, Set
-from Bio.Seq import Seq
-from uuid import UUID, uuid4
 import re
+import warnings
+from functools import lru_cache
+from typing import Any, Dict, List, Optional, Set, Union
+from uuid import UUID, uuid4
+
+from Bio.Seq import Seq
+from pydantic import BaseModel, validator
 
 
 @lru_cache(maxsize=1)

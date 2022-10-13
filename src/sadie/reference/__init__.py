@@ -1,19 +1,19 @@
-from sadie.reference.reference import Reference, G3Error
-from sadie.reference.yaml import YamlRef
+from sadie.reference.reference import G3Error, Reference
 from sadie.reference.settings import (
-    RECEPTORS,
-    IMGT_DEF_nt,
+    BLAST_CONVENTION,
     IMGT_GB_LOOKUP,
     IMGT_LOOKUP,
-    BLAST_CONVENTION,
     J_SEGMENTS,
     MOTIF_LOOKUP,
+    RECEPTORS,
     RENAME_DICT,
     RENAME_DICT_TRANSLATE,
     REVERSE_IMGT_LOOKUP,
     SEGMENTS,
     SEGMENTS_INTERNAL_DATA,
+    IMGT_DEF_nt,
 )
+from sadie.reference.yaml import YamlRef
 
 __all__ = [
     "Reference",
@@ -31,5 +31,4 @@ __all__ = [
     "SEGMENTS",
     "SEGMENTS_INTERNAL_DATA",
     "YamlRef",
-    "get_loaded_database",
 ]

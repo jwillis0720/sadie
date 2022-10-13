@@ -1,9 +1,11 @@
 import logging
-import pandas as pd
 from ast import literal_eval
 
-from .constants import NUMBERING_RESULTS
+import pandas as pd
+
 from sadie.numbering.scheme_numbering import scheme_numbering
+
+from .constants import NUMBERING_RESULTS
 
 logger = logging.getLogger("NUMBERING")
 

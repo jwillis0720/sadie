@@ -1,5 +1,7 @@
-import requests
 import json
+
+import requests
+
 from sadie.reference import G3Error
 
 url = "https://g3.jordanrwillis.com/api/v1/genes?source=imgt&segment=V&common=human&limit=5"

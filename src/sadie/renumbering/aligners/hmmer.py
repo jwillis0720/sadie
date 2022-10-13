@@ -1,16 +1,16 @@
 # from functools import lru_cache TODO: see if this is worth it for get_hmm_models
 from operator import itemgetter
 from pathlib import Path
-from typing import Union, Optional, Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
+import pyhmmer
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pydantic import validate_arguments
-import pyhmmer
 
 from sadie.renumbering.clients import G3
 from sadie.renumbering.numbering_translator import NumberingTranslator
-from sadie.typing import Species, Chain, Source
+from sadie.typing import Chain, Source, Species
 
 
 class HMMER:

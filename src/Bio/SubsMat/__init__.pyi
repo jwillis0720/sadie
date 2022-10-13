@@ -1,7 +1,8 @@
 import math
+from typing import Any
+
 from Bio import BiopythonDeprecationWarning as BiopythonDeprecationWarning
 from Bio.SubsMat import FreqTable as FreqTable
-from typing import Any
 
 log = math.log
 NOTYPE: int

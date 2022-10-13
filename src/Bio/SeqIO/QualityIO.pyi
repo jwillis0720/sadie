@@ -1,14 +1,15 @@
-from .Interfaces import SequenceIterator as SequenceIterator, SequenceWriter as SequenceWriter
-from Bio import (
-    BiopythonParserWarning as BiopythonParserWarning,
-    BiopythonWarning as BiopythonWarning,
-    StreamModeError as StreamModeError,
-)
+from collections.abc import Generator
+from typing import Any
+
+from Bio import BiopythonParserWarning as BiopythonParserWarning
+from Bio import BiopythonWarning as BiopythonWarning
+from Bio import StreamModeError as StreamModeError
 from Bio.File import as_handle as as_handle
 from Bio.Seq import Seq as Seq
 from Bio.SeqRecord import SeqRecord as SeqRecord
-from collections.abc import Generator
-from typing import Any
+
+from .Interfaces import SequenceIterator as SequenceIterator
+from .Interfaces import SequenceWriter as SequenceWriter
 
 SANGER_SCORE_OFFSET: int
 SOLEXA_SCORE_OFFSET: int

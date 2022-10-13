@@ -26,4 +26,4 @@ jobs:
           pip install poetry
           poetry install --with dev
       - name: Static Type Check
-        run: poetry run mypy src/sadie
+        run: poetry run pyright

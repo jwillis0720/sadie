@@ -1,8 +1,10 @@
-from .Interfaces import SequenceIterator as SequenceIterator
-from Bio.Seq import Seq as Seq
-from Bio.SeqRecord import SeqRecord as SeqRecord
 from collections.abc import Generator
 from typing import Any
+
+from Bio.Seq import Seq as Seq
+from Bio.SeqRecord import SeqRecord as SeqRecord
+
+from .Interfaces import SequenceIterator as SequenceIterator
 
 class AbiIterator(SequenceIterator):
     trim: Any

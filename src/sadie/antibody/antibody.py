@@ -1,14 +1,15 @@
 import json
+from typing import Union
+
 from .chain import (
     HeavyChainAA,
-    KappaChainAA,
-    LambdaChainAA,
     HeavyChainNT,
+    KappaChainAA,
     KappaChainNT,
+    LambdaChainAA,
     LambdaChainNT,
 )
 from .exception import HeavyChainException, LightChainException
-from typing import Union
 
 
 class AntibodyAA:

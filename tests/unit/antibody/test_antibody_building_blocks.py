@@ -5,7 +5,7 @@ import logging
 import pytest
 from pkg_resources import resource_filename
 
-from sadie.antibody import segment, exception
+from sadie.antibody import exception, segment
 
 logger = logging.getLogger()
 

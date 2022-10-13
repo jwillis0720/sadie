@@ -6,15 +6,15 @@ import pytest
 
 from sadie.antibody.exception import LongHCDR3Error
 from sadie.numbering.schemes import (
-    smooth_insertions,
     _number_regions,
+    get_cdr3_annotations,
     get_imgt_cdr,
-    number_imgt,
     number_chothia_heavy,
     number_chothia_light,
+    number_imgt,
     number_kabat_heavy,
     number_kabat_light,
-    get_cdr3_annotations,
+    smooth_insertions,
 )
 
 

@@ -1,5 +1,6 @@
-from sadie.airr import AirrTable
 import pandas as pd
+
+from sadie.airr import AirrTable
 
 # write airr table to a csv
 airr_table_1 = AirrTable(pd.read_csv("PG9 AIRR.csv"))

@@ -1,11 +1,12 @@
-import logging
 import glob
+import logging
 import os
 import tempfile
 from itertools import product
 from pathlib import Path
 
 from click.testing import CliRunner
+
 from sadie.app import renumbering
 from sadie.renumbering import Renumbering
 

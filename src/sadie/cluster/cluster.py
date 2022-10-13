@@ -1,15 +1,17 @@
 from __future__ import annotations
+
+import logging
 import re
+from typing import Any, Iterable, List, Optional, Union
+
+import numpy as np
+import numpy.typing as npt
 import pandas as pd
+from Levenshtein import distance as lev_distance
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
-from Levenshtein import distance as lev_distance
-from sadie.airr import AirrTable, LinkedAirrTable
-from typing import Any, Iterable, List, Optional, Union
-import numpy as np
-import logging
-import numpy.typing as npt
 
+from sadie.airr import AirrTable, LinkedAirrTable
 
 logger = logging.getLogger("Cluster")
 

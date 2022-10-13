@@ -1,7 +1,9 @@
 """yaml object for reference data"""
 from __future__ import annotations
+
 from pathlib import Path
 from typing import Any, Dict, List, Set, Type
+
 import pandas as pd
 from yaml import load
 
