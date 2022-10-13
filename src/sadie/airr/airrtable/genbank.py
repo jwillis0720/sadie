@@ -1,9 +1,9 @@
-from typing import Dict, List, Union
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 import datetime
-from Bio.SeqFeature import FeatureLocation, SeqFeature
+from typing import Dict, List, Union
 
+from Bio.Seq import Seq
+from Bio.SeqFeature import FeatureLocation, SeqFeature
+from Bio.SeqRecord import SeqRecord
 
 # Qualifier Dictionary
 example_qualifiers_dict = {

@@ -1,3 +1,4 @@
+from .antibody import AntibodyAA, AntibodyNT
 from .chain import (
     AntibodyChainAA,
     AntibodyChainNT,
@@ -8,9 +9,7 @@ from .chain import (
     LambdaChainAA,
     LambdaChainNT,
 )
-
-from .antibody import AntibodyAA, AntibodyNT
-from .genetable import VGene, JGene
+from .genetable import JGene, VGene
 
 __all__ = [
     "AntibodyAA",

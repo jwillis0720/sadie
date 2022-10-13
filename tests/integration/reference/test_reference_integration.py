@@ -6,6 +6,7 @@ from typing import Any
 import pandas as pd
 import pytest
 from click.testing import CliRunner
+
 from sadie import app
 from tests.conftest import SadieFixture
 

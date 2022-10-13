@@ -4,32 +4,33 @@ You probably only want to interact with this module through airr as the database
 
 """
 from __future__ import annotations
+
 import glob
 import logging
 import os
 import subprocess
 import tempfile
 import warnings
-import semantic_version
 from multiprocessing import cpu_count
 from pathlib import Path
 from typing import Any, List, Union
 
 # Third party
 import pandas as pd
+import semantic_version
 
-# package/module level
-from sadie.utility.util import is_tool
 from sadie.airr.airrtable.constants import IGBLAST_AIRR
 from sadie.airr.exceptions import (
     BadIgBLASTArgument,
     BadIgBLASTExe,
     BadIgDATA,
-    MissingIgBLASTArgument,
     EmtpyFileError,
     IgBLASTRunTimeError,
+    MissingIgBLASTArgument,
 )
 
+# package/module level
+from sadie.utility.util import is_tool
 
 # get logger in global scope
 logger = logging.getLogger("IgBLAST")

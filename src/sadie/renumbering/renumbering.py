@@ -4,28 +4,25 @@
 import gzip
 import logging
 import multiprocessing
-
 import warnings
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import Any, List, Tuple, Union, Generator
+from typing import Any, Generator, List, Tuple, Union
+
+import pandas as pd
 
 # third party
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
-import pandas as pd
+from Bio.SeqRecord import SeqRecord
 
-from sadie.renumbering.aligners import HMMER
 from sadie.numbering import Numbering
-
-from .exception import (
-    NumberingDuplicateIdError,
-    BadNumberingArgument,
-)
-from .result import NumberingResults
-from .constants import NUMBERING_RESULTS
 from sadie.numbering.scheme_numbering import scheme_numbering
+from sadie.renumbering.aligners import HMMER
+
+from .constants import NUMBERING_RESULTS
+from .exception import BadNumberingArgument, NumberingDuplicateIdError
+from .result import NumberingResults
 
 logger = logging.getLogger("RENUMBERING")
 
@@ -391,16 +388,10 @@ class Renumbering:
             def chunks(list_to_split: List[Any], n: int):
                 return [list_to_split[i : i + n] for i in range(0, len(list_to_split), n)]
 
-            try:
+            with multiprocessing.Pool() as pool:
                 # split sequences into chunks
                 _sequences = chunks(_sequences, min(self.num_cpus, len(_sequences)))
-                multiproc = multiprocessing.Pool()
-                _results = pd.concat(multiproc.map(self._run, _sequences))
-
-            # cleans up the pool
-            finally:
-                multiproc.close()
-                multiproc.join()
+                _results = pd.concat(pool.map(self._run, _sequences))
         else:
             _results = self._run(_sequences)
         return _results

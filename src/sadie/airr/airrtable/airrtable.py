@@ -1,35 +1,33 @@
 """The AirrTable module"""
-# std lib
-import logging
-from pathlib import Path
-from typing import Any, Hashable, Optional, Tuple, List, Type, Union
-import warnings
 
-# third party
+import logging
+import warnings
+from pathlib import Path
+from pprint import pformat
+from typing import Any, Hashable, List, Optional, Tuple, Type, Union
+
+import numpy as np
 import pandas as pd
+from Bio import SeqIO, SeqRecord
+from Bio.Seq import Seq
 from Levenshtein import distance
 from numpy import nan
-from Bio import SeqRecord, SeqIO
-from Bio.Seq import Seq
-import numpy as np
 
-# module/package
 from sadie.airr.airrtable.constants import IGBLAST_AIRR
 from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
 from sadie.airr.exceptions import MissingAirrColumns
+from sadie.receptor.rearrangment import (
+    AlignmentAnnotations,
+    AlignmentPositions,
+    InputSequence,
+    JunctionLengths,
+    PrimaryAnnotations,
+    ReceptorChain,
+    RegionPositions,
+    RegionSequences,
+)
 from sadie.utility.io import SadieOutput
 from sadie.utility.util import correct_alignment
-from pprint import pformat
-from sadie.receptor.rearrangment import (
-    InputSequence,
-    PrimaryAnnotations,
-    AlignmentAnnotations,
-    RegionSequences,
-    AlignmentPositions,
-    JunctionLengths,
-    RegionPositions,
-    ReceptorChain,
-)
 
 logger = logging.getLogger("AIRRTable")
 

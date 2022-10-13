@@ -7,9 +7,15 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pandas.testing import assert_frame_equal
-from sadie.renumbering import Renumbering, NumberingDuplicateIdError, NumberingResults, BadNumberingArgument
-from sadie.numbering.schemes import number_imgt
+
 from sadie.numbering import Numbering
+from sadie.numbering.schemes import number_imgt
+from sadie.renumbering import (
+    BadNumberingArgument,
+    NumberingDuplicateIdError,
+    NumberingResults,
+    Renumbering,
+)
 
 USE_CACHE = True  # TODO: make this an option in the config
 

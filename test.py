@@ -1,5 +1,6 @@
-from sadie.airr import Airr
 import pandas as pd
+
+from sadie.airr import Airr
 
 file = "tests/data/fixtures/airr_tables/dog_igh.tsv.gz"
 dog_df = pd.read_csv(file, sep="\t")

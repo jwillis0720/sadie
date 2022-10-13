@@ -1,5 +1,6 @@
-from sadie.airr import AirrTable
 import pandas as pd
+
+from sadie.airr import AirrTable
 
 # use AirrTable method to convert AirrTable.tsv to an AirrTable object
 airr_table = AirrTable.read_airr("PG9 AIRR.tsv.gz")

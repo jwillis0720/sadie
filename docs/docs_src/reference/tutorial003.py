@@ -1,5 +1,6 @@
-from sadie.reference import Reference
 import tempfile
+
+from sadie.reference import Reference
 
 # create empty reference object
 ref_class = Reference()

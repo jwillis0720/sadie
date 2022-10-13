@@ -9,12 +9,13 @@ import pytest
 import semantic_version
 from Bio.SeqRecord import SeqRecord
 from numpy import isnan
+
 from sadie.airr import Airr, AirrSeries, AirrTable, GermlineData, LinkedAirrTable
-from sadie.airr.exceptions import BadDataSet, BadRequstedFileType
 from sadie.airr import __file__ as sadie_airr_file
 from sadie.airr import exceptions as airr_exceptions
 from sadie.airr import igblast
 from sadie.airr import methods as airr_methods
+from sadie.airr.exceptions import BadDataSet, BadRequstedFileType
 from sadie.reference import Reference
 from sadie.reference.reference import References
 from tests.conftest import SadieFixture

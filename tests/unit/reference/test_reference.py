@@ -2,16 +2,18 @@
  Working directly with reference functions to create custom or trimmed databases. Also tests G3 intereaction
 """
 from typing import List
+
 import pandas as pd
 import pytest
-from pydantic import ValidationError
-from sadie.reference.models import GeneEntries, GeneEntry
-from tests.conftest import SadieFixture
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from pydantic import ValidationError
+
+from sadie.reference.models import GeneEntries, GeneEntry
 from sadie.reference.reference import G3Error, Reference, References
 from sadie.reference.util import write_out_fasta
 from sadie.reference.yaml import YamlRef
+from tests.conftest import SadieFixture
 
 
 def test_yaml(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixture) -> None:

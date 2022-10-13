@@ -7,21 +7,22 @@
 # from gzip import GzipFile
 # from pathlib import Path
 
+import shutil
 from io import TextIOWrapper
 from pathlib import Path
-import shutil
 from typing import List
-from tests.conftest import SadieFixture
 
 import pytest
-
-# third part
 from Bio.SeqIO.AbiIO import AbiIterator
 from Bio.SeqIO.FastaIO import FastaIterator
 from Bio.SeqIO.QualityIO import FastqPhredIterator
 from Bio.SeqRecord import SeqRecord
 
-# package
+from sadie.utility.exception import (
+    DirectoryExistsError,
+    NotAValidCompression,
+    NotAValidSequenceFile,
+)
 from sadie.utility.io import (
     SadieInputDir,
     SadieInputFile,
@@ -31,11 +32,7 @@ from sadie.utility.io import (
     get_sequence_file_type,
     guess_input_compression,
 )
-from sadie.utility.exception import (
-    DirectoryExistsError,
-    NotAValidCompression,
-    NotAValidSequenceFile,
-)
+from tests.conftest import SadieFixture
 
 
 def test_io_methods(fixture_setup):

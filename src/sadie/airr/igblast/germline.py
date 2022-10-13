@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import Optional, Set
 import warnings
 from pathlib import Path
+from typing import Optional, Set
+
+from sadie.airr.igblast.igblast import ensure_prefix_to
 
 # package/module level
 from sadie.reference import YamlRef
-from sadie.airr.igblast.igblast import ensure_prefix_to
 
 
 class GermlineData:

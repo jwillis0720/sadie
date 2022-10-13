@@ -1,8 +1,11 @@
-from .Interfaces import SequenceIterator as SequenceIterator, SequenceWriter as SequenceWriter
-from Bio.Seq import Seq as Seq
-from Bio.SeqRecord import SeqRecord as SeqRecord
 from collections.abc import Generator
 from typing import Any
+
+from Bio.Seq import Seq as Seq
+from Bio.SeqRecord import SeqRecord as SeqRecord
+
+from .Interfaces import SequenceIterator as SequenceIterator
+from .Interfaces import SequenceWriter as SequenceWriter
 
 def SimpleFastaParser(handle) -> Generator[Any, None, None]: ...
 def FastaTwoLineParser(handle) -> Generator[Any, None, None]: ...
