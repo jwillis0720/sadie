@@ -1,6 +1,7 @@
 """This is our main entry point"""
 import logging
 import os
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, List, Union
@@ -23,6 +24,9 @@ from sadie.utility.util import get_project_root, get_verbosity_level
 
 
 @click.group()
+@click.version_option(
+    subprocess.run(["git", "describe", "--tags", "--abbrev=0"], stdout=subprocess.PIPE).stdout.decode("utf-8").strip()
+)
 @click.pass_context
 def sadie(ctx: click.Context) -> None:
     pass

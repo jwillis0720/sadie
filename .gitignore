@@ -352,3 +352,6 @@ notebooks/new_macaque/sequences.fasta.gz
 notebooks/new_macaque/small_test.fasta
 notebooks/new_macaque/test_new.ipynb
 notebooks/new_macaque/Untitled.ipynb
+
+# local coverage files
+cov.xml
