@@ -301,6 +301,10 @@ class AirrTables:
         """get the joined catnap airrtable that has precomputed mutational analysis"""
         return self.airr_table_inputs / "joined_airrtable_with_mutational.feather"
 
+    def get_bum_igl_assignment(self) -> Path:
+        """Get an airrtable feather path that is failing igl assignment"""
+        return self.airr_table_inputs / "bum_igl_assignment_macaque.feather"
+
 
 class ReferenceFixtures:
     """A class for organization of reference related fixtures"""
