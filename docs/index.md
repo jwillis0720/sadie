@@ -14,8 +14,8 @@
         <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
             alt="Mac Build">
-        <a href="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg"
+        <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
             alt="Static Type">
     </div>
     <div class="flex-container" align="center">
