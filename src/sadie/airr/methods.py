@@ -169,7 +169,17 @@ def _get_igl_aa(row: pd.Series) -> Union[str, float]:  # type: ignore
     iGL_cdr3 = ""
     for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
         if germline == "X" or germline == "-" or germline == "*":
-            iGL_cdr3 += mature
+            if germline == "-":
+                # germline is -- so it has an insertion
+                logger.warning(
+                    f"{row.sequence_id} - {row.germline_alignment_aa}  has a insertion in it at CDR3...that can happen but rare"
+                )
+            else:
+                if mature == "*" or mature == "-":
+                    # germline is X but mature is * or - so this should be non functional?
+                    raise ValueError(f"{row.name} - sequence has a non functional CDR3")
+                iGL_cdr3 += mature
+
             continue
         iGL_cdr3 += germline
 
@@ -241,6 +251,7 @@ def _get_igl_nt(row: pd.Series) -> Union[str, float]:  # type: ignore
     germline_igl = ""
 
     # grab the alignment that has hopefully been corrected
+    # germlines should replace - since it cant have insertions
     germline_alignment_aa = row["germline_alignment_aa"]
     sequence_alignment_aa = row["sequence_alignment_aa"]
 
@@ -320,6 +331,23 @@ def _get_igl_nt(row: pd.Series) -> Union[str, float]:  # type: ignore
 
 
 def run_igl_assignment(airrtable: Union[AirrTable, LinkedAirrTable]) -> Union[AirrTable, LinkedAirrTable]:
+    """Run the infered germline assignment
+
+    Parameters
+    ----------
+    airrtable : Union[AirrTable, LinkedAirrTable]
+        An airrtable instance to run on
+
+    Returns
+    -------
+    Union[AirrTable, LinkedAirrTable]
+        AirrTable with added igl_aa and igl_nt columns
+
+    Raises
+    ------
+    TypeError
+        didn't pass airrtable or linked airrtable
+    """
     if not isinstance(airrtable, AirrTable):
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
