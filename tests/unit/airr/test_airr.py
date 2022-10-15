@@ -439,6 +439,14 @@ def test_igl_assignment(heavy_catnap_airrtable, light_catnap_airrtable):
     assert "iGL_light" in joined_airr_table_with_analysis.columns
 
 
+def test_hard_igl_seqs(fixture_setup: SadieFixture) -> None:
+    """Test we can run igl on super hard igl macaque set"""
+    airr_table = pd.read_feather(fixture_setup.get_bum_igl_assignment())
+    airr_methods.run_igl_assignment(
+        AirrTable(airr_table[airr_table["germline_alignment_aa"].str.contains(r"C[VA]R.*-")])
+    )
+
+
 def test_runtime_reference(fixture_setup: SadieFixture) -> None:
     """Test JIT reference generation"""
     reference = Reference()
