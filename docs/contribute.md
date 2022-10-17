@@ -24,50 +24,72 @@ to your question or feature request.
 
 You'll need to have a version between **Python 3.8 and 3.10**, **poetry**, and **git** installed.
 
-1. Clone your fork and cd into the repo directory
+1. Clone your fork from Github and cd into your repo directory
+
+    <div class="termy">
+        ```console
+        $ git clone git@github.com:YOUR_USERNAME/sadie.git
+        $ cd sadie
+        ```
+    </div>
+
+1. Set up a poetry for running tests
+    <div class="termy">
     ```console
-    git clone git@github.com:<your username>/sadie.git
-    cd sadie
-    ````
-2. Set up a poetry for running tests
-    ```console
-    pip install poetry
-    --> 100%
+    $ pip install poetry
+    ---> 100%
     ```
-    !!! info
+    </div>
+
+    !!! Info
         Currently poetry does not support python 3.11
 
-3. Install sadie, dependencies, test dependencies and doc dependencies
+2. Install sadie, dependencies, test dependencies and doc dependencies
+    <div class="termy">
     ```console
-    poetry install --with dev
-    --> 100%
+    $ poetry install --with dev
+    ---> 100%
     ```
+    </div>
 
-4. Checkout a new branch and make your changes
+3. Checkout a new branch and make your changes
+    <div class="termy">
     ```console
-    git checkout -b my-new-feature-branch
+    $ git checkout -b my-new-feature-branch
     ```
+    </div>
 
-5. Fix formatting and imports
+4. Fix formatting and imports
+    <div class="termy">
     ```console
-    pre-commit run --all-files
+    $ pre-commit run --all-files
     ```
-    !!! info
-        SADIE uses black to enforce formatting, isort to fix imports, and pyright for type checking [black](https://github.com/psf/black), [isort](https://github.com/PyCQA/isort), and [pyright](https://github.com/microsoft/pyright)
+    </div>
 
-6. Run tests and linting
-    ```console
-    poetry run pytest tests
-    ```
+    !!! Info
+        SADIE uses [black](https://github.com/psf/black) to enforce formatting, [isort](https://github.com/PyCQA/isort) to fix imports, and [pyright](https://github.com/microsoft/pyright) for type checking.
 
-7. Build documentation
+5. Run tests and linting
+    <div class="termy">
     ```console
-    mkdocs build
+    $ poetry run pytest tests
     ```
-    !!! info
+    </div>
+
+6. Build documentation
+    <div class="termy">
+    ```console
+    $ mkdocs build
+    $ mkdocs serve
+    INFO     -  Building documentation...
+    INFO     -  [14:27:11] Serving on http://127.0.0.1:8000/
+    ```
+    <div>
+
+    !!! Info
         Our netlify.toml is used to create our documentation site.
         This is not needed for a pull request, but is useful for checking your changes locally.
 
-8. Commit your changes and submit a pull request to the `development` branch
+7. Commit your changes and submit a pull request to the `development` branch
 
     ... add, commit, push, and create your pull request point to our development branch. Thank you in advance!
