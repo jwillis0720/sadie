@@ -1,8 +1,7 @@
 Please contribute to *SADIE*!
 
-!!! Key Notes
-- SADIE does not support he M1/M2 Mac chip set architecture.
-  - SADIE uses [pyhmmer](https://github.com/althonos/pyhmmer), an amazing library for Cython bindings to the sequence aligner [HMMER3](http://hmmer.org/). Due to HMMER3 not supporting the M1/M2 chip sets, SADIE does not support them either. HMMER3 will support it with it's next merge from their develop branch. When that happens we will update SADIE to support it as well.
+!!! Warning
+    SADIE does not support he M1/M2 Mac chip set architecture. SADIE uses [pyhmmer](https://github.com/althonos/pyhmmer), an amazing library for Cython bindings to the sequence aligner [HMMER3](http://hmmer.org/). Due to HMMER3 not supporting the M1/M2 chip sets, SADIE does not support them either. HMMER3 will support it with it's next merge from their develop branch. When that happens we will update SADIE to support it as well.
 
 ## Issues
 
