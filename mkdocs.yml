@@ -66,6 +66,7 @@ nav: # this is how we layout the documents
   - Sequence Numbering: numbering.md
   - BCR/TCR Objects: models.md
   - Clustering: clustering.md
+  - Contributing to SADIE: contribute.md
 extra_css:
   - css/termynal.css
   - css/custom.css
