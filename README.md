@@ -101,6 +101,7 @@ $ airr -q my_sequecnes.fasta -s human -d imgt
 ### API
 
 ```python
+from sadie.airr import Airr
 # define a single sequence
 pg9_seq = """
     CAGCGATTAGTGGAGTCTGGGGGAGGCGTGGTCCAGCCTGGGTCGTCCCTGAGACTCTCCTGTGCAGCGT
