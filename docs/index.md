@@ -14,8 +14,8 @@
         <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
             alt="Mac Build">
-        <a href="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/actions/workflows/mypy.yml/badge.svg"
+        <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
             alt="Static Type">
     </div>
     <div class="flex-container" align="center">
@@ -81,26 +81,6 @@ Installation is handled using the python package installer `pip`
 $ pip install sadie-antibody
 ---> 100%
 ```
-
-</div>
-
-### Development installation.
-
-!!! info
-
-    Pull requests are highly     [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reusability.
-
-<div class="termy">
-
-A development installation is available by running the following command:
-
-    ```console
-    $ git clone git@github.com/jwillis0720/sadie.git
-    $ pip install poetry
-    ---> 100%
-    $ poetry install --with dev
-    ---> 100%
-    ```
 
 </div>
 

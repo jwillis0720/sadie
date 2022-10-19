@@ -43,3 +43,7 @@ airr_html_source/**
 .gitignore
 notebooks/**
 bin/
+
+
+# local coverage files
+cov.xml
