@@ -177,7 +177,8 @@ class AirrTable(pd.DataFrame):
     >>> at = AirrTable.read_airr("tests/fixtures/kappa_lev_sample.tsv.gz")
     """
 
-    _metadata = ["_suffixes", "_islinked"]
+    # if you create a new property make sur eyou add it here or else it will be lost
+    _metadata = ["_suffixes", "_islinked", "_key_column", "_verified"]
 
     def __init__(self, data: Any = None, key_column: str = "sequence_id", copy: bool = False):
         super(AirrTable, self).__init__(data=data, copy=copy)  # type: ignore
