@@ -225,6 +225,7 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
                     logger.warning(
                         f"{row.name} - is productive, but has incomplete vdj with a v_germline_start at {row['v_germline_start']} and j_germline_end at {row['j_germline_end']}, consider running methods.run_termini_buffers"
                     )
+                return
     return germline_igl
 
 
