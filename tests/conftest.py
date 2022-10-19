@@ -305,6 +305,10 @@ class AirrTables:
         """Get an airrtable feather path that is failing igl assignment"""
         return self.airr_table_inputs / "bum_igl_assignment_macaque.feather"
 
+    def get_bum_igl_solution(self) -> Path:
+        """Get an airrtable feather with teh solutions"""
+        return self.airr_table_inputs / "igl_out.feather"
+
 
 class ReferenceFixtures:
     """A class for organization of reference related fixtures"""

@@ -13,7 +13,7 @@ from Bio.Seq import Seq
 from Levenshtein import distance
 from numpy import nan
 
-from sadie.airr.airrtable.constants import IGBLAST_AIRR
+from sadie.airr.airrtable.constants import CONSTANTS_AIRR, IGBLAST_AIRR, OTHER_COLS
 from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
 from sadie.airr.exceptions import MissingAirrColumns
 from sadie.receptor.rearrangment import (
@@ -187,6 +187,19 @@ class AirrTable(pd.DataFrame):
                 self._key_column: str = key_column
                 self._suffixes: List[str] = []
                 self._verify()
+                key: str
+                for key, value in IGBLAST_AIRR.items():
+                    self[key] = self[key].astype(value)
+
+                # what about the non Airr columns?
+                _have_other = self.columns.intersection(OTHER_COLS.keys())
+                for key in _have_other:
+                    self[key] = self[key].astype(OTHER_COLS[key])
+
+                # what about the constant Airr columns?
+                _have_constant = self.columns.intersection(CONSTANTS_AIRR.keys())
+                for key in _have_constant:
+                    self[key] = self[key].astype(CONSTANTS_AIRR[key])
 
     @property
     def _constructor_sliced(self) -> Type[AirrSeries]:

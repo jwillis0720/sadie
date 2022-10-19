@@ -4,6 +4,7 @@ import platform
 import shutil
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import pytest
 import semantic_version
@@ -16,8 +17,7 @@ from sadie.airr import exceptions as airr_exceptions
 from sadie.airr import igblast
 from sadie.airr import methods as airr_methods
 from sadie.airr.exceptions import BadDataSet, BadRequstedFileType
-from sadie.reference import Reference
-from sadie.reference.reference import References
+from sadie.reference import Reference, References
 from tests.conftest import SadieFixture
 
 
@@ -223,9 +223,9 @@ def test_airr_single_sequence(fixture_setup: SadieFixture) -> None:
     assert seq_id == "PG9"
 
     # will def change based on penalties, so be careful
-    assert round(v_mutation, 2) == 0.14
-    assert round(d_mutation, 2) == 0.18
-    assert round(j_mutation, 2) == 0.11
+    assert round(v_mutation, 2) == np.float32(0.14)
+    assert round(d_mutation, 2) == np.float32(0.18)
+    assert round(j_mutation, 2) == np.float32(0.11)
     with pytest.raises(TypeError):
         # id must be str
         airr_table = air_api.run_single(9, pg9_heavy_seq)
@@ -246,19 +246,6 @@ def test_run_multiple(fixture_setup: SadieFixture) -> None:
     airr.run_records([fixture_setup.get_pg9_heavy_sequence(), fixture_setup.get_pg9_light_sequence()])
     with pytest.raises(TypeError):
         airr.run_records(fixture_setup.get_pg9_heavy_sequence())
-
-
-# def test_scfv(fixture_setup):
-# """Run on short scfv sequence"""
-# airr = Airr("human", adaptable=False)
-# linked = airr.run_records(fixture_setup.get_scfv_sequences(), scfv=True)
-# assert isinstance(linked, LinkedAirrTable)
-
-# """Run on multiple long scfv sequences"""
-# scfv = fixture_setup.get_long_scfv_fastq()
-# airr = Airr("human", adaptable=False)
-# results = airr.run_records(scfv, scfv=True)
-# assert isinstance(results, LinkedAirrTable)
 
 
 def test_airr_from_dataframe(fixture_setup: SadieFixture) -> None:
@@ -439,12 +426,23 @@ def test_igl_assignment(heavy_catnap_airrtable, light_catnap_airrtable):
     assert "iGL_light" in joined_airr_table_with_analysis.columns
 
 
-def test_hard_igl_seqs(fixture_setup: SadieFixture) -> None:
+def test_five_and_three_prime_extension(fixture_setup: SadieFixture) -> None:
+    airr_table = AirrTable(pd.read_feather(fixture_setup.get_bum_igl_assignment()))
+    airr_methods.run_five_prime_buffer(airr_table)
+
+
+@pytest.fixture()
+def test_buffer_seqs(fixture_setup: SadieFixture) -> AirrTable:
+    airr_table = AirrTable(pd.read_feather(fixture_setup.get_bum_igl_assignment()))
+    out_airr = airr_methods.run_termini_buffers(airr_table)
+    return out_airr
+
+
+def test_hard_igl_seqs(test_buffer_seqs: AirrTable, fixture_setup: SadieFixture) -> None:
     """Test we can run igl on super hard igl macaque set"""
-    airr_table = pd.read_feather(fixture_setup.get_bum_igl_assignment())
-    airr_methods.run_igl_assignment(
-        AirrTable(airr_table[airr_table["germline_alignment_aa"].str.contains(r"C[VA]R.*-")])
-    )
+    igl_df = airr_methods.run_igl_assignment(test_buffer_seqs)
+    output_solution = AirrTable(pd.read_feather(fixture_setup.get_bum_igl_solution()))
+    pd.testing.assert_frame_equal(igl_df, output_solution)
 
 
 def test_runtime_reference(fixture_setup: SadieFixture) -> None:

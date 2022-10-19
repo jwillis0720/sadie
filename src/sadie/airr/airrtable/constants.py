@@ -112,3 +112,28 @@ CONSTANTS_AIRR = {
     "c_sequence_end": "Int16",
     "c_support": "float64",
 }
+
+OTHER_COLS = {
+    "d_call_top": "object",
+    "d_mutation": "float32",
+    "d_mutation_aa": "float32",
+    "d_penalty": "Int16",
+    "germline_alignment_aa_corrected": bool,
+    "iGL": "object",
+    "iGL_aa": "object",
+    "j_call_top": "object",
+    "j_mutation": "float32",
+    "j_mutation_aa": "float32",
+    "j_penalty": "Int16",
+    "liable": "bool",
+    "padded_five_prime": "bool",
+    "padded_three_prime": "bool",
+    "reference_name": "object",
+    "v_call_top": "object",
+    "v_germline_alignment_aa_corrected": "bool",
+    "v_mutation": "float32",
+    "v_mutation_aa": "float32",
+    "v_penalty": "Int16",
+    "vdj_aa": "object",
+    "vdj_aa": "object",
+}
