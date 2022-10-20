@@ -431,19 +431,6 @@ def test_five_and_three_prime_extension(fixture_setup: SadieFixture) -> None:
     airr_methods.run_five_prime_buffer(airr_table)
 
 
-# def test_confounding_seq() -> None:
-
-#     airr_apit = Airr("macaque")
-#     test_info = airr_apit.run_single(
-#         "bad_light",
-#         "CATTCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACAGAGTCACCGTCACTTGCCGGGCGAGTCAGGACATTAACAAGGAGTTAGCCTGGTATCAGCAGAAACCAGGGAAAGCCCCTACACTCCTGATCTATGCTGCCTCCAGTTTGCAGACGGGGGTCTCATCTCGGTTCAGTGGCAGTGGATCTGGGACAGGTTTCACTCTCACCATCAGCAGCCTGCAGCCTGAAGATGTTGCAACTTATTACTGTCAACAGGATTATAGATACCCGCTCACTTTCGGCGGAGGGACCAAGGTGGAGATCAGAC",
-#     )
-#     unaltered = airr_methods.run_igl_assignment(test_info)
-
-#     fbp = airr_methods.run_five_prime_buffer(unaltered)
-#     fpb_altered = airr_methods.run_igl_assignment(fbp)
-
-
 def test_hard_igl_seqs(fixture_setup: SadieFixture) -> None:
     """Test we can run igl on super hard igl macaque set"""
     airr_table = AirrTable(pd.read_feather(fixture_setup.get_bum_igl_assignment()))
