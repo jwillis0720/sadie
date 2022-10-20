@@ -11,6 +11,7 @@ import pandas as pd
 import requests
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from traitlets import default
 
 from sadie.reference.models import GeneEntries, GeneEntry
 from sadie.reference.util import (
@@ -290,8 +291,29 @@ class Reference:
 
 
 class References:
-    def __init__(self) -> None:
+    def __init__(self, default_output_path: Path | str | None = None) -> None:
         self.references: Dict[str, Reference] = {}
+        if not default_output_path:
+            self.default_output_path = Path(__file__).parent / "../airr/data/germlines"
+        else:
+            self.default_output_path = Path(default_output_path)
+        logger.info(f"Default output path is {self.default_output_path}")
+        self.reference_dataframe_path = self.default_output_path / ".references_dataframe.csv.gz"
+        logger.info(f"Default dataframe is {self.default_output_path}")
+
+    @property
+    def reference_dataframe_path(self) -> Path:
+        return self._reference_dataframe_path
+
+    @reference_dataframe_path.setter
+    def reference_dataframe_path(self, value: Path) -> None:
+        self._reference_dataframe_path = value
+        if self._reference_dataframe_path.exists():
+            self.reference_dataframe = pd.read_csv(self._reference_dataframe_path, index_col=0)
+        else:
+            raise FileExistsError(
+                f"Reference dataframe does not exist in default path {self._reference_dataframe_path}"
+            )
 
     def add_reference(self, name: str, reference: Reference, overwrite: bool = False) -> None:
         if name in self.references.keys():
@@ -305,6 +327,8 @@ class References:
     def get_dataframe(self) -> pd.DataFrame:
         """Return a pandas dataframe of the references data"""
         names_dataframe: List[pd.DataFrame] = []
+        if not self.references:
+            return self.reference_dataframe
         for name in self.references:
             # create a single reference object
             _ref: Reference = self.references[name]
@@ -340,6 +364,7 @@ class References:
         concat_df.loc[indexes_to_chimera, "gene"] = concat_df.loc[indexes_to_chimera, ["common", "gene"]].apply(
             lambda x: "|".join(x), axis=1
         )
+        self.reference_dataframe = concat_df
         return concat_df
 
     @staticmethod
@@ -586,6 +611,13 @@ class References:
         # dataframe to igblast aux structure
         self._make_auxillary_file(output_path)
         logger.info(f"Generated Aux Data {output_path}/aux_db")
+        self.default_output_path = Path(output_path)
+        logger.debug(f"Regenerating frame to {self.reference_dataframe_path}")
+        self.reference_dataframe = self.get_dataframe()
+        _out = self.default_output_path / ".references_dataframe.csv.gz"
+        logger.info(f"Writing out reference dataframe to {self.reference_dataframe_path}")
+        self.reference_dataframe.to_csv(_out)
+        self.reference_dataframe_path = _out
         return output_path
 
     @staticmethod
@@ -621,6 +653,7 @@ class References:
                 )
             )
             references.add_reference(name, ref)
+        references.reference_dataframe = dataframe
         return references
 
     def __repr__(self) -> str:

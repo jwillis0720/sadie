@@ -60,14 +60,23 @@ def test_util_methods(tmp_path_factory: pytest.TempPathFactory) -> None:
     write_out_fasta([SeqRecord(Seq(seq), id="test", name="test")], file)
 
 
+def test_check_default_reference_df(fixture_setup: SadieFixture) -> None:
+    """Test if we have default reference"""
+    ref_api = References()
+    df = ref_api.get_dataframe()
+    assert isinstance(df, pd.DataFrame)
+    assert len(df) == 4975
+
+
 def test_load_reference_from_yml(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixture) -> None:
     shortened_yaml = fixture_setup.get_shortened_yaml()
     references: References = References().from_yaml(shortened_yaml)
     outpath = tmp_path_factory.mktemp("test_load_reference_from_yml")
     output_db = references.make_airr_database(outpath)
-    assert [i.stem for i in output_db.glob("*")] == ["aux_db", "Ig"]
+    assert sorted([i.name for i in output_db.glob("*")]) == sorted([".references_dataframe.csv.gz", "aux_db", "Ig"])
 
     # test we can get a dataframe
+
     df = references.get_dataframe()
     assert isinstance(df, pd.DataFrame)
 
@@ -109,7 +118,7 @@ def test_make_from_empty(tmp_path_factory: pytest.TempPathFactory) -> None:
     tmpdir = tmp_path_factory.mktemp("test_creation_from_empty_reference")
     ref_class = References()
     output = ref_class.make_airr_database(tmpdir)
-    assert [i.stem for i in output.glob("*")] == ["aux_db", "Ig"]
+    assert sorted([i.name for i in output.glob("*")]) == sorted([".references_dataframe.csv.gz", "aux_db", "Ig"])
 
 
 def test_G3_errors() -> None:
