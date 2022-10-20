@@ -431,15 +431,17 @@ def test_five_and_three_prime_extension(fixture_setup: SadieFixture) -> None:
     airr_methods.run_five_prime_buffer(airr_table)
 
 
-def test_confounding_seq() -> None:
-    airr_apit = Airr("macaque")
-    test_info = airr_apit.run_single(
-        "bad_light",
-        "CATTCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACAGAGTCACCGTCACTTGCCGGGCGAGTCAGGACATTAACAAGGAGTTAGCCTGGTATCAGCAGAAACCAGGGAAAGCCCCTACACTCCTGATCTATGCTGCCTCCAGTTTGCAGACGGGGGTCTCATCTCGGTTCAGTGGCAGTGGATCTGGGACAGGTTTCACTCTCACCATCAGCAGCCTGCAGCCTGAAGATGTTGCAACTTATTACTGTCAACAGGATTATAGATACCCGCTCACTTTCGGCGGAGGGACCAAGGTGGAGATCAGAC",
-    )
-    unaltered = airr_methods.run_igl_assignment(test_info)
-    fbp = airr_methods.run_five_prime_buffer(unaltered)
-    fpb_altered = airr_methods.run_igl_assignment(fbp)
+# def test_confounding_seq() -> None:
+
+#     airr_apit = Airr("macaque")
+#     test_info = airr_apit.run_single(
+#         "bad_light",
+#         "CATTCAGATGACCCAGTCTCCATCCTCCCTGTCTGCATCTGTAGGAGACAGAGTCACCGTCACTTGCCGGGCGAGTCAGGACATTAACAAGGAGTTAGCCTGGTATCAGCAGAAACCAGGGAAAGCCCCTACACTCCTGATCTATGCTGCCTCCAGTTTGCAGACGGGGGTCTCATCTCGGTTCAGTGGCAGTGGATCTGGGACAGGTTTCACTCTCACCATCAGCAGCCTGCAGCCTGAAGATGTTGCAACTTATTACTGTCAACAGGATTATAGATACCCGCTCACTTTCGGCGGAGGGACCAAGGTGGAGATCAGAC",
+#     )
+#     unaltered = airr_methods.run_igl_assignment(test_info)
+
+#     fbp = airr_methods.run_five_prime_buffer(unaltered)
+#     fpb_altered = airr_methods.run_igl_assignment(fbp)
 
 
 def test_hard_igl_seqs(fixture_setup: SadieFixture) -> None:
@@ -455,9 +457,9 @@ def test_hard_igl_seqs_linked(fixture_setup: SadieFixture) -> None:
     """Test we can run igl on super hard igl macaque set linked"""
     lat = LinkedAirrTable(pd.read_feather(fixture_setup.get_bum_link_igl_assignment()))
     out_lat = airr_methods.run_termini_buffers(lat)
-    # igl_df = airr_methods.run_igl_assignment(out_lat)
-    # output_solution = LinkedAirrTable(pd.read_feather(fixture_setup.get_bum_link_igl_solution()))
-    # pd.testing.assert_frame_equal(igl_df, output_solution)
+    igl_df = airr_methods.run_igl_assignment(out_lat)
+    output_solution = LinkedAirrTable(pd.read_feather(fixture_setup.get_bum_link_igl_solution()))
+    pd.testing.assert_frame_equal(igl_df, output_solution)
 
 
 def test_runtime_reference(fixture_setup: SadieFixture) -> None:
