@@ -118,9 +118,6 @@ air_api = Airr("human")
 
 # run single sequence
 airr_table = air_api.run_single("PG9", pg9_seq)
-
-# or run file
-airr_table = air_api.run_file("myfile.fasta")
 ```
 
 ## License
