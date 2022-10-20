@@ -309,6 +309,14 @@ class AirrTables:
         """Get an airrtable feather with teh solutions"""
         return self.airr_table_inputs / "igl_out.feather"
 
+    def get_bum_link_igl_assignment(self) -> Path:
+        """Get an airrtable feather path that is failing linked igl assignment"""
+        return self.airr_table_inputs / "bum_link_input.feather"
+
+    def get_bum_link_igl_solution(self) -> Path:
+        """Get an airrtable feather with the linked solutions"""
+        return self.airr_table_inputs / "bum_link_solution.feather"
+
 
 class ReferenceFixtures:
     """A class for organization of reference related fixtures"""
