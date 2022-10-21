@@ -27,4 +27,4 @@ repos:
             language: node
             pass_filenames: false
             types: [python]
-            additional_dependencies: ["pyright@latest"]
+            # additional_dependencies: ["pyright@latest"]

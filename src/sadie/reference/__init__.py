@@ -1,4 +1,4 @@
-from sadie.reference.reference import G3Error, Reference
+from sadie.reference.reference import G3Error, Reference, References
 from sadie.reference.settings import (
     BLAST_CONVENTION,
     IMGT_GB_LOOKUP,
@@ -16,6 +16,7 @@ from sadie.reference.settings import (
 from sadie.reference.yaml import YamlRef
 
 __all__ = [
+    "References",
     "Reference",
     "RECEPTORS",
     "IMGT_DEF_nt",
