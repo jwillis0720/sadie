@@ -52,7 +52,7 @@
 
 SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key feautures include:
 
-- Provide pre-built **command line apps** for popular immunoinformatics applications.
+- Provide pre-built **command line applications** for popular immunoinformatics applications.
 
 - Provide a **low-level API framework** for immunoinformatics developers to build higher level tools.
 
