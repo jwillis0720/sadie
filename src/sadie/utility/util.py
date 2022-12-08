@@ -13,13 +13,19 @@ from Bio.SeqIO import MultipleSeqAlignment
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    from Bio.SubsMat import MatrixInfo as matlist
+    try:  # Biopython <= 1.79
+        from Bio.SubsMat import MatrixInfo as matlist  # type: ignore
+
+        blosum_matrix = matlist.blosum62
+    except ImportError:  # Biopython >= 1.80
+        from Bio.Align import substitution_matrices
+
+        blosum_matrix = substitution_matrices.load("BLOSUM62")
     from Bio import pairwise2, SeqIO
 
 from sadie.utility.io import SadieInputFile
 
 # global
-blosum_matrix = matlist.blosum62
 logger = logging.getLogger("Utilility")
 
 

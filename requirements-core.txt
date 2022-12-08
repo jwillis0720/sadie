@@ -1,7 +1,7 @@
 biopython>=1.79
-click>=7.0
+click>=8.0
 filetype
-pandas>=1.0,<1.5.0
+pandas>=1.0,<1.6.0
 requests
 pydantic
 python-levenshtein
