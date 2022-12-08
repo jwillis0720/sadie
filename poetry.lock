@@ -563,7 +563,6 @@ python-versions = ">=3.8"
 numpy = [
     {version = ">=1.20.3", markers = "python_version < \"3.10\""},
     {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
-    {version = ">=1.23.2", markers = "python_version >= \"3.11\""},
 ]
 python-dateutil = ">=2.8.1"
 pytz = ">=2020.1"
@@ -1095,8 +1094,8 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.8,<3.12"
-content-hash = "10d622853d5be2e66381b38625df06478c6452b26767d006f480fdf4d25fcbee"
+python-versions = ">=3.8,<3.11"
+content-hash = "64a1c5741b7d84b6f1a4d28a79f9850572e9dbd6cf5fa665d2cb4600f1abe0a5"
 
 [metadata.files]
 airr = [

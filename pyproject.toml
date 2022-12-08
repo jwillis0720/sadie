@@ -24,7 +24,6 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering",
 ]
 packages = [
@@ -38,7 +37,7 @@ issues = "https://github.com/jwillis0720/sadie/issues"
 sadie = "sadie.app:sadie"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.8,<3.11"
 biopython = ">=1.79"
 click = ">=8.0"
 filetype = "^1.2.0"
