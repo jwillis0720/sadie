@@ -39,20 +39,20 @@ sadie = "sadie.app:sadie"
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
 biopython = ">=1.79"
-click = ">=8.0"
-filetype = "^1.2.0"
-pandas = ">=1.0,<1.6.0"
+click = ">=7.0"
+filetype = "^1.1.0"
+pandas = ">=1.0,<1.5.0"
 requests = "^2.28.1"
 pydantic = ">=1.9.0,<2.0.0"
-python-levenshtein = "^0.20.8"
+Levenshtein = "^0.20.5"
 pyarrow = ">=6.0.1"
 semantic-version = "^2.10.0"
-pyyaml = "^6.0"
+PyYAML = "^6.0"
 pyhmmer = ">=0.5.0"
-scikit-learn = "^1.2.0"
+scikit-learn = "^1.1.2"
 openpyxl = "^3.0.10"
-yarl = "^1.8.2"
-
+yarl = "^1.8.1"
+ipython = "^8.5.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.0"
@@ -78,8 +78,6 @@ mypy = "0.982"
 bump2version = "1.0.1"
 Markdown = "3.3.7"
 pyright = ">=1.1.275"
-markdown = "3.3.7"
-jinja2 = "3.0.3"
 
 [build-system]
 requires = ["poetry-core"]
