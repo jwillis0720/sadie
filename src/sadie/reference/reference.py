@@ -11,7 +11,6 @@ import pandas as pd
 import requests
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from traitlets import default
 
 from sadie.reference.models import GeneEntries, GeneEntry
 from sadie.reference.util import (
