@@ -14,9 +14,10 @@ class AirrSeries(pd.Series):  # type: ignore
             if isinstance(data, pd.core.series.Series):
                 self._verify()
 
-    @property
-    def _constructor(self) -> "AirrSeries":
-        return AirrSeries  # type: ignore[return-value]
+    # TODO: Not needed until there is an AirrTable to complement AirrSeries
+    # @property
+    # def _constructor(self) -> "AirrSeries":
+    #     return AirrSeries  # type: ignore[return-value]
 
     def _verify(self) -> None:
         data: Dict[Any, Any] = AirrSeriesModel(**self).dict()  # type: ignore
