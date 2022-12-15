@@ -10,7 +10,7 @@ import pytest
 import semantic_version
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
-from numpy import isnan
+from numpy import isnan, nan
 
 from sadie.airr import Airr, AirrSeries, AirrTable, GermlineData, LinkedAirrTable
 from sadie.airr import __file__ as sadie_airr_file
@@ -18,8 +18,14 @@ from sadie.airr import exceptions as airr_exceptions
 from sadie.airr import igblast
 from sadie.airr import methods as airr_methods
 from sadie.airr.exceptions import BadDataSet, BadRequstedFileType
+from sadie.airr.models import AirrSeriesModel
 from sadie.reference import Reference, References
 from tests.conftest import SadieFixture
+
+
+def test_airr_model() -> None:
+    # string nulls should be equal to None
+    assert AirrSeriesModel(**{field: str(nan) for field in AirrSeriesModel().__fields__}) == AirrSeriesModel()
 
 
 def test_airrtable_inheritance(fixture_setup) -> None:

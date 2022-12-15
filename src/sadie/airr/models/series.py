@@ -21,7 +21,7 @@ class AirrSeriesModel(BaseModel):
     # cdr3_aa_length: Optional[int]
     cdr3_end: Optional[int]
     cdr3_start: Optional[int]
-    complete_vdj: bool
+    complete_vdj: Optional[bool]
     d_alignment_end: Optional[int]
     d_alignment_start: Optional[int]
     d_call: Optional[str]
