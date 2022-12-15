@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import semantic_version
+from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from numpy import isnan
 
@@ -19,6 +20,57 @@ from sadie.airr import methods as airr_methods
 from sadie.airr.exceptions import BadDataSet, BadRequstedFileType
 from sadie.reference import Reference, References
 from tests.conftest import SadieFixture
+
+
+def test_airrtable_inheritance(fixture_setup) -> None:
+    """Test that we can create an airr DataFrame"""
+    df = pd.read_feather(fixture_setup.get_bum_igl_assignment())
+    table = AirrTable(df)  # init and verify
+    assert isinstance(table, AirrTable)
+    assert table.verified == True
+    series = table.iloc[0]  # constroctor slice
+    series = AirrSeries(series)  # init and verify
+    assert isinstance(series, AirrSeries)
+    assert set(series.index) == set(table.columns)
+    series.copy()  # constroctor
+    table = series.to_frame()  # expanddim
+    assert isinstance(table, AirrTable)
+    table = AirrTable([series, series])
+    assert isinstance(table, AirrTable)
+
+
+def test_airr_columns(fixture_setup) -> None:
+    """Formality to return airr format compliant columns."""
+    df = pd.read_feather(fixture_setup.get_bum_igl_assignment())
+    table = AirrTable(df)
+    assert table.airr_columns.empty == False
+
+
+def test_to_fasta(fixture_setup) -> None:
+    """Formality to return airr format compliant columns."""
+    df = pd.read_feather(fixture_setup.get_bum_igl_assignment())
+    table = AirrTable(df)
+    filepath = fixture_setup.tmp_path / "test.fasta"
+    table.to_fasta(filename=filepath)
+    SeqIO.parse(filepath, "fasta")
+    with pytest.raises(ValueError):
+        table.to_fasta(filename=filepath, sequence_field="not_a_sequence_field")
+
+
+def test_to_genbank(fixture_setup) -> None:
+    """Formality to return airr format compliant columns."""
+    df = pd.read_feather(fixture_setup.get_bum_igl_assignment())
+    table = AirrTable(df)
+    filepath = fixture_setup.tmp_path / "test.gb"
+    table.to_genbank(filename=filepath)
+    SeqIO.parse(filepath, "genbank")
+
+
+def test_sanitized_antibodies(fixture_setup) -> None:
+    """Test get antobodies where no segment is missing."""
+    df = pd.read_feather(fixture_setup.get_bum_igl_assignment())
+    table = AirrTable(df)
+    assert table.get_sanitized_antibodies().empty == False
 
 
 def test_germline_init() -> None:
@@ -600,14 +652,11 @@ def test_write_and_check_airr(tmp_path_factory: pytest.TempPathFactory, fixture_
     with pytest.raises(airr.schema.ValidationError):
         airr.load_rearrangement(output_file, debug=True, validate=True)
 
-
-def test_airr_series(fixture_setup: SadieFixture):
-    """Test that we can create an airr series"""
-    df = pd.read_feather(fixture_setup.get_catnap_heavy_airrtable())
-    series = AirrSeries(df.iloc[0])
-    assert isinstance(series, AirrSeries)
-    table = AirrTable([series, series])
-    assert isinstance(table, AirrTable)
+    # files extensions checked
+    with pytest.raises(ValueError):
+        airr_table.to_airr(filename=fixture_setup.tmp_path / "test.tsvv")
+    with pytest.raises(ValueError):
+        airr_table.to_airr(filename=fixture_setup.tmp_path / "test.tsvv.bz2")
 
 
 def test_airr_constant_region(fixture_setup: SadieFixture) -> None:

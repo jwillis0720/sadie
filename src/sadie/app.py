@@ -112,7 +112,7 @@ def airr(
         output_str = str(airr_table.to_csv(sep="\t"))
         sys.stdout.write(output_str)
     else:
-        airr_table.to_output(output_object)
+        airr_table.to_airr(output_object.output_path)
 
 
 def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> List[str]:

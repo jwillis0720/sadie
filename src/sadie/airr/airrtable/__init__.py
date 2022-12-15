@@ -1,4 +1,3 @@
-from .airrseries import AirrSeries
-from .airrtable import AirrTable, LinkedAirrTable
+from .airrtable import AirrSeries, AirrTable, LinkedAirrTable
 
 __all__ = ["AirrSeries", "AirrTable", "LinkedAirrTable"]

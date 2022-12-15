@@ -4,18 +4,19 @@ import logging
 import warnings
 from pathlib import Path
 from pprint import pformat
-from typing import Any, Hashable, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, Hashable, List, Optional, Tuple, Type, Union
 
 import numpy as np
 import pandas as pd
 from Bio import SeqIO, SeqRecord
 from Bio.Seq import Seq
-from Levenshtein import distance
+from Levenshtein import distance  # type: ignore
 from numpy import nan
 
 from sadie.airr.airrtable.constants import CONSTANTS_AIRR, IGBLAST_AIRR, OTHER_COLS
 from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
 from sadie.airr.exceptions import MissingAirrColumns
+from sadie.airr.models import AirrSeriesModel
 from sadie.receptor.rearrangment import (
     AlignmentAnnotations,
     AlignmentPositions,
@@ -32,8 +33,9 @@ from sadie.utility.util import correct_alignment
 logger = logging.getLogger("AIRRTable")
 
 
-def get_reverse_compliment(seq: Seq) -> Seq:
-    return Seq(seq.reverse_complement())
+# DEPRECARED
+# def get_reverse_compliment(seq: Seq) -> Seq:
+#     return Seq(seq.reverse_complement())
 
 
 # def _get_raw_seq(row: pd.Series) -> str: # type:
@@ -49,6 +51,14 @@ def get_reverse_compliment(seq: Seq) -> Seq:
 
 
 class AirrSeries(pd.Series):  # type: ignore
+    _metadata = ["meta"]  # add custom namespaces here
+
+    def __init__(self, data: Any, copy: bool = False, *args, **kwargs):
+        super(AirrSeries, self).__init__(data=data, copy=copy, *args, **kwargs)  # type: ignore
+        if not isinstance(data, pd.core.internals.managers.SingleBlockManager):
+            if isinstance(data, pd.core.series.Series):
+                self._verify()
+
     @property
     def _constructor(self) -> Type["AirrSeries"]:
         return AirrSeries
@@ -56,6 +66,11 @@ class AirrSeries(pd.Series):  # type: ignore
     @property
     def _constructor_expanddim(self) -> Type["AirrTable"]:
         return AirrTable
+
+    def _verify(self) -> None:
+        """Verifies that the AirrSeries is valid"""
+        data: Dict[Any, Any] = AirrSeriesModel(**self).dict()  # type: ignore
+        self.update(data)
 
     def to_input_sequence_object(self) -> InputSequence:
         """
@@ -261,36 +276,127 @@ class AirrTable(pd.DataFrame):
         AirrTable
             AirrTable for just sanitized_antibodies
         """
-        return AirrTable(
-            self[
-                ~(
-                    (self["fwr1_aa"].isna())
-                    | (self["cdr1_aa"].isna())
-                    | (self["fwr2_aa"].isna())
-                    | (self["cdr2_aa"].isna())
-                    | (self["fwr3_aa"].isna())
-                    | (self["cdr3_aa"].isna())
-                    | (self["fwr4_aa"].isna())
-                )
-            ].copy()
-        )
+        antibody_segments = ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]
+        return AirrTable(self[self[antibody_segments].notna().all(axis=1)].copy())
 
-    def write_fasta(self, id_field: str, sequence_field: str, file_out: Path) -> None:
+    def to_fasta(
+        self,
+        filename: Path,
+        sequence_field: str = "sequence_alignment",
+    ) -> None:
         """given an id field and sequence field, write out dataframe to fasta
 
         Parameters
         ----------
-        id_field : str
-            the id field from the dataframe to use in the fasta header
-        sequence_field : str
-            the seq field to use as the sqeuence
         file_out : Path
             the file output path to fasta
+        sequence_field : str (default: sequence_alignment)
+            The seq field to use as the sqeuence for the fasta file
+            Options:
+                sequence
+                sequence_alignment (default)
+                germline_alignment
+                sequence_alignment_aa
+                germline_alignment_aa
+                v_sequence_alignment
+                v_sequence_alignment_aa
+                v_germline_alignment
+                v_germline_alignment_aa
+                d_sequence_alignment
+                d_sequence_alignment_aa
+                d_germline_alignment
+                d_germline_alignment_aa
+                j_sequence_alignment
+                j_sequence_alignment_aa
+                j_germline_alignment
+                j_germline_alignment_aa
+                c_sequence_alignment
+                c_sequence_alignment_aa
+                c_germline_alignment
+                c_germline_alignment_aa
+                fwr1
+                fwr1_aa
+                cdr1
+                cdr1_aa
+                fwr2
+                fwr2_aa
+                cdr2
+                cdr2_aa
+                fwr3
+                fwr3_aa
+                fwr4
+                fwr4_aa
+                cdr3
+                cdr3_aa
+                junction
+                junction_aa
+                np1
+                np2
+                vdj_nt
+                vdj_aa
         """
-        with open(file_out, "w") as f:
-            # Todo: send this to a function
+        seq_fields = [
+            "sequence",
+            "sequence_alignment",
+            "germline_alignment",
+            "sequence_alignment_aa",
+            "germline_alignment_aa",
+            "v_sequence_alignment",
+            "v_sequence_alignment_aa",
+            "v_germline_alignment",
+            "v_germline_alignment_aa",
+            "d_sequence_alignment",
+            "d_sequence_alignment_aa",
+            "d_germline_alignment",
+            "d_germline_alignment_aa",
+            "j_sequence_alignment",
+            "j_sequence_alignment_aa",
+            "j_germline_alignment",
+            "j_germline_alignment_aa",
+            "c_sequence_alignment",
+            "c_sequence_alignment_aa",
+            "c_germline_alignment",
+            "c_germline_alignment_aa",
+            "fwr1",
+            "fwr1_aa",
+            "cdr1",
+            "cdr1_aa",
+            "fwr2",
+            "fwr2_aa",
+            "cdr2",
+            "cdr2_aa",
+            "fwr3",
+            "fwr3_aa",
+            "fwr4",
+            "fwr4_aa",
+            "cdr3",
+            "cdr3_aa",
+            "junction",
+            "junction_aa",
+            "np1",
+            "np2",
+            "vdj_nt",
+            "vdj_aa",
+        ]
+        records: List[SeqRecord.SeqRecord] = []
+        description_fields = [x for x in self.columns if x not in seq_fields]
+        if sequence_field not in seq_fields:
+            raise ValueError(f"sequence_field must be one of {seq_fields}")
+        with open(filename, "w") as f:
             for _, row in self.iterrows():
-                f.write(f">{row[id_field]}\n{row[sequence_field]}\n")
+                records.append(
+                    SeqRecord.SeqRecord(
+                        Seq(row[sequence_field]),
+                        id=row["sequence_id"],
+                        name=row["sequence_id"],
+                        description=", ".join([f"{x} {row[x]}" for x in description_fields]),
+                        dbxrefs=None,
+                        features=None,
+                        annotations=None,
+                        letter_annotations=None,
+                    )
+                )
+            SeqIO.write(records, f, "fasta")
 
     def get_genbank(self) -> List[SeqRecord.SeqRecord]:
         _genbanks = []
@@ -421,15 +527,15 @@ class AirrTable(pd.DataFrame):
 
         else:
             for call in ["v_call", "d_call", "j_call"]:
-                # pure light chain columns won't have a dcall
-                if call not in self.columns:
-                    continue
                 # drop the volumn if it's already there, that helps with backwards compatibility
                 if f"{call}_top" in self.columns:
                     self.drop(f"{call}_top", inplace=True, axis=1)
-
-                # Insert right next to the X_call airr_columns
-                self.insert(self.columns.get_loc(call), f"{call}_top", self[call].fillna("").str.split(",").str.get(0))
+                # pure light chain columns won't have a dcall
+                if call in self.columns:
+                    # Insert right next to the X_call airr_columns
+                    self.insert(
+                        self.columns.get_loc(call), f"{call}_top", self[call].fillna("").str.split(",").str.get(0)
+                    )
 
             # get mutation frequency rather than identity
             self.loc[:, "v_mutation"] = self["v_identity"].apply(lambda x: (1 - x))
@@ -455,8 +561,8 @@ class AirrTable(pd.DataFrame):
 
     def _get_aa_distance(self, X: pd.Series) -> float:
         "get character levenshtrein distance, will work with '-' on alignments"
-        first: str = str(X[0])
-        second: str = str(X[1])
+        first: str = X[0]
+        second: str = X[1]
         if not first or not second or isinstance(first, float) or isinstance(second, float):
             return nan
         d: int = distance(first, second)
@@ -772,60 +878,54 @@ class AirrTable(pd.DataFrame):
             }
             feature = GenBankFeature(_v_segment_start, _fw4_end, _locus, qualifier_dict=qd_locus)
             gb.add_feature(feature)
+
+        # BioPython GenBank object >= 1.78
+        gb.record.annotations["molecule_type"] = "DNA"
+
         return gb.record
 
-    def to_airr(self, file_name: str) -> None:
+    def to_airr(self, filename: str) -> None:
         """Output AIRR object to AIRR complient file
 
         Parameters
         ----------
-        file_name : str
+        filename : str
             File name to output to, must end with .tsv or tsv.gz, tsv.bz which will be compressed
         """
         reverse_to_boolean = ["productive", "vj_in_frame", "stop_codon", "rev_comp", "v_frameshift", "complete_vdj"]
-        suffixes = Path(file_name).suffixes
+        suffixes = Path(filename).suffixes
         if len(suffixes) > 1 and suffixes[0] != ".tsv":
             raise ValueError("File name must end with .tsv or .tsv.gz or .tsv.bz")
         elif suffixes[0] != ".tsv":
             raise ValueError("File name must end with .tsv or .tsv.gz or .tsv.bz")
-        self._unset_boolean(reverse_to_boolean).to_csv(file_name, sep="\t")
+        self._unset_boolean(reverse_to_boolean).to_csv(filename, sep="\t")
 
-    def to_output(self, output_object: SadieOutput) -> None:
-        """Output AIRR object to SADIE output object
+    @staticmethod
+    def read_airr(filename: Union[str, Path]) -> "AirrTable":
+        """Read AIRR file into AIRR Table object
 
         Parameters
         ----------
-        output_object : SadieOutput
-            SADIE output obhject
+        filename : Union[str, Path]
+            File name to read in
+
+        Returns
+        -------
+        AirrTable
+            AIRR Table object
         """
-        reverse_to_boolean = ["productive", "vj_in_frame", "stop_codon", "rev_comp", "v_frameshift", "complete_vdj"]
+        return AirrTable(pd.read_csv(filename, sep="\t"))
 
-        # traditional tsv
-        if output_object.output_format in ["tsv", "csv"]:
-            self._unset_boolean(reverse_to_boolean)
-            if output_object.output_format == "tsv":
-                self.to_csv(output_object.output_path, sep="\t")
-            else:
-                self.to_csv(output_object.output_path)
-
-    @staticmethod
-    def read_airr(file_name: Union[str, Path]) -> "AirrTable":
-        at = pd.read_csv(file_name, sep="\t")
-        if at.index.is_monotonic_increasing:
-            at = AirrTable(at)
-        else:
-            at = AirrTable(at.reset_index())
-        return at
-
-    def __eq__(self, other: object) -> bool:  # type: ignore[override]
-        """equals method for AirrTable"""
-        # needs to be cast to dataframe and na needs to be fileld
-        if not isinstance(other, AirrTable):
-            raise NotImplementedError("Can only compare AirrTable to AirrTable")
-        _dataframe = pd.DataFrame(self).fillna("")
-        other_dataframe = pd.DataFrame(other).fillna("")
-        _is_equal: bool = (_dataframe == other_dataframe).all().all()
-        return _is_equal
+    # Deprecated: no internal usage; falling back on built-in pandas __eq__ method
+    # def __eq__(self, other: object) -> bool:  # type: ignore[override]
+    #     """equals method for AirrTable"""
+    #     # needs to be cast to dataframe and na needs to be fileld
+    #     if not isinstance(other, AirrTable):
+    #         raise NotImplementedError("Can only compare AirrTable to AirrTable")
+    #     _dataframe = pd.DataFrame(self).fillna("")
+    #     other_dataframe = pd.DataFrame(other).fillna("")
+    #     _is_equal: bool = (_dataframe == other_dataframe).all().all()
+    #     return _is_equal
 
 
 class LinkedAirrTable(AirrTable):
@@ -851,8 +951,6 @@ class LinkedAirrTable(AirrTable):
 
     @property
     def suffixes(self) -> List[str]:
-        if not hasattr(self, "_suffixes"):
-            return []
         return self._suffixes
 
     @property
@@ -878,8 +976,6 @@ class LinkedAirrTable(AirrTable):
         right_rows = [i for i in self.columns if self.right_suffix in i]
         key_column = self.key_column
         common_columns = list(self.columns.difference(set(left_rows + right_rows)))
-        if key_column not in common_columns:
-            raise ValueError(f"{key_column} key column not in common columns")
         left_table = self[common_columns + left_rows]
         left_airr_columns: List[str] = list(map(lambda x: x.replace(self._suffixes[0], ""), list(left_table.columns)))  # type: ignore[no-any-return]
         left_table.columns = left_airr_columns

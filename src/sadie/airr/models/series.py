@@ -4,6 +4,8 @@ import pandas as pd
 from pydantic import BaseModel, root_validator
 
 
+# TODO: https://docs.airr-community.org/en/stable/news.html
+# confirm match 1.4.1 schema
 class AirrSeriesModel(BaseModel):
     sequence_id: Optional[str]
     cdr1: Optional[str]
@@ -107,12 +109,16 @@ class AirrSeriesModel(BaseModel):
 
     @root_validator(pre=True)
     def fix_dependent_attrs(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        """Fixes dependent attributes that are not the proper type"""
         cleaned_values = {}
+        # Remove all null values
         for k, v in values.items():
+            # any null values as string by mistake
             if isinstance(v, str):
                 if v.lower() in ["<na>", "na", "nan", "", "none"]:
                     v = None
-            if isinstance(v, pd._libs.missing.NAType):
-                v = None
+            # nan to None: we have hybrid types in the data so nan types cannot be leveraged & will break some logic
+            # elif isinstance(v, pd._libs.missing.NAType):
+            #     v = None
             cleaned_values[k] = v
         return cleaned_values
