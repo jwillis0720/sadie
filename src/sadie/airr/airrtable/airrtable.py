@@ -983,7 +983,3 @@ class LinkedAirrTable(AirrTable):
         right_airr_columns = list(map(lambda x: x.replace(self._suffixes[1], ""), list(right_table.columns)))  # type: ignore[no-any-return]
         right_table.columns = right_airr_columns
         return AirrTable(left_table, key_column=key_column), AirrTable(right_table, key_column=key_column)
-
-
-if __name__ == "__main__":
-    pass
