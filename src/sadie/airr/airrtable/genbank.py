@@ -90,7 +90,7 @@ class GenBank:
             self.name = name
         else:
             self.name = id[0:16]
-        self.description = description
+        self.description = description or "<unknown description>"
 
         # Our main GB record
         self._record = SeqRecord(self.sequence, id=self.id, name=self.name, description=self.description)
