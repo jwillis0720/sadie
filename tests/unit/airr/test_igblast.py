@@ -156,55 +156,58 @@ class TestIgBLASTN:
 
     def test_init_exceptions(self) -> None:
         # Path does not exist or is not executable
-        with pytest.raises(BadIgBLASTExe):
+        with pytest.raises(BadIgBLASTExe, match="Cant find IgBLAST"):
             igblastn = IgBLASTN("igblastn-fake")
             igblastn._get_version()  # type: ignore
         # Path is executable but not igblast
-        with pytest.raises(BadIgBLASTExe):
+        with pytest.raises(BadIgBLASTExe, match="Cant find IgBLAST"):
             igblastn = IgBLASTN("robot")
             igblastn._get_version()  # type: ignore
         # Bad tmp output path
         with pytest.raises(IOError):
             IgBLASTN(self.igblastn_exe, tmp_dir=Path("fake"))
 
+    def test_str_repr(self) -> None:
+        assert str(self.igblastn).startswith("IgBLAST")
+
     def test_version(self) -> None:
         assert re.match("[0-9]{1,}.[0-9]{1,}.[0-9]{1,}", str(self.igblastn.version)) is not None
 
     def test_min_d_match(self) -> None:
         self.igblastn.min_d_match = 5
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.min_d_match = 0
 
     def test_outfmt(self) -> None:
         self.igblastn.outfmt = 19
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.outfmt = 0
 
     def test_receptor(self) -> None:
         self.igblastn.receptor = "Ig"
         self.igblastn.receptor = "TCR"
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.receptor = "fake"
 
     def test_nomenclature(self) -> None:
         self.igblastn.nomenclature = "imgt"
         self.igblastn.nomenclature = "kabat"
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.nomenclature = "fake"
 
     def test_word_size(self) -> None:
         self.igblastn.word_size = 4
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.word_size = 0
 
     def test_gap_open(self) -> None:
         self.igblastn.gap_open = 0
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.gap_open = -1
 
     def test_gap_extend(self) -> None:
         self.igblastn.gap_extend = 0
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.gap_extend = -1
 
     def test_allow_vdj_overlap(self) -> None:
@@ -216,28 +219,28 @@ class TestIgBLASTN:
 
     def test_v_penalty(self) -> None:
         self.igblastn.v_penalty = -4
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.v_penalty = 1
 
     def test_d_penalty(self) -> None:
         self.igblastn.d_penalty = -3
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.d_penalty = 1
 
     def test_j_penalty(self) -> None:
         self.igblastn.j_penalty = -3
-        with pytest.raises(BadIgBLASTArgument):
+        with pytest.raises(BadIgBLASTArgument, match="Passed argument"):
             self.igblastn.j_penalty = 1
 
     def test_igdata(self) -> None:
-        with pytest.raises(BadIgDATA):
+        with pytest.raises(BadIgDATA, match="Bad IgDATA"):
             self.igblastn.igdata = "fake"
 
     def test_pre_check(self) -> None:
-        with pytest.raises(MissingIgBLASTArgument):
+        with pytest.raises(MissingIgBLASTArgument, match="Missing"):
             self.igblastn.pre_check()
 
     def test_run_file_exceptions(self) -> None:
         igblastn = self.get_populated_igblastn()
-        with pytest.raises(IgBLASTRunTimeError):
+        with pytest.raises(IgBLASTRunTimeError, match="Runtime Error"):
             igblastn.run_file(Path("fake"))

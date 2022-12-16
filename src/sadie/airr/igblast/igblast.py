@@ -24,7 +24,6 @@ from sadie.airr.exceptions import (
     BadIgBLASTArgument,
     BadIgBLASTExe,
     BadIgDATA,
-    EmtpyFileError,
     IgBLASTRunTimeError,
     MissingIgBLASTArgument,
 )
@@ -326,8 +325,6 @@ class IgBLASTN:
 
     @executable.setter
     def executable(self, exe: Path) -> None:
-        if isinstance(exe, str):
-            exe = Path(exe)
         self._executable = exe
 
     @property
@@ -933,8 +930,6 @@ class IgBLASTN:
 
         Raises
         ------
-        EmtpyFileError
-           if the fasta file is empty
         IgBLASTRunTimeError
            for any given runtime error for igblastn
         """

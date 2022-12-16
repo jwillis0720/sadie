@@ -21,19 +21,20 @@ class MissingAirrColumns(Error):
         return "Must have all AIRR columns defined, missing {}".format(self.missing_columns)
 
 
-class EmtpyFileError(Error):
-    """Exception raised for a file passed to igblast being empty
+# Deprecated for now: IgBLASTN will not accept empty files but looks useful for other programs
+# class EmtpyFileError(Error):
+#     """Exception raised for a file passed to igblast being empty
 
-    this is needed because blasts accepts empty files but we will not
+#     this is needed because blasts accepts empty files but we will not
 
-    """
+#     """
 
-    def __init__(self, file: Union[str, Path]):
-        super().__init__()
-        self.passed_arguments = file
+#     def __init__(self, file: Union[str, Path]):
+#         super().__init__()
+#         self.passed_arguments = file
 
-    def __str__(self) -> str:
-        return "{} is empty".format(self.passed_arguments)
+#     def __str__(self) -> str:
+#         return "{} is empty".format(self.passed_arguments)
 
 
 class BadIgBLASTExe(Error):
@@ -100,7 +101,7 @@ class BadIgDATA(Error):
         self.passed_arguments = passed_arguments
 
     def __str__(self) -> str:
-        return f"Bad IgDAta path {self.passed_arguments} - please provide where IgDATA is located"
+        return f"Bad IgDATA path {self.passed_arguments} - please provide where IgDATA is located"
 
 
 class IgBLASTRunTimeError(Error):
