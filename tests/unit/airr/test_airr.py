@@ -698,9 +698,9 @@ def test_genbank_feature():
 
 
 def test_genbank():
-    GenBank(sequence="ATCG", id="test")
-    GenBank(sequence=Seq("ATCG"), id="test")
+    GenBank(sequence="ATCG", id="test", name="test")
+    GenBank(sequence=Seq("ATCG"), id="test", name="test")
     with pytest.raises(TypeError):
-        GenBank(sequence=1, id="test")
+        GenBank(sequence=1, id="test", name="test")
     with pytest.raises(TypeError):
-        GenBank.add_feature("bad_feature")
+        GenBank(sequence="ATCG", id="test").add_feature(feature="bad_feature")
