@@ -9,6 +9,7 @@ import pandas as pd
 import pytest
 import semantic_version
 from Bio import SeqIO
+from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from numpy import isnan, nan
 
@@ -17,6 +18,7 @@ from sadie.airr import __file__ as sadie_airr_file
 from sadie.airr import exceptions as airr_exceptions
 from sadie.airr import igblast
 from sadie.airr import methods as airr_methods
+from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
 from sadie.airr.exceptions import BadDataSet, BadRequstedFileType
 from sadie.airr.models import AirrSeriesModel
 from sadie.reference import Reference, References
@@ -688,3 +690,17 @@ def test_airr_constant_region(fixture_setup: SadieFixture) -> None:
     airr_api = Airr("macaque")
     results = airr_api.run_fasta(constant_fasta)
     print(results.columns)
+
+
+def test_genbank_feature():
+    with pytest.raises(TypeError):
+        GenBankFeature(start=0, end=20, feature_type="FWR1_fake")
+
+
+def test_genbank():
+    GenBank(sequence="ATCG", id="test")
+    GenBank(sequence=Seq("ATCG"), id="test")
+    with pytest.raises(TypeError):
+        GenBank(sequence=1, id="test")
+    with pytest.raises(TypeError):
+        GenBank.add_feature("bad_feature")
