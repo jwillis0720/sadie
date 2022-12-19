@@ -52,6 +52,22 @@ def get_3mers(string: str) -> List[str]:
 
 
 def find_best_codon(codon: str, aa: str) -> str:
+    """Find the best codon for a given amino acid.
+
+    If no codon query is given or found it will default to amino acid given.
+
+    Parameters
+    ----------
+    codon : str
+        partial codon
+    aa : str
+        amino acid
+
+    Returns
+    -------
+    str
+        the best codon
+    """
     # first arg is a partial codon, second arg is an aa.
     if len(codon) == 3:
         return codon
@@ -99,19 +115,14 @@ def get_igl_aa(row: pd.Series) -> Union[str, float]:  # type: ignore
 
     iGL_cdr3 = ""
     for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
-        if germline == "X" or germline == "-" or germline == "*":
-            if germline == "-":
-                # germline is -- so it has an insertion
-                logger.warning(
-                    f"{row.sequence_id} - {row.germline_alignment_aa}  has a insertion in it at CDR3...that can happen but rare"
-                )
-            else:
-                if mature == "*" or mature == "-":
-                    # germline is X but mature is * or - so this should be non functional?
-                    raise ValueError(f"{row.name} - sequence has a non functional CDR3")
-                iGL_cdr3 += mature
-
+        # print(mature, germline)
+        if germline == "-":
+            logger.warning(
+                f"{row.sequence_id} - {row.germline_alignment_aa}  has a insertion in it at CDR3...that can happen but rare"
+            )
             continue
+        if germline in ["X", "*"] and mature in ["X", "*"]:
+            raise ValueError(f"{row.name} - sequence has a non functional CDR3")
         iGL_cdr3 += germline
 
     # remove insertions from seq
