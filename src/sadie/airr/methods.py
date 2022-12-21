@@ -269,7 +269,6 @@ def run_mutational_analysis(
     TypeError
         if input is not an instance of airrtable
     """
-
     if not isinstance(airrtable, AirrTable):
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 

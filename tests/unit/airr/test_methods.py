@@ -98,9 +98,14 @@ def test_get_igl_nt(fixture_setup, caplog):
             get_igl_nt(_row)
 
 
+def test_run_igl_assignment() -> None:
+    with pytest.raises(TypeError):
+        run_igl_assignment(None)
+
+
 def test_run_mutational_analysis(fixture_setup, caplog) -> None:
     with pytest.raises(TypeError):
-        run_mutational_analysis(None)
+        run_mutational_analysis(airrtable=None, scheme="imgt")
 
 
 def test_run_five_prime_buffer(fixture_setup, caplog) -> None:
