@@ -435,9 +435,6 @@ def run_five_prime_buffer(
         r_suffix = airrtable.suffixes[1]
         return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
 
-    if not airrtable.index.is_monotonic_increasing:
-        raise IndexError(f"{airrtable.index} must be monotonic increasing")
-
     refs_name = airrtable["reference_name"].unique()
     if len(refs_name) > 1:
         raise ValueError(f"Only one reference can be used at a time, current have {refs_name}")

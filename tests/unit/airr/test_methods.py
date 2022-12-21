@@ -12,6 +12,7 @@ from sadie.airr.methods import (
     get_igl_nt,
     run_five_prime_buffer,
     run_igl_assignment,
+    run_mutational_analysis,
     run_termini_buffers,
     run_three_prime_buffer,
 )
@@ -99,7 +100,7 @@ def test_get_igl_nt(fixture_setup, caplog):
 
 def test_run_mutational_analysis(fixture_setup, caplog) -> None:
     with pytest.raises(TypeError):
-        run_igl_assignment(None)
+        run_mutational_analysis(None)
 
 
 def test_run_five_prime_buffer(fixture_setup, caplog) -> None:
