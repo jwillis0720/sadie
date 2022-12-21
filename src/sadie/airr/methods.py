@@ -115,7 +115,6 @@ def get_igl_aa(row: pd.Series) -> Union[str, float]:  # type: ignore
 
     iGL_cdr3 = ""
     for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
-        # print(mature, germline)
         if germline == "-":
             logger.warning(
                 f"{row.sequence_id} - {row.germline_alignment_aa}  has a insertion in it at CDR3...that can happen but rare"
@@ -177,8 +176,8 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
 
         # we can't have both - in germ and sequence
         if germline_aa == "-" and sequence_aa == "-":
-            raise Exception("this is not possible")
-
+            raise ValueError("this is not possible")
+        print(germline_aa, sequence_aa, germline_index, len(germline_alignment_aa))
         # if germline == sequence, take the germline codon
         if germline_aa == sequence_aa:
             codon = sequence_alignment_codons[sequence_index]
@@ -190,7 +189,6 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
         elif germline_aa == "-":
             if germline_index == len(germline_alignment_aa) - 1:
                 # we are at the end so pad it with sequence
-                # print('here',germline_igl)
                 partial_codon = sequence_alignment_codons[sequence_index]
                 best_codon = find_best_codon(partial_codon, sequence_aa)
                 logger.debug(f"Partial codon:{partial_codon} for mature {sequence_aa} choosing {best_codon}")
@@ -214,6 +212,7 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
                 germline_igl += codon
             sequence_index += 1
             germline_index += 1
+
     real_igl: str = row["iGL_aa"]
     contrived_igl = str(Seq(germline_igl).translate())
     if real_igl != contrived_igl:
@@ -221,11 +220,12 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
             ending_codon = find_best_codon(sequence_alignment_codons[-1], real_igl[-1])
             germline_igl = germline_igl[: -(len(germline_igl) % 3)] + ending_codon
             # we are trying to fix it
-            if real_igl != str(Seq(germline_igl).translate()):
-                if row["productive"]:
-                    raise ValueError(
-                        f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}"
-                    )
+            # TODO: this doesnt look possible if its equal until the last codon and pull from real to make germ. This looks more of a find_best_codon issue test.
+            # if real_igl != str(Seq(germline_igl).translate()):
+            #     if row["productive"]:
+            #         raise ValueError(
+            #             f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}"
+            #         )
         else:
             if row["productive"]:
                 if row["complete_vdj"]:
@@ -264,6 +264,7 @@ def run_mutational_analysis(
     TypeError
         if input is not an instance of airrtable
     """
+
     if not isinstance(airrtable, AirrTable):
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
@@ -279,9 +280,6 @@ def run_mutational_analysis(
         r_suffix = airrtable.suffixes[1]
 
         return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
-
-    if not airrtable.index.is_monotonic_increasing:
-        raise IndexError(f"{airrtable.index} must be monotonic increasing")
 
     # create Renumbering api
     logger.info("Running Renumbering on germline alignment")
@@ -519,11 +517,9 @@ def run_three_prime_buffer(
         r_suffix = airrtable.suffixes[1]
         return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
 
-    if not airrtable.index.is_monotonic_increasing:
-        raise IndexError(f"{airrtable.index} must be monotonic increasing")
-
     refs_name = airrtable["reference_name"].unique()
     if len(refs_name) > 1:
+        print("here")
         raise ValueError(f"Only one reference can be used at a time, current have {refs_name}")
 
     # create Renumbering api
