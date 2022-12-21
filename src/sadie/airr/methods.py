@@ -519,7 +519,6 @@ def run_three_prime_buffer(
 
     refs_name = airrtable["reference_name"].unique()
     if len(refs_name) > 1:
-        print("here")
         raise ValueError(f"Only one reference can be used at a time, current have {refs_name}")
 
     # create Renumbering api
