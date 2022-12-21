@@ -115,13 +115,18 @@ def get_igl_aa(row: pd.Series) -> Union[str, float]:  # type: ignore
 
     iGL_cdr3 = ""
     for mature, germline in zip(cdr3_j_mature, cdr3_j_germline):
-        if germline == "-":
-            logger.warning(
-                f"{row.sequence_id} - {row.germline_alignment_aa}  has a insertion in it at CDR3...that can happen but rare"
-            )
+        if germline == "X" or germline == "-" or germline == "*":
+            if germline == "-":
+                # germline is -- so it has an insertion
+                logger.warning(
+                    f"{row.sequence_id} - {row.germline_alignment_aa}  has a insertion in it at CDR3...that can happen but rare"
+                )
+            else:
+                if mature == "*" or mature == "-":
+                    # germline is X but mature is * or - so this should be non functional?
+                    raise ValueError(f"{row.name} - sequence has a non functional CDR3")
+                iGL_cdr3 += mature
             continue
-        if germline in ["X", "*"] and mature in ["X", "*"]:
-            raise ValueError(f"{row.name} - sequence has a non functional CDR3")
         iGL_cdr3 += germline
 
     # remove insertions from seq
@@ -177,7 +182,7 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
         # we can't have both - in germ and sequence
         if germline_aa == "-" and sequence_aa == "-":
             raise ValueError("this is not possible")
-        print(germline_aa, sequence_aa, germline_index, len(germline_alignment_aa))
+
         # if germline == sequence, take the germline codon
         if germline_aa == sequence_aa:
             codon = sequence_alignment_codons[sequence_index]

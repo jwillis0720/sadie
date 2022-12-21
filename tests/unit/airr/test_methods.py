@@ -53,7 +53,7 @@ def test_get_igl_aa(fixture_setup, caplog) -> None:
     assert "has a insertion in it at CDR3" in caplog.text
     # X or * in aa position for both germline and mature
     _row = row.copy()
-    _row.germline_alignment_aa = _row.germline_alignment_aa[:1] + "*" * 60 + _row.germline_alignment_aa[61:]
+    _row.germline_alignment_aa = _row.germline_alignment_aa[:1] + "*" * 100 + _row.germline_alignment_aa[101:]
     _row.sequence_alignment_aa = _row.germline_alignment_aa
     with pytest.raises(ValueError):
         get_igl_aa(_row)
