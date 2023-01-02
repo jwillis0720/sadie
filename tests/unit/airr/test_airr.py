@@ -549,9 +549,12 @@ def test_airrtable_init(fixture_setup: SadieFixture) -> None:
 
     # I will not accept a busted table sam I am
     busted_table = fixture_setup.get_busted_airrtable()
-    with pytest.raises(airr_exceptions.MissingAirrColumns) as e:
-        AirrTable.read_airr(busted_table)
-    assert e.value.__str__()
+    with pytest.raises(airr_exceptions.MissingAirrColumns):
+        try:
+            AirrTable.read_airr(busted_table)
+        except airr_exceptions.MissingAirrColumns as e:
+            print(e)
+            raise e
 
 
 def test_indel_correction(fixture_setup: SadieFixture) -> None:
