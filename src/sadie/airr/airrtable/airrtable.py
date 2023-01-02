@@ -365,7 +365,6 @@ class AirrTable(pd.DataFrame):
                 self[f"vdj_aa{suffix}"] = self[_local_suffix_aa].apply(
                     lambda x: "".join([str(i) for i in x if not isinstance(i, float)]), axis=1
                 )
-                self[f"sequence_aa{suffix}"] = self[f"sequence{suffix}"].apply(lambda x: Seq(x).translate().__str__())
         else:
             # get full nt vdj recombination
             self["vdj_nt"] = self[vdj_nt_keys].apply(
