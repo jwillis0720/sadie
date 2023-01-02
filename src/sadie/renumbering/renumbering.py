@@ -122,7 +122,7 @@ class Renumbering:
         self._region_definition = definition
 
     @staticmethod
-    def get_available_region_definitions() -> List:
+    def get_available_region_definitions() -> List[str]:
         """Get currently available antibody region definitions
 
         Returns
@@ -153,7 +153,7 @@ class Renumbering:
         self._scheme = scheme.lower()
 
     @staticmethod
-    def get_available_numbering_schemes() -> List:
+    def get_available_numbering_schemes() -> List[str]:
         """Get currently available antibody numbering schemes
 
         Returns
