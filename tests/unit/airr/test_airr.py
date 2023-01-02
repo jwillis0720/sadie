@@ -84,8 +84,12 @@ def test_antibody_igblast_setup() -> None:
 
     # Set data
     with pytest.raises(airr_exceptions.BadIgDATA):
-        ig_blast.igdata = germline_ref
-        ig_blast.pre_check()
+        try:
+            ig_blast.igdata = germline_ref
+            ig_blast.pre_check()
+        except airr_exceptions.BadIgDATA as e:
+            print(e)  # get the __str__ coverage
+            raise e
     for species in ["human", "mouse", "rat", "dog"]:
         db_ref = os.path.join(germline_ref, "imgt/Ig/blastdb/")
         internal_ref = os.path.join(germline_ref, "imgt/Ig/")
@@ -147,6 +151,15 @@ def test_antibody_igblast_file_run(fixture_setup: SadieFixture) -> None:
     query = fixture_setup.get_pg9_heavy_fasta()
     csv_dataframe = ig_blast.run_file(query)
     csv_dataframe["d_call"] = csv_dataframe["d_call"].fillna("")
+
+    ## test empty file
+    query = fixture_setup.get_empty_fasta()
+    with pytest.raises(airr_exceptions.EmtpyFileError):
+        try:
+            csv_dataframe = ig_blast.run_file(query)
+        except airr_exceptions.EmtpyFileError as e:
+            print(e)
+            raise e
 
 
 def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest.MonkeyPatch) -> None:

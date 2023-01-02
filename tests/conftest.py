@@ -162,6 +162,10 @@ class AirrSequences:
         """get a file path for the catnap heavy nt file"""
         return self.fasta_inputs / "catnap_nt_heavy.fasta"
 
+    def get_empty_fasta(self) -> Path:
+        """get an empty fasta file"""
+        return self.fasta_inputs / "empty.fasta"
+
     def get_catnap_light_nt(self) -> Path:
         """get a file path for the catnap light nt file"""
         return self.fasta_inputs / "catnap_nt_light.fasta"
