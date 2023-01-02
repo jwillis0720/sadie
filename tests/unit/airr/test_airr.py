@@ -59,15 +59,23 @@ def test_antibody_igblast_setup() -> None:
         internal_ref = os.path.join(germline_ref, f"Ig/internal_data/{name}")
         aux_ref = os.path.join(germline_ref, "aux_db/imgt/")
         assert os.path.exists(db_ref)
-        ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(name))
-        ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(name))
-        ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(name))
-        ig_blast.germline_db_c = os.path.join(db_ref, "{}_C".format(name))
 
         aux_ref = os.path.join(aux_ref, f"{name}_gl.aux")
+        ig_blast.germline_db_j = os.path.join(db_ref, "{}_J".format(name))
+        ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(name))
+        ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(name))
+        ig_blast.germline_db_c = os.path.join(db_ref, "{}_C".format(name))
+        ig_blast.organism = ""
         ig_blast.aux_path = aux_ref
-        ig_blast.organism = name
         ig_blast.igdata = internal_ref
+        with pytest.raises(airr_exceptions.MissingIgBLASTArgument):
+            # missing organism
+            try:
+                ig_blast.pre_check()
+            except airr_exceptions.MissingIgBLASTArgument as e:
+                print(e)
+                raise e
+        ig_blast.organism = name
         ig_blast.pre_check()
     assert os.path.exists(germline_ref)
 
@@ -83,7 +91,11 @@ def test_antibody_igblast_setup() -> None:
         internal_ref = os.path.join(germline_ref, "imgt/Ig/")
         aux_ref = os.path.join(germline_ref, "imgt/aux_db/")
         with pytest.raises(airr_exceptions.BadIgBLASTArgument):
-            ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(species))
+            try:
+                ig_blast.germline_db_v = os.path.join(db_ref, "{}_V".format(species))
+            except airr_exceptions.BadIgBLASTArgument as e:
+                print(e)  # to get _str_ coverag
+                raise e
         with pytest.warns(UserWarning):
             ig_blast.germline_db_d = os.path.join(db_ref, "{}_D".format(species))
         with pytest.raises(airr_exceptions.BadIgBLASTArgument):
@@ -93,7 +105,11 @@ def test_antibody_igblast_setup() -> None:
 
     with pytest.raises(airr_exceptions.BadIgBLASTExe):
         # pass an executable that is not igblast
-        igblast.IgBLASTN("find")
+        try:
+            igblast.IgBLASTN("find")
+        except airr_exceptions.BadIgBLASTExe as e:
+            print(e)  # for __str_ coverage
+            raise e
 
 
 def test_antibody_igblast_file_run(fixture_setup: SadieFixture) -> None:
