@@ -26,7 +26,7 @@
         <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
             alt="Format Version">
         <a href="https://codecov.io/gh/jwillis0720/sadie">
-        <img src="https://codecov.io/gh/jwillis0720/sadie/branch/master/graph/badge.svg?token=EH9QEX4ZMP"
+        <img src="https://codecov.io/gh/jwillis0720/sadie/branch/main/graph/badge.svg?token=EH9QEX4ZMP"
             alt="Code Coverage">
         <a href="https://github.com/pre-commit/pre-commit">
         <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
@@ -47,7 +47,7 @@
 
 <!-- use a href so you can use _blank to open new tab -->
 
-**Documentation**: <a href="https://sadie.jordanrwillis.com" target="_blank">https://sadie.jordanrwillis.com</a>
+**Documentations**: <a href="https://sadie.jordanrwillis.com" target="_blank">https://sadie.jordanrwillis.com</a>
 
 **Source Code**: <a href="https://github.com/jwillis0720/sadie" target="_blank">https://github.com/jwillis0720/sadie</a>
 
