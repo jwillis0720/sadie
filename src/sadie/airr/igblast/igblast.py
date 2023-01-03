@@ -24,7 +24,6 @@ from sadie.airr.exceptions import (
     BadIgBLASTArgument,
     BadIgBLASTExe,
     BadIgDATA,
-    EmtpyFileError,
     IgBLASTRunTimeError,
     MissingIgBLASTArgument,
 )
@@ -243,8 +242,16 @@ class IgBLASTN:
         "_allow_vdj_overlap",
     ]
 
-    def __init__(self, executable: Union[Path, str] = "igblastn"):
-        """IgBLASTN with a query. Set everything up with a setter"""
+    def __init__(self, executable: Union[Path, str] = "igblastn", tmp_dir: Union[Path, str] = None):
+        """IgBLASTN with a query. Set everything up with a setter
+
+        Parameters
+        ----------
+        excutable : Union[Path,str], optional
+            Path to the igblastn executable, by default "igblastn"
+        tmp_dir : Union[Path,str], optional
+            Path to the temporary directory, by default None
+        """
 
         # set the executable dynamically
         self.executable = Path(executable)
@@ -274,11 +281,12 @@ class IgBLASTN:
         self._germline_db_v = IgBLASTArgument("germline_db_v", "germline_db_V", "", True)
         self._germline_db_d = IgBLASTArgument("germline_db_d", "germline_db_D", "", True)
         self._germline_db_j = IgBLASTArgument("germline_db_j", "germline_db_J", "", True)
+        self._germline_db_c = IgBLASTArgument("c_region_db", "c_region_db", "", True)
         self._aux_path = IgBLASTArgument("aux_path", "auxiliary_data", "", True)
 
         # Igdata is not an official blast argument, it is an enviroment
         self._igdata = Path(".")
-        self.temp_dir = Path(".")
+        self.temp_dir = tmp_dir or Path(".")
 
     def _get_version(self) -> semantic_version.Version:
         """Private method to parse igblast -version and get semantic_version
@@ -288,18 +296,16 @@ class IgBLASTN:
         semantic_version.Version
             the igblast version
         """
-        process = subprocess.run([self.executable, "-version"], capture_output=True)
-        stdout = process.stdout.decode("utf-8")
-        if process.stderr:
-            logger.error(
-                f"{self.executable}, has no returned and error when checking version,. Tried igblastn -version: {process.stderr.decode('utf-8')}"
-            )
-            raise BadIgBLASTExe(self.executable, process.stderr.decode("utf-8"))
+        try:
+            process = subprocess.run([self.executable, "-version"], capture_output=True)
+            stdout = process.stdout.decode("utf-8")
+        except (FileNotFoundError, subprocess.CalledProcessError) as e:
+            raise BadIgBLASTExe(self.executable, f"igblastn -version failed: {e}")
         version = stdout.split("\n")[0].split(":")[-1].strip()
         try:
             version = semantic_version.Version(version)
         except ValueError:
-            raise BadIgBLASTExe(self.executable, f"semantic version can't parse {version}")
+            raise BadIgBLASTExe(self.executable, f"semantic version can't parse {stdout}.")
         return version
 
     @property
@@ -319,8 +325,6 @@ class IgBLASTN:
 
     @executable.setter
     def executable(self, exe: Path) -> None:
-        if isinstance(exe, str):
-            exe = Path(exe)
         self._executable = exe
 
     @property
@@ -373,8 +377,20 @@ class IgBLASTN:
 
     @min_d_match.setter
     def min_d_match(self, d: int) -> None:
-        if not isinstance(d, int) and d < 5:
-            raise BadIgBLASTArgument(d, ">5")
+        """Required minimal consecutive nucleotide base matches for D genes
+
+        Parameters
+        ----------
+        d : int
+            The number of matches
+
+        Raises
+        ------
+        BadIgBLASTArgument
+            Must be >= 5
+        """
+        if d < 5:
+            raise BadIgBLASTArgument(d, ">= 5")
         self._min_d_match = IgBLASTArgument("min_d_match", "min_D_match", d, False)
 
     @property
@@ -390,8 +406,6 @@ class IgBLASTN:
 
     @num_v.setter
     def num_v(self, v: int) -> None:
-        if not isinstance(v, int):
-            raise BadIgBLASTArgument(v, int)
         self._num_v = IgBLASTArgument("num_v", "num_alignments_V", v, False)
 
     @property
@@ -407,8 +421,6 @@ class IgBLASTN:
 
     @num_d.setter
     def num_d(self, d: int) -> None:
-        if not isinstance(d, int):
-            raise BadIgBLASTArgument(d, int)
         self._num_d = IgBLASTArgument("num_d", "num_alignments_D", d, False)
 
     @property
@@ -424,8 +436,6 @@ class IgBLASTN:
 
     @num_j.setter
     def num_j(self, j: int) -> None:
-        if not isinstance(j, int):
-            raise BadIgBLASTArgument(j, int)
         self._num_j = IgBLASTArgument("num_j", "num_alignments_J", j, False)
 
     @property
@@ -446,17 +456,10 @@ class IgBLASTN:
         ----------
         o : str
             an organism string
-
-        Raises
-        ------
-        BadIgBLASTArgument
-            if igblast is not a str
         """
         # I don't want to hardcode in the organisms here.
         # I will handle that logic at a higher level,
         # this is because blast has no preset organims and it's all about the v,d,j blast paths which are set dynamically
-        if not isinstance(o, str):
-            raise BadIgBLASTArgument(o, str)
         self._organism = IgBLASTArgument("organism", "organism", o, True)
 
     @property
@@ -475,6 +478,17 @@ class IgBLASTN:
 
     @outfmt.setter
     def outfmt(self, fmt: int) -> None:
+        """alignment view options:
+            3 = Flat query-anchored, show identities,
+            4 = Flat query-anchored, no identities,
+            7 = Tabular with comment lines
+            19 = Rearrangement summary report (AIRR format)
+
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only 19 is supported for now
+        """
         # only accept 19 for now
         if fmt != 19:
             raise BadIgBLASTArgument(fmt, 19)
@@ -482,8 +496,7 @@ class IgBLASTN:
 
     @property
     def receptor(self) -> ArgumentType:
-        """
-        Specify Ig or T cell receptor sequence
+        """Specify Ig or T cell receptor sequence
 
         Returns
         -------
@@ -493,7 +506,14 @@ class IgBLASTN:
 
     @receptor.setter
     def receptor(self, r: str) -> None:
-        if not isinstance(r, str) and not (r in ["Ig", "TCR"]):
+        """Specify Ig or T cell receptor sequence
+
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only 'Ig' or 'TCR' are supported
+        """
+        if r not in ["Ig", "TCR"]:
             raise BadIgBLASTArgument(r, ["Ig", "TCR"])
         self._receptor = IgBLASTArgument("receptor", "ig_seqtype", r, True)
 
@@ -509,8 +529,15 @@ class IgBLASTN:
 
     @nomenclature.setter
     def nomenclature(self, system: str) -> None:
+        """Domain system to be used for segment annotation
+
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only 'imgt' or 'kabat' are supported
+        """
         if system.lower() not in ["imgt", "kabat"]:
-            raise BadIgBLASTArgument(system, "['imgt','kaba']")
+            raise BadIgBLASTArgument(system, "['imgt','kabat']")
         self._nomenclature = IgBLASTArgument("nomenclature", "domain_system", system, True)
 
     @property
@@ -543,6 +570,13 @@ class IgBLASTN:
 
     @germline_db_v.setter
     def germline_db_v(self, path: str | Path) -> None:
+        """Path to V gene database prefix
+
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only valid path to V Database is supported
+        """
         abs_path = ensure_prefix_to(path)
         if not abs_path:
             raise BadIgBLASTArgument(path, "Valid path to V Database")
@@ -560,6 +594,7 @@ class IgBLASTN:
 
     @germline_db_d.setter
     def germline_db_d(self, path: str | Path) -> None:
+        """Path to D gene database prefix"""
         abs_path = ensure_prefix_to(path)
         if not abs_path:
             warnings.warn(f"{path} is not found, No D gene segment", UserWarning)
@@ -580,6 +615,7 @@ class IgBLASTN:
 
     @germline_db_c.setter
     def germline_db_c(self, path: str | Path) -> None:
+        """Path to C gene database prefix"""
         abs_path = ensure_prefix_to(path)
         if not abs_path:
             warnings.warn(f"{path} is not found, No C gene segment", UserWarning)
@@ -599,7 +635,13 @@ class IgBLASTN:
 
     @germline_db_j.setter
     def germline_db_j(self, path: str | Path) -> None:
+        """Path to J gene database prefix
 
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only valid path to J Database is supported
+        """
         abs_path = ensure_prefix_to(path)
         if not abs_path:
             raise BadIgBLASTArgument(path, "Valid path to J Database")
@@ -617,8 +659,15 @@ class IgBLASTN:
 
     @word_size.setter
     def word_size(self, word_size: int) -> None:
-        if not isinstance(word_size, int) and word_size < 4:
-            raise BadIgBLASTArgument(word_size, ">4")
+        """Word size for wordfinder algorithm (length of best perfect match)
+
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only integer greater than 4 is supported
+        """
+        if word_size < 4:
+            raise BadIgBLASTArgument(word_size, ">=4")
         self._word_size = IgBLASTArgument("word_size", "word_size", word_size, False)
 
     @property
@@ -633,8 +682,15 @@ class IgBLASTN:
 
     @gap_open.setter
     def gap_open(self, go: int) -> None:
-        if not isinstance(go, int) and go > 0:
-            raise BadIgBLASTArgument(go, ">0")
+        """Cost to open a gap
+
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only integer greater than 0 is supported
+        """
+        if go < 0:
+            raise BadIgBLASTArgument(go, ">=0")
         self._gap_open = IgBLASTArgument("gap_open", "gapopen", go, False)
 
     @property
@@ -649,8 +705,15 @@ class IgBLASTN:
 
     @gap_extend.setter
     def gap_extend(self, ge: int) -> None:
-        if not isinstance(ge, int) and ge > 0:
-            raise BadIgBLASTArgument(ge, ">0")
+        """Cost to extend a gap
+
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only integer greater than 0 is supported
+        """
+        if ge < 0:
+            raise BadIgBLASTArgument(ge, ">=0")
         self._gap_extend = IgBLASTArgument("gap_open", "gapextend", ge, False)
 
     @property
@@ -666,8 +729,7 @@ class IgBLASTN:
 
     @num_threads.setter
     def num_threads(self, num_threads: int) -> None:
-        if num_threads > cpu_count():
-            raise BadIgBLASTArgument(num_threads, "<" + str(cpu_count()))
+        # Some architectures have more threads than number of cores. Letting the users decide the number of threads.
         self._num_threads = IgBLASTArgument("number_threds", "num_threads", num_threads, False)
 
     @property
@@ -701,8 +763,10 @@ class IgBLASTN:
     @property
     def allow_vdj_overlap(self) -> Any:
         """Allow the VDJ overlap
+
         This option is active only when D_penalty
         and J_penalty are set to -4 and -3, respectively
+
         Returns
         -------
         IgBLASTArgument
@@ -711,6 +775,11 @@ class IgBLASTN:
 
     @allow_vdj_overlap.setter
     def allow_vdj_overlap(self, allow: bool) -> None:
+        """Allow the VDJ overlap
+
+        This option is active only when D_penalty
+        and J_penalty are set to -4 and -3, respectively
+        """
         j_penalty: IgBLASTArgument = self.j_penalty  # type: ignore[assignment]
         d_penalty: IgBLASTArgument = self.d_penalty  # type: ignore[assignment]
         if j_penalty.value != -3 and d_penalty.value != -4 and allow:
@@ -732,6 +801,13 @@ class IgBLASTN:
 
     @d_penalty.setter
     def d_penalty(self, penalty: int) -> None:
+        """What is the  D gene panalty
+
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only integer less than 0 and greater than -5 is supported
+        """
         if not -5 < penalty < 1:
             raise BadIgBLASTArgument(penalty, "must be less than 0 and greater than -5")
         self._d_penalty = IgBLASTArgument("d_penalty", "D_penalty", penalty, True)
@@ -748,6 +824,13 @@ class IgBLASTN:
 
     @j_penalty.setter
     def j_penalty(self, penalty: int) -> None:
+        """What is the  J gene panalty
+
+        Exceptions
+        ----------
+        BadIgBLASTArgument
+            Only integer less than 0 and greater than -4 is supported
+        """
         if not -4 < penalty < 1:
             raise BadIgBLASTArgument(penalty, "must be less than 0 and greater than -4")
         self._j_penalty = IgBLASTArgument("j_penalty", "J_penalty", penalty, True)
@@ -825,21 +908,11 @@ class IgBLASTN:
         BadIgDATA
             If any of the fields are not set properly
         """
+        # TODO: move to pydanic model
         # Ensure required arguments werer set
         for blast_arg in self.arguments:
             if blast_arg.required and not (blast_arg.value):
                 raise MissingIgBLASTArgument(f"Missing Blast argument. Need to set IgBLASTN.{blast_arg.name}")
-
-            #  Check the executable
-            if not is_tool(str(self.executable)):
-                raise BadIgBLASTExe(self.executable, "Is not an executable tool")
-
-            if not self.igdata:
-                raise BadIgDATA("No IGDATA set, set with IgBLASTN.igdata")
-
-            else:
-                if not os.path.exists(self.igdata):
-                    raise BadIgDATA(self.igdata)
 
     # Run methods
     def run_file(self, file: Union[Path, str]) -> pd.DataFrame:
@@ -857,8 +930,6 @@ class IgBLASTN:
 
         Raises
         ------
-        EmtpyFileError
-           if the fasta file is empty
         IgBLASTRunTimeError
            for any given runtime error for igblastn
         """
@@ -866,10 +937,6 @@ class IgBLASTN:
         # because igblast uses IGDATA as the internal file structure, we should pass the enviroment to the subprocess
         local_env = os.environ.copy()
         local_env["IGDATA"] = str(self.igdata)
-
-        # we want to ensure they actually passed a file with stuff in it
-        if os.path.getsize(file) == 0:
-            raise EmtpyFileError(file)
 
         # take the cmd and finally add the query file
         cmd = self.cmd
@@ -888,9 +955,6 @@ class IgBLASTN:
             # we read the dataframe from the tempfile, it should always be in .TSV.
             # We can also cast it to IGBLAST_AIRR dtypes to save memory
             df = pd.read_csv(tmpfile.name, sep="\t", dtype=IGBLAST_AIRR)  # type: ignore
-        if Path(tmpfile.name).exists():
-            logger.debug(f"{tmpfile.name} was not deleted after it exited scope")
-            Path(tmpfile.name).unlink()
 
         df["v_identity"] = df["v_identity"] / 100
         df["d_identity"] = df["d_identity"] / 100
@@ -902,7 +966,3 @@ class IgBLASTN:
 
     def __str__(self) -> str:
         return self.__repr__()
-
-
-if __name__ == "__main__":
-    ig_blast = IgBLASTN()

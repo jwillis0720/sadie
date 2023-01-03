@@ -245,9 +245,6 @@ class Airr:
 
     @temp_directory.setter
     def temp_directory(self, temp_directory: str | Path) -> None:
-        if not isinstance(temp_directory, (str, Path)):
-            raise TypeError(f"temp_directory must be str or Path, not {type(temp_directory)}")
-
         # if we set the temp diretory, we need to create it
         if not os.path.exists(temp_directory):
             os.makedirs(temp_directory)
@@ -282,9 +279,6 @@ class Airr:
 
     @executable.setter
     def executable(self, path: Union[Path, str]) -> None:
-        # none can be passed if which(igblastn) returns None
-        if not path:
-            raise BadIgBLASTExe(path, "No igblastn found")
         if isinstance(path, str):
             path = Path(path)
         if not path.exists():
