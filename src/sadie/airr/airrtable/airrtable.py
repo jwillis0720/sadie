@@ -913,12 +913,7 @@ class AirrTable(pd.DataFrame):
         AirrTable
             AIRR Table object
         """
-        at = pd.read_csv(filename, sep="\t")
-        if at.index.is_monotonic_increasing:
-            at = AirrTable(at)
-        else:
-            at = AirrTable(at.reset_index())
-        return at
+        return AirrTable(pd.read_csv(filename, sep="\t"))
 
     # Deprecated: no internal usage; falling back on built-in pandas __eq__ method
     # def __eq__(self, other: object) -> bool:  # type: ignore[override]
