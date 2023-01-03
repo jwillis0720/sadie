@@ -285,6 +285,9 @@ def run_mutational_analysis(
 
         return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
 
+    if not airrtable.index.is_monotonic_increasing:
+        airrtable = airrtable.reset_index()
+
     # create Renumbering api
     logger.info("Running Renumbering on germline alignment")
     renumbering_api = Renumbering(scheme=scheme, allowed_chain=["H", "K", "L"], run_multiproc=run_multiproc)
@@ -434,6 +437,9 @@ def run_five_prime_buffer(
         r_suffix = airrtable.suffixes[1]
         return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
 
+    if not airrtable.index.is_monotonic_increasing:
+        airrtable = airrtable.reset_index()
+
     refs_name = airrtable["reference_name"].unique()
     if len(refs_name) > 1:
         raise ValueError(f"Only one reference can be used at a time, current have {refs_name}")
@@ -517,6 +523,9 @@ def run_three_prime_buffer(
         l_suffix = airrtable.suffixes[0]
         r_suffix = airrtable.suffixes[1]
         return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
+
+    if not airrtable.index.is_monotonic_increasing:
+        airrtable = airrtable.reset_index()
 
     refs_name = airrtable["reference_name"].unique()
     if len(refs_name) > 1:
