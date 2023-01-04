@@ -163,7 +163,7 @@ class HMMER:
                     sequences.extend(list(seq_file))
                     continue
             if isinstance(seq_obj, str):
-                if len(seq_obj) < 4096:
+                if len(seq_obj) < 4096:  # max length of a path
                     if Path(seq_obj).is_file():
                         with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
                             sequences.extend(list(seq_file))
@@ -342,7 +342,7 @@ class HMMER:
         hmm_seq: str,
         query_seq: str,
         query_length: int,
-        hmm_start: Optional[int] = None,
+        hmm_start: int,
         hmm_end: Optional[int] = None,
         query_start: Optional[int] = None,
         query_end: Optional[int] = None,
@@ -519,15 +519,16 @@ class HMMER:
         assert len(hmm_seq) == len(query_seq), "The 2 seqs should be alignments of eachother"
         hmm_length = 128  # hardcoded since this is the length of the HMM for an antibody
 
+        #
         # Allowing the user simple numbering if they already have alignments
-        if hmm_start is None:
-            hmm_start = 0
-        if hmm_end is None:
-            hmm_end = len(hmm_seq) - hmm_seq.count(".")
-        if query_start is None:
-            query_start = 0
-        if query_end is None:
-            query_end = len(query_seq) - query_seq.count("-")
+        # if hmm_start is None:
+        #     hmm_start = 0
+        # if hmm_end is None:
+        #     hmm_end = len(hmm_seq) - hmm_seq.count(".")
+        # if query_start is None:
+        #     query_start = 0
+        # if query_end is None:
+        #     query_end = len(query_seq) - query_seq.count("-")
 
         # print('0', hmm_length, hmm_start, hmm_end, query_length, query_start, query_end)
 
