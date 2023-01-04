@@ -4,7 +4,6 @@ if the scheme is used directly.
 """
 import pytest
 
-from sadie.utility.exception import LongHCDR3Error
 from sadie.numbering.schemes import (
     _number_regions,
     get_cdr3_annotations,
@@ -16,6 +15,7 @@ from sadie.numbering.schemes import (
     number_kabat_light,
     smooth_insertions,
 )
+from sadie.utility.exception import LongHCDR3Error
 
 
 def test_smooth_insertions():
