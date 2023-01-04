@@ -8,11 +8,15 @@ import pytest
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from pydantic import ValidationError
+from click.testing import CliRunner
+import os
+import glob
 
 from sadie.reference.models import GeneEntries, GeneEntry
 from sadie.reference.reference import G3Error, Reference, References
 from sadie.reference.util import write_out_fasta
 from sadie.reference.yaml import YamlRef
+from sadie import app
 from tests.conftest import SadieFixture
 
 
@@ -138,3 +142,25 @@ def test_missing_makeblast_df(tmp_path_factory: pytest.TempPathFactory, fixture_
         write_blast_db(fasta, tmpdir.joinpath("missing.fasta"), "some_bogus_makeblastdb")
     with pytest.raises(RuntimeError):
         write_blast_db(bogus_file, tmpdir.joinpath("missing.fasta"))
+
+
+def test_cli(tmp_path_factory: pytest.TempPathFactory):
+    """Confirm the CLI works as expected This runs the entire generation pipeline that ships with SADIE and checks that the file structure is exactly the same"""
+    runner = CliRunner(echo_stdin=True)
+
+    # these are the expected file structures
+    # make a hierarchy of directories
+    tmpdir = tmp_path_factory.mktemp("igblast_dir")
+
+    # run the entire pipeline via CLICK cli
+    result = runner.invoke(app.make_igblast_reference, ["--outpath", tmpdir], catch_exceptions=True)
+    if result.exit_code != 0:
+        print(result)
+        assert result.exit_code == 0
+
+    # was the file actually output?
+    assert os.path.exists(tmpdir)
+
+    # assert we made an imgt and custom directory, but still don't know if anything is in it
+    directories_created = glob.glob(str(tmpdir) + "/*")
+    assert sorted(directories_created) == sorted([f"{tmpdir}/aux_db", f"{tmpdir}/Ig"])
