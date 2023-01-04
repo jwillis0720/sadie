@@ -1,4 +1,6 @@
 # from functools import lru_cache TODO: see if this is worth it for get_hmm_models
+from __future__ import annotations
+
 from operator import itemgetter
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
@@ -85,7 +87,7 @@ class HMMER:
 
         return hmms
 
-    def __digitize_seq(self, name: str, seq: str) -> pyhmmer.easel.DigitalSequence:
+    def digitize_seq(self, name: str | bytes, seq: Seq | str) -> pyhmmer.easel.DigitalSequence:
         """
         Digitize a sequence for hmmer.
 
@@ -107,7 +109,7 @@ class HMMER:
             seq = str(seq)
         return pyhmmer.easel.TextSequence(name=name, sequence=seq).digitize(self.alphabet)
 
-    def __transform_seq(
+    def transform_seqs(
         self, seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
     ) -> List[pyhmmer.easel.DigitalSequence]:
         """
@@ -125,19 +127,19 @@ class HMMER:
         >>> seqrecord = SeqRecord('DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS', id="unique name", description="long description")
         >>> loose_str = 'DIVMTQSPLSLPVTPGEPASISCRSSQSLLYS'
 
-        >>> __transform_seq(file)  # read fasta file with amino acids
+        >>> transform_seqs(file)  # read fasta file with amino acids
         [<pyhmmer.easel.DigitalSequence at 0x1396614c0>]
 
-        >>> __transform_seq(seq)  # read Biopython Seq object; auto-assigns id via a counter starting at 0
+        >>> transform_seqs(seq)  # read Biopython Seq object; auto-assigns id via a counter starting at 0
         [<pyhmmer.easel.DigitalSequence at 0x139661540>]
 
-        >>> __transform_seq(seqrecord)  # read Biopython SeqRecord object
+        >>> transform_seqs(seqrecord)  # read Biopython SeqRecord object
         [<pyhmmer.easel.DigitalSequence at 0x139de98c0>]
 
-        >>> __transform_seq(loose_str)  # read string of amino acids; auto-assigns id via a counter starting at 0
+        >>> transform_seqs(loose_str)  # read string of amino acids; auto-assigns id via a counter starting at 0
         [<pyhmmer.easel.DigitalSequence at 0x139deb800>]
 
-        >>> __transform_seq([file, seq, seqrecord, loose_str])  # read all of the above together as 1 list output
+        >>> transform_seqs([file, seq, seqrecord, loose_str])  # read all of the above together as 1 list output
         [
             <pyhmmer.easel.DigitalSequence at 0x1396614c0>,
             <pyhmmer.easel.DigitalSequence at 0x139661540>,
@@ -163,7 +165,7 @@ class HMMER:
                     sequences.extend(list(seq_file))
                     continue
             if isinstance(seq_obj, str):
-                if len(seq_obj) < 4096:
+                if len(seq_obj) < 4096:  # max length of a path
                     if Path(seq_obj).is_file():
                         with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
                             sequences.extend(list(seq_file))
@@ -171,19 +173,16 @@ class HMMER:
 
             # If sequence is a string, digitize it directly and add it to the list
             if isinstance(seq_obj, (Seq, str)):
-                sequences.append(self.__digitize_seq(name=str(sudo_name), seq=seq_obj))
+                sequences.append(self.digitize_seq(name=str(sudo_name), seq=seq_obj))
                 continue
             if isinstance(seq_obj, SeqRecord):
-                sequences.append(self.__digitize_seq(name=seq_obj.id, seq=seq_obj.seq))
+                sequences.append(self.digitize_seq(name=seq_obj.id, seq=seq_obj.seq))
                 continue
             if isinstance(seq_obj, tuple):
                 seq_id, seq = seq_obj
-                sequences.append(self.__digitize_seq(name=seq_id, seq=seq))
+                sequences.append(self.digitize_seq(name=seq_id, seq=seq))
                 continue
             raise ValueError(f"seq_obj {seq_obj} is not a valid sequence or path")
-
-        if not sequences:
-            raise ValueError(f"No valid sequences were found in {seq_objs}")
 
         return sequences
 
@@ -252,7 +251,7 @@ class HMMER:
             List of HMMER hits for NUMBERING numbering.
         """
         # Convert sequences to Easel sequences
-        sequences = self.__transform_seq(sequences)
+        sequences = self.transform_seqs(sequences)
 
         # Multiprocessing might scramble actual seq from order
         seq_name_2_seq = {seq.name.decode(): seq.textize().sequence for seq in sequences}
@@ -319,8 +318,6 @@ class HMMER:
             best_results = [
                 result[0] if result else None for result in best_results
             ]  # Numbering only expects best result per query
-            if not best_results:
-                return [default_out]
             return [
                 (
                     [numbering_keys, itemgetter(*numbering_keys)(result)],
@@ -342,7 +339,7 @@ class HMMER:
         hmm_seq: str,
         query_seq: str,
         query_length: int,
-        hmm_start: Optional[int] = None,
+        hmm_start: int,
         hmm_end: Optional[int] = None,
         query_start: Optional[int] = None,
         query_end: Optional[int] = None,
@@ -519,15 +516,16 @@ class HMMER:
         assert len(hmm_seq) == len(query_seq), "The 2 seqs should be alignments of eachother"
         hmm_length = 128  # hardcoded since this is the length of the HMM for an antibody
 
+        #
         # Allowing the user simple numbering if they already have alignments
-        if hmm_start is None:
-            hmm_start = 0
-        if hmm_end is None:
-            hmm_end = len(hmm_seq) - hmm_seq.count(".")
-        if query_start is None:
-            query_start = 0
-        if query_end is None:
-            query_end = len(query_seq) - query_seq.count("-")
+        # if hmm_start is None:
+        #     hmm_start = 0
+        # if hmm_end is None:
+        #     hmm_end = len(hmm_seq) - hmm_seq.count(".")
+        # if query_start is None:
+        #     query_start = 0
+        # if query_end is None:
+        #     query_end = len(query_seq) - query_seq.count("-")
 
         # print('0', hmm_length, hmm_start, hmm_end, query_length, query_start, query_end)
 

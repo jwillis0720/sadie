@@ -913,7 +913,8 @@ class AirrTable(pd.DataFrame):
         AirrTable
             AIRR Table object
         """
-        return AirrTable(pd.read_csv(filename, sep="\t"))
+        at = pd.read_csv(filename, sep="\t")
+        return AirrTable(at)
 
     # Deprecated: no internal usage; falling back on built-in pandas __eq__ method
     # def __eq__(self, other: object) -> bool:  # type: ignore[override]
