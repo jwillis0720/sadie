@@ -1,4 +1,6 @@
 # from functools import lru_cache TODO: see if this is worth it for get_hmm_models
+from __future__ import annotations
+
 from operator import itemgetter
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union

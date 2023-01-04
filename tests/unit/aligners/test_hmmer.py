@@ -38,6 +38,12 @@ class TestHMMER:
         with pytest.raises(ValueError):
             self.hmmer.transform_seqs(None)
 
+    def test_get_hmm_models(self):
+        hmms = self.hmmer.get_hmm_models(species=["macaque"], chains=["H"], source="imgt")
+        assert hmms is not None
+        hmms = self.hmmer.get_hmm_models(species=["pig"], chains=["H"], source="imgt")
+        assert hmms is not None
+
     def test_hmmsearch(self):
         assert self.hmmer.hmmsearch("ACDEFGHIKLMNPQRSTVWY") == [[]]
         assert self.hmmer.hmmsearch("ACDEFGHIKLMNPQRSTVWY", for_numbering=True) == [
