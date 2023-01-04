@@ -4,7 +4,7 @@ if the scheme is used directly.
 """
 import pytest
 
-from sadie.antibody.exception import LongHCDR3Error
+from sadie.utility.exception import LongHCDR3Error
 from sadie.numbering.schemes import (
     _number_regions,
     get_cdr3_annotations,
