@@ -20,7 +20,7 @@ from sadie.renumbering import Renumbering
 
 # utility
 from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
-from sadie.utility.util import get_project_root, get_verbosity_level
+from sadie.utility.util import get_project_root, getVerbosityLevel
 
 
 @click.group()
@@ -79,7 +79,7 @@ def airr(
     output_path: Union[None, Path, str],
 ) -> None:
 
-    numeric_level = get_verbosity_level(verbose)
+    numeric_level = getVerbosityLevel(verbose)
     logging.basicConfig(level=numeric_level)
     airr = Airr(name)
     if not output_path:
@@ -220,7 +220,7 @@ def renumbering(
     compress: str,
     file_format: str,
 ) -> None:
-    numeric_level = get_verbosity_level(verbose)
+    numeric_level = getVerbosityLevel(verbose)
     logging.basicConfig(level=numeric_level)
     logger = logging.getLogger("NUMBERING")
 
@@ -325,7 +325,7 @@ def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None
     """
     # Set the root logger in the console script
     # Get back a numeric level associated with number of clicks
-    numeric_level = get_verbosity_level(verbose)
+    numeric_level = getVerbosityLevel(verbose)
     logging.basicConfig(level=numeric_level)
     click.echo(f"reference path {reference}")
 

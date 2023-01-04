@@ -8,8 +8,8 @@ from typing import List, Optional, Tuple
 import pandas as pd
 from numpy import nan
 
-from sadie.antibody.exception import LongHCDR3Error, NumberingDecreasing
 from sadie.numbering.scheme_numbering import scheme_numbering
+from sadie.utility.exception import LongHCDR3Error, NumberingDecreasing
 
 from .germlines import all_germlines
 from .schemes import (

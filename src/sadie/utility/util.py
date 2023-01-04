@@ -203,37 +203,6 @@ def split_fasta(
                     f.write("\n".join(joiner))
 
 
-def get_verbosity_level(verbosity_count: int) -> int:
-    """Get verbosity level by how many --vvv were passed
-
-    Arguments:
-        verboisty_count {int} -- how many v's were passed
-
-    50 - critical
-    40 - error
-    30 - warning
-    20 - info
-    10 -debug
-    0 - notset
-    """
-
-    # If 5, we want 10 debug level logging
-    if verbosity_count >= 5:
-        return 10
-    # If 4, we want 20 info level logging
-    elif verbosity_count == 4:
-        return 20
-    # If 3, we want 30 warming level logging
-    elif verbosity_count == 3:
-        return 30
-    # If 2, we want 40 error level logging
-    elif verbosity_count == 2:
-        return 40
-
-    # always return critical
-    return 50
-
-
 def guess_compress(filename: Union[str, Path]) -> Union[str, bool]:
     """Guess compression type
 
