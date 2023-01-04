@@ -184,9 +184,6 @@ class HMMER:
                 continue
             raise ValueError(f"seq_obj {seq_obj} is not a valid sequence or path")
 
-        if not sequences:
-            raise ValueError(f"No valid sequences were found in {seq_objs}")
-
         return sequences
 
     # def load_stockholm(self, stockholm_path: Union[Path, str]) -> pyhmmer.easel.DigitalMSA:
@@ -321,8 +318,6 @@ class HMMER:
             best_results = [
                 result[0] if result else None for result in best_results
             ]  # Numbering only expects best result per query
-            if not best_results:
-                return [default_out]
             return [
                 (
                     [numbering_keys, itemgetter(*numbering_keys)(result)],
