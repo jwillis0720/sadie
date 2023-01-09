@@ -1,12 +1,12 @@
 """This is our main entry point"""
 import logging
 import os
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any, List, Union
 
 import click
+import pkg_resources
 
 # airr
 from sadie.airr import Airr
@@ -22,11 +22,14 @@ from sadie.renumbering import Renumbering
 from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
 from sadie.utility.util import get_project_root, getVerbosityLevel
 
+__version__ = pkg_resources.get_distribution("sadie-antibody").version
+
 
 @click.group()
-@click.version_option(
-    subprocess.run(["git", "describe", "--tags", "--abbrev=0"], stdout=subprocess.PIPE).stdout.decode("utf-8").strip()
-)
+# @click.version_option(
+#     subprocess.run(["git", "describe", "--tags", "--abbrev=0"], stdout=subprocess.PIPE).stdout.decode("utf-8").strip()
+# )
+@click.version_option(version=__version__)
 @click.pass_context
 def sadie(ctx: click.Context) -> None:
     pass
