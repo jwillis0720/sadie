@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sadie-antibody"
-version = "0.0.0" # run 'sadie --version' to get the current version
+version = "v0.4.47" # run 'sadie --version' to get the current version
 license = "MIT"
 description = "\"The Complete Antibody Library\""
 authors = [
@@ -84,6 +84,10 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 # ------------------------------------------------ External Tools ------------------------------------------------ #
+[[tool.poetry_bumpversion.replacements]]
+files = ["src/sadie/__init__.py"]
+search = '__version__ = "{current_version}"'
+replace = '__version__ = "{new_version}"'
 
 [tool.black]
 line-length = 120
