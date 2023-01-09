@@ -42,7 +42,7 @@ jobs:
           git config user.email jwillis0720@gmail.com
           git add pyproject.toml src/sadie/__init__.py
           git commit -m "bump up $(git describe --tags --abbrev=0) version from workflow"
-          git push
+          git push --force
           poetry build
           poetry publish --username "$PYPI_USERNAME" --password "$PYPI_PASSWORD"
       - name: Dump GitHub context
