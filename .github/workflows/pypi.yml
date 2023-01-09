@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.ref_name }}
           fetch-depth: "0"
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@v1
