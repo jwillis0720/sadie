@@ -38,7 +38,7 @@ jobs:
           PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
           poetry version $(git describe --tags --abbrev=0)
-          git config user.name ${{ secrets.PYPI_USERNAME }}
+          git config user.name $PYPI_USERNAME
           git config user.email jwillis0720@gmail.com
           git add pyproject.toml src/sadie/__init__.py
           git commit -m "bump up $(git describe --tags --abbrev=0) version from workflow"
