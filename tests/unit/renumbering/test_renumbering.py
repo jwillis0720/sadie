@@ -20,6 +20,17 @@ from sadie.renumbering import (
 USE_CACHE = True  # TODO: make this an option in the config
 
 
+class TestRenumbering:
+    def setup_method(self):
+        self.renumbering_api = Renumbering(scheme="imgt", region_assign="imgt", allowed_species=["human"])
+
+    def test_renumbering(self):
+        with pytest.raises(TypeError):
+            self.renumbering_api.run_multiple("single fastaa")
+        with pytest.raises(TypeError):
+            self.renumbering_api.run_multiple(["incorrect fastaa"])
+
+
 def test_long_seq_from_src():
     renumbering_api = Renumbering(scheme="chothia", region_assign="imgt", run_multiproc=True)
     renumbering_api.run_single(
@@ -327,10 +338,12 @@ def test_good_chain(fixture_setup):
 def test_df(fixture_setup):
     test_file_heavy = fixture_setup.get_catnap_heavy_aa()
     df = pd.DataFrame(
-        [{"id": x.id, "seq": x.seq, "description": x.description} for x in SeqIO.parse(test_file_heavy, "fasta")]
+        [{"Id": x.id, "seq": x.seq, "description": x.description} for x in SeqIO.parse(test_file_heavy, "fasta")]
     )
     numbering_obj = Renumbering()
-    numbering_results = numbering_obj.run_dataframe(df, "id", "seq")
+    numbering_results = numbering_obj.run_dataframe(df, "Id", "seq")
+    assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
+    numbering_results = numbering_obj.run_dataframe(df, "Id", "seq", return_join=True)
     assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))
     # numbering_results = numbering_obj.run_dataframe(df, "id", "seq", return_join=True)
     # assert isinstance(numbering_results, (NumberingResults, pd.DataFrame))

@@ -102,8 +102,9 @@ class Renumbering:
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
         self.hmmer.use_numbering_hmms = use_numbering_hmms
-        if not self.check_combination(self.scheme, self.region_definition):
-            raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
+        # TODO: move this out of aligner and into it's own class for checks
+        # if not self.check_combination(self.scheme, self.region_definition):
+        #     raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
 
     @property
     def region_definition(self) -> str:
@@ -117,8 +118,9 @@ class Renumbering:
         accepted: imgt, kabat, chotia, martin, abm
 
         """
-        if definition.lower() not in self.get_available_region_definitions():
-            raise BadNumberingArgument(definition, self.get_available_region_definitions())
+        # TODO: move this out of aligner and into it's own class for checks
+        # if definition.lower() not in self.get_available_region_definitions():
+        #     raise BadNumberingArgument(definition, self.get_available_region_definitions())
         self._region_definition = definition
 
     @staticmethod
@@ -324,11 +326,12 @@ class Renumbering:
         numbering_results["allowed_chains"] = ",".join(self.allowed_chains)
         numbering_results = numbering_results._add_segment_regions()
 
-        if len(numbering_results["Id"].unique()) != len(numbering_results):
-            logger.warning(
-                f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated"
-            )
-            numbering_results = numbering_results.sort_values("score", ascending=False).groupby("Id").head(1)
+        # TODO: not possible, since we don't allow multiple hits. Should we?
+        # if len(numbering_results["Id"].unique()) != len(numbering_results):
+        #     logger.warning(
+        #         f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated"
+        #     )
+        #     numbering_results = numbering_results.sort_values("score", ascending=False).groupby("Id").head(1)
 
         # segment the region
         # numbering_results = numbering_results.add_segment_regions()
@@ -436,11 +439,10 @@ class Renumbering:
         if return_join:
             dataframe[seq_id_field] = dataframe[seq_id_field].astype(str)
             _df = self.run_multiple(_get_seq_generator())
-            # convert seq id field to stry stince sequence_id is cast to string
             return dataframe.merge(
                 _df,
                 left_on=seq_id_field,
-                right_on="sequence_id",
+                right_on="Id",
             )
         else:
             return self.run_multiple(_get_seq_generator())
