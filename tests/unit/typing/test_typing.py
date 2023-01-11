@@ -56,7 +56,7 @@ class TestTyping:
             (1, pytest.raises(ValueError)),
         ],
     )
-    def test_chain(self, species: str, expectation: AbstractContextManager | pytest.raises) -> None:  # type: ignore
+    def test_species(self, species: str, expectation: AbstractContextManager | pytest.raises) -> None:  # type: ignore
         @validate_arguments
         def dummy(species: Species) -> None:
             pass
