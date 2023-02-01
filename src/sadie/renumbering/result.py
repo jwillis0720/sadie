@@ -2,6 +2,7 @@ import logging
 from ast import literal_eval
 
 import pandas as pd
+from numpy import nan
 
 from sadie.numbering.scheme_numbering import scheme_numbering
 
@@ -25,24 +26,36 @@ class NumberingResults(pd.DataFrame):
     def _constructor(self):
         return NumberingResults
 
+    @staticmethod
+    def pileup(positions, seq):
+        return pd.Series(seq, index=positions).groupby(level=0).apply("".join)
+
     def get_alignment_table(self) -> pd.DataFrame:
-        """Get a numbered alignment table from the numbering and insertions
+        pileup_df = (
+            self.apply(lambda x: self.pileup(x.Numbering, x.Numbered_Sequence), axis=1)
+            .replace(nan, "-")
+            .set_index(self.Id)
+        )
+        return self[["Id", "chain_type", "scheme"]].merge(pileup_df, on="Id").copy()
 
-        Returns
-        -------
-        pd.DataFrame
-            A dataframe with Id, chain_type, scheme and numbering. Values are the amino acid sequences
-        """
-        all_dataframes = []
+    # def get_alignment_table(self) -> pd.DataFrame:
+    #     """Get a numbered alignment table from the numbering and insertions
 
-        # I'm not sure if there is a more effiecient way to do this other than iterate through the df and pivot each row
-        for index in range(len(self)):
-            all_dataframes.append(self._pivot_alignment(self.iloc[index]))
-        all_dataframes = pd.concat(all_dataframes)
-        all_dataframes.columns = list(map(lambda x: str(x[0]) + x[1], all_dataframes.columns.values))
-        all_dataframes = all_dataframes.reset_index()
+    #     Returns
+    #     -------
+    #     pd.DataFrame
+    #         A dataframe with Id, chain_type, scheme and numbering. Values are the amino acid sequences
+    #     """
+    #     all_dataframes = []
 
-        return self[["Id", "chain_type", "scheme"]].merge(all_dataframes, on="Id").copy()
+    #     # I'm not sure if there is a more effiecient way to do this other than iterate through the df and pivot each row
+    #     for index in range(len(self)):
+    #         all_dataframes.append(self._pivot_alignment(self.iloc[index]))
+    #     all_dataframes = pd.concat(all_dataframes)
+    #     all_dataframes.columns = list(map(lambda x: str(x[0]) + x[1], all_dataframes.columns.values))
+    #     all_dataframes = all_dataframes.reset_index()
+
+    #     return self[["Id", "chain_type", "scheme"]].merge(all_dataframes, on="Id").copy()
 
     def _get_region(self, row, start: int, end: int, segment_name) -> pd.Series:
         with_segment = "".join(
@@ -107,27 +120,28 @@ class NumberingResults(pd.DataFrame):
         segmented_df["follow"] = segmented_df[["sequence", "seqend_index"]].apply(lambda x: x[0][x[1] + 1 :], axis=1)
         return segmented_df
 
-    def _pivot_alignment(self, row: pd.Series) -> pd.DataFrame:
-        """Private method to pivot a segmented row into an alignment series
+    # def _pivot_alignment(self, row: pd.Series) -> pd.DataFrame:
+    #     """Private method to pivot a segmented row into an alignment series
 
-        Parameters
-        ----------
-        row : pd.Series
-            indidual Numbering result row
+    #     Parameters
+    #     ----------
+    #     row : pd.Series
+    #         indidual Numbering result row
 
-        Returns
-        -------
-            pivoted dataframe
-        """
-        pivoted_df = (
-            pd.DataFrame(
-                zip(row["Numbering"], row["Insertion"], row["Numbered_Sequence"]),
-                columns=["numbering", "insertion", "sequence"],
-            )
-            .assign(Id=row["Id"])
-            .pivot("Id", ["numbering", "insertion"], "sequence")
-        )
-        return pivoted_df
+    #     Returns
+    #     -------
+    #         pivoted dataframe
+    #     """
+    #     pivoted_df = (
+    #         pd.DataFrame(
+    #             zip(row["Numbering"], row["Insertion"], row["Numbered_Sequence"]),
+    #             columns=["numbering", "insertion", "sequence"],
+    #         )
+    #         .assign(Id=row["Id"])
+    #         .pivot("Id", ["numbering", "insertion"], "sequence")
+    #         # .groupby(["Id", "numbering", "insertion"])
+    #     )
+    #     return pivoted_df
 
     # def get_sanatized_antibodies(self):
     #     # drop sequences that don't start at the first amino acid and dont end at the last amino acid.
