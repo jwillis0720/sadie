@@ -54,7 +54,6 @@ class HMMER:
         hmms = []
         species = species if species else set(Species.species.values())
         chains = chains if chains else Chain.chains
-
         for single_species in species:
             for chain in chains:
                 # If not in G3 -- try Numbering
@@ -261,7 +260,7 @@ class HMMER:
         # Maintain order of sequences since pyhmmer is async
         results = {seq.name.decode(): [] for seq in sequences}
 
-        for top_hits in pyhmmer.hmmsearch(hmms, sequences, cpus=10):
+        for top_hits in pyhmmer.hmmsearch(hmms, sequences, cpus=0):
             for _i, hit in enumerate(top_hits):
 
                 domain = hit.best_domain

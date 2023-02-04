@@ -12,15 +12,12 @@ from sadie.numbering.scheme_numbering import scheme_numbering
 from sadie.utility.exception import LongHCDR3Error, NumberingDecreasing
 
 from .germlines import all_germlines
-from .schemes import (
-    number_aho,
+from .schemes import (  # number_aho,; number_martin_heavy,; number_martin_light,
     number_chothia_heavy,
     number_chothia_light,
     number_imgt,
     number_kabat_heavy,
     number_kabat_light,
-    number_martin_heavy,
-    number_martin_light,
 )
 
 logger = logging.getLogger("NUMBERING")
@@ -127,17 +124,17 @@ class Numbering:
                 return number_kabat_light(state_vector, sequence)
             else:
                 raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
-        elif scheme == "martin":
-            if chain_type == "H":
-                return number_martin_heavy(state_vector, sequence)
-            elif chain_type in "KL":
-                return number_martin_light(state_vector, sequence)
-            else:
-                raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
-        elif scheme == "aho":
-            return number_aho(
-                state_vector, sequence, chain_type
-            )  # requires the chain type to heuristically put the CDR1 gap in position.
+        # elif scheme == "martin":
+        #     if chain_type == "H":
+        #         return number_martin_heavy(state_vector, sequence)
+        #     elif chain_type in "KL":
+        #         return number_martin_light(state_vector, sequence)
+        #     else:
+        #         raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
+        # elif scheme == "aho":
+        #     return number_aho(
+        #         state_vector, sequence, chain_type
+        #     )  # requires the chain type to heuristically put the CDR1 gap in position.
         else:
             raise AssertionError("Unimplemented numbering scheme %s for chain %s" % (scheme, chain_type))
 

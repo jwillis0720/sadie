@@ -41,7 +41,6 @@ class Renumbering:
 
     def __init__(
         self,
-        aligner: str = "hmmer",
         scheme: str = "imgt",
         region_assign: str = "imgt",
         allowed_chain: List[str] = ["H", "K", "L"],
@@ -51,6 +50,7 @@ class Renumbering:
         run_multiproc: bool = True,
         num_cpus: int = cpu_count(),
         use_numbering_hmms: bool = False,
+        # aligner: str = "hmmer",  # NOTE: only one aligner is supported at the moment
         *args,
         **kwargs,
     ):
@@ -58,8 +58,6 @@ class Renumbering:
 
         Parameters
         ----------
-        aligner: str
-            The aligner to use. Currently only hmmer is supported
         scheme : str, optional
             scheme of alignment, by default imgt,
             options: Chothia, Kabat, Martin (Extended Chothia), Aho
@@ -397,6 +395,7 @@ class Renumbering:
                 _results = pd.concat(pool.map(self._run, _sequences))
         else:
             _results = self._run(_sequences)
+
         return _results
 
     def run_dataframe(
