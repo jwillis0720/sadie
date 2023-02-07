@@ -588,6 +588,10 @@ class Numbering:
                     "v_identity",
                     "j_gene",
                     "j_identity",
+                    "Chain",
+                    "Numbering",
+                    "Insertion",
+                    "Numbered_Sequence",
                 ]
                 numbering_ = [("%d%s" % (p)).strip() for p in positions]
                 # print(",".join(fields), file=out)
@@ -600,6 +604,11 @@ class Numbering:
                     else:
                         j_gene = nan
                         j_gene_score = nan
+
+                    d = dict(numbered[i][j][0])
+                    seq_ = [d.get(p, "-") for p in positions]
+                    numbering_ = [[int(p[0]), p[1]] for p in positions]
+
                     line = [
                         sequences[i][0].replace(",", " "),
                         sequences[i][1],
@@ -615,18 +624,22 @@ class Numbering:
                         "%.2f" % details[i][j].get("germlines", {}).get("v_gene", [["", ""], 0])[1],
                         j_gene,
                         j_gene_score,
+                        cts,
+                        list(map(lambda x: x[0], numbering_)),
+                        list(map(lambda x: x[1].strip(), numbering_)),
+                        seq_,
                     ]
 
                     # Hash the numbering. Insertion order has been preserved in the positions sort.
-                    d = dict(numbered[i][j][0])
-                    seq_ = [d.get(p, "-") for p in positions]
-                    numbering_ = [[int(p[0]), p[1]] for p in positions]
+                    # d = dict(numbered[i][j][0])
+                    # seq_ = [d.get(p, "-") for p in positions]
+                    # numbering_ = [[int(p[0]), p[1]] for p in positions]
                     assert len(line) == len(fields)
                     _df = pd.Series(line, index=fields)
-                    _df["Chain"] = cts
-                    _df["Numbering"] = list(map(lambda x: x[0], numbering_))
-                    _df["Insertion"] = list(map(lambda x: x[1].strip(), numbering_))
-                    _df["Numbered_Sequence"] = seq_
+                    # _df["Chain"] = cts
+                    # _df["Numbering"] = list(map(lambda x: x[0], numbering_))
+                    # _df["Insertion"] = list(map(lambda x: x[1].strip(), numbering_))
+                    # _df["Numbered_Sequence"] = seq_
                     summary_dataframes.append(_df)
 
         return summary_dataframes
