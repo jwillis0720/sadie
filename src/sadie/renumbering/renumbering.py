@@ -87,11 +87,6 @@ class Renumbering:
         NotImplementedError
             If the scheme + region assign combo is not implemented
         """
-        self.hmmer = HMMER(
-            species=allowed_species, chains=allowed_chain, source=scheme, use_numbering_hmms=use_numbering_hmms
-        )
-        self.numbering = Numbering()
-
         self.scheme = scheme
         self.region_definition = region_assign
         self.allowed_chains = allowed_chain
@@ -100,6 +95,11 @@ class Renumbering:
         self.num_cpus = num_cpus
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
+
+        self.hmmer = HMMER(
+            species=self.allowed_species, chains=self.allowed_chains, use_numbering_hmms=use_numbering_hmms
+        )
+        self.numbering = Numbering()
 
         # TODO: move this out of aligner and into it's own class for checks
         # if not self.check_combination(self.scheme, self.region_definition):
