@@ -162,6 +162,12 @@ class HMMER:
             seq_objs = [seq_objs]
 
         for sudo_name, seq_obj in enumerate(seq_objs):
+            if isinstance(seq_obj, str):
+                if len(seq_obj) < 4096:  # max length of a path
+                    if Path(seq_obj).is_file():
+                        with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
+                            sequences.extend(list(seq_file))
+                            continue
             # If sequence is a string, digitize it directly and add it to the list
             if isinstance(seq_obj, (Seq, str)):
                 sequences.append(self.digitize_seq(name=str(sudo_name), seq=seq_obj))
@@ -178,12 +184,6 @@ class HMMER:
                 seq_id, seq = seq_obj
                 sequences.append(self.digitize_seq(name=seq_id, seq=seq))
                 continue
-            # if isinstance(seq_obj, str):
-            #     if len(seq_obj) < 4096:  # max length of a path
-            #         if Path(seq_obj).is_file():
-            #             with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
-            #                 sequences.extend(list(seq_file))
-            #                 continue
             raise ValueError(f"seq_obj {seq_obj} is not a valid sequence or path")
 
         return sequences

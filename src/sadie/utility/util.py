@@ -13,8 +13,9 @@ from Bio.SeqIO import MultipleSeqAlignment
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    from Bio.Align import PairwiseAligner, substitution_matrices
-    from Bio import pairwise2, SeqIO
+    from Bio import SeqIO
+    from Bio.Align import substitution_matrices
+    from Bio.Align import PairwiseAligner
 
 from sadie.utility.io import SadieInputFile
 
@@ -31,13 +32,6 @@ aligner.open_gap_score = -12
 aligner.extend_gap_score = -4
 # Equivalent to penalize_end_gaps=False to set all end gap scores to 0
 aligner.end_gap_score = 0
-aligner.end_extend_gap_score = 0
-aligner.target_end_gap_score = 0
-aligner.target_end_open_gap_score = 0
-aligner.target_end_extend_gap_score = 0
-aligner.query_end_gap_score = 0
-aligner.query_end_open_gap_score = 0
-aligner.query_end_extend_gap_score = 0
 
 
 def getVerbosityLevel(verbosity_count: int) -> int:
@@ -252,36 +246,21 @@ def correct_alignment(X: pd.Series, field_1: str, field_2: str) -> pd.Series:  #
     if any([isinstance(alignment_aa_1, float), isinstance(alignment_aa_2, float)]):
         return pd.Series({field_1: alignment_aa_1, field_2: alignment_aa_2})
 
-    # get alignments
-    try:
-        alignments = pairwise2.align.globalds(
-            alignment_aa_1,
-            alignment_aa_2,
-            blosum_matrix,
-            -12,
-            -4,
-            penalize_extend_when_opening=True,
-            penalize_end_gaps=False,
-        )
-        alignment_1_aa_corrected = alignments[0][0]
-        alignment_2_aa_corrected = alignments[0][1]
-        # print(alignment_aa_1)
-        # print(alignment_aa_2)
-        # alignment_1_aa_corrected, alignment_2_aa_corrected = aligner.align(alignment_aa_1, alignment_aa_2)[-1][:2]
-    except SystemError:
-        logger.debug(f"System error most likely due to * in germline alignment...falling back {alignment_aa_2}")
-        alignments = pairwise2.align.globalms(
-            alignment_aa_1,
-            alignment_aa_2,
-            4,
-            -1,
-            -12,
-            -4,
-            penalize_extend_when_opening=True,
-            penalize_end_gaps=False,
-        )
-        alignment_1_aa_corrected = alignments[0][0]
-        alignment_2_aa_corrected = alignments[0][1]
+    # alignments = pairwise2.align.globalms(
+    #     alignment_aa_1,
+    #     alignment_aa_2,
+    #     4,
+    #     -1,
+    #     -12,
+    #     -4,
+    #     penalize_extend_when_opening=True,
+    #     penalize_end_gaps=False,
+    # )
+    # alignment_1_aa_corrected = alignments[0][0]
+    # alignment_2_aa_corrected = alignments[0][1]
+
+    alignment_1_aa_corrected, alignment_2_aa_corrected = aligner.align(alignment_aa_1, alignment_aa_2)[0][:2]
+
     return pd.Series({field_1: alignment_1_aa_corrected, field_2: alignment_2_aa_corrected})
 
 
@@ -315,23 +294,7 @@ def get_consensus_of_paired_end_abi(abi_file_1: Union[str, Path], abi_file_2: Un
     phred_1 = read_1.letter_annotations["phred_quality"]
     phred_2 = read_2.letter_annotations["phred_quality"][::-1]
 
-    # get the alignment of the two seqs with high gap penalties
-    alignments = pairwise2.align.globalms(
-        seq_1,
-        seq_2.reverse_complement(),
-        4,
-        -1,
-        -12,
-        -4,
-        penalize_extend_when_opening=True,
-        penalize_end_gaps=False,
-    )
-
-    # get top scoring
-    top_alignment = alignments[0]
-
-    # destructure
-    seq_1_aligned, seq_2_aligned = top_alignment[0], top_alignment[1]
+    seq_1_aligned, seq_2_aligned = aligner.align(seq_1, seq_2.reverse_complement())[0][:2]
 
     # set indexes to zero
     phred_1_indexer, phred_2_indexer = 0, 0

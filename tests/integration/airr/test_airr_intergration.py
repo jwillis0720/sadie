@@ -281,14 +281,6 @@ def test_catnap_integration(fixture_setup: SadieFixture) -> None:
     diffs = catnap_heavy.columns.symmetric_difference(heavy_at.columns)
     if not diffs.empty:
         raise AssertionError(f"Heavy table has the following different columns {diffs}")
-    for s1, s2, l, r in zip(
-        catnap_light.sequence, light_at.sequence, catnap_light.sequence_alignment_aa, light_at.sequence_alignment_aa
-    ):
-        if l != r:
-            # print(s1)
-            # print(s2)
-            print(l)
-            print(r)
-            # raise AssertionError("Light table has different sequence alignment")
+
     pd.testing.assert_frame_equal(light_at, catnap_light, check_dtype=False, rtol=0.15)
     pd.testing.assert_frame_equal(heavy_at, catnap_heavy, check_dtype=False, rtol=0.15)

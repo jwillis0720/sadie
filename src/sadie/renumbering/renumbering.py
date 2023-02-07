@@ -277,30 +277,6 @@ class Renumbering:
                               e.g. [ ("seq1","EVQLQQSGAEVVRSG ..."),
                                      ("seq2","DIVMTQSQKFMSTSV ...")
         """
-        # Perform the alignments of the sequences to the hmm database
-        # _alignments = self.hmmer.hmmersearch_with_j(
-        #     sequences=sequences,
-        #     bit_score_threshold=self.threshold_bit,
-        #     limit=1,
-        #     for_numbering=True,
-        # )
-
-        # # Apply the desired numbering scheme to all sequences
-        # _numbered, _alignment_details, _hit_tables = self.numbering.number_sequences_from_alignment(
-        #     sequences,
-        #     _alignments,
-        #     scheme=self.scheme,
-        #     allow=self.allowed_chains,
-        #     assign_germline=self.assign_germline,
-        #     allowed_species=self.allowed_species,
-        # )
-
-        # _summary = self.numbering.parsed_output(sequences, _numbered, _alignment_details)
-        # numbering_results = pd.DataFrame(_summary)
-
-        # _summary = self.numbering.parsed_output(_sequences, _numbered, _alignment_details)
-        # numbering_results = pd.DataFrame(_summary)
-
         numbering_results = pd.DataFrame(_summary)
         if numbering_results.empty:
             return NumberingResults()
@@ -318,15 +294,6 @@ class Renumbering:
         numbering_results["allowed_chains"] = ",".join(self.allowed_chains)
         numbering_results = numbering_results._add_segment_regions()
 
-        # TODO: not possible, since we don't allow multiple hits. Should we?
-        # if len(numbering_results["Id"].unique()) != len(numbering_results):
-        #     logger.warning(
-        #         f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated"
-        #     )
-        #     numbering_results = numbering_results.sort_values("score", ascending=False).groupby("Id").head(1)
-
-        # segment the region
-        # numbering_results = numbering_results.add_segment_regions()
         return numbering_results
 
     def run_single(self, seq_id: str, seq: str) -> NumberingResults:
@@ -343,11 +310,22 @@ class Renumbering:
         -------
             AnarchiResults Object
         """
-        sequences = [(seq_id, seq)]
+        sequences = [SeqRecord(id=seq_id, seq=Seq(seq))]
 
         return self._run(sequences)
 
     def seq_numbered(self, _sequences):
+        """Run HMMER for alignment and then number the sequences based on scheme and region
+
+        Parameters
+        ----------
+        _sequences : List[SeqRecord]
+            A list of SeqRecords
+
+        Returns
+        -------
+            Tuple[List[SeqRecord], List[Any], List[Any]]
+        """
         _alignments = self.hmmer.hmmersearch_with_j(
             sequences=_sequences,
             bit_score_threshold=self.threshold_bit,
@@ -365,10 +343,37 @@ class Renumbering:
 
         return _sequences, _numbered, _alignment_details
 
-    def _run(self, _sequences):
+    def _run(self, seqrecords: List[SeqRecord]) -> NumberingResults:
+        """Run the Numbering
+
+        Parameters
+        ----------
+        seqrecords : List[SeqRecord]
+            A list of SeqRecords
+
+        Returns
+        -------
+        NumberingResults
+            A NumberingResults object, which is a pandas dataframe with some extra methods
+        """
+
         def chunks(list_to_split: List[Any], n: int):
             """split a list into evenly sized chunks"""
             return [list_to_split[i : i + n] for i in range(0, len(list_to_split), n)]
+
+        if not isinstance(seqrecords, (list, type(SeqIO.FastaIO.FastaIterator), Generator)):
+            raise TypeError(f"seqrecords must be of type {list} pased {type(seqrecords)}")
+
+        if isinstance(seqrecords, list) and not all([type(i) is SeqRecord for i in seqrecords]):
+            raise TypeError("seqrecords argument must be of a list of Seqrecords")
+
+        _sequences = []
+        _seen = set()
+        for seq in seqrecords:
+            if seq.id in _seen:
+                raise NumberingDuplicateIdError(seq.id, 1)
+            _sequences.append((seq.id, str(seq.seq)))
+            _seen.add(seq.id)
 
         if self.run_multiproc:
             with multiprocessing.Pool() as pool:
@@ -381,7 +386,7 @@ class Renumbering:
         # Cannot multiprocess this part, since it depends on all inputs being processed as reference to final header
         _summary = self.numbering.parsed_output(_sequences, _numbered, _alignment_details)
 
-        if self.run_multiproc:
+        if self.run_multiproc and _summary:
             with multiprocessing.Pool(processes=self.num_cpus) as pool:
                 _summary = chunks(_summary, min(self.num_cpus, len(_summary)))
                 numbering_results = pd.concat(pool.map(self._run_numbering_results, _summary))
@@ -407,21 +412,7 @@ class Renumbering:
         TypeError
             if you don't pass a list of SeqRecords
         """
-        if not isinstance(seqrecords, (list, type(SeqIO.FastaIO.FastaIterator), Generator)):
-            raise TypeError(f"seqrecords must be of type {list} pased {type(seqrecords)}")
-
-        if isinstance(seqrecords, list) and not all([type(i) is SeqRecord for i in seqrecords]):
-            raise TypeError("seqrecords argument must be of a list of Seqrecords")
-
-        _sequences = []
-        _seen = set()
-        for seq in seqrecords:
-            if seq.id in _seen:
-                raise NumberingDuplicateIdError(seq.id, 1)
-            _sequences.append((seq.id, str(seq.seq)))
-            _seen.add(seq.id)
-
-        numbering_results = self._run(_sequences)
+        numbering_results = self._run(seqrecords)
 
         return numbering_results
 
@@ -471,7 +462,7 @@ class Renumbering:
                 right_on="Id",
             )
         else:
-            return self.run_multiple(list(_get_seq_generator()))
+            return self.run_multiple(_get_seq_generator())
 
     def run_file(self, file: Path) -> "NumberingResults":
         """Run numbering annotator on a fasta file

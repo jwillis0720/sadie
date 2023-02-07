@@ -98,38 +98,36 @@ files = [
 
 [[package]]
 name = "biopython"
-version = "1.79"
+version = "1.80"
 description = "Freely available tools for computational molecular biology."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "biopython-1.79-cp310-cp310-win_amd64.whl", hash = "sha256:9eadfd4300f534cd4fa39613eeee786d2c3d6b981d373c5c46616fa1a97cad10"},
-    {file = "biopython-1.79-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:72a1477cf1701964c7224e506a54fd65d1cc5228da200b634a17992230aa1cbd"},
-    {file = "biopython-1.79-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:365569543ea58dd07ef205ec351c23b6c1a3200d5d321eb28ceaecd55eb5955e"},
-    {file = "biopython-1.79-cp36-cp36m-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:4be31815226052d86d4c2f6a103c40504e34bba3e25cc1b1d687a3203c42fb6e"},
-    {file = "biopython-1.79-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:ceab668be9cbdcddef55ad459f87acd0316ae4a00d32251fea4cf665f5062fda"},
-    {file = "biopython-1.79-cp36-cp36m-win32.whl", hash = "sha256:83bfea8a19f9352c47b13965c4b73853e7aeef3c5aed8489895b0679e32c621b"},
-    {file = "biopython-1.79-cp36-cp36m-win_amd64.whl", hash = "sha256:98deacc30b8654cfcdcf707d93fa4e3c8717bbda07c3f9f828cf84753d4a1e4d"},
-    {file = "biopython-1.79-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:884a2b99ac7820cb84f70089769a512e3238ee60438b8c934ed519613dc570ce"},
-    {file = "biopython-1.79-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:51eb467a60c38820ad1e6c3a7d4cb10535606f559646e824cc65c96091d91ff7"},
-    {file = "biopython-1.79-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:03ee5c72b3cc3f0675a8c22ce1c45fe99a32a60db18df059df479ae6cf619708"},
-    {file = "biopython-1.79-cp37-cp37m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:9580978803b582e0612b71673cab289e6bf261a865009cfb9501d65bc726a76e"},
-    {file = "biopython-1.79-cp37-cp37m-win32.whl", hash = "sha256:5ae69c5e09769390643aa0f8064517665df6fb99c37433821d6664584d0ecb8c"},
-    {file = "biopython-1.79-cp37-cp37m-win_amd64.whl", hash = "sha256:f0a7e1d94a318f74974345fd0987ec389b16988ec484e67218e900b116b932a8"},
-    {file = "biopython-1.79-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:aa23a83a220486af6193760d079b36543fe00afcfbd18280ca2fd0b2c1c8dd6d"},
-    {file = "biopython-1.79-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4b3d4eec2e348c3d97a7fde80ee0f2b8ebeed849d2bd64a616833a9be03b93c8"},
-    {file = "biopython-1.79-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:947b793e804c59ea45ae46945a57612ad1789ca87af4af0d6a62dcecf3a6246a"},
-    {file = "biopython-1.79-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:d9f6ce961e0c380e2a5435f64c96421dbcebeab6a1b41506bd81251feb733c08"},
-    {file = "biopython-1.79-cp38-cp38-win32.whl", hash = "sha256:155c5b95857bca7ebd607210cb9d8ea459bb0b86b3ca37ea44ec47c26ede7e9a"},
-    {file = "biopython-1.79-cp38-cp38-win_amd64.whl", hash = "sha256:2dbb4388c75b5dfca8ce729e791f465c9c878dbd7ba2ab9a1f9854609d2b5426"},
-    {file = "biopython-1.79-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:76988ed3d7383d566db1d7fc69c9cf136c6275813fb749fc6753c340f81f1a8f"},
-    {file = "biopython-1.79-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e921571b51514a6d35944242d6fef6427c3998acf58940fe1f209ac8a92a6e87"},
-    {file = "biopython-1.79-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:bf634a56f449a4123e48e538d661948e5ac29fb452acd2962b8cb834b472a9d7"},
-    {file = "biopython-1.79-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:ab93d5749b375be3682866b3a606aa2ebd3e6d868079793925bf4fbb0987cf1f"},
-    {file = "biopython-1.79-cp39-cp39-win32.whl", hash = "sha256:8f33dafd3c7254fff5e1684b965e45a7c08d9b8e1bf51562b0a521ff9a6f5ea0"},
-    {file = "biopython-1.79-cp39-cp39-win_amd64.whl", hash = "sha256:b3ab26f26a1956ef26303386510d84e917e31fcbbc94918c336da0163ef628df"},
-    {file = "biopython-1.79.tar.gz", hash = "sha256:edb07eac99d3b8abd7ba56ff4bedec9263f76dfc3c3f450e7d2e2bcdecf8559b"},
+    {file = "biopython-1.80-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:7c028b6129505e40efaeb70cc9ee034da83be743049315e124e5d44ec0e43494"},
+    {file = "biopython-1.80-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2fa77bf8a99e5acc82518805a07cfb01bb98bf9439fed3e2764df57ae52b1614"},
+    {file = "biopython-1.80-cp310-cp310-win32.whl", hash = "sha256:299b2402eb7145b56d8c9a2418bb5b36c3ceadc7b1e915e0dd0062973281affa"},
+    {file = "biopython-1.80-cp310-cp310-win_amd64.whl", hash = "sha256:c3cedd2d7935084f8e929e5f516218845eaea4b06e6ac14ef400906dc48214a9"},
+    {file = "biopython-1.80-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:bc8e00f3f3704f1e6aa0a67c19874c5a848ff827e31c7226b495c258d079f329"},
+    {file = "biopython-1.80-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:24b0376a1df657531cb9c6d221ef8e7956dd52533f550a8548572e875b4877c8"},
+    {file = "biopython-1.80-cp311-cp311-win32.whl", hash = "sha256:0766783ec50a100dc12636c9f261cb46c438ba56be33b4e27c68b9b98c80a102"},
+    {file = "biopython-1.80-cp311-cp311-win_amd64.whl", hash = "sha256:2a324830cff00e706d7010efb3013348bdabdacf42496cc706d2a2fd34d3fe17"},
+    {file = "biopython-1.80-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:f4f14294976f7fe309147537b0bed618c193dccb446798f2db8a16977f064cb7"},
+    {file = "biopython-1.80-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:043a8fc0b0bd5593c748dce54b89f8dd978cd67c720427abe857ae64f85ef6d3"},
+    {file = "biopython-1.80-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0b7904908f5c05f1cc0ecf3f02854f73e3dd7ed7b531e00c7bda04bbea91d271"},
+    {file = "biopython-1.80-cp37-cp37m-win32.whl", hash = "sha256:91b0347251c9b3e6bdbfd2fadb2aab2f91420f46ec9e9599e64e6cb0efe54462"},
+    {file = "biopython-1.80-cp37-cp37m-win_amd64.whl", hash = "sha256:bf2c70e2eff50ab78fbb944a359baeb765923873fb6e8b1ec24bd3a84a781e3c"},
+    {file = "biopython-1.80-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:2274f399b09a1ebdabf37a19fab7a325e2e2dfa87b5c838d86ad4e8cfadbcd78"},
+    {file = "biopython-1.80-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c73edaccbeac6bec51368f4970169cd0b62a468ba18cde2cf3c12d6f706f9d05"},
+    {file = "biopython-1.80-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:33b92ca2cb43cccbd0018143b265bb4fbc34e7333ea4594972aa7e7db246bc7e"},
+    {file = "biopython-1.80-cp38-cp38-win32.whl", hash = "sha256:e4abbcec3d84587bf2f32669b0f1ff60ff42838581203603bc641da5e5bd0354"},
+    {file = "biopython-1.80-cp38-cp38-win_amd64.whl", hash = "sha256:d565f1a9cc7508dfe8b09bbd36d4f69f6bcbb58b54d483b6a3ab2ca96f3977ba"},
+    {file = "biopython-1.80-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:9ab20351dda7b2b1951481586acf6299593541069301422d178ee82ac7d66845"},
+    {file = "biopython-1.80-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:013c664418ee47ec3ac459c924d0fe8193240b384dc3f1ae00fb69b39eebdb2b"},
+    {file = "biopython-1.80-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5d91b0bf503bc69accdb1b6d549f195ba421c5e6c55535de593a4b06cc1fb699"},
+    {file = "biopython-1.80-cp39-cp39-win32.whl", hash = "sha256:063b1de90331f52f4617821b7ba0e6a2846c06028844ba0d047573da8b1b4ea1"},
+    {file = "biopython-1.80-cp39-cp39-win_amd64.whl", hash = "sha256:4782e1ba91069f12f9a526a4291c71d6aafb08503f72fb250aafeb6fb811278c"},
+    {file = "biopython-1.80.tar.gz", hash = "sha256:52805e9af88767e450e2df8113b5bc59e964e2e8a7bb803a83570bdbb51c0e43"},
 ]
 
 [package.dependencies]
@@ -2678,4 +2676,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "03af1814d82ed9f6e85ac7dcaceb4accfe31e34f654af8a35da881624c9825fc"
+content-hash = "748cd2f3d347db902dac49f187b88dd6925c7fb33d3f6f5d9abcbcdddf1cdae6"

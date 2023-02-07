@@ -123,6 +123,12 @@ def get_igl_aa(row: pd.Series) -> Union[str, float]:  # type: ignore
                 )
             else:
                 if mature == "*" or mature == "-":
+                    print(row.sequence_id)
+                    print(row.sequence_alignment_aa)
+                    print(row.germline_alignment_aa)
+                    print(mature, germline)
+                    print(cdr3_j_mature)
+                    print(cdr3_j_germline)
                     # germline is X but mature is * or - so this should be non functional?
                     raise ValueError(f"{row.name} - sequence has a non functional CDR3")
                 iGL_cdr3 += mature
