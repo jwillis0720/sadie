@@ -38,7 +38,7 @@ sadie = "sadie.app:sadie"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
-biopython = ">=1.79"
+biopython = "1.79"
 click = ">=7.0"
 filetype = "^1.1.0"
 pandas = ">=1.0,<1.5.0"
@@ -53,6 +53,7 @@ scikit-learn = "^1.1.2"
 openpyxl = "^3.0.10"
 yarl = "^1.8.1"
 ipython = "^8.5.0"
+numpy = "^1.24.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.0"

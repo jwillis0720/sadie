@@ -13,20 +13,31 @@ from Bio.SeqIO import MultipleSeqAlignment
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    try:  # Biopython <= 1.79
-        from Bio.SubsMat import MatrixInfo as matlist  # type: ignore
-
-        blosum_matrix = matlist.blosum62
-    except ImportError:  # Biopython >= 1.80
-        from Bio.Align import substitution_matrices
-
-        blosum_matrix = substitution_matrices.load("BLOSUM62")
+    from Bio.Align import PairwiseAligner, substitution_matrices
     from Bio import pairwise2, SeqIO
 
 from sadie.utility.io import SadieInputFile
 
 # global
 logger = logging.getLogger("Utilility")
+
+# Biopython 1.8 global aligner for pairwise
+blosum_matrix = substitution_matrices.load("BLOSUM62")
+aligner = PairwiseAligner(
+    mode="global",
+    substitution_matrix=blosum_matrix,
+)
+aligner.open_gap_score = -12
+aligner.extend_gap_score = -4
+# Equivalent to penalize_end_gaps=False to set all end gap scores to 0
+aligner.end_gap_score = 0
+aligner.end_extend_gap_score = 0
+aligner.target_end_gap_score = 0
+aligner.target_end_open_gap_score = 0
+aligner.target_end_extend_gap_score = 0
+aligner.query_end_gap_score = 0
+aligner.query_end_open_gap_score = 0
+aligner.query_end_extend_gap_score = 0
 
 
 def getVerbosityLevel(verbosity_count: int) -> int:
@@ -252,6 +263,11 @@ def correct_alignment(X: pd.Series, field_1: str, field_2: str) -> pd.Series:  #
             penalize_extend_when_opening=True,
             penalize_end_gaps=False,
         )
+        alignment_1_aa_corrected = alignments[0][0]
+        alignment_2_aa_corrected = alignments[0][1]
+        # print(alignment_aa_1)
+        # print(alignment_aa_2)
+        # alignment_1_aa_corrected, alignment_2_aa_corrected = aligner.align(alignment_aa_1, alignment_aa_2)[-1][:2]
     except SystemError:
         logger.debug(f"System error most likely due to * in germline alignment...falling back {alignment_aa_2}")
         alignments = pairwise2.align.globalms(
@@ -264,8 +280,8 @@ def correct_alignment(X: pd.Series, field_1: str, field_2: str) -> pd.Series:  #
             penalize_extend_when_opening=True,
             penalize_end_gaps=False,
         )
-    alignment_1_aa_corrected = alignments[0][0]
-    alignment_2_aa_corrected = alignments[0][1]
+        alignment_1_aa_corrected = alignments[0][0]
+        alignment_2_aa_corrected = alignments[0][1]
     return pd.Series({field_1: alignment_1_aa_corrected, field_2: alignment_2_aa_corrected})
 
 
