@@ -25,9 +25,17 @@ class HMMER:
         NumberingTranslator()
     )  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
 
-    def __init__(self, use_numbering_hmms: bool = False):
+    def __init__(
+        self,
+        species: Optional[Union[List[Species], Species]] = None,
+        chains: Optional[Union[List[Chain], Chain]] = None,
+        source: Source = "imgt",
+        use_numbering_hmms: bool = False,
+    ) -> None:
         # Force Numbering local HMMs to be used -- mostely for primiary testing
-        self.use_numbering_hmms = use_numbering_hmms
+        self.hmms = self.get_hmm_models(
+            species=species, chains=chains, source=source, use_numbering_hmms=use_numbering_hmms
+        )
         # place holders for hmmer
         self.alphabet = pyhmmer.easel.Alphabet.amino()
 
@@ -37,6 +45,7 @@ class HMMER:
         species: Optional[Union[List[Species], Species]] = None,
         chains: Optional[Union[List[Chain], Chain]] = None,
         source: Source = "imgt",
+        use_numbering_hmms: bool = False,
     ) -> List[pyhmmer.plan7.HMMFile]:
         """
         Return a HMMER model for a given specie.
@@ -54,15 +63,10 @@ class HMMER:
         hmms = []
         species = species if species else set(Species.species.values())
         chains = chains if chains else Chain.chains
-
         for single_species in species:
             for chain in chains:
                 # If not in G3 -- try Numbering
-                if (
-                    chain not in self.g3.chains
-                    or single_species not in self.g3.species
-                    or self.use_numbering_hmms is True
-                ):
+                if chain not in self.g3.chains or single_species not in self.g3.species or use_numbering_hmms is True:
                     # Legacy HMMs have rhesus as the species for macaque
                     if single_species.strip() == "macaque":
                         single_species = "rhesus"
@@ -158,23 +162,21 @@ class HMMER:
             seq_objs = [seq_objs]
 
         for sudo_name, seq_obj in enumerate(seq_objs):
-
-            # If the sequence is a path, open it and digitize
-            if isinstance(seq_obj, Path):
-                with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
-                    sequences.extend(list(seq_file))
-                    continue
             if isinstance(seq_obj, str):
                 if len(seq_obj) < 4096:  # max length of a path
                     if Path(seq_obj).is_file():
                         with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
                             sequences.extend(list(seq_file))
                             continue
-
             # If sequence is a string, digitize it directly and add it to the list
             if isinstance(seq_obj, (Seq, str)):
                 sequences.append(self.digitize_seq(name=str(sudo_name), seq=seq_obj))
                 continue
+            # If the sequence is a path, open it and digitize
+            if isinstance(seq_obj, Path):
+                with pyhmmer.easel.SequenceFile(seq_obj, digital=True) as seq_file:
+                    sequences.extend(list(seq_file))
+                    continue
             if isinstance(seq_obj, SeqRecord):
                 sequences.append(self.digitize_seq(name=seq_obj.id, seq=seq_obj.seq))
                 continue
@@ -194,9 +196,6 @@ class HMMER:
     def hmmsearch(
         self,
         sequences: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str],
-        species: Optional[Union[List[Species], Species]] = None,
-        chains: Optional[Union[List[Chain], Chain]] = None,
-        source: Source = "imgt",
         bit_score_threshold: int = 80,
         limit: Optional[int] = 1,
         for_numbering: bool = False,
@@ -213,8 +212,6 @@ class HMMER:
         ----------
         sequences : Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
             Sequences and/or Fasta files to be searched.
-        species : Union[list, str]
-            Available species: alpaca, cat, cow, dog, human, mouse, pig, rabbit, rat, rhesus
         bit_score_threshold : int
             Domain bit score threshold, default is 80.
         limit : int
@@ -255,13 +252,12 @@ class HMMER:
 
         # Multiprocessing might scramble actual seq from order
         seq_name_2_seq = {seq.name.decode(): seq.textize().sequence for seq in sequences}
-        # Load Models by species
-        hmms = self.get_hmm_models(species=species, chains=chains, source=source)
 
         # Maintain order of sequences since pyhmmer is async
         results = {seq.name.decode(): [] for seq in sequences}
 
-        for top_hits in pyhmmer.hmmsearch(hmms, sequences, cpus=10):
+        # HMMs not big enough to be worth multiprocessing
+        for top_hits in pyhmmer.hmmsearch(self.hmms, sequences, cpus=1):
             for _i, hit in enumerate(top_hits):
 
                 domain = hit.best_domain
@@ -578,8 +574,6 @@ class HMMER:
         self,
         sequences: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str],
         alignments: List[List[Dict[str, Union[str, int]]]],
-        species: Optional[List[Union[str, int]]] = None,
-        chains: Optional[List[Union[str, int]]] = None,
     ):
         """
         As the length of CDR3 gets long (over 30ish) an alignment that does not include the J region becomes more favourable.
@@ -612,8 +606,6 @@ class HMMER:
                             # Try to identify a J region in the remaining sequence after the 104. A low bit score threshold is used.
                             _, re_states, re_details = self.hmmsearch(
                                 sequences=[(sequences[i][0], sequences[i][1][cys_si + 1 :])],
-                                species=species,
-                                chains=chains,
                                 bit_score_threshold=10,
                                 for_numbering=True,
                             )[0]
@@ -639,3 +631,24 @@ class HMMER:
                                 # Update the alignment entry.
                                 alignments[i][1][0] = vRegion + cdrRegion + jRegion
                                 alignments[i][2][0]["query_end"] = jRegion[-1][1] + 1
+
+    def hmmersearch_with_j(
+        self,
+        sequences: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str],
+        bit_score_threshold: int = 80,
+        limit: Optional[int] = 1,
+        for_numbering: bool = False,
+        threads: int = 1,
+    ) -> List[Tuple[str, List[List[Tuple[Tuple[int, str], int]]], List[Dict[str, Union[str, int]]]]]:
+        """
+        Run a HMMER search on the given sequences using the J region HMMs.
+        """
+        alignments = self.hmmsearch(
+            sequences=sequences, bit_score_threshold=bit_score_threshold, limit=limit, for_numbering=for_numbering
+        )
+        # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
+        # Check for J regions. Modifies sequence and alignment in place.
+        if for_numbering:
+            self.check_for_j(sequences=sequences, alignments=alignments)
+
+        return alignments

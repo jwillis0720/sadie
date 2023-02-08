@@ -1,30 +1,30 @@
 repos:
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v3.3.0
-      hooks:
-          - id: check-yaml
-            args: ["--unsafe"]
-          - id: end-of-file-fixer
-          - id: trailing-whitespace
-            exclude: docs/img/
-    - repo: https://github.com/psf/black
-      rev: 22.10.0
-      hooks:
-          - id: black
-            files: "(src|tests).*py"
-            args: ["-l", "120"]
-    - repo: https://github.com/PyCQA/isort
-      rev: 5.12.0
-      hooks:
-          - id: isort
-            name: isort (python)
-            args: ["-m", "3", "--tc"]
-    - repo: local
-      hooks:
-          - id: pyright
-            name: pyright
-            entry: poetry run pyright
-            language: node
-            pass_filenames: false
-            types: [python]
-            # additional_dependencies: ["pyright@latest"]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.3.0
+    hooks:
+      - id: check-yaml
+        args: ["--unsafe"]
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        exclude: docs/img/
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+        files: "(src|tests).*py"
+        args: ["-l", "120"]
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+        args: ["-m", "3", "--tc"]
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright
+        entry: poetry run pyright
+        language: node
+        pass_filenames: false
+        types: [python]
+        # additional_dependencies: ["pyright@latest"]
