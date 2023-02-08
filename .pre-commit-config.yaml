@@ -14,7 +14,7 @@ repos:
             files: "(src|tests).*py"
             args: ["-l", "120"]
     - repo: https://github.com/PyCQA/isort
-      rev: 5.10.1
+      rev: 5.12.0
       hooks:
           - id: isort
             name: isort (python)
