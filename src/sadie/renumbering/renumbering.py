@@ -2,6 +2,7 @@
 
 # Std library
 import gzip
+import itertools
 import logging
 import multiprocessing
 import warnings
@@ -35,13 +36,8 @@ class Error(Exception):
 
 
 class Renumbering:
-
-    hmmer = HMMER()
-    numbering = Numbering()
-
     def __init__(
         self,
-        aligner: str = "hmmer",
         scheme: str = "imgt",
         region_assign: str = "imgt",
         allowed_chain: List[str] = ["H", "K", "L"],
@@ -51,6 +47,7 @@ class Renumbering:
         run_multiproc: bool = True,
         num_cpus: int = cpu_count(),
         use_numbering_hmms: bool = False,
+        # aligner: str = "hmmer",  # NOTE: only one aligner is supported at the moment
         *args,
         **kwargs,
     ):
@@ -58,8 +55,6 @@ class Renumbering:
 
         Parameters
         ----------
-        aligner: str
-            The aligner to use. Currently only hmmer is supported
         scheme : str, optional
             scheme of alignment, by default imgt,
             options: Chothia, Kabat, Martin (Extended Chothia), Aho
@@ -101,7 +96,12 @@ class Renumbering:
         self.num_cpus = num_cpus
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
-        self.hmmer.use_numbering_hmms = use_numbering_hmms
+
+        self.hmmer = HMMER(
+            species=self.allowed_species, chains=self.allowed_chains, use_numbering_hmms=use_numbering_hmms
+        )
+        self.numbering = Numbering()
+
         # TODO: move this out of aligner and into it's own class for checks
         # if not self.check_combination(self.scheme, self.region_definition):
         #     raise NotImplementedError(f"{self.scheme} with {self.region_definition} has not been implemented yet")
@@ -267,7 +267,7 @@ class Renumbering:
         ]
         return _allowed_species
 
-    def _run(self, sequences: List[Tuple[str, str]]):
+    def _run_numbering_results(self, _summary):
         """
         private method to run Numbering
 
@@ -278,38 +278,7 @@ class Renumbering:
                               e.g. [ ("seq1","EVQLQQSGAEVVRSG ..."),
                                      ("seq2","DIVMTQSQKFMSTSV ...")
         """
-        # Perform the alignments of the sequences to the hmm database
-        _alignments = self.hmmer.hmmsearch(
-            sequences=sequences,
-            species=self.allowed_species,
-            chains=self.allowed_chains,
-            bit_score_threshold=self.threshold_bit,
-            limit=1,
-            for_numbering=True,
-        )
-
-        # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
-        # Modify alignments in-place
-        self.hmmer.check_for_j(
-            sequences=sequences,
-            alignments=_alignments,
-            species=self.allowed_species,
-            chains=self.allowed_chains,
-        )
-
-        # Apply the desired numbering scheme to all sequences
-        _numbered, _alignment_details, _hit_tables = self.numbering.number_sequences_from_alignment(
-            sequences,
-            _alignments,
-            scheme=self.scheme,
-            allow=self.allowed_chains,
-            assign_germline=self.assign_germline,
-            allowed_species=self.allowed_species,
-        )
-
-        _summary = self.numbering.parsed_output(sequences, _numbered, _alignment_details)
         numbering_results = pd.DataFrame(_summary)
-
         if numbering_results.empty:
             return NumberingResults()
 
@@ -326,15 +295,6 @@ class Renumbering:
         numbering_results["allowed_chains"] = ",".join(self.allowed_chains)
         numbering_results = numbering_results._add_segment_regions()
 
-        # TODO: not possible, since we don't allow multiple hits. Should we?
-        # if len(numbering_results["Id"].unique()) != len(numbering_results):
-        #     logger.warning(
-        #         f"multiple results for {numbering_results[numbering_results['Id'].duplicated()]} is duplicated"
-        #     )
-        #     numbering_results = numbering_results.sort_values("score", ascending=False).groupby("Id").head(1)
-
-        # segment the region
-        # numbering_results = numbering_results.add_segment_regions()
         return numbering_results
 
     def run_single(self, seq_id: str, seq: str) -> NumberingResults:
@@ -351,9 +311,91 @@ class Renumbering:
         -------
             AnarchiResults Object
         """
-        sequences = [(seq_id, seq)]
+        sequences = [SeqRecord(id=seq_id, seq=Seq(seq))]
 
         return self._run(sequences)
+
+    def seq_numbered(self, _sequences):
+        """Run HMMER for alignment and then number the sequences based on scheme and region
+
+        Parameters
+        ----------
+        _sequences : List[SeqRecord]
+            A list of SeqRecords
+
+        Returns
+        -------
+            Tuple[List[SeqRecord], List[Any], List[Any]]
+        """
+        _alignments = self.hmmer.hmmersearch_with_j(
+            sequences=_sequences,
+            bit_score_threshold=self.threshold_bit,
+            limit=1,
+            for_numbering=True,
+        )
+        _numbered, _alignment_details, _hit_tables = self.numbering.number_sequences_from_alignment(
+            _sequences,
+            _alignments,
+            scheme=self.scheme,
+            allow=self.allowed_chains,
+            assign_germline=self.assign_germline,
+            allowed_species=self.allowed_species,
+        )
+
+        return _sequences, _numbered, _alignment_details
+
+    def _run(self, seqrecords: List[SeqRecord]) -> NumberingResults:
+        """Run the Numbering
+
+        Parameters
+        ----------
+        seqrecords : List[SeqRecord]
+            A list of SeqRecords
+
+        Returns
+        -------
+        NumberingResults
+            A NumberingResults object, which is a pandas dataframe with some extra methods
+        """
+
+        def chunks(list_to_split: List[Any], n: int):
+            """split a list into evenly sized chunks"""
+            return [list_to_split[i : i + n] for i in range(0, len(list_to_split), n)]
+
+        if not isinstance(seqrecords, (list, type(SeqIO.FastaIO.FastaIterator), Generator)):
+            raise TypeError(f"seqrecords must be of type {list} pased {type(seqrecords)}")
+
+        if isinstance(seqrecords, list) and not all([type(i) is SeqRecord for i in seqrecords]):
+            raise TypeError("seqrecords argument must be of a list of Seqrecords")
+
+        _sequences = []
+        _seen = set()
+        for seq in seqrecords:
+            if seq.id in _seen:
+                raise NumberingDuplicateIdError(seq.id, 1)
+            _sequences.append((seq.id, str(seq.seq)))
+            _seen.add(seq.id)
+
+        if self.run_multiproc:
+            with multiprocessing.Pool() as pool:
+                # split sequences into chunks
+                _sequences = chunks(_sequences, min(self.num_cpus, len(_sequences)))
+                _sequences, _numbered, _alignment_details = [
+                    list(itertools.chain.from_iterable(x)) for x in list(zip(*pool.map(self.seq_numbered, _sequences)))
+                ]
+        else:
+            _sequences, _numbered, _alignment_details = self.seq_numbered(_sequences)
+        # Cannot multiprocess this part, since it depends on all inputs being processed as reference to final header
+        _summary = self.numbering.parsed_output(_sequences, _numbered, _alignment_details)
+
+        if self.run_multiproc and _summary:
+            with multiprocessing.Pool(processes=self.num_cpus) as pool:
+                _summary = chunks(_summary, min(self.num_cpus, len(_summary)))
+                numbering_results = pd.concat(pool.map(self._run_numbering_results, _summary))
+        else:
+            numbering_results = self._run_numbering_results(_summary)
+
+        return numbering_results
 
     def run_multiple(self, seqrecords: List[SeqRecord], scfv=False) -> NumberingResults:
         """Run multiple seq records
@@ -372,32 +414,9 @@ class Renumbering:
         TypeError
             if you don't pass a list of SeqRecords
         """
-        if not isinstance(seqrecords, (list, type(SeqIO.FastaIO.FastaIterator), Generator)):
-            raise TypeError(f"seqrecords must be of type {list} pased {type(seqrecords)}")
+        numbering_results = self._run(seqrecords)
 
-        if isinstance(seqrecords, list) and not all([type(i) is SeqRecord for i in seqrecords]):
-            raise TypeError("seqrecords argument must be of a list of Seqrecords")
-
-        _sequences = []
-        _seen = set()
-        for seq in seqrecords:
-            if seq.id in _seen:
-                raise NumberingDuplicateIdError(seq.id, 1)
-            _sequences.append((seq.id, str(seq.seq)))
-            _seen.add(seq.id)
-
-        if self.run_multiproc:
-            # split a list into evenly sized chunks
-            def chunks(list_to_split: List[Any], n: int):
-                return [list_to_split[i : i + n] for i in range(0, len(list_to_split), n)]
-
-            with multiprocessing.Pool() as pool:
-                # split sequences into chunks
-                _sequences = chunks(_sequences, min(self.num_cpus, len(_sequences)))
-                _results = pd.concat(pool.map(self._run, _sequences))
-        else:
-            _results = self._run(_sequences)
-        return _results
+        return numbering_results
 
     def run_dataframe(
         self,

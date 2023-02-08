@@ -46,7 +46,7 @@ def test_long_seq_from_src():
 
 def test_long_seq_from_empty_src(tmp_path):
     # Hack to force G3 to repopulate hmm in temp and use it for HMMER
-    Renumbering.hmmer.g3.data_folder = tmp_path
+    Renumbering().hmmer.g3.data_folder = tmp_path
 
     renumbering_api = Renumbering(scheme="chothia", region_assign="imgt", run_multiproc=True)
     renumbering_api.run_single(
