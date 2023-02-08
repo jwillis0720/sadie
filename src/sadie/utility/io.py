@@ -6,7 +6,7 @@ import gzip
 import warnings
 from pathlib import Path
 from pprint import pformat
-from typing import IO, Any, Dict, Iterator, List, TextIO, Union
+from typing import IO, Any, Dict, Iterator, List, Literal, TextIO, Union
 
 from Bio import SeqIO
 from Bio.SeqIO.AbiIO import AbiIterator
@@ -25,7 +25,8 @@ from sadie.utility.exception import (
 
 
 def guess_input_compression(input_path: Union[str, Path]) -> Union[str, None]:
-    """Given a path, guess if it's compressed gz,bz2 or directory.
+    """
+    Given a path, guess if it's compressed gz,bz2 or directory.
     If not compressed returned None
 
     Parameters
@@ -90,7 +91,7 @@ def get_file_buffer(file: Path, compression: Union[str, None] = None, mode: str 
         raise TypeError(f"{file} can't determine file encoding")
 
 
-def get_sequence_file_type(file: Union[str, Path]) -> str:
+def get_sequence_file_type(file: str | Path) -> Literal["fasta", "fastq", "abi"]:
     """Get file type of file
 
     Parameters
@@ -134,7 +135,7 @@ def get_sequence_file_type(file: Union[str, Path]) -> str:
 
 def get_sequence_file_iter(
     file: Union[str, Path, TextIO, IO[Any]], file_type: str
-) -> Union[AbiIterator, FastaIterator, FastqPhredIterator]:
+) -> AbiIterator | FastaIterator | FastqPhredIterator:
     """Get a sequence file iterator from SeqIO module"""
     if file_type not in ["fasta", "fastq", "abi", "abi-trim"]:
         raise NotImplementedError(f"{file_type} is not a supported sequence file type")
@@ -150,10 +151,7 @@ class SadieInputFile:
     """Sadie Input File will handle input files. Use SadieInputDir for input directories"""
 
     def __init__(
-        self,
-        input_path: Union[Path, str],
-        input_format: str = "infer",
-        compression_format: Union[str, None] = "infer",
+        self, input_path: Union[Path, str], input_format: str = "infer", compression_format: Union[str, None] = "infer"
     ) -> None:
         self.input: Path | str = input_path
         self.compression_format_inferred = False
@@ -334,7 +332,7 @@ class SadieOutput:
                 raise FileExistsError(f"{output_path} is exists and is directory directory instead")
 
         # set accepted formats
-        self._accepted_output_format = ["json", "csv", "tsv", "feather", "stdout"]
+        self._accepted_output_format = ["json", "csv", "tsv", "feather", "gb"]
         self._accepted_output_compression = ["gz", "bz2"]
         self.output_path = Path(output_path)
         self.suffixes = list(map(lambda x: x.lstrip("."), self.output_path.suffixes))

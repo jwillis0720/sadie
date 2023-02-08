@@ -1,5 +1,7 @@
 """The AirrTable module"""
 
+from __future__ import annotations
+
 import logging
 import warnings
 from pathlib import Path
@@ -48,6 +50,13 @@ logger = logging.getLogger("AIRRTable")
 
 # def _get_seq_aa(seq: str) -> str:
 #     return str(Seq(seq).translate())
+
+
+def is_all_integer(row_1: int | float, row_2: int | float) -> bool:
+    """Checks if all values in a series are integers"""
+    if all([isinstance(row_1, int), isinstance(row_2, int)]):
+        return True
+    return False
 
 
 class AirrSeries(pd.Series):  # type: ignore
@@ -399,41 +408,28 @@ class AirrTable(pd.DataFrame):
             SeqIO.write(records, f, "fasta")
 
     def get_genbank(self) -> List[SeqRecord.SeqRecord]:
+        """get genbank records from airrtable"""
         _genbanks = []
         # go through as an iterator
         for row in self.iterrows():
             _genbanks.append(AirrTable.parse_row_to_genbank(row))
         return _genbanks
 
-    def to_genbank(self, filename: str, compression: str = "gzip") -> None:
+    def to_genbank(self, filename: str) -> None:
         """write airrtable to genbank file
 
         Parameters
         ----------
         filename : str
             file name string path
-        compression: ['gzip']
         """
         _records = self.get_genbank()
         SeqIO.write(_records, filename, "genbank")
 
     def _verify(self) -> None:
-        # if there ais any missing columns
-        # add raw seq and sequence_aa_columns
-        # if not self._islinked:
-        #     self[f"raw_seq"] = self[["sequence", "rev_comp"]].apply(_get_raw_seq, axis=1)
-        #     self[f"sequence_aa"] = self["sequence"].apply(_get_seq_aa)
         missing_columns = set(self.compliant_cols).difference(self.columns)
         if missing_columns:
-            # _non_constnat_columns = missing_columns.difference(set(CONSTANTS_AIRR.keys()))
-            # if _non_constnat_columns:
             raise MissingAirrColumns(missing_columns)
-            # else:
-            #     for col in CONSTANTS_AIRR:
-            #         # add constnat airr if not in there
-            #         if col not in self.columns:
-            #             logger.debug(f"Adding missing column {col}")
-            #             self[col] = ""
         # drop any unnamed columns
         self.drop([i for i in self.columns if "Unnamed" in i], axis=1, inplace=True)
 
@@ -538,7 +534,6 @@ class AirrTable(pd.DataFrame):
 
             # get mutation frequency rather than identity
             self.loc[:, "v_mutation"] = self["v_identity"].apply(lambda x: (1 - x))
-            # self.loc[:, "v_identity"] = self["v_identity"].apply(lambda x: x / 100)
 
             # then get a percentage for AA by computing levenshtein
             self.loc[:, "v_mutation_aa"] = self[["v_sequence_alignment_aa", "v_germline_alignment_aa"]].apply(
@@ -547,7 +542,6 @@ class AirrTable(pd.DataFrame):
 
             # do the same for D and J gene segment portions
             self.loc[:, "d_mutation"] = self["d_identity"].apply(lambda x: (1 - x) if x else np.nan)
-            # self.loc[:, "d_identity"] = self["d_identity"].apply(lambda x: x / 100)
             self.loc[:, "d_mutation_aa"] = self[["d_sequence_alignment_aa", "d_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
             )
@@ -559,7 +553,7 @@ class AirrTable(pd.DataFrame):
         self._verified = True
 
     def _get_aa_distance(self, X: pd.Series) -> float:
-        "get character levenshtrein distance, will work with '-' on alignments"
+        "get character levenshtein distance, will work with '-' on alignments"
         first: str = X[0]
         second: str = X[1]
         if not first or not second or isinstance(first, float) or isinstance(second, float):
@@ -793,80 +787,79 @@ class AirrTable(pd.DataFrame):
         _complete_vdj = single_seq[_complete_vdj_string]
 
         # Collect species
-        if "species" in single_seq.keys():
-            species = single_seq["species"]
+        if "refrence_name" in single_seq.keys():
+            species = single_seq["reference_name"]
         else:
-            warnings.warn(f"species is not in {single_seq.keys()}")
+            warnings.warn(f"reference is not in {list(single_seq.keys())}")
             species = "Unknown"
 
         # setup genbank object
         gb = GenBank(sequence, str(single_seq["sequence_id"]), description="AIRR annotation")
 
         # default qualifier dictionaries
-        qd_v = {"gene": top_v, "species": species, "other_vgene": other_v}
-        qd_d = {"gene": top_d, "species": species, "other_dgene": other_d}
-        qd_j = {"gene": top_j, "species": species, "other_jgene": other_j}
+        qd_v = {"gene": top_v, "reference": species, "other_vgene": other_v}
+        qd_d = {"gene": top_d, "reference": species, "other_dgene": other_d}
+        qd_j = {"gene": top_j, "reference": species, "other_jgene": other_j}
 
         # FW1
-        if all([isinstance(_fw1_start, int), isinstance(_fw1_end, int)]):
+        if is_all_integer(_fw1_start, _fw1_end):
             feature = GenBankFeature(_fw1_start, _fw1_end, "FWR1", qualifier_dict=qd_v)
             gb.add_feature(feature)
 
         # CDR1
-        if all([isinstance(_cdr1_start, int), isinstance(_cdr1_end, int)]):
+        if is_all_integer(_cdr1_start, _cdr1_end):
             feature = GenBankFeature(_cdr1_start, _cdr1_end, "CDR1", qualifier_dict=qd_v)
             gb.add_feature(feature)
 
         # FW2
-        if all([isinstance(_fw2_start, int), isinstance(_fw2_end, int)]):
+        if is_all_integer(_fw2_start, _fw2_end):
             feature = GenBankFeature(_fw2_start, _fw2_end, "FWR2", qualifier_dict=qd_v)
             gb.add_feature(feature)
 
         # CDR2
-        if all([isinstance(_cdr2_start, int), isinstance(_cdr2_end, int)]):
+        if is_all_integer(_cdr2_start, _cdr2_end):
             feature = GenBankFeature(_cdr2_start, _cdr2_end, "CDR2", qualifier_dict=qd_v)
             gb.add_feature(feature)
 
         # FW3
-        if all([isinstance(_fw3_start, int), isinstance(_fw3_end, int)]):
+        if is_all_integer(_fw3_start, _fw3_end):
             feature = GenBankFeature(_fw3_start, _fw3_end, "FWR3", qualifier_dict=qd_v)
             gb.add_feature(feature)
 
         # CDR3
-        if all([isinstance(_cdr3_start, int), isinstance(_cdr3_end, int)]):
+        if is_all_integer(_cdr3_start, _cdr3_end):
             feature = GenBankFeature(_cdr3_start, _cdr3_end, "CDR3")
             gb.add_feature(feature)
 
         # FW4
-        if all([isinstance(_fw4_start, int), isinstance(_fw4_end, int)]):
+        if is_all_integer(_fw4_start, _fw4_end):
             feature = GenBankFeature(_fw4_start, _fw4_end, "FWR4", qualifier_dict=qd_j)
             gb.add_feature(feature)
 
         # VGene
-        if all([isinstance(_v_segment_start, int), isinstance(_v_segment_end, int)]):
+        if is_all_integer(_v_segment_start, _v_segment_end):
             qd_v = {"gene": top_v, "species": species}
             feature = GenBankFeature(_v_segment_start, _v_segment_end, "VGene", qualifier_dict=qd_v)
             gb.add_feature(feature)
 
         # DGene
-        if all([isinstance(_d_segment_start, int), isinstance(_d_segment_end, int)]):
+        if is_all_integer(_d_segment_start, _d_segment_end):
             qd_d = {"gene": top_d, "species": species}
             feature = GenBankFeature(_d_segment_start, _d_segment_end, "DGene", qualifier_dict=qd_d)
             gb.add_feature(feature)
 
         # JGene
-        if all([isinstance(_j_segment_start, int), isinstance(_j_segment_end, int)]):
+        if is_all_integer(_j_segment_start, _j_segment_end):
             qd_j = {"gene": top_j, "species": species}
             feature = GenBankFeature(_j_segment_start, _j_segment_end, "JGene", qualifier_dict=qd_j)
             gb.add_feature(feature)
 
         # Locus
-        if all([isinstance(_v_segment_start, int), isinstance(_fw4_end, int)]):
+        if is_all_integer(_v_segment_start, _fw4_end):
             _p = "Productive"
             _vdj = "Complete"
             if not _productive:
                 _p = "Non-Productive"
-                # _locus = "_".join([_locus, _p])
             if not _complete_vdj:
                 _vdj = "Non-Complete"
             qd_locus = {
@@ -878,9 +871,7 @@ class AirrTable(pd.DataFrame):
             feature = GenBankFeature(_v_segment_start, _fw4_end, _locus, qualifier_dict=qd_locus)
             gb.add_feature(feature)
 
-        # BioPython GenBank object >= 1.78
         gb.record.annotations["molecule_type"] = "DNA"
-
         return gb.record
 
     def to_airr(self, filename: str) -> None:
