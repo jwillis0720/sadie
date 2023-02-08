@@ -1,22 +1,17 @@
 """Unit tests for analysis interface."""
-import os
-import platform
 import shutil
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
-import semantic_version
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from numpy import isnan, nan
 
 from sadie.airr import Airr, AirrSeries, AirrTable, GermlineData, LinkedAirrTable
-from sadie.airr import __file__ as sadie_airr_file
 from sadie.airr import exceptions as airr_exceptions
-from sadie.airr import igblast
 from sadie.airr import methods as airr_methods
 from sadie.airr.airrtable.genbank import GenBank, GenBankFeature
 from sadie.airr.exceptions import BadDataSet, BadRequstedFileType
@@ -459,8 +454,6 @@ def test_runtime_reference(fixture_setup: SadieFixture) -> None:
     references.add_reference("normal_human", reference, overwrite=True)
     airr_api = Airr("normal_human", references=references, adaptable=True)
     airr_table = airr_api.run_fasta(fixture_setup.get_OAS_liable_file())
-    # assert airr_table.reference_name.iloc[0] == "normal_human"
-    # assert airr_table.v_call_top.iloc[0] == "IGHV1-2*01"
 
 
 def test_airrtable_init(fixture_setup: SadieFixture) -> None:
@@ -513,39 +506,6 @@ def test_indel_correction(fixture_setup: SadieFixture) -> None:
     assert "germline_alignment_aa_corrected" in airr_table_indel.columns
     assert "v_germline_alignment_aa_corrected" in airr_table_indel.columns
     assert isinstance(airr_table_indel, AirrTable)
-
-
-# def test_scfv_airrtable(fixture_setup):
-#     file_path = fixture_setup.get_linked_airrtable()
-#     dummy_scfv_table = pd.read_csv(file_path, index_col=0)
-#     linked_table = LinkedAirrTable(dummy_scfv_table)
-#     # test if we can split
-#     heavy_table, light_table = linked_table.get_split_table()
-#     assert isinstance(heavy_table, AirrTable)
-#     assert isinstance(light_table, AirrTable)
-#     rebuild_table = LinkedAirrTable(heavy_table.merge(light_table, on="sequence_id", suffixes=["_heavy", "_light"]))
-#     assert rebuild_table == rebuild_table
-#     assert rebuild_table == linked_table
-
-#     heavy_table["cell_id"] = heavy_table["sequence_id"]
-#     light_table["cell_id"] = light_table["sequence_id"]
-#     with pytest.raises(airr_exceptions.MissingAirrColumns):
-#         LinkedAirrTable(heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]))
-#     rebuild_data = LinkedAirrTable(
-#         heavy_table.merge(light_table, on="cell_id", suffixes=["_heavy", "_light"]), key_column="cell_id"
-#     )
-#     heavy_table_split, light_table_split = rebuild_data.get_split_table()
-#     assert heavy_table_split.columns.difference(heavy_table.columns).empty
-#     assert light_table_split.columns.difference(light_table.columns).empty
-#     assert heavy_table == heavy_table_split[heavy_table.columns]
-#     assert light_table == light_table_split[light_table.columns]
-#     assert rebuild_data.key_column == "cell_id"
-#     assert rebuild_data.suffixes == ["_heavy", "_light"]
-
-#     rebuild_data = LinkedAirrTable(
-#         heavy_table.merge(light_table, on="cell_id", suffixes=["_h", "_l"]), suffixes=["_h", "_l"], key_column="cell_id"
-#     )
-#     assert rebuild_data.suffixes == ["_h", "_l"]
 
 
 def test_write_and_check_airr(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixture) -> None:

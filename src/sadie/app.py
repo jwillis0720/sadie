@@ -26,64 +26,35 @@ __version__ = pkg_resources.get_distribution("sadie-antibody").version
 
 
 @click.group()
-# @click.version_option(
-#     subprocess.run(["git", "describe", "--tags", "--abbrev=0"], stdout=subprocess.PIPE).stdout.decode("utf-8").strip()
-# )
 @click.version_option(version=__version__)
-@click.pass_context
-def sadie(ctx: click.Context) -> None:
-    pass
-
-
-@sadie.command("airr")
 @click.option(
     "-v",
     "--verbose",
     count=True,
-    default=5,
+    default=3,
     help="Vebosity level, ex. -vvvvv for debug level logging",
 )
+def sadie(verbose: int) -> None:
+    numeric_level = getVerbosityLevel(verbose)
+    logging.basicConfig(level=numeric_level)
+
+
+@sadie.command("airr")
 @click.option(
-    "--name",
-    "-n",
-    type=click.Choice(Airr.get_available_species()),
-    help="Species to annotate",
-    default="human",
+    "--name", "-n", type=click.Choice(Airr.get_available_species()), help="Species to annotate", default="human"
 )
 @click.option("--skip-igl", is_flag=True, help="Skip the igl assignment")
 @click.option("--skip-mutation", is_flag=True, help="Skip the somewhat time instansive mutational analysis")
 @click.argument(
     "input_path",
     required=True,
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=True,
-        readable=True,
-        resolve_path=True,
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True, resolve_path=True),
 )
 @click.argument(
-    "output_path",
-    required=False,
-    type=click.Path(
-        file_okay=True,
-        dir_okay=False,
-        writable=True,
-        resolve_path=True,
-    ),
+    "output_path", required=False, type=click.Path(file_okay=True, dir_okay=False, writable=True, resolve_path=True)
 )
-def airr(
-    verbose: int,
-    name: str,
-    skip_igl: bool,
-    skip_mutation: bool,
-    input_path: Path,
-    output_path: Union[None, Path, str],
-) -> None:
+def airr(name: str, skip_igl: bool, skip_mutation: bool, input_path: Path, output_path: Union[None, Path, str]) -> None:
 
-    numeric_level = getVerbosityLevel(verbose)
-    logging.basicConfig(level=numeric_level)
     airr = Airr(name)
     if not output_path:
         output_path = "stdout"
@@ -114,8 +85,14 @@ def airr(
     if output_object.output_format == "stdout":
         output_str = str(airr_table.to_csv(sep="\t"))
         sys.stdout.write(output_str)
-    else:
+    elif output_object.output_format in ["airr", "tsv"]:
         airr_table.to_airr(output_object.output_path)
+    elif output_object.output_format == "csv":
+        airr_table.to_csv(output_object.output_path)
+    elif output_object.output_format == "gb":
+        airr_table.to_genbank(output_object.output_path)
+    else:
+        raise ValueError(f"Output format {output_object.output_format} not recognized")
 
 
 def _validate_numbering_objects(ctx: click.Context, param: Any, value: str) -> List[str]:
@@ -290,8 +267,7 @@ def renumbering(
 
 
 @sadie.group()
-@click.pass_context
-def reference(ctx: click.Context) -> None:
+def reference() -> None:
     pass
 
 
