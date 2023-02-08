@@ -1,5 +1,7 @@
 """The AirrTable module"""
 
+from __future__ import annotations
+
 import logging
 import warnings
 from pathlib import Path
