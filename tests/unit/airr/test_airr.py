@@ -408,7 +408,6 @@ def test_five_and_three_prime_extension(fixture_setup: SadieFixture) -> None:
 
 def test_hard_igl_seqs(fixture_setup: SadieFixture) -> None:
     """Test we can run igl on super hard igl macaque set"""
-    print(fixture_setup.get_bum_igl_assignment())
     airr_table = AirrTable(pd.read_feather(fixture_setup.get_bum_igl_assignment()))
     out_airr_single = airr_methods.run_termini_buffers(airr_table)
     igl_df = airr_methods.run_igl_assignment(out_airr_single)
