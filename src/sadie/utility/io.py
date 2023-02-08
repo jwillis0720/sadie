@@ -6,7 +6,7 @@ import gzip
 import warnings
 from pathlib import Path
 from pprint import pformat
-from typing import IO, Any, Dict, Iterator, List, TextIO, Union
+from typing import IO, Any, Dict, Iterator, List, Literal, TextIO, Union
 
 from Bio import SeqIO
 from Bio.SeqIO.AbiIO import AbiIterator
