@@ -335,6 +335,7 @@ class SadieOutput:
         self._accepted_output_format = ["json", "csv", "tsv", "feather", "stdout", "gb"]
         self._accepted_output_compression = ["gz", "bz2"]
         self.output_path = Path(output_path)
+        self.suffixes = list(map(lambda x: x.lstrip("."), self.output_path.suffixes))
 
         if not self.suffixes:
             raise ValueError(f"{self.output_path} has no suffix")

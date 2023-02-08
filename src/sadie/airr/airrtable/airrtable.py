@@ -788,7 +788,7 @@ class AirrTable(pd.DataFrame):
         if "refrence_name" in single_seq.keys():
             species = single_seq["reference_name"]
         else:
-            warnings.warn(f"species is not in {single_seq.keys()}")
+            warnings.warn(f"reference is not in {list(single_seq.keys())}")
             species = "Unknown"
 
         # setup genbank object
