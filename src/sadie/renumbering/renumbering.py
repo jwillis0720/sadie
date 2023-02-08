@@ -2,6 +2,7 @@
 
 # Std library
 import gzip
+import itertools
 import logging
 import multiprocessing
 import warnings
@@ -379,10 +380,11 @@ class Renumbering:
             with multiprocessing.Pool() as pool:
                 # split sequences into chunks
                 _sequences = chunks(_sequences, min(self.num_cpus, len(_sequences)))
-                _sequences, _numbered, _alignment_details = pool.map(self.seq_numbered, _sequences)[0]
+                _sequences, _numbered, _alignment_details = [
+                    list(itertools.chain.from_iterable(x)) for x in list(zip(*pool.map(self.seq_numbered, _sequences)))
+                ]
         else:
             _sequences, _numbered, _alignment_details = self.seq_numbered(_sequences)
-
         # Cannot multiprocess this part, since it depends on all inputs being processed as reference to final header
         _summary = self.numbering.parsed_output(_sequences, _numbered, _alignment_details)
 
