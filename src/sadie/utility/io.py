@@ -332,7 +332,7 @@ class SadieOutput:
                 raise FileExistsError(f"{output_path} is exists and is directory directory instead")
 
         # set accepted formats
-        self._accepted_output_format = ["json", "csv", "tsv", "feather", "stdout", "gb"]
+        self._accepted_output_format = ["json", "csv", "tsv", "feather", "gb"]
         self._accepted_output_compression = ["gz", "bz2"]
         self.output_path = Path(output_path)
         self.suffixes = list(map(lambda x: x.lstrip("."), self.output_path.suffixes))
