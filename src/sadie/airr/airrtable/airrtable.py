@@ -49,13 +49,12 @@ logger = logging.getLogger("AIRRTable")
 # def _get_seq_aa(seq: str) -> str:
 #     return str(Seq(seq).translate())
 
-def is_all_integer(row_1:int|float, row_2:int|float) -> bool:
+
+def is_all_integer(row_1: int | float, row_2: int | float) -> bool:
     """Checks if all values in a series are integers"""
     if all([isinstance(row_1, int), isinstance(row_2, int)]):
         return True
     return False
-    
-
 
 
 class AirrSeries(pd.Series):  # type: ignore
@@ -407,7 +406,7 @@ class AirrTable(pd.DataFrame):
             SeqIO.write(records, f, "fasta")
 
     def get_genbank(self) -> List[SeqRecord.SeqRecord]:
-        '''get genbank records from airrtable'''
+        """get genbank records from airrtable"""
         _genbanks = []
         # go through as an iterator
         for row in self.iterrows():
