@@ -2,6 +2,7 @@ import logging
 from ast import literal_eval
 
 import pandas as pd
+from numpy import nan
 
 from sadie.numbering.scheme_numbering import scheme_numbering
 
@@ -34,11 +35,13 @@ class NumberingResults(pd.DataFrame):
             A dataframe with Id, chain_type, scheme and numbering. Values are the amino acid sequences
         """
         all_dataframes = []
-
         # I'm not sure if there is a more effiecient way to do this other than iterate through the df and pivot each row
         for index in range(len(self)):
             all_dataframes.append(self._pivot_alignment(self.iloc[index]))
         all_dataframes = pd.concat(all_dataframes)
+
+        # all_dataframes = all_dataframes.sort_index(axis=1)
+        # all_dataframes = all_dataframes.replace(nan, "-")
         all_dataframes.columns = list(map(lambda x: str(x[0]) + x[1], all_dataframes.columns.values))
         all_dataframes = all_dataframes.reset_index()
 
