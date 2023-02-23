@@ -234,7 +234,7 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
         else:
             if row["productive"]:
                 if row["complete_vdj"]:
-                    raise ValueError(
+                    warnings.warn(
                         f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}"
                     )
                 else:
