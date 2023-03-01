@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Any, List, Union
 import warnings
+from typing import Any, List, Union
 
 import numpy as np
 
