@@ -235,7 +235,12 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
         else:
             if row["productive"]:
                 if row["complete_vdj"]:
-                    warnings.warn(f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}")
+                    logger.warning(
+                        f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}, will have nan for iGL_nt"
+                    )
+                    warnings.warn(
+                        f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}", UserWarning
+                    )
                 else:
                     logger.warning(
                         f"{row.name} - is productive, but has incomplete vdj with a v_germline_start at {row['v_germline_start']} and j_germline_end at {row['j_germline_end']}, consider running methods.run_termini_buffers"

@@ -94,7 +94,7 @@ def test_get_igl_nt(fixture_setup, caplog):
     _row.sequence_alignment_aa = _row.germline_alignment_aa[:]
     _row.germline_alignment_aa = _row.germline_alignment_aa[:-1] + "-"
     with caplog.at_level(logging.WARNING):
-        with pytest.raises(ValueError):
+        with pytest.warns(UserWarning):
             get_igl_nt(_row)
 
 
