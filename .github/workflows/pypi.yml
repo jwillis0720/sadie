@@ -1,7 +1,5 @@
 # Takes tag and auto sets that to the version to push to pypi
-# Example:
-# > git tag 0.1.1
-# > git push --tags
+# Full install is needed to sync poetry python version to get poetry-bumpversion to work
 name: Publish to PYPI
 
 on:
