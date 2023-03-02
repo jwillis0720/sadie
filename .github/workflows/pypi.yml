@@ -1,5 +1,4 @@
 # Takes tag and auto sets that to the version to push to pypi
-# Full install is needed to sync poetry python version to get poetry-bumpversion to work
 name: Publish to PYPI
 
 on:
@@ -8,12 +7,9 @@ on:
     types: [closed]
 
 jobs:
-  pypi:
+  version-bump:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10"]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -28,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10"
       - name: Install dependencies
         run: |
           pip install poetry
@@ -44,6 +40,36 @@ jobs:
           git add pyproject.toml src/sadie/__init__.py
           git commit -m "bump up $(git describe --tags --abbrev=0) version from workflow"
           git push --force
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+  pypi:
+    needs: version-bump
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: "0"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install poetry
+      - name: Build and publish
+        env:
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          git config user.name $PYPI_USERNAME
+          git config user.email jwillis0720@gmail.com
           poetry build
           poetry publish --username "$PYPI_USERNAME" --password "$PYPI_PASSWORD"
       - name: Dump GitHub context
