@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
+import warnings
 from typing import Any, List, Union
 
 import numpy as np
@@ -234,8 +235,11 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
         else:
             if row["productive"]:
                 if row["complete_vdj"]:
-                    raise ValueError(
-                        f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}"
+                    logger.warning(
+                        f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}, will have nan for iGL_nt"
+                    )
+                    warnings.warn(
+                        f"{row.name} - iGL_aa {row['iGL_aa']} != contrived {Seq(germline_igl).translate()}", UserWarning
                     )
                 else:
                     logger.warning(

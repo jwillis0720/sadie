@@ -31,7 +31,7 @@ def test_yaml(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixt
     assert yaml_object.__repr__()
     assert set([i for i in yaml_object]) == {"clk", "dog", "human", "mouse", "rabbit", "se09", "rat", "macaque"}
     assert yaml_object["human"]
-    assert len(yaml_object) == 4976
+    assert len(yaml_object) == 4977
 
     with pytest.raises(ValueError):
         YamlRef(fixture_setup.get_duplicated_yaml())
@@ -69,7 +69,7 @@ def test_check_default_reference_df(fixture_setup: SadieFixture) -> None:
     ref_api = References()
     df = ref_api.get_dataframe()
     assert isinstance(df, pd.DataFrame)
-    assert len(df) == 4976
+    assert len(df) == 4977
 
 
 def test_load_reference_from_yml(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixture) -> None:

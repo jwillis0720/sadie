@@ -1,6 +1,6 @@
 <h2 align="center" style="font-family:verdana;font-size:150%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</h2>
 <div align="center">
-  <img src="https://sadiestaticcrm.s3.us-west-2.amazonaws.com/Sadie.svg" alt="SADIE" style="margin:0.5em;width:50%">
+  <img src="https://sadiestaticcrm.s3.us-west-2.amazonaws.com/Sadie.svg" alt="SADIE" style="margin:0.51em;width:50%">
 </div>
 
 <div class="flex-container" align="center">
@@ -75,6 +75,10 @@ SADIE is billed as a "**complete antibody library**", not because it aims to do 
 
 Installation is handled using the python package installer `pip`
 
+!!! note
+
+    Because SADIE relies on Pyhmmer, it will only work on x86 Linux and MacOS x86 systems. Windows is not supported. If you are using the M1 Mac, please see below.
+
 <div class="termy">
 
 ```console
@@ -83,6 +87,30 @@ $ pip install sadie-antibody
 ```
 
 </div>
+
+### Installation with M1 or M2 Macs
+
+---
+
+You can either:
+
+1. use the Intel version of [Conda](https://docs.conda.io/en/latest/miniconda.html) and run `pip install sadie-antibody`
+
+2. If you use the Apple M1 version of [Conda](https://docs.conda.io/en/latest/miniconda.html), please create your SADIE environment using the following.
+
+<div class="termy">
+
+```console
+$ CONDA_SUBDIR=osx-64 conda create -n sadie python=3.10.4
+---> 100%
+$ conda activate sadie
+$ conda config --env --set subdir osx-64
+$ pip install sadie-antibody
+---> 100%
+```
+
+</div>
+This tells CONDA to install the Intel version of python and then install SADIE even though you have the M1 version of AIRR. For additional help, please file an issue on the [SADIE GitHub](https://github.com/jwillis0720/sadie/issues).
 
 ## The Littlest Usage
 
@@ -119,3 +147,7 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
 - Copyright © Jordan R. Willis and Troy Sincomb
 
 <!-- Page last revised on: {{ git_revision_date }} -->
+
+```
+
+```
