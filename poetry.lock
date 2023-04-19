@@ -1285,8 +1285,8 @@ files = [
 numpy = [
     {version = ">=1.18.5", markers = "platform_machine != \"aarch64\" and platform_machine != \"arm64\" and python_version < \"3.10\""},
     {version = ">=1.19.2", markers = "platform_machine == \"aarch64\" and python_version < \"3.10\""},
-    {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
     {version = ">=1.20.0", markers = "platform_machine == \"arm64\" and python_version < \"3.10\""},
+    {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
 ]
 python-dateutil = ">=2.8.1"
 pytz = ">=2020.1"
@@ -1622,36 +1622,43 @@ description = "Cython bindings and Python interface to HMMER3."
 category = "main"
 optional = false
 python-versions = ">=3.6"
-files = []
-develop = false
+files = [
+    {file = "pyhmmer-0.7.4-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:ad2951853425713ad1fb73edf66efd1e59e367818924cebca345e1f2f41d0136"},
+    {file = "pyhmmer-0.7.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:248f46dac13a5677144dea96c52ca9872e087da4b0f078a8d26ebffe571696c5"},
+    {file = "pyhmmer-0.7.4-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:dcd657ef69c4e419246cd8675a41642a0aff7c8d2240d15595b982b25e93551c"},
+    {file = "pyhmmer-0.7.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:9ff5facb74924a9cccc13101a63e9940cb2fbb9f7ac7ec35cf0471abeb5bd593"},
+    {file = "pyhmmer-0.7.4-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:9b8b488cfe1c5777630add99f7e788ead3b8bb632196e3269eba26b839cd3860"},
+    {file = "pyhmmer-0.7.4-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:70453303099f0f379888683b95b66c5cb197daabec0258e16fde9e7daadb5f3f"},
+    {file = "pyhmmer-0.7.4-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:3ba095837f9a209a054f786fcbdce21860f70306e220f50ecfd707b3ff27bccd"},
+    {file = "pyhmmer-0.7.4-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:e3c1d04144e4424389cce8a32275b14de05788b41480e59f462fac411c81a426"},
+    {file = "pyhmmer-0.7.4-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:dd0330b00bd38252027e2246c504e80d660e8240c4ff8e661e4b4d1bfaf70b9e"},
+    {file = "pyhmmer-0.7.4-cp39-cp39-macosx_11_0_x86_64.whl", hash = "sha256:42241530c8453bcbaa517e41bc3f8c4cac4b08ebcd3bc4cecb3fcb9523d15a59"},
+    {file = "pyhmmer-0.7.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:04f62d7ea011fd6f932aae689b74aa5f494fd0ccebdcf795961fb4bb63d7bfef"},
+    {file = "pyhmmer-0.7.4-pp37-pypy37_pp73-macosx_10_9_x86_64.whl", hash = "sha256:81ffd68a7b938441ac6b6f656fbf1339309cec111f729ec7b2b95fd2b4c0911e"},
+    {file = "pyhmmer-0.7.4-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:5b6db46fbc358e4cc44f50573855d0412dffebd22f23f16de0dc146e5b3442ad"},
+    {file = "pyhmmer-0.7.4-pp38-pypy38_pp73-macosx_10_9_x86_64.whl", hash = "sha256:873daf0d541d8c330ed054d1f62beeaac492fb9ed3adb7eb1a9068df5980b9d5"},
+    {file = "pyhmmer-0.7.4-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:4fcc8c7b8ca632c429ca106ad2a00de415393b2733538e9c354ab145888762bb"},
+    {file = "pyhmmer-0.7.4-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:53a3745451e7dadd98c29401e9ad0dd7d9dc5647d174cfb50dcb299106aa05d1"},
+    {file = "pyhmmer-0.7.4-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:71d1e9e24e0dd4a41687cfc8a3be04cf371981867d61600c142d05f18f27a331"},
+    {file = "pyhmmer-0.7.4.tar.gz", hash = "sha256:e3ce2719628ce8f1c7ee0b604ca68ca33ccf0b3c77f785a720fa96aa86295c5f"},
+]
 
 [package.dependencies]
 psutil = ">=5.8,<6.0"
 
-[package.source]
-type = "git"
-url = "https://github.com/althonos/pyhmmer"
-reference = "master"
-resolved_reference = "0f803aaa7ff43a18f03ffb67c4fae220a0927a2c"
-
 [[package]]
-name = "pyhmmer"
-version = "0.7.4"
+name = "pyhmmer-arm"
+version = "0.7.5"
 description = "Cython bindings and Python interface to HMMER3."
 category = "main"
 optional = false
 python-versions = ">=3.6"
-files = []
-develop = false
+files = [
+    {file = "pyhmmer_arm-0.7.5-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:719bc2c883f3ca01beccce4b0e46a4a5ff038e7e7e4804f22670efaff3b2ea37"},
+]
 
 [package.dependencies]
 psutil = ">=5.8,<6.0"
-
-[package.source]
-type = "git"
-url = "https://github.com/althonos/pyhmmer"
-reference = "neon-support"
-resolved_reference = "23a27f067e124c617fa68f7cd7767204e8836563"
 
 [[package]]
 name = "pyinstrument"
@@ -2490,4 +2497,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "e5e22ba3f10e3d25a66d5de30c3e3a1c7bd7d685c69dd55110eec2ead38991b6"
+content-hash = "4e56a4241dc68c116603cc0e5929064019af88f9f871113befbeca388f0b7806"
