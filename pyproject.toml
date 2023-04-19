@@ -49,9 +49,10 @@ pyarrow = ">=6.0.1"
 semantic-version = "^2.10.0"
 PyYAML = "^6.0"
 pyhmmer = [
-    { git = "https://github.com/althonos/pyhmmer", branch = "master", markers= "sys_platform == 'darwin' and platform_machine != 'arm64'"  },
-    { git = "https://github.com/althonos/pyhmmer", branch = "neon-support", markers= "platform_machine == 'arm64'" }
+    { version = "^0.7.4", markers= "platform_machine != 'arm64'"  },
+    # { git = "https://github.com/althonos/pyhmmer.git", branch = "neon-support", markers= "platform_machine == 'arm64'" }
 ]
+pyhmmer-arm = [{ version = "0.7.5", markers= "platform_machine == 'arm64'"  }]
 scikit-learn = "^1.1.2"
 openpyxl = "^3.0.10"
 yarl = "^1.8.1"
