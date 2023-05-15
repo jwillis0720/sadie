@@ -77,40 +77,7 @@ Installation is handled using the python package installer `pip`
 
 !!! note
 
-    Because SADIE relies on Pyhmmer, it will only work on x86 Linux and MacOS x86 systems. Windows is not supported. If you are using the M1 Mac, please see below.
-
-<div class="termy">
-
-```console
-$ pip install sadie-antibody
----> 100%
-```
-
-</div>
-
-### Installation with M1 or M2 Macs
-
----
-
-You can either:
-
-1. use the Intel version of [Conda](https://docs.conda.io/en/latest/miniconda.html) and run `pip install sadie-antibody`
-
-2. If you use the Apple M1 version of [Conda](https://docs.conda.io/en/latest/miniconda.html), please create your SADIE environment using the following.
-
-<div class="termy">
-
-```console
-$ CONDA_SUBDIR=osx-64 conda create -n sadie python=3.10.4
----> 100%
-$ conda activate sadie
-$ conda config --env --set subdir osx-64
-$ pip install sadie-antibody
----> 100%
-```
-
-</div>
-This tells CONDA to install the Intel version of python and then install SADIE even though you have the M1 version of AIRR. For additional help, please file an issue on the [SADIE GitHub](https://github.com/jwillis0720/sadie/issues).
+    Because SADIE relies on Pyhmmer, it will only work on x86 Linux and MacOS x86 systems. Windows is not supported.
 
 ## The Littlest Usage
 

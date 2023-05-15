@@ -62,8 +62,8 @@ nav: # this is how we layout the documents
   - Reference Database: reference.md
   - AIRR Sequence Annotation:
     - Annotating: annotation.md
-    - Advanced Annotation Methods: advanced_annotation.md
-  - Sequence Numbering: numbering.md
+    # - Advanced Annotation Methods: advanced_annotation.md  # TODO: add to_datafarme a few other hidden methods
+  - Sequence Numbering: renumbering.md
   - BCR/TCR Objects: models.md
   - Clustering: clustering.md
   - Contributing to SADIE: contribute.md

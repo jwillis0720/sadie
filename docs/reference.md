@@ -85,12 +85,12 @@ database:
 ```
 
 
-| Field      | Description                          | Example
-| ----------- | ------------------------------------ | --------
-| `database`       | :material-check:     The database that the gene comes from  | `IMGT` or `custom`
-| `species`       | :material-check: The name of the species that will be used in the annotation table | `human`, `mouse`
-| `sub-species`    | :material-check:     A gene from another species that maybe knocked-in the species | `human`
-| `gene`    | :material-check:     The full gene name | `IGHV3-23*01`
+| Field         | Description                                                                        | Example            |
+| ------------- | ---------------------------------------------------------------------------------- | ------------------ |
+| `database`    | :material-check:     The database that the gene comes from                         | `IMGT` or `custom` |
+| `species`     | :material-check: The name of the species that will be used in the annotation table | `human`, `mouse`   |
+| `sub-species` | :material-check:     A gene from another species that maybe knocked-in the species | `human`            |
+| `gene`        | :material-check:     The full gene name                                            | `IGHV3-23*01`      |
 
 !!! Info "Why are is there a sub-species?"
 
