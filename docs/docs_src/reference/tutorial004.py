@@ -1,6 +1,6 @@
 import tempfile
 
-from sadie.reference import Reference
+from sadie.reference import Reference, References
 from sadie.reference.yaml import YamlRef
 
 # enter no file to use reference.yml
@@ -9,24 +9,21 @@ yml_ref = YamlRef()
 # create empty reference object
 ref_class = Reference()
 
+# references class
+references = References()
+
 # Iterate through YamlRef
-for entry in yml_ref:
+for name in yml_ref:
     # these are dictionary entries
-    db = entry["database"]
-    species = entry["species"]
-    sub_species = entry["sub_species"]
+    for database in yml_ref[name]:
+        species = yml_ref[name][database]
+        for single in species:
+            single_species = single
+            # gene is a list of genes
+            genes = yml_ref[name][database][single_species]
+            if database == "custom" and single_species == "macaque":  # only want cat and custom
+                only_vs = list(filter(lambda x: x[3] == "V", genes))  # only get v genes, lookup third letter for this
+                for gene in only_vs[:5]:  # only getting first 5
+                    ref_class.add_gene({"gene": gene, "species": single_species, "source": database})
 
-    # gene is a list of genes
-    genes = entry["gene"]
-
-    # only keep custom
-    if db == "custom" and species == "cat":  # only want cat and custom
-        only_vs = list(filter(lambda x: x[3] == "V", genes))  # only get v genes, lookup third letter for this
-        for gene in only_vs[:5]:  # only getting first 5
-            ref_class.add_gene({"gene": gene, "species": species, "sub_species": sub_species, "database": db})
-
-# now add J6 to make a cat/dog. Can't mix and match database types!
-ref_class.add_gene({"gene": "IGHJ6*01", "species": "dog", "sub_species": "dog", "database": "custom"})
-
-with tempfile.TemporaryDirectory() as named_temp:
-    ref_class.make_airr_database(named_temp)
+references.add_reference("small_macaque", ref_class)

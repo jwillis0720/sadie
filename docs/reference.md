@@ -3,7 +3,7 @@
 The SADIE reference module abstracts the underlying reference data used by the [AIRR](annotation.md) and [Numbering](numbering.md) module. Both of these modules use external database files. Their organization (particularly by AIRR which ports [IGBlast](https://www.ncbi.nlm.nih.gov/igblast/)) can be extremely complicated. Making new reference database is a tedious and time consuming task. This module provides a simple interface for making your own reference databases.
 
 !!! Abstract "Builtin reference"
-    SADIE ships with a reference database that contains the most common species along with functional genes. The average user will not need to use this module as the the database is comprehensive. You can see each entry by looking either directly at the paths used `src/sadie/airr/data/` for AIRR and `src/sadie/anarci/data` for the renumbering module. Another convienitent way to look at the reference database is to view the [reference.yml](https://github.com/jwillis0720/sadie/blob/master/src/sadie/reference/data/reference.yml). More on how that file is structured will be [provided](#the-reference-yaml).
+SADIE ships with a reference database that contains the most common species along with functional genes. The average user will not need to use this module as the the database is comprehensive. You can see each entry by looking either directly at the paths used `src/sadie/airr/data/` for AIRR and `src/sadie/anarci/data` for the renumbering module. Another convienitent way to look at the reference database is to view the [reference.yml](https://github.com/jwillis0720/sadie/blob/master/src/sadie/reference/data/reference.yml). More on how that file is structured will be [provided](#the-reference-yaml).
 
 ## Germline Gene Gateway
 
@@ -35,7 +35,6 @@ The following examples shows how to pull genes programmatically usinng the comma
     ```Python
     {!> docs_src/reference/tutorial001.py!}
     ```
-
 
 The output will be a JSON file containing the V-Gene segment and all relevant information needed by SADIE to write out databases needed by the AIRR and Numbering modules.
 
@@ -74,31 +73,30 @@ The output will be a JSON file containing the V-Gene segment and all relevant in
 The reference YAML file is a simple YAML file that takes the following structure.
 
 ```yaml
-database:
+name:
+  database:
     species:
-        sub-species:
-            -gene1
-            -gene2
-        sub-species2:
-            -gene3
-            -gene4
+    -gene1
+    -gene2
+    species2:
+    -gene3
+    -gene4
 ```
 
+| Field      | Description                                                                        | Example                 |
+| ---------- | ---------------------------------------------------------------------------------- | ----------------------- |
+| `name`     | :material-check: The name that this reference will be called in SADIE              | `human`, `mouse`, `clk` |
+| `database` | :material-check: The database that the gene comes from                             | `IMGT` or `custom`      |
+| `species`  | :material-check: The name of the species that will be used in the annotation table | `human`, `mouse`        |
+| `gene`     | :material-check: The full gene name                                                | `IGHV3-23*01`           |
 
-| Field         | Description                                                                        | Example            |
-| ------------- | ---------------------------------------------------------------------------------- | ------------------ |
-| `database`    | :material-check:     The database that the gene comes from                         | `IMGT` or `custom` |
-| `species`     | :material-check: The name of the species that will be used in the annotation table | `human`, `mouse`   |
-| `sub-species` | :material-check:     A gene from another species that maybe knocked-in the species | `human`            |
-| `gene`        | :material-check:     The full gene name                                            | `IGHV3-23*01`      |
+!!! Info "Why do we allow multiple species?"
 
-!!! Info "Why are is there a sub-species?"
-
-    Most of the time the sub-species and species will be the same thing. i.e.
+    Most of the time the name and species will be the same thing. i.e.
 
     ```yaml
-    imgt:
-        human:
+    human
+        imgt:
             human:
                 -IGHV3-23*01
                 -IGHD3-3*01
@@ -108,8 +106,8 @@ database:
     However, sometimes you maybe working with chimeric models where a transgene is knocked into a model species. Consider the HuGL mouse models from [Deli et al. (2020)](https://pubmed.ncbi.nlm.nih.gov/32873644/)
 
     ```yaml
-    imgt:
-        hugl18:
+    hugl18:
+        imgt:
             human:
             - IGHV4-59*01
             - IGHD3-3*01
@@ -126,7 +124,6 @@ database:
 
 Again, a full list of databases, species and genes can be found by exploring the [G3 API](https://g3.jordanrwillis.com/docs#/G3/find_genes_api_v1_genes_get), click the `Try it out` button.
 
-
 ## Generating AIRR database with Reference Class
 
 Rather than generate a pre-configured database, SADIE can also generate a reference file on the fly. This is useful for procedural analsysis where you are generating cusom genes for multiple species.
@@ -140,9 +137,5 @@ or we can use the YAML file as a template to add more genes
 ```Python
 {!> docs_src/reference/tutorial004.py!}
 ```
-
-!!! Warning
-
-    You can't mix and match databases. A custom and IMGT can't be mixed.
 
 - Copyright © Jordan R. Willis and Troy Sincomb

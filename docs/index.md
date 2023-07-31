@@ -19,8 +19,8 @@
             alt="Static Type">
     </div>
     <div class="flex-container" align="center">
-        <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue">
-        <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue"
+        <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue">
+        <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue"
             alt="Python Version">
         <a href="https://github.com/psf/black">
         <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
@@ -77,13 +77,44 @@ Installation is handled using the python package installer `pip`
 
 !!! note
 
-    Because SADIE relies on Pyhmmer, it will only work on x86 Linux and MacOS x86 systems. Windows is not supported.
+    Because SADIE relies on Pyhmmer, it will only work on x86 Linux and MacOS x86 systems. Windows is not supported. If you are using the M1 Mac, please see below.
 
-## The Littlest Usage
+<div class="termy">
+
+```console
+$ pip install sadie-antibody
+---> 100%
+```
+
+</div>
+
+### Installation with M1 or M2 Macs
+
+---
+
+If you use the Apple M1 version of [Conda](https://docs.conda.io/en/latest/miniconda.html), please create your SADIE environment using the following.
+
+<div class="termy">
+
+```console
+$ conda create -n sadie python=3.10.6
+---> 100%
+$ conda activate sadie
+$ pip install sadie-antibody
+$ conda install -c conda-forge biopython
+---> 100%
+```
+
+</div>
+!!! note
+
+    You must install biopython from conda since pip install sadie-antibody will not install the proper version of biopython.
+
+For additional help, please file an issue on the [SADIE GitHub](https://github.com/jwillis0720/sadie/issues).
+
+# Quick Usage
 
 Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
-
-### Command Line Usage
 
 <!-- get these icons through icon search https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/#search -->
 
@@ -107,14 +138,8 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
     {!> docs_src/annotation/tutorial002.py!}
     ```
 
-## License
+# License
 
 [![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
 
 - Copyright © Jordan R. Willis and Troy Sincomb
-
-<!-- Page last revised on: {{ git_revision_date }} -->
-
-```
-
-```
