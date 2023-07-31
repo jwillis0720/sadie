@@ -1,13 +1,13 @@
 # Reference Module
 
-The SADIE reference module abstracts the underlying reference data used by the [AIRR](annotation.md) and [Numbering](numbering.md) module. Both of these modules use external database files. Their organization (particularly by AIRR which ports [IGBlast](https://www.ncbi.nlm.nih.gov/igblast/)) can be extremely complicated. Making new reference database is a tedious and time consuming task. This module provides a simple interface for making your own reference databases.
+The SADIE reference module abstracts the underlying reference data used by the [AIRR](annotation.md) and [Numbering](renumbering.md) module. Both of these modules use external database files. Their organization (particularly by AIRR which ports [IGBlast](https://www.ncbi.nlm.nih.gov/igblast/)) can be extremely complicated. Making new reference database is a tedious and time consuming task. This module provides a simple interface for making your own reference databases.
 
 !!! Abstract "Builtin reference"
 SADIE ships with a reference database that contains the most common species along with functional genes. The average user will not need to use this module as the the database is comprehensive. You can see each entry by looking either directly at the paths used `src/sadie/airr/data/` for AIRR and `src/sadie/anarci/data` for the renumbering module. Another convienitent way to look at the reference database is to view the [reference.yml](https://github.com/jwillis0720/sadie/blob/master/src/sadie/reference/data/reference.yml). More on how that file is structured will be [provided](#the-reference-yaml).
 
 ## Germline Gene Gateway
 
-New germline gene segments are being discovered at a rapid pace. To meet the needs of this changing landscape, SADIE gets all of the gemrline gene info from a programmatic API called the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This API is hosted as free service. It consists of gemrline genes from [IMGT](www.imgt.org) as well as custom genes that have been annotated and cataloged by programs such as [IGDiscover](http://docs.igdiscover.se/en/stable/). To explore the API, go to the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This API is RESTful and conforms to the [OpenAPI 3.0](https://swagger.io/specification/) specification.
+New germline gene segments are being discovered at a rapid pace. To meet the needs of this changing landscape, SADIE gets all of the gemrline gene info from a programmatic API called the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This API is hosted as free service. It consists of gemrline genes from [IMGT](https://www.imgt.org) as well as custom genes that have been annotated and cataloged by programs such as [IGDiscover](http://docs.igdiscover.se/en/stable/). To explore the API, go to the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This API is RESTful and conforms to the [OpenAPI 3.0](https://swagger.io/specification/) specification.
 
 ### Examples of how to use the G3 API
 
