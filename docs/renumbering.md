@@ -129,3 +129,4 @@ The following is a description of each definition taken from [the Martin group](
 - SCDR is the longest CDR definition for each region. It's used in industry
 
 For a great review of the numbering schemes and region definitions, see this [paper](https://www.frontiersin.org/articles/10.3389/fimmu.2018.02278/full)
+
