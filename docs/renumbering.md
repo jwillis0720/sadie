@@ -74,7 +74,7 @@ which stores a handy alignment table of the sequence.
 | --: | :------- | :--------- | :------ | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
 |   0 | VRC26.27 | H          | chothia | Q   | K   | Q   | L   | V   | E   | S   | G   | G   | G   | V   | V   | Q   | P   | G   | R   | S   | L   | T   | L   | S   | C   | A   | A   | S   | Q   | F   | P   | F   | S   | H   | Y   | G   | M   | H   | W   | V   | R   | Q   | A   | P   | G   | K   | G   | L   | E   | W   | V   | A   | S   | I   | T   | N   | D   | G   | T   | K   | K   | Y   | H   | G   | E   | S   | V   | W   | D   | R   | F   | R   | I   | S   | R   | D   | N   | S   | K   | N   | T   | L   | F   | L   | Q   | M   | N   | S   | L   | R   | A   | E   | D   | T   | A   | L   | Y   | F   | C   | V   | R   | D   | Q   | R   | E   | D   | E   | C    | E    | E    | W    | W    | S    | D    | Y    | Y    | D    | F    | G    | K    | E    | L    | P    | C    | R    | K    | F    | R    | G    | L    | G    | L    | A    | G    | I    | F    | D   | I   | W   | G   | H   | G   | T   | M   | V   | I   | V   | S   |
 
-# Multiple Sequence Numbering
+## Multiple Sequence Numbering
 
 You can also renumber a fasta file.
 
@@ -95,7 +95,7 @@ You can also renumber a fasta file.
     {!>docs_src/renumbering/multi_use.py!}
     ```
 
-# Schemes
+## Schemes
 
 These are the current numbering schemes we have implemented.
 
@@ -105,7 +105,7 @@ These are the current numbering schemes we have implemented.
 | kabat   | [Kabat numbering scheme](https://www.chemogenomix.com/kabat-antibody-numbering)                          |
 | imgt    | [IMGT numbering scheme](https://www.imgt.org/IMGTScientificChart/Nomenclature/IMGT-FRCDRdefinition.html) |
 
-# Region definitions
+## Region definitions
 
 Given a numbering scheme we can define CDRS and frameworks with the following definitions.
 
