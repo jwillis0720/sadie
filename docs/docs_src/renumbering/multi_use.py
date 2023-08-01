@@ -1,6 +1,7 @@
 # Use Renumbering module
-from sadie.renumbering import Renumbering
 import pandas as pd
+
+from sadie.renumbering import Renumbering
 
 # define a fasta file
 catnap_fasta = "catnap_aa_heavy_sample.fasta"
