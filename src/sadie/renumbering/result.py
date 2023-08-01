@@ -132,10 +132,6 @@ class NumberingResults(pd.DataFrame):
         )
         return pivoted_df
 
-    # def get_sanatized_antibodies(self):
-    #     # drop sequences that don't start at the first amino acid and dont end at the last amino acid.
-    #     return self[(self["seqstart_index"] == 0) & (self["seqend_index"] == self["sequence"].str.len() - 1)]
-
     @staticmethod
     def read_csv(*args, **kwargs):
         return NumberingResults(
@@ -147,6 +143,3 @@ class NumberingResults(pd.DataFrame):
                 **kwargs,
             )
         )
-
-    # def drop_bad_numbering(self) -> "NumberingResults":
-    #     return self[(self["seqstart_index"] == 0) & (self["seqend_index"] == self["sequence"].str.len() - 1)]

@@ -1,6 +1,7 @@
 # Use Renumbering module
-from sadie.renumbering import Renumbering
 import pandas as pd
+
+from sadie.renumbering import Renumbering
 
 # define a single sequence
 vrc26_seq = "QKQLVESGGGVVQPGRSLTLSCAASQFPFSHYGMHWVRQAPGKGLEWVASITNDGTKKYHGESVWDRFRISRDNSKNTLFLQMNSLRAEDTALYFCVRDQREDECEEWWSDYYDFGKELPCRKFRGLGLAGIFDIWGHGTMVIVS"
