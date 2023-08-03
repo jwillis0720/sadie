@@ -1,0 +1,22 @@
+name: Docs Build
+on:
+  push:
+    tags:
+      - '*'
+    branches: ['main']
+  pull_request:
+    branches: ['main', 'development']
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install --with dev
