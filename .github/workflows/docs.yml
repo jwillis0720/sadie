@@ -20,4 +20,5 @@ jobs:
         run: |
           pip install poetry
           poetry install --with dev
+          chmod +x ./scripts/run_docs_snippets.bash
           ./scripts/run_docs_snippets.bash
