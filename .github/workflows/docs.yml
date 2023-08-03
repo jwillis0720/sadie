@@ -7,7 +7,7 @@ on:
   pull_request:
     branches: ['main', 'development']
 jobs:
-  pytest:
+  docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
