@@ -76,6 +76,7 @@ which stores a handy alignment table of the sequence.
 
 ## Multiple Sequence Numbering
 
+
 You can also renumber a fasta file.
 
 === ":material-console-line: Command Line Usage"
@@ -106,6 +107,7 @@ These are the current numbering schemes we have implemented.
 | imgt    | [IMGT numbering scheme](https://www.imgt.org/IMGTScientificChart/Nomenclature/IMGT-FRCDRdefinition.html) |
 
 ## Region definitions
+
 
 Given a numbering scheme we can define CDRS and frameworks with the following definitions.
 
