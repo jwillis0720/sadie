@@ -10,7 +10,7 @@ Annotation is the bedrock of all immunoformatics workflows. It is the process of
 
 ---
 
-SADIE leverages the AIRR to provide a standardized data representation for BCRs. You can read all the fields and values in the AIRR Rearrangment shema standard [here](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#fields)
+SADIE leverages the AIRR to provide a standardized data representation for BCRs. You can read all the fields and values in the AIRR Rearrangement schema standard [here](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#fields)
 
 ## Single Sequence Annotation
 
@@ -27,7 +27,7 @@ The output will contain `<class 'sadie.airr.airrtable.airrtable.AirrTable'>` and
 
 ### Writing Files
 
-#### AIRR Rearrangment File
+#### AIRR Rearrangement File
 
 To output an AIRR file, we can use the `AirrTable.to_airr()` method.
 

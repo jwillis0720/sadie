@@ -14,4 +14,8 @@ for src in $(find . -name '*.py'); do
     echo "Running $src"
     python $src
 done
+for src in $(find . -name '*.bash'); do
+    echo "Running $src"
+    bash $src
+done
 cd ../../../
