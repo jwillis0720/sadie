@@ -42,9 +42,7 @@
         <img src="https://github.com/jwillis0720/sadie/actions/workflows/docs.yml/badge.svg"
             alt="Documentation">
         </a>
-
     </div>
-
 </div>
 
 <!-- markdownlint-restore -->
