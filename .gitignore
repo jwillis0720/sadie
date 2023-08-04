@@ -33,7 +33,6 @@ site/*
 images/Sadie.ai
 coverage/reports/html
 coverage/reports/xml/coverage.xml
-PG9 AIRR*
 test_me/*
 my_output_database_path/*
 sadie.workspace.code-workspace
