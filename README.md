@@ -108,7 +108,7 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage.
 Annotate antibody sequences only from functional human imgt antibodies to a gzip output
 
 ```console
-$ airr -q my_sequecnes.fasta -s human -d imgt
+$ sadie airr my_sequence.fasta
 ```
 
 ### API
