@@ -1,5 +1,6 @@
-from sadie.receptor.rearrangment import ReceptorChain
 from Bio import SeqIO
+
+from sadie.receptor.rearrangment import ReceptorChain
 
 # get a sequence
 vrc01_heavy_sequecne = SeqIO.read("vrc01_heavy.fasta", "fasta")

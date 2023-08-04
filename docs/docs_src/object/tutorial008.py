@@ -1,13 +1,14 @@
 from Bio import SeqIO
+
 from sadie.receptor.rearrangment import (
-    InputSequence,
     AlignmentAnnotations,
-    PrimaryAnnotations,
     AlignmentPositions,
-    RegionSequences,
-    RegionPositions,
+    InputSequence,
     JunctionLengths,
+    PrimaryAnnotations,
     ReceptorChain,
+    RegionPositions,
+    RegionSequences,
 )
 
 vrc01_heavy_sequecne = SeqIO.read("vrc01_heavy.fasta", "fasta")
