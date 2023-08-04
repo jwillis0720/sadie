@@ -18,7 +18,7 @@ jobs:
           python-version: '3.10'
       - name: Install dependencies and test docs
         run: |
+          which python
           pip install poetry
-          poetry install --with dev
-          chmod +x ./scripts/run_docs_snippets.bash
+          pip install -e
           ./scripts/run_docs_snippets.bash
