@@ -21,4 +21,4 @@ jobs:
           which python
           pip install poetry
           pip install -e
-          ./scripts/run_docs_snippets.bash
+          bash ./scripts/run_docs_snippets.bash
