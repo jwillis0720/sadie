@@ -127,6 +127,7 @@ region_positions_dict = dict(
 )
 region_position_model = RegionPositions(**region_positions_dict)
 
+# junction lengths
 junction_length_dict = dict(
     junction_length=48,
     junction_aa_length=None,
