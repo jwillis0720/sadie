@@ -1,4 +1,4 @@
-name: Docs Build
+name: Docs Snippets
 on:
   push:
     tags:

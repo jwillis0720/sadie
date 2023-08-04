@@ -3,36 +3,50 @@
 <div align="center">
   <img src="https://sadiestaticcrm.s3.us-west-2.amazonaws.com/Sadie.svg" alt="SADIE" style="margin:0.5em;width:50%">
 </div>
-
 <div class="flex-container" align="center">
-    <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
-         alt="Linux Build">
-    <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
-    <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
-         alt="Mac Build">
-    <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
-    <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
-         alt="Static Type">
-    <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue">
-    <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue"
-        alt="Python Version">
-    <a href="https://github.com/psf/black">
-    <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
-        alt="Format Version">
-    <a href="https://codecov.io/gh/jwillis0720/sadie">
-    <img src="https://codecov.io/gh/jwillis0720/sadie/branch/main/graph/badge.svg?token=EH9QEX4ZMP"
-        alt="Code Coverage">
-    <a href="https://github.com/pre-commit/pre-commit">
-    <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
-        alt="pre commit">
-    <a href="https://pypi.org/project/sadie-antibody">
-    <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
-        alt='pypi'>
-    <a href="https://app.netlify.com/sites/sadie-docs/overview">
-    <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
-        alt="Documentation">
-    </a>
+    <!-- <a href="https://github.com/jwillis0720/sadie/commits/master">
+    <img src="https://img.shields.io/github/commit-activity/y/jwillis0720/sadie?style=flat-square"
+         alt="GitHub commits"> -->
+    <div class="flex-container" align="center">
+        <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
+            alt="Linux Build">
+        <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
+            alt="Mac Build">
+        <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
+            alt="Static Type">
+        <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue">
+        <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue"
+            alt="Python Version">
+    </div>
+    <div class="flex-container" align="center">
+        <a href="https://github.com/psf/black">
+        <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
+            alt="Format Version">
+        <a href="https://codecov.io/gh/jwillis0720/sadie">
+        <img src="https://codecov.io/gh/jwillis0720/sadie/branch/main/graph/badge.svg?token=EH9QEX4ZMP"
+            alt="Code Coverage">
+        <a href="https://github.com/pre-commit/pre-commit">
+        <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
+            alt="pre commit">
+        <a href=https://pypi.org/project/sadie-antibody">
+        <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
+            alt='pypi'>
+        <a href="https://sadie.jordanrwillis.com" >
+        <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
+            alt="Documentation">
+        </a>
+        <a href="https://github.com/jwillis0720/sadie/actions/workflows/docs.yml" >
+        <img src="https://github.com/jwillis0720/sadie/actions/workflows/docs.yml/badge.svg"
+            alt="Documentation">
+        </a>
+
+    </div>
+
 </div>
+
 <!-- markdownlint-restore -->
 
 ## About
@@ -85,9 +99,9 @@ $ pip install poetry
 $ poetry install --with dev
 ```
 
-## The Littlest Usage
+## Quick Usage
 
-Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
+Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage. Or checkout our [Colab](https://colab.research.google.com/github/jwillis0720/sadie/blob/main/notebooks/airr_c/SADIE_DEMO.ipynb) notebook
 
 ### Command Line Usage
 
@@ -115,7 +129,7 @@ pg9_seq = """
 # initialize the api
 air_api = Airr("human")
 
-# run single sequence
+# run single sequence string
 airr_table = air_api.run_single("PG9", pg9_seq)
 ```
 

@@ -17,11 +17,11 @@
         <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
             alt="Static Type">
-    </div>
-    <div class="flex-container" align="center">
         <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue">
         <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue"
             alt="Python Version">
+    </div>
+    <div class="flex-container" align="center">
         <a href="https://github.com/psf/black">
         <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
             alt="Format Version">
@@ -38,7 +38,13 @@
         <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
             alt="Documentation">
         </a>
+        <a href="https://github.com/jwillis0720/sadie/actions/workflows/docs.yml" >
+        <img src="https://github.com/jwillis0720/sadie/actions/workflows/docs.yml/badge.svg"
+            alt="Documentation">
+        </a>
+
     </div>
+
 </div>
 
 ## About
@@ -114,7 +120,7 @@ For additional help, please file an issue on the [SADIE GitHub](https://github.c
 
 # Quick Usage
 
-Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
+Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage. Or checkout our [Colab](https://colab.research.google.com/github/jwillis0720/sadie/blob/main/notebooks/airr_c/SADIE_DEMO.ipynb) notebook
 
 <!-- get these icons through icon search https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/#search -->
 
@@ -125,7 +131,7 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
     <div class="termy">
 
     ```console
-    $ sadie airr -s human -db-type imgt my_sequences.fasta output.csv
+    $ sadie airr -n human my_sequences.fasta output.csv
     ```
 
     </div>
