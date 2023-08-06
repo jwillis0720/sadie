@@ -4,9 +4,6 @@
 </div>
 
 <div class="flex-container" align="center">
-    <!-- <a href="https://github.com/jwillis0720/sadie/commits/master">
-    <img src="https://img.shields.io/github/commit-activity/y/jwillis0720/sadie?style=flat-square"
-         alt="GitHub commits"> -->
     <div class="flex-container" align="center">
         <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
@@ -17,11 +14,11 @@
         <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
             alt="Static Type">
+    </div>
+    <div class="flex-container" align="center">
         <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue">
         <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue"
             alt="Python Version">
-    </div>
-    <div class="flex-container" align="center">
         <a href="https://github.com/psf/black">
         <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
             alt="Format Version">
@@ -29,6 +26,8 @@
         <img src="https://codecov.io/gh/jwillis0720/sadie/branch/main/graph/badge.svg?token=EH9QEX4ZMP"
             alt="Code Coverage">
         <a href="https://github.com/pre-commit/pre-commit">
+    </div>
+    <div class="flex-container" align="center">
         <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
             alt="pre commit">
         <a href=https://pypi.org/project/sadie-antibody">
@@ -42,9 +41,7 @@
         <img src="https://github.com/jwillis0720/sadie/actions/workflows/docs.yml/badge.svg"
             alt="Documentation">
         </a>
-
     </div>
-
 </div>
 
 ## About
