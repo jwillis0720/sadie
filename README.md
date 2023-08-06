@@ -1,21 +1,11 @@
 <!-- markdownlint-disable -->
+
 <h2 align="center" style="font-family:verdana;font-size:150%"> <b>S</b>equencing <b>A</b>nalysis and <b>D</b>ata Library for <b>I</b>mmunoinformatics <b>E</b>xploration</h2>
 <div align="center">
-  <img src="https://sadiestaticcrm.s3.us-west-2.amazonaws.com/Sadie.svg" alt="SADIE" style="margin:0.5em;width:50%">
+  <img src="https://sadiestaticcrm.s3.us-west-2.amazonaws.com/Sadie.svg" alt="SADIE" style="margin:0.51em;width:50%">
 </div>
 
 <div class="flex-container" align="center">
-    <div class="flex-container" align="center">
-        <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
-            alt="Linux Build">
-        <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
-            alt="Mac Build">
-        <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
-            alt="Static Type">
-    </div>
     <div class="flex-container" align="center">
         <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue">
         <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue"
@@ -43,8 +33,18 @@
             alt="Documentation">
         </a>
     </div>
+    <div class="flex-container" align="center">
+        <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
+            alt="Linux Build">
+        <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
+            alt="Mac Build">
+        <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
+            alt="Static Type">
+    </div>
 </div>
-
 <!-- markdownlint-restore -->
 
 ## About

@@ -5,17 +5,6 @@
 
 <div class="flex-container" align="center">
     <div class="flex-container" align="center">
-        <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
-            alt="Linux Build">
-        <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
-            alt="Mac Build">
-        <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
-            alt="Static Type">
-    </div>
-    <div class="flex-container" align="center">
         <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue">
         <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue"
             alt="Python Version">
@@ -41,6 +30,17 @@
         <img src="https://github.com/jwillis0720/sadie/actions/workflows/docs.yml/badge.svg"
             alt="Documentation">
         </a>
+    </div>
+    <div class="flex-container" align="center">
+        <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
+            alt="Linux Build">
+        <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
+            alt="Mac Build">
+        <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
+        <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
+            alt="Static Type">
     </div>
 </div>
 
