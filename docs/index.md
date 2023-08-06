@@ -80,10 +80,6 @@ SADIE is billed as a "**complete antibody library**", not because it aims to do 
 
 Installation is handled using the python package installer `pip`
 
-!!! note
-
-    Because SADIE relies on Pyhmmer, it will only work on x86 Linux and MacOS x86 systems. Windows is not supported. If you are using the M1 Mac, please see below.
-
 <div class="termy">
 
 ```console
