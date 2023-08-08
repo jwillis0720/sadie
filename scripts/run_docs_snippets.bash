@@ -43,3 +43,15 @@ for src in $(find . -name '*.bash'); do
     bash $src
 done
 cd ../../../
+
+echo "Running docs_src/cluster"
+cd docs/docs_src/cluster
+for src in $(find . -name '*.py'); do
+    echo "Running $src"
+    python $src
+done
+for src in $(find . -name '*.bash'); do
+    echo "Running $src"
+    bash $src
+done
+cd ../../../
