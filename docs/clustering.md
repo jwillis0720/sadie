@@ -38,3 +38,29 @@ So what happened here.
 | `pad_somatic` | Any somatic mutations that are present in both sequences will be subtracted from the total distance. This is useful for somatic hypermutation analysis. |
 
 - Run `cluseter_api.cluster(distace)` where `distance` is a distance cutoff in hierarchical clustering. This will return an airrtable with the a field called cluster.
+
+# A complete example
+
+You will probably run this in context of a larger analysis where you use [airrtables](annotation.md#single-sequence-annotation) to create an Airr Table.
+
+```Python
+{!docs_src/cluster/tutorial002.py!}
+```
+
+|     | sequence_id                                                                         | cluster |
+| --: | :---------------------------------------------------------------------------------- | ------: |
+|  45 | PCT64-24E_MF565875_PCT64-24E-HC_anti-HIV_immunoglobulin_heavy_chain_variable_region |       0 |
+|  43 | PCT64-24A_MF565871_PCT64-24A-HC_anti-HIV_immunoglobulin_heavy_chain_variable_region |       0 |
+|  44 | PCT64-24B_MF565872_PCT64-24B-HC_anti-HIV_immunoglobulin_heavy_chain_variable_region |       0 |
+|  58 | PCT64-35M_MF565891_PCT64-35M-HC_anti-HIV_immunoglobulin_heavy_chain_variable_region |       0 |
+|   8 | CH27_patent_20160244510_CH27_heavy_chain                                            |       1 |
+
+`...`
+
+In the example above we did the following:
+
+1. Read in a fasta file.
+2. Annotated a fasta file
+3. Ran mutational analysis on the airr table
+4. Clustered the airr table
+5. printed out the cluster name and sequence id
