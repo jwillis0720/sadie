@@ -11,4 +11,4 @@ cluster_api = Cluster(airr_table_mutational, lookup=["cdr1_aa", "cdr2_aa", "cdr3
 
 airr_table_with_cluster = cluster_api.cluster(5)
 airr_table_with_cluster.sort_values("cluster")
-airr_table_with_cluster.sort_values("cluster")[["sequence_id", "cluster"]].head(5)
+print(airr_table_with_cluster.sort_values("cluster")[["sequence_id", "cluster"]].head(5))
