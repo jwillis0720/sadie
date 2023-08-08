@@ -1,6 +1,6 @@
-from sadie.cluster import Cluster
 from sadie.airr import Airr
 from sadie.airr.methods import run_mutational_analysis
+from sadie.cluster import Cluster
 
 fasta_file = "catnap.fasta"
 airr_api = Airr("human", adaptable=True)
