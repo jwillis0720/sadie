@@ -16,7 +16,3 @@ airr_table_4 = AirrTable(pd.read_parquet("PG9 AIRR.parquet"))
 
 # write to a feather file that has rapid IO
 airr_table_5 = AirrTable(pd.read_feather("PG9 AIRR.feather"))
-
-# ensure they are all equal to each other
-print(airr_table_1 == airr_table_2)
-# == airr_table_3 == airr_table_4 == airr_table_5)

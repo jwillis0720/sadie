@@ -33,7 +33,6 @@ site/*
 images/Sadie.ai
 coverage/reports/html
 coverage/reports/xml/coverage.xml
-PG9 AIRR*
 test_me/*
 my_output_database_path/*
 sadie.workspace.code-workspace
@@ -44,6 +43,8 @@ airr_html_source/**
 notebooks/**
 bin/
 
-
 # local coverage files
 cov.xml
+docs/docs_src/renumbering/Untitled.ipynb
+human_v.json
+docs/docs_src/reference/my_output_database_path

@@ -4,9 +4,33 @@
 </div>
 
 <div class="flex-container" align="center">
-    <!-- <a href="https://github.com/jwillis0720/sadie/commits/master">
-    <img src="https://img.shields.io/github/commit-activity/y/jwillis0720/sadie?style=flat-square"
-         alt="GitHub commits"> -->
+    <div class="flex-container" align="center">
+        <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue">
+        <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10-blue"
+            alt="Python Version">
+        <a href="https://github.com/psf/black">
+        <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
+            alt="Format Version">
+        <a href="https://codecov.io/gh/jwillis0720/sadie">
+        <img src="https://codecov.io/gh/jwillis0720/sadie/branch/main/graph/badge.svg?token=EH9QEX4ZMP"
+            alt="Code Coverage">
+        <a href="https://github.com/pre-commit/pre-commit">
+    </div>
+    <div class="flex-container" align="center">
+        <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
+            alt="pre commit">
+        <a href=https://pypi.org/project/sadie-antibody">
+        <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
+            alt='pypi'>
+        <a href="https://sadie.jordanrwillis.com" >
+        <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
+            alt="Documentation">
+        </a>
+        <a href="https://github.com/jwillis0720/sadie/actions/workflows/docs.yml" >
+        <img src="https://github.com/jwillis0720/sadie/actions/workflows/docs.yml/badge.svg"
+            alt="Documentation">
+        </a>
+    </div>
     <div class="flex-container" align="center">
         <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
@@ -17,27 +41,6 @@
         <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
             alt="Static Type">
-    </div>
-    <div class="flex-container" align="center">
-        <a href="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue">
-        <img src="https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue"
-            alt="Python Version">
-        <a href="https://github.com/psf/black">
-        <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
-            alt="Format Version">
-        <a href="https://codecov.io/gh/jwillis0720/sadie">
-        <img src="https://codecov.io/gh/jwillis0720/sadie/branch/main/graph/badge.svg?token=EH9QEX4ZMP"
-            alt="Code Coverage">
-        <a href="https://github.com/pre-commit/pre-commit">
-        <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
-            alt="pre commit">
-        <a href=https://pypi.org/project/sadie-antibody">
-        <img src="https://img.shields.io/pypi/v/sadie-antibody?color=blue"
-            alt='pypi'>
-        <a href="https://sadie.jordanrwillis.com" >
-        <img src="https://api.netlify.com/api/v1/badges/59ff956c-82d9-4900-83c7-758ed21ccb34/deploy-status"
-            alt="Documentation">
-        </a>
     </div>
 </div>
 
@@ -50,6 +53,8 @@
 **Documentations**: <a href="https://sadie.jordanrwillis.com" target="_blank">https://sadie.jordanrwillis.com</a>
 
 **Source Code**: <a href="https://github.com/jwillis0720/sadie" target="_blank">https://github.com/jwillis0720/sadie</a>
+
+**Colab**: [https://colab.research.google.com/github/jwillis0720/sadie](https://colab.research.google.com/github/jwillis0720/sadie/blob/main/notebooks/airr_c/SADIE_DEMO.ipynb)
 
 ---
 
@@ -75,10 +80,6 @@ SADIE is billed as a "**complete antibody library**", not because it aims to do 
 
 Installation is handled using the python package installer `pip`
 
-!!! note
-
-    Because SADIE relies on Pyhmmer, it will only work on x86 Linux and MacOS x86 systems. Windows is not supported. If you are using the M1 Mac, please see below.
-
 <div class="termy">
 
 ```console
@@ -92,31 +93,29 @@ $ pip install sadie-antibody
 
 ---
 
-You can either:
-
-1. use the Intel version of [Conda](https://docs.conda.io/en/latest/miniconda.html) and run `pip install sadie-antibody`
-
-2. If you use the Apple M1 version of [Conda](https://docs.conda.io/en/latest/miniconda.html), please create your SADIE environment using the following.
+If you use the Apple M1 version of [Conda](https://docs.conda.io/en/latest/miniconda.html), please create your SADIE environment using the following.
 
 <div class="termy">
 
 ```console
-$ CONDA_SUBDIR=osx-64 conda create -n sadie python=3.10.4
+$ conda create -n sadie python=3.10.6
 ---> 100%
 $ conda activate sadie
-$ conda config --env --set subdir osx-64
 $ pip install sadie-antibody
+$ conda install -c conda-forge biopython
 ---> 100%
 ```
 
 </div>
-This tells CONDA to install the Intel version of python and then install SADIE even though you have the M1 version of AIRR. For additional help, please file an issue on the [SADIE GitHub](https://github.com/jwillis0720/sadie/issues).
+!!! note
 
-## The Littlest Usage
+    You must install biopython from conda since pip install sadie-antibody will not install the proper version of biopython.
 
-Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
+For additional help, please file an issue on the [SADIE GitHub](https://github.com/jwillis0720/sadie/issues).
 
-### Command Line Usage
+# Quick Usage
+
+Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage. Or checkout our [Colab](https://colab.research.google.com/github/jwillis0720/sadie/blob/main/notebooks/airr_c/SADIE_DEMO.ipynb) notebook
 
 <!-- get these icons through icon search https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/#search -->
 
@@ -127,7 +126,7 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
     <div class="termy">
 
     ```console
-    $ sadie airr -s human -db-type imgt my_sequences.fasta output.csv
+    $ sadie airr -n human my_sequences.fasta output.csv
     ```
 
     </div>
@@ -140,14 +139,8 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage
     {!> docs_src/annotation/tutorial002.py!}
     ```
 
-## License
+# License
 
 [![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
 
 - Copyright © Jordan R. Willis and Troy Sincomb
-
-<!-- Page last revised on: {{ git_revision_date }} -->
-
-```
-
-```
