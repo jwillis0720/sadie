@@ -48,3 +48,6 @@ cov.xml
 docs/docs_src/renumbering/Untitled.ipynb
 human_v.json
 docs/docs_src/reference/my_output_database_path
+
+# mkdocs?
+src/site/
