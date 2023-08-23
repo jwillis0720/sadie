@@ -621,7 +621,6 @@ class References:
 
     @staticmethod
     def from_dataframe(dataframe: pd.DataFrame) -> "References":
-
         """Read dataframe into a reference object
 
         Parameters

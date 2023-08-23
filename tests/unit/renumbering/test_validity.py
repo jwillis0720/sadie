@@ -7,7 +7,6 @@ from sadie.renumbering import Renumbering
 
 
 def test_alignments(fixture_setup):
-
     renumbering_api = Renumbering(
         use_numbering_hmms=True,
         allowed_species=["human"],
@@ -52,7 +51,6 @@ def test_alignments(fixture_setup):
 
 # TODO: the alignment changes with mutiple need to have a seperate ANARCI align to a complete fasta
 def test_alignments_file(fixture_setup):
-
     anarci_table = pd.read_csv(fixture_setup.alignment_data / "catnap_aa_heave_sample_H.csv")
     anarci_table["Id"] = anarci_table["Id"].str.replace("<unknown description>", "").str.strip()
     anarci_table = anarci_table[anarci_table.domain_no == 0].iloc[:, [0, *list(range(13, len(anarci_table.columns)))]]

@@ -27,7 +27,6 @@ def test_stockholm_pairs(fixture_setup):
 
     for species in species_list:
         for chain in chains:
-
             stockholm_pairs = g3.get_stockholm_pairs(species=species, chain=chain)
 
             print(f"{species} {chain}")

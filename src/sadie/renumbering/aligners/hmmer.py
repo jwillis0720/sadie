@@ -259,7 +259,6 @@ class HMMER:
         # HMMs not big enough to be worth multiprocessing
         for top_hits in pyhmmer.hmmsearch(self.hmms, sequences, cpus=1):
             for _i, hit in enumerate(top_hits):
-
                 domain = hit.best_domain
                 ali = hit.best_domain.alignment
 
@@ -584,7 +583,6 @@ class HMMER:
         for i in range(len(sequences)):
             # Check the alignment for J region
             if len(alignments[i][1]) == 1:  # Only do for single domain chains.
-
                 # Check whether a J region has been identified. If not check whether there is still a considerable amount of sequence
                 # remaining.
                 ali = alignments[i][1][0]
@@ -599,7 +597,6 @@ class HMMER:
                         # Find the position of the conserved cysteine (imgt 104).
                         cys_si = dict(ali).get((104, "m"), None)
                         if cys_si is not None:  # 104 found.
-
                             # Find the corresponding index in the alignment.
                             cys_ai = ali.index(((104, "m"), cys_si))
 
@@ -612,7 +609,6 @@ class HMMER:
 
                             # Check if a J region was detected in the remaining sequence.
                             if re_states and re_states[0][-1][0][0] >= 126 and re_states[0][0][0][0] <= 117:
-
                                 # Sandwich the presumed CDR3 region between the V and J regions.
 
                                 vRegion = ali[: cys_ai + 1]

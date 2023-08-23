@@ -481,7 +481,6 @@ class AirrTable(pd.DataFrame):
             for suffix in self._suffixes:
                 # Insert the top call for each vdj call but right next to the N_call column using the insert method
                 for call in ["v_call", "d_call", "j_call"]:
-
                     # pure light chain columns won't have a dcall
                     if call + suffix == "d_call_light":
                         continue
@@ -652,7 +651,6 @@ class AirrTable(pd.DataFrame):
         return True
 
     def correct_indel(self) -> Union["AirrTable", "LinkedAirrTable"]:
-
         _fields = [
             ["sequence_alignment_aa", "germline_alignment_aa"],
             ["v_sequence_alignment_aa", "v_germline_alignment_aa"],

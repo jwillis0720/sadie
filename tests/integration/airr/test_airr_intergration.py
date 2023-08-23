@@ -131,7 +131,6 @@ def _make_sadie_comparable(df):
 
 
 def _make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
-
     """Takes Hi-Vquest and return a compariable dataframe
     Parameters
     ----------

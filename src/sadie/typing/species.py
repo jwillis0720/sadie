@@ -65,7 +65,6 @@ SPECIES = {
 
 
 class Species(UserString):
-
     species = SPECIES
 
     @classmethod

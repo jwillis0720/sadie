@@ -103,7 +103,6 @@ def _test_internal_data_file_structure(tmpdir: Path, fixture_setup: SadieFixture
                 obj=index,
             )
         except AssertionError:
-
             if index in known_internal_db_exceptions:
                 print(index, "is known exception")
                 continue

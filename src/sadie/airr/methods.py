@@ -178,8 +178,7 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
     sequence_aa: str
     germline_alignment_aa: str
     sequence_alignment_aa: str
-    for (germline_aa, sequence_aa) in zip(germline_alignment_aa, sequence_alignment_aa):
-
+    for germline_aa, sequence_aa in zip(germline_alignment_aa, sequence_alignment_aa):
         # we can't have both - in germ and sequence
         if germline_aa == "-" and sequence_aa == "-":
             raise ValueError("this is not possible")

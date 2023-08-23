@@ -123,7 +123,6 @@ def test_IgBLASTArgument_exceptions() -> None:
 
 
 class TestIgBLASTN:
-
     igblastn_exe = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{platform.system().lower()}/igblastn")
     germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
     db_ref = os.path.join(germline_ref, "Ig/blastdb/human/")

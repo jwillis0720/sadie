@@ -7,7 +7,6 @@ SOURCES = ["imgt", "custom"]
 
 
 class Source(UserString):
-
     sources = SOURCES
 
     @classmethod

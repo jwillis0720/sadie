@@ -168,7 +168,6 @@ def split_fasta(
     # _open will . handle all
     with sadie_handle.open_input as parent_file_handle:
         for num, record in enumerate(SeqIO.parse(parent_file_handle, f"{filetype}"), start=1):
-
             # append records to our list holder
             joiner.append(">" + record.id + "\n" + str(record.seq))
 
