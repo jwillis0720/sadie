@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sadie-antibody"
-version = "v2.0.0" # run 'sadie --version' to get the current version
+version = "v1.0.0" # run 'sadie --version' to get the current version
 license = "MIT"
 description = "\"The Complete Antibody Library\""
 authors = [
