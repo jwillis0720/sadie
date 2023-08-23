@@ -139,7 +139,6 @@ def test_sadie_input(fixture_setup: SadieFixture):
 
 
 def test_sadie_directory(fixture_setup, tmpdir_factory):
-
     with pytest.raises(TypeError):
         # raise on a single file
         SadieInputDir(fixture_setup.get_abi_files()[0], "abi")

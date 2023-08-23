@@ -148,7 +148,6 @@ def test_antibody_chain_nt():
 
 
 def test_alignments():
-
     antibody_chain = antibody.AntibodyChainNT(
         name="short_alignent",
         fwr1_nt="",

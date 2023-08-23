@@ -19,7 +19,6 @@ except ImportError:
 
 class YamlRef:
     def __init__(self, filepath: None | Path | str = None):
-
         if not filepath:
             filepath = Path(__file__).parent.joinpath("data/reference.yml")
         self.ref_path = filepath

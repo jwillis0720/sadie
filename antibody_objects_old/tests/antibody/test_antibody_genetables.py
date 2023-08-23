@@ -283,7 +283,6 @@ def test_v_gene():
 
 
 def test_v_gene_numbering():
-
     v_gene_object = antibody.VGene("IGHV3-23*01", "human")
     assert v_gene_object.fwr1_aa.start_index == 0
     assert v_gene_object.fwr1_aa.start == 1

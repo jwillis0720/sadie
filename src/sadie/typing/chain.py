@@ -7,7 +7,6 @@ CHAINS = ["L", "H", "K", "A", "B", "G", "D"]
 
 
 class Chain(UserString):
-
     chains = CHAINS
 
     @classmethod

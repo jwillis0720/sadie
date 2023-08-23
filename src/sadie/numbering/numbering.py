@@ -24,7 +24,6 @@ logger = logging.getLogger("NUMBERING")
 
 
 class Numbering:
-
     Number = namedtuple("Number", ["position", "ref_aa", "aa", "region"])
 
     def __init__(self, scheme: str = "imgt", region: str = "imgt"):
@@ -151,7 +150,6 @@ class Numbering:
         query_end: Optional[int] = None,
         **kwargs,
     ) -> List[Tuple[Tuple[int, str], int]]:
-
         state_vector = self.get_vector_state(hmm_aln, query_aln, hmm_start, hmm_end, query_start, query_end)
 
         _numbering, start, end = self.validate_numbering(
@@ -455,7 +453,6 @@ class Numbering:
         hit_tables = []
 
         for i in range(len(sequences)):
-
             # Unpack
             hit_table, state_vectors, detailss = alignments[
                 i
@@ -568,7 +565,6 @@ class Numbering:
         # Write a new file for each chain type. Kappa and lambda are written together as light chains.
         for cts in ["H", "KL", "A", "B", "G", "D"]:
             if cts in chain_types:
-
                 # Sort the positions by index and insertion order
                 positions = sorted(all_pos[cts], key=lambda p: (p[0], pos_ranks[cts][p]))
 

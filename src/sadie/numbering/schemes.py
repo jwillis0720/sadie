@@ -476,13 +476,11 @@ def smooth_insertions(state_vector):
             state_buffer.append(((state_id, state_type), si))
             reg = 5
         elif len(state_buffer) != 0:  # Add the buffer and reset
-
             # Find the number of insertions in the buffer
             nins = sum(1 for s in state_buffer if s[0][1] == "i")
 
             # If there are insertions, adjust the alignment
             if nins > 0:  # We have insertions
-
                 if reg == -1:  # FW1, only adjust if there are the same or more N terminal deletions than insertions
                     nt_dels = state_buffer[0][0][0] - 1  # Missing states
                     for (_id, _type), _si in state_buffer:  # Explicit deletion states.
@@ -491,7 +489,6 @@ def smooth_insertions(state_vector):
                         else:  # First residue found
                             break
                     if nt_dels >= nins:  # More n terminal deletions than insertions found. Likely misalignment.
-
                         # Preserve the deleted states structure by using the same match annotations
                         new_states = [s for s, _ in state_buffer if s[1] == "m"]
                         _first = new_states[0][0]
@@ -588,7 +585,6 @@ def _number_regions(
 
     # Iterate over the aligned state vector
     for (state_id, state_type), si in state_vector:
-
         # Retrieve the region index
         if (
             state_type != "i" or region is None
@@ -597,7 +593,6 @@ def _number_regions(
 
         # Check the state_types
         if state_type == "m":  # It is a match
-
             # Check whether this position is in the scheme as an independent state
             if state_string[state_id - 1] == "I":  # No, it should be treated as an insertion
                 if (
@@ -1166,6 +1161,7 @@ def number_aho(state_vector, sequence, chain_type):
 
 # Chothia #
 
+
 # Heavy chains
 def number_chothia_heavy(state_vector, sequence):
     """
@@ -1424,6 +1420,7 @@ def number_chothia_light(state_vector, sequence):
 
 # Kabat #
 
+
 # Heavy chains
 def number_kabat_heavy(state_vector, sequence):
     """
@@ -1658,6 +1655,7 @@ def number_kabat_light(state_vector, sequence):
 
 
 # Martin (extended Chothia) #
+
 
 # Heavy chains
 def number_martin_heavy(state_vector, sequence):

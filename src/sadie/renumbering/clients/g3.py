@@ -86,13 +86,11 @@ class G3:
         species: Species = "human",
         limit: Optional[int] = None,
     ) -> List[Tuple[str, str]]:
-
         sub_v = self.get_gene(source=source, species=species, chain=chain, segment="V", limit=limit)
         sub_j = self.get_gene(source=source, species=species, chain=chain, segment="J", limit=limit)
 
         stockholm_pairs = []
         for merge in product(sub_v, sub_j):
-
             v_seg = merge[0]
             j_seg = merge[1]
 
