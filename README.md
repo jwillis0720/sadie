@@ -135,4 +135,4 @@ airr_table = air_api.run_single("PG9", pg9_seq)
 
 [![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
 
-- Copyright © Jordan R. Willis and Troy M. Sincomb
+- Copyright © Jordan R. Willis & Troy M. Sincomb
