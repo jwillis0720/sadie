@@ -1,48 +1,35 @@
-LOCUS       PG9                      408 bp    DNA              UNK 01-JAN-1980
+LOCUS       PG9                      136 aa                     UNK 01-JAN-1980
 DEFINITION  .
-ACCESSION   PG9-Antibody
-VERSION     PG9-Antibody
+ACCESSION   PG9
+VERSION     PG9
 KEYWORDS    .
 SOURCE      .
-  ORGANISM  .
+  ORGANISM  human
             .
 FEATURES             Location/Qualifiers
-     FWR1            1..72
-                     /gene="IGHV3-33*05"
+     FWR1            1..24
                      /reference="human"
-     CDR1            73..96
-                     /gene="IGHV3-33*05"
+                     /gene="IGHV3-30*02"
+     CDR1            25..32
                      /reference="human"
-     FWR2            97..147
-                     /gene="IGHV3-33*05"
+                     /gene="IGHV3-30*02"
+     FWR2            33..49
                      /reference="human"
-     CDR2            148..171
-                     /gene="IGHV3-33*05"
+                     /gene="IGHV3-30*02"
+     CDR2            50..57
                      /reference="human"
-     FWR3            172..285
-                     /gene="IGHV3-33*05"
+                     /gene="IGHV3-30*02"
+     FWR3            58..95
                      /reference="human"
-     CDR3            286..375
-                     /gene="IGHD3-3*01"
+                     /gene="IGHV3-30*02"
+     CDR3            96..125
                      /reference="human"
-     FWR4            376..408
-                     /gene="IGHJ6*03"
+                     /gene="Missing"
+     FWR4            126..136
                      /reference="human"
-     VGene           1..293
-                     /gene="IGHV3-33*05"
-                     /species="human"
-     DGene           328..355
-                     /gene="IGHD3-3*01"
-                     /species="human"
-     JGene           356..408
-                     /gene="IGHJ6*03"
-                     /species="human"
+                     /gene="IGHJ6*04"
 ORIGIN
-        1 cagcgattag tggagtctgg gggaggcgtg gtccagcctg ggtcgtccct gagactctcc
-       61 tgtgcagcgt ccggattcga cttcagtaga caaggcatgc actgggtccg ccaggctcca
-      121 ggccaggggc tggagtgggt ggcatttatt aaatatgatg gaagtgagaa atatcatgct
-      181 gactccgtat ggggccgact cagcatctcc agagacaatt ccaaggatac gctttatctc
-      241 caaatgaata gcctgagagt cgaggacacg gctacatatt tttgtgtgag agaggctggt
-      301 gggcccgact accgtaatgg gtacaactat tacgatttct atgatggtta ttataactac
-      361 cactatatgg acgtctgggg caaagggacc acggtcaccg tctcgagc
+        1 qrlvesgggv vqpgsslrls caasgfdfsr qgmhwvrqap gqglewvafi kydgsekyha
+       61 dsvwgrlsis rdnskdtlyl qmnslrvedt atyfcvreag gpdyrngyny ydfydgyyny
+      121 hymdvwgkgt tvtvss
 //
