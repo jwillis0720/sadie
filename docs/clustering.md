@@ -1,6 +1,6 @@
 # Clustering
 
-Clustering is handled using an input of [AirrTables](annotation.md #single-sequence-annotation). Consider the following example.
+Clustering is handled using an input of [AirrTables](annotation.md#single-sequence-annotation). Consider the following example.
 
 ```Python
 {!docs_src/cluster/tutorial001.py!}
