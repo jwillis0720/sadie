@@ -105,5 +105,5 @@ if __name__ == "__main__":
 
     # Fetch the genbank file and annotate
     genebank_record = main(seq=pg9_seq, seq_id=id, seq_name=seq_name)
-    with open(f"output/{id}_airr.gb", "w") as handle:
+    with open(f"{id}_airr.gb", "w") as handle:
         SeqIO.write(genebank_record, handle, "genbank")

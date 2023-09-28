@@ -55,7 +55,7 @@ This format has minimal features and description but allows us to visualize the 
 
 ## Now we can write the record to file and visualize
 ```python
-with open(f'output/{seg_name}_hmmer.gb',"w") as handle:
+with open(f'{seg_name}_hmmer.gb',"w") as handle:
     SeqIO.write(genbank_record,handle,"genbank")
 ```
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     gene_id = 'GU272045.1'
     # Can use a provided sequence
     genbank_record = main(email=email, gene_id=gene_id)
-    with open(f'output/{gene_id}_complete.gb',"w") as handle:
+    with open(f'{gene_id}_complete.gb',"w") as handle:
         SeqIO.write(genbank_record,handle,"genbank")
 ```
 which generates
