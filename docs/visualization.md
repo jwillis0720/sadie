@@ -1,9 +1,9 @@
 # Visualizing Sadie Annotation in GenBank Format
 
-After generating Annotations using BLAST implemented in Sadie as AIrr or with HMMER, implemented as Renumbering, you can convert the annotations as features in a Genbank formatted file and then visualize them using your favorite gene browser like Genious. This tutorial shows how you can convert your annotations to GenBank. You can also test it out in a [Collab Notebook](https://colab.research.google.com/github/kipkurui/sadie/blob/genbank_notebook/notebooks/airr_c/GenBank_Annotation.ipynb). 
+After generating Annotations using BLAST implemented in Sadie as AIrr or with HMMER, implemented as Renumbering, you can convert the annotations as features in a Genbank formatted file and then visualize them using your favorite gene browser like Genious. This tutorial shows how you can convert your annotations to GenBank. You can also test it out in a [Collab Notebook](https://colab.research.google.com/github/kipkurui/sadie/blob/genbank_notebook/notebooks/airr_c/GenBank_Annotation.ipynb).
 
 ## Renumberring HMM
-The renumbering module in Sadie uses HMMER to annotate the antibody sequences.  
+The renumbering module in Sadie uses HMMER to annotate the antibody sequences.
 
 ```Python
 {!docs_src/annotation/tutorial006.py!}
@@ -51,7 +51,7 @@ ORIGIN
 //
 
 ```
-This format has minimal features and description but allows us to visualize the annotations of the amino acid sequence. 
+This format has minimal features and description but allows us to visualize the annotations of the amino acid sequence.
 
 ## Now we can write the record to file and visualize
 ```python
@@ -64,7 +64,7 @@ You can then load the GenBank file and export the visualization:
 ![HMMER](docs_src/annotation/HMMER_Sadie_Annotation.png)
 
 ## BLAST Annotation Using SADIE
-Sadie uses igblastn to annotate the sequence provided, which runs through the AIRR API. It can take a single sequence, fasta, or a directory with several files. The output is an AirrTable, which inherits from Pandas DataFrame and has the same functionalities, plus a few more. We parse the AirTable to get the features added to the Genbank annotation. 
+Sadie uses igblastn to annotate the sequence provided, which runs through the AIRR API. It can take a single sequence, fasta, or a directory with several files. The output is an AirrTable, which inherits from Pandas DataFrame and has the same functionalities, plus a few more. We parse the AirTable to get the features added to the Genbank annotation.
 
 
 For AIRR annotation, we have two options. We can annotate the file  and convert directly to Genbank format
@@ -74,7 +74,7 @@ For AIRR annotation, we have two options. We can annotate the file  and convert 
 
 ![HMMER](docs_src/annotation/AIRR_Annotation_incomplete.png)
 
-Or fetch a Genbank file from NCBI, then add the features to the file using BioPython. This gives us an exhaustive annotation, which we can visualize as described above. 
+Or fetch a Genbank file from NCBI, then add the features to the file using BioPython. This gives us an exhaustive annotation, which we can visualize as described above.
 
 
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     with open(f'output/{gene_id}_complete.gb',"w") as handle:
         SeqIO.write(genbank_record,handle,"genbank")
 ```
-which generates 
+which generates
 
 ```
 LOCUS       GU272045                 408 bp    mRNA    linear   PRI 24-JUL-2016
@@ -174,7 +174,6 @@ ORIGIN
 
 ```
 
-and can be visualized as 
+and can be visualized as
 
 ![HMMER](docs_src/annotation/AIRR_Annotation.png)
-
