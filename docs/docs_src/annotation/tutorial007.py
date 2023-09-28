@@ -3,6 +3,7 @@ from Bio import Entrez
 from Bio.Seq import Seq
 from Bio.SeqFeature import FeatureLocation, SeqFeature
 from Bio.SeqRecord import SeqRecord
+from Bio import SeqIO
 
 from sadie.airr import Airr
 
