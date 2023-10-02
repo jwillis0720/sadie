@@ -63,7 +63,6 @@ nav: # this is how we layout the documents
   - AIRR Sequence Annotation:
     - Annotating: annotation.md
     - Advanced Annotation Methods: advanced_annotation.md  # TODO: add to_datafarme a few other hidden methods
-    - Visualization: visualization.md
   - Sequence Numbering: renumbering.md
   - BCR/TCR Objects: models.md
   - Clustering: clustering.md

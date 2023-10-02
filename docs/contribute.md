@@ -2,7 +2,7 @@ Please contribute to _SADIE_!
 
 ## Issues
 
-Questions, feature requests, and bug reports are welcome as [discussions or issues](https://github.com/jwillis0720/sadie/issues/new/choose). **However, to report a security
+Questions, feature requests and bug reports are all welcome as [discussions or issues](https://github.com/jwillis0720/sadie/issues/new/choose). **However, to report a security
 vulnerability, please see our [security policy](https://github.com/jwillis0720/sadie/security/policy).**
 
 To make it as simple as possible for us to help you, please include the version output in your issue:
@@ -16,7 +16,7 @@ to your question or feature request.
 
 ## Pull Requests
 
-_SADIE_ has an automated release. If you submit a pull request, it will be released as soon as it is accepted. This ensures that the latest version of _SADIE_ is always available to the community.
+_SADIE_ has an automated release. This means that if you submit a pull request, it will be released as soon as it is accepted. This is to ensure that the latest version of _SADIE_ is always available to the community.
 
 You'll need to have a version between **Python 3.8 and 3.10**, **poetry**, and **git** installed.
 
@@ -38,9 +38,9 @@ You'll need to have a version between **Python 3.8 and 3.10**, **poetry**, and *
    </div>
 
    !!! Info
-   Currently, poetry does not support Python 3.11
+   Currently poetry does not support python 3.11
 
-1. Install sadie, dependencies, test dependencies, and doc dependencies
+1. Install sadie, dependencies, test dependencies and doc dependencies
 <div class="termy">
 ```console
 $ poetry install --with dev
@@ -84,7 +84,7 @@ $ poetry run pytest tests
 
    !!! Info
    Our netlify.toml is used to create our documentation site.
-   This is not needed for a pull request but is useful for checking your changes locally.
+   This is not needed for a pull request, but is useful for checking your changes locally.
 
 1. Commit your changes and submit a pull request to the `development` branch
 
