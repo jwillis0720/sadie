@@ -5,7 +5,7 @@ license = "MIT"
 description = "\"The Complete Antibody Library\""
 authors = [
     "Jordan R. Willis <jwillis0720@gmail.com>",
-    "Troy Sincomb <troysincomb@gmail.com>"
+    "Troy Sincomb <troysincomb@gmail.com>",
     "Caleb Kibet <ckibet@iavi.org>"
 ]
 readme = "README.md"
