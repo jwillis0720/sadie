@@ -1,11 +1,12 @@
 [tool.poetry]
 name = "sadie-antibody"
-version = "v1.0.3" # run 'sadie --version' to get the current version
+version = "v1.0.4" # run 'sadie --version' to get the current version
 license = "MIT"
 description = "\"The Complete Antibody Library\""
 authors = [
     "Jordan R. Willis <jwillis0720@gmail.com>",
     "Troy Sincomb <troysincomb@gmail.com>"
+    "Caleb Kibet <ckibet@iavi.org>"
 ]
 readme = "README.md"
 homepage = "https://sadie.jordanrwillis.com"
