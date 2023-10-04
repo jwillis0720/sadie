@@ -1,6 +1,6 @@
 #AIRR Annotation
 
-Annotation is the bedrock of all immunoformatics workflows. It is the process of identifying CDRs/frameworks, levels of somatic mutation, locus use, productive rearrangements, and other features that describe the B cell receptor or T cell receptor (BCR/TCR). In the description of a BCR/TCR, how can we compare the data file output from one data pipeline to another? In other words, what if the description of a repertoire has different fields and datatypes that describe a repertoire or even a single BCR/TCR? Fear not! [The AIRR community to the rescue](https://docs.airr-community.org/en/stable/)!
+Annotation is the bedrock of all immunoformatics workflows. It is the process of identifying CDRs/frameworks, levels of somatic mutation, locus use, productive rearragements, and other features that describe the B cell receptor or T cell recptor (BCR/TCR). In the description of a BCR/TCR, how can we use the data file output from one data pipeline can be compared to another? In other words, what if the description of a reperotire has different fields and datatypes that describe a repertoire or even a single BCR/TCR? Fear not! [The AIRR community to the rescue](https://docs.airr-community.org/en/stable/)!
 
 ---
 
@@ -23,7 +23,7 @@ The output will contain `<class 'sadie.airr.airrtable.airrtable.AirrTable'>` and
 
 !!! info
 
-    Running an AIRR method generates an AIRR table object. The AIRR table is a subclass of a [pandas dataframe](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html) and thus can be used by any pandas method. Pandas is the workhorse of the SADIE library, so we highly encourage some rudimentary knowledge of pandas to get maximize SAIDIE functionality.
+    Running an AIRR method generates an AIRR table object. The AIRR table is a subclass of a [pandas dataframe](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html) and thus can be used by any pandas method. Pandas is the workhorse of the SADIE library so we highly encourage some rudimentary knowledge of pandas to get maximize SAIDIE functionality.
 
 ### Writing Files
 
@@ -39,7 +39,7 @@ The tsv file `PG9 AIRR.tsv` generated will be a tabular datafile that will resem
 
 {!docs_output/annotation/tutorial001.md!}
 
-This `.tsv` file is a [Rearrangement Schema compliant AIRR table](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#file-format-specification). These files have certain specifications, including a `.tsv` file suffix. Since they are AIRR compliant, they can be used by other [AIRR compliant software.](https://docs.airr-community.org/en/stable/resources/rearrangement_support.html). For instance, we could use the output `.tsv ` in any module in the [immcantation portal](https://immcantation.readthedocs.io/en/stable/).
+This `.tsv` file is a [Rearrangement Schema compliant AIRR table](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#file-format-specification). These files have a certain specification, including a `.tsv` file suffix. Since they are AIRR compliant, they can be used by other [AIRR compliant software.](https://docs.airr-community.org/en/stable/resources/rearrangement_support.html). For instance, we could use the output `.tsv ` in any module in the [immcantation portal](https://immcantation.readthedocs.io/en/stable/).
 
 #### Other Output Formats
 
@@ -55,7 +55,7 @@ While the `.tsv` AIRR table is the recognized standard for AIRR, you can also ou
 
 ### Reading Files
 
-To read in an AIRR file, we have to create an `AirrTable` object.
+To read in an AIRR file we have to create an `AirrTable` object.
 
 #### Reading an AIRR.tsv
 
@@ -70,7 +70,7 @@ Outputs:
 ```output
 <class 'sadie.airr.airrtable.airrtable.AirrTable'> True
 <class 'sadie.airr.airrtable.airrtable.AirrTable'> True
-True # The airr tables are equal
+True # The airr tables are equall
 ```
 
 #### Reading other file formats
