@@ -61,7 +61,7 @@ with open(f'{seg_name}_hmmer.gb',"w") as handle:
 
 You can then load the GenBank file and export the visualization:
 
-![HMMER](../notebooks/airr_c/images/HMMER_Sadie_Annotation.png)
+![HMMER](docs_src/annotation/HMMER_Sadie_Annotation.png)
 
 ## BLAST Annotation Using SADIE
 Sadie uses igblastn to annotate the sequence provided, which runs through the AIRR API. It can take a single sequence, fasta, or a directory with several files. The output is an AirrTable, which inherits from Pandas DataFrame and has the same functionalities, plus a few more. We parse the AirTable to get the features added to the Genbank annotation.
@@ -72,7 +72,7 @@ For AIRR annotation, we have two options. We can annotate the file  and convert 
 {!docs_src/annotation/tutorial006.py!}
 ```
 
-![HMMER](../notebooks/airr_c/images/AIRR_Annotation_incomplete.png)
+![HMMER](docs_src/annotation/AIRR_Annotation_incomplete.png)
 
 Or fetch a Genbank file from NCBI, then add the features to the file using BioPython. This gives us an exhaustive annotation, which we can visualize as described above.
 
@@ -176,4 +176,4 @@ ORIGIN
 
 and can be visualized as
 
-![HMMER](../notebooks/airr_c/images/AIRR_Annotation.png)
+![HMMER](docs_src/annotation/AIRR_Annotation.png)
