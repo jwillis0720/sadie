@@ -143,4 +143,4 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage.
 
 [![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
 
-- Copyright © Jordan R. Willis and Troy Sincomb
+- Copyright © Jordan R. Willis, Troy Sincomb, and Caleb K. Kibet
