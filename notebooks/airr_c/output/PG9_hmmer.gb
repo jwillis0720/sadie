@@ -1,0 +1,35 @@
+LOCUS       PG9                      136 aa                     UNK 01-JAN-1980
+DEFINITION  .
+ACCESSION   PG9
+VERSION     PG9
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  human
+            .
+FEATURES             Location/Qualifiers
+     FWR1            1..24
+                     /reference="human"
+                     /gene="IGHV3-30*02"
+     CDR1            25..32
+                     /reference="human"
+                     /gene="IGHV3-30*02"
+     FWR2            33..49
+                     /reference="human"
+                     /gene="IGHV3-30*02"
+     CDR2            50..57
+                     /reference="human"
+                     /gene="IGHV3-30*02"
+     FWR3            58..95
+                     /reference="human"
+                     /gene="IGHV3-30*02"
+     CDR3            96..125
+                     /reference="human"
+                     /gene="Missing"
+     FWR4            126..136
+                     /reference="human"
+                     /gene="IGHJ6*04"
+ORIGIN
+        1 qrlvesgggv vqpgsslrls caasgfdfsr qgmhwvrqap gqglewvafi kydgsekyha
+       61 dsvwgrlsis rdnskdtlyl qmnslrvedt atyfcvreag gpdyrngyny ydfydgyyny
+      121 hymdvwgkgt tvtvss
+//
