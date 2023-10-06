@@ -1,6 +1,6 @@
 # Antibody Objects
 
-This module provides convenience classes to store the annotations of an antibody or TCR. First, let's start at a very low level. These are pythonic objects that model the data we expect in an AIRR compliant data format. They are divided by [AIRR 1.3 Rearrangement category](https://docs.airr-community.org/en/stable/datarep/rearrangements.html)
+This module provides convenience classes to store the annotations of an antibody or TCR. First, let's start at a very low level. These Pythonic objects model the data we expect in an AIRR compliant data format. They are divided by [AIRR 1.3 Rearrangement category](https://docs.airr-community.org/en/stable/datarep/rearrangements.html)
 
 - Input Sequence
 - Primary Annotations
@@ -244,4 +244,4 @@ But what if you don't want to fill in all that information? Where do you even ge
 
 !!! info
 
-    You can use all these objects for pythonic syntatic sugar but you will probably just want to use the `ReceptorChain` object for most of your use cases.
+    You can use all these objects for Pythonic syntatic sugar, but you will probably just want to use the `ReceptorChain` object for most of your use cases.
