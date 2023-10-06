@@ -58,7 +58,7 @@
 
 ---
 
-SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key feautures include:
+SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinformatics **E**xploration. The key features include:
 
 - Provide pre-built **command line apps** for popular immunoinformatics applications.
 
@@ -70,15 +70,14 @@ SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinfo
 
 - Maintain data formats consistent with standards governed by the [**AIRR community**](https://docs.airr-community.org/en/stable/#table-of-contents)
 
-- **Portability** ready to use out the box.
+- **Portability** ready to use out of the box.
 
-SADIE is billed as a "**complete antibody library**", not because it aims to do everything, but because it aims to meet the needs of all immunoinformatics users. SADIE contains both low, mid and high level functionality for immunoinformatics tools and workflows. You can use SADIE as a framework to develop your own tools, use many of the prebuilt contributed tools, or run it in a notebook to enable data exploration. In addition, SADIE aims to port all code to python because relies heavily on the [Pandas](https://www.pandas.org) library, the workhorse of the data science/machine learning age.
+SADIE is billed as a "**complete antibody library**", not because it aims to do everything but because it aims to meet the needs of all immunoinformatics users. SADIE contains both low, mid, and high level functionality for immunoinformatics tools and workflows. You can use SADIE as a framework to develop your own tools, use many of the prebuilt contributed tools, or run it in a notebook to enable data exploration. In addition, SADIE aims to port all code to Python because it relies heavily on the [Pandas](https://www.pandas.org) library, the workhorse of the data science/machine learning age.
 
 ## Installation
 
 ---
-
-Installation is handled using the python package installer `pip`
+Installation is handled using the Python package installer `pip`
 
 <div class="termy">
 
@@ -143,4 +142,4 @@ Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage.
 
 [![License](https://img.shields.io/github/license/jwillis0720/sadie)](https://opensource.org/licenses/MIT)
 
-- Copyright © Jordan R. Willis, Troy Sincomb, and Caleb K. Kibet
+- Copyright © Jordan R. Willis, Troy Sincomb, and Caleb K Kibet

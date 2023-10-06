@@ -1,6 +1,6 @@
 #Renumbering Antibody Sequences
 
-One of the hardest parts of working with antibody sequences is that have different definitions of numbering. There is also different definitions of where the framework and CDR regions are depending on the scheme. SADIE provides a simple interface to renumber antibody sequences to a common numbering scheme. We borrow heavily from the Antigen receptor Numbering and Receptor Classification ([ANARCI](https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabpred/anarci/))
+One of the most complex parts of working with antibody sequences is that they have different definitions of numbering. Depending on the scheme, there are different definitions of where the framework and CDR regions are. SADIE provides a simple interface to renumber antibody sequences to a common numbering scheme. We borrow heavily from the Antigen receptor Numbering and Receptor Classification ([ANARCI](https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabpred/anarci/))
 
 ---
 
@@ -58,7 +58,7 @@ The output will contain `<sadie.renumbering.result.NumberingResults'>` object. T
 | leader            | what sequences come before the alignment         |
 | follow            | what sequences come after the alignment          |
 
-The `NumberingResults` is a pandas dataframe instance so it can be used like one. It also contains an alignment table that looks like the following.
+The `NumberingResults` is a Pandas DataFrame instance that can be used like one. It also contains an alignment table that looks like the following.
 
 ```Python
 {!docs_src/renumbering/alignment_table.py!}
@@ -87,7 +87,7 @@ You can also renumber a fasta file.
     ```
     </div>
 
-    The output will be `catnap_aa_heavy_sample_numbering_segment.csv` which will be the table from the Numbering Results and `catnap_aa_heavy_sample_numbering_alignment.csv` which will be the alignment table.
+    The output will be `catnap_aa_heavy_sample_numbering_segment.csv`, which will be the table from the NumberingResults and `catnap_aa_heavy_sample_numbering_alignment.csv`, which will be the alignment table.
 
 === " :material-api: Python"
 
@@ -107,7 +107,7 @@ These are the current numbering schemes we have implemented.
 
 ## Region definitions
 
-Given a numbering scheme we can define CDRS and frameworks with the following definitions.
+Given a numbering scheme, we can define CDRS and frameworks with the following definitions.
 
 ['imgt', 'kabat', 'chothia', 'abm', 'contact', 'scdr']
 
@@ -125,7 +125,7 @@ The following is a description of each definition taken from [the Martin group](
 - The Kabat definition is based on sequence variability and is the most commonly used
 - The Chothia definition is based on the location of the structural loop regions - see more detail at the bottom of this section
 - The AbM definition is a compromise between the two used by Oxford Molecular's AbM antibody modelling software
-- The contact definition has been recently introduced by us and is based on an analysis of the available complex crystal structures. This definition is likely to be the most useful for people wishing to perform mutagenesis to modify the affinity of an antibody since these are residues which take part in interactions with antigen. Lists of CDR residues making contact in each antibody with summary data for each CDR
-- SCDR is the longest CDR definition for each region. It's used in industry
+- The contact definition has been recently introduced by us and is based on an analysis of the available complex crystal structures. This definition is likely the most useful for people wishing to perform mutagenesis to modify the affinity of an antibody since these residues take part in interactions with antigens. Lists of CDR residues making contact in each antibody with summary data for each CDR
+- SCDR is the longest CDR definition for each region. It is used in the industry
 
-For a great review of the numbering schemes and region definitions, see this [paper](https://www.frontiersin.org/articles/10.3389/fimmu.2018.02278/full)
+For an excellent review of the numbering schemes and region definitions, see this [paper](https://www.frontiersin.org/articles/10.3389/fimmu.2018.02278/full)
