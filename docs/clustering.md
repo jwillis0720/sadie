@@ -1,6 +1,6 @@
 # Clustering
 
-Clustering is handled by using an input of [AirrTables](annotation.md#single-sequence-annotation). Consider the following example.
+Clustering is handled using an input of [AirrTables](annotation.md#single-sequence-annotation). Consider the following example.
 
 ```Python
 {!docs_src/cluster/tutorial001.py!}
@@ -24,9 +24,9 @@ cluster name: 2 contains ['PGT151', 'PGT152', 'PGT153', 'PGT154', 'PGT155', 'PGT
 ...
 ```
 
-So what happened here.
+So what happened here?
 
-- We read in a `LinkedAirrTable` which has the heavy and light table paired together. This is also a pandas dataframe so we can use any pandas method on it.
+- We read in a `LinkedAirrTable`, which has the heavy and light table paired together. This is also a Pandas DataFrame, so we can use any Pandas method.
 
 - Instantiate a Cluster object that contains the following parameters.
 
@@ -34,7 +34,7 @@ So what happened here.
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `linkage`     | The hierarchical clustering linkage method. [single, average or complete linkage](https://en.wikipedia.org/wiki/Hierarchical_clustering)                |
 | `groupby`     | Do we pre-group by any fields. e.g. v_call_heavy will only cluster things that are the same v_call_heavy.                                               |
-| `lookup`      | What fields to take the Levenshtein distance to make a cluster distance.                                                                                |
+| `lookup`      | What fields to take the Levenshtein distance to make a cluster distance?                                                                                |
 | `pad_somatic` | Any somatic mutations that are present in both sequences will be subtracted from the total distance. This is useful for somatic hypermutation analysis. |
 
 - Run `cluseter_api.cluster(distace)` where `distance` is a distance cutoff in hierarchical clustering. This will return an airrtable with the a field called cluster.
@@ -57,10 +57,10 @@ You will probably run this in context of a larger analysis where you use [airrta
 
 `...`
 
-In the example above we did the following:
+In the example above, we did the following:
 
-1. Read in a fasta file.
+ 1. Read in a fasta file.
 2. Annotated a fasta file
-3. Ran mutational analysis on the airr table
-4. Clustered the airr table
-5. printed out the cluster name and sequence id
+3. Ran mutational analysis on the Airr Table
+4. Clustered the Airr Table
+5. Printed out the cluster name and sequence id
