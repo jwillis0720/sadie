@@ -92,7 +92,8 @@ $ pip install sadie-antibody
 Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
 
 ```console
-$ git clone git@github.com/jwillis0720/sadie.git
+$ git clone git@github.com:jwillis0720/sadie.git
+$ cd sadie
 $ pip install poetry
 $ poetry install --with dev
 ```
