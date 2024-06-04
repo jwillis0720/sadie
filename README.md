@@ -14,8 +14,7 @@
         <img src="https://img.shields.io/badge/code%20style-black-000000.svg"
             alt="Format Version">
         <a href="https://codecov.io/gh/jwillis0720/sadie">
-        <img src="https://codecov.io/gh/jwillis0720/sadie/branch/main/graph/badge.svg?token=EH9QEX4ZMP"
-            alt="Code Coverage">
+        <img src="https://codecov.io/github/jwillis0720/sadie/graph/badge.svg?token=EH9QEX4ZMP"/>
         <a href="https://github.com/pre-commit/pre-commit">
     </div>
     <div class="flex-container" align="center">
@@ -35,11 +34,11 @@
     </div>
     <div class="flex-container" align="center">
         <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
+<!--         <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
             alt="Linux Build">
         <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
-            alt="Mac Build">
+            alt="Mac Build"> -->
         <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
             alt="Static Type">
