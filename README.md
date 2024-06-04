@@ -33,12 +33,6 @@
         </a>
     </div>
     <div class="flex-container" align="center">
-        <a href="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg">
-<!--         <img src="https://github.com/jwillis0720/sadie/workflows/Linux%20Build%20and%20Test/badge.svg"
-            alt="Linux Build">
-        <a href="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg">
-        <img src="https://github.com/jwillis0720/sadie/workflows/MacOS%20Build%20and%20Test/badge.svg"
-            alt="Mac Build"> -->
         <a href="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg">
         <img src="https://github.com/jwillis0720/sadie/actions/workflows/pyright.yml/badge.svg"
             alt="Static Type">
