@@ -150,7 +150,7 @@ class Cluster:
         if self.groupby is None:
             self.distance_df = self._get_distance_df(self.airrtable)
             model = AgglomerativeClustering(
-                linkage=self.linkage, affinity="precomputed", distance_threshold=distance_threshold, n_clusters=None
+                linkage=self.linkage, metric="precomputed", distance_threshold=distance_threshold, n_clusters=None
             )
             model.fit(self.distance_df)
             self.model = model
@@ -166,7 +166,7 @@ class Cluster:
                 # Calculate the linkage matrix
                 model = AgglomerativeClustering(
                     linkage=self.linkage,
-                    affinity="precomputed",
+                    metric="precomputed",
                     distance_threshold=distance_threshold,
                     n_clusters=None,
                 )
