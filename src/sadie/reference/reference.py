@@ -1,4 +1,5 @@
 """This module houses the main Refernce object to manipulate the backend references"""
+
 from __future__ import annotations
 
 import logging
@@ -230,6 +231,7 @@ class Reference:
                 "receptor",
                 "sequence",
                 "latin",
+                "gene_curation_source",
                 "imgt.sequence_gapped",
                 "imgt.sequence_gapped_aa",
                 "imgt.cdr3",
