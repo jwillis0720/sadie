@@ -964,7 +964,7 @@ class LinkedAirrTable(AirrTable):
         left_rows = [i for i in self.columns if self.left_suffix in i]
         right_rows = [i for i in self.columns if self.right_suffix in i]
         key_column = self.key_column
-        common_columns = list(self.columns.difference(set(left_rows + right_rows)))
+        common_columns = list(set(self.columns).difference(set(left_rows + right_rows)))
         left_table = self[common_columns + left_rows]
         left_airr_columns: List[str] = list(map(lambda x: x.replace(self._suffixes[0], ""), list(left_table.columns)))  # type: ignore[no-any-return]
         left_table.columns = left_airr_columns

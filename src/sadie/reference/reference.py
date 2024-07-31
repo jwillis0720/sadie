@@ -337,7 +337,8 @@ class References:
 
             # because a user could add genes multiple times, lets drop by unique id
             logger.info(f"dropping duplicated: {_df['_id'].duplicated().sum()}")
-            _df = _df.drop_duplicates("_id")
+            _df = _df[~_df["_id"].duplicated()]
+            # _df = _df.drop_duplicates("_id")
 
             # insert name at beggining
             _df.insert(0, "name", name)

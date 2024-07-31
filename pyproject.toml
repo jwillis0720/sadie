@@ -6,12 +6,19 @@ description = "\"The Complete Antibody Library\""
 authors = [
     "Jordan R. Willis <jwillis0720@gmail.com>",
     "Troy Sincomb <troysincomb@gmail.com>",
-    "Caleb Kibet <ckibet@iavi.org>"
+    "Caleb Kibet <ckibet@iavi.org>",
 ]
 readme = "README.md"
 homepage = "https://sadie.jordanrwillis.com"
 repository = "https://github.com/jwillis0720/sadie"
-keywords = ["antibody", "bioinformatics", "biology", "computational biology", "protein", "immunoinformatics"]
+keywords = [
+    "antibody",
+    "bioinformatics",
+    "biology",
+    "computational biology",
+    "protein",
+    "immunoinformatics",
+]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -27,9 +34,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Topic :: Scientific/Engineering",
 ]
-packages = [
-    { include = "sadie", from = "src" },
-]
+packages = [{ include = "sadie", from = "src" }]
 
 [tool.poetry.urls]
 issues = "https://github.com/jwillis0720/sadie/issues"
@@ -38,30 +43,31 @@ issues = "https://github.com/jwillis0720/sadie/issues"
 sadie = "sadie.app:sadie"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-biopython = "1.80"
+python = ">=3.8,<3.11"
+biopython = "^1.80"
 click = ">=8.0"
 filetype = "^1.1.0"
 pandas = ">=1.0,<1.5.0"
 requests = "^2.28.1"
 pydantic = ">=1.9.0,<2.0.0"
 Levenshtein = "^0.20.5"
-pyarrow = ">=6.0.1"
+pyarrow = ">=6.0.1,<16.0.0"
 semantic-version = "^2.10.0"
 PyYAML = "^6.0"
-scikit-learn = "^1.1.2"
+scikit-learn = "^1.3.2"
 openpyxl = "^3.0.10"
 yarl = "^1.8.1"
 ipython = "^8.5.0"
-numpy = "^1.24.2"
+numpy = "1.22.3"
 pyhmmer = "^0.10.2"
+scipy = "^1.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.0"
 flake8 = "4.0.1"
 pre-commit = "2.16.0"
 coverage = "6.2"
-airr = ">=1.4.0"
+airr = "1.4.1"
 black = "22.3.0"
 pyinstrument = "^4.3.0"
 types-PyYAML = "^6.0.12"
@@ -117,11 +123,7 @@ output = "coverage/reports/xml/coverage.xml"
 
 [tool.pyright]
 include = ["src"]
-exclude = [
-    "tests",
-    "coverage",
-    "src/Bio",
-]
+exclude = ["tests", "coverage", "src/Bio"]
 reportMissingTypeStubs = false
 reportUnkownVariableType = false
 reportOptionalIterable = false
@@ -135,7 +137,7 @@ reportOptionalSubscript = false
 reportOptionalOperand = false
 # TODO: old anacri code using short one time variables
 reportUnboundVariable = false
-reportMissingImports = false # TODO: should move biopythn 1.79 dep into own folder
+reportMissingImports = false  # TODO: should move biopythn 1.79 dep into own folder
 
 [tool.isort]
 profile = "black"
