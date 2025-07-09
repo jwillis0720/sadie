@@ -18,7 +18,7 @@ to your question or feature request.
 
 _SADIE_ has an automated release. If you submit a pull request, it will be released as soon as it is accepted. This ensures that the latest version of _SADIE_ is always available to the community.
 
-You'll need to have a version between **Python 3.8 and 3.10**, **poetry**, and **git** installed.
+You'll need to have a version between **Python 3.9 and 3.13**, **poetry**, and **git** installed.
 
 1. Clone your fork from Github and cd into your repo directory
 
@@ -38,7 +38,7 @@ You'll need to have a version between **Python 3.8 and 3.10**, **poetry**, and *
    </div>
 
    !!! Info
-   Currently, poetry does not support Python 3.11
+   Poetry now supports all Python versions from 3.9 to 3.13
 
 1. Install sadie, dependencies, test dependencies, and doc dependencies
 <div class="termy">

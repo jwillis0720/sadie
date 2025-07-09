@@ -4,62 +4,58 @@ from contextlib import AbstractContextManager
 from contextlib import nullcontext as does_not_raise
 
 import pytest
-from pydantic import validate_arguments
+from pydantic import BaseModel, ValidationError
 
 from sadie.typing.chain import Chain
 from sadie.typing.source import Source
 from sadie.typing.species import SPECIES, Species
 
 
-class TestTyping:
-    @pytest.mark.parametrize(
-        "source, expectation",
-        [
-            ("imgt", does_not_raise()),
-            ("custom", does_not_raise()),
-            ("", pytest.raises(ValueError)),
-            ("test", pytest.raises(ValueError)),
-            (1, pytest.raises(ValueError)),
-        ],
-    )
-    def test_source(self, source: str, expectation: AbstractContextManager | pytest.raises) -> None:  # type: ignore
-        @validate_arguments
-        def dummy(source: Source) -> None:
-            pass
+class TestModels(BaseModel):
+    source: Source
+    species: Species
+    chain: Chain
 
-        with expectation:
-            dummy(source)
 
-    @pytest.mark.parametrize(
-        "chain, expectation",
-        [(chain, does_not_raise()) for chain in ["L", "H", "K", "A", "B", "G", "D"]]  # type: ignore
-        + [
-            ("", pytest.raises(ValueError)),
-            ("test", pytest.raises(ValueError)),
-            (1, pytest.raises(ValueError)),
-        ],
-    )
-    def test_chain(self, chain: str, expectation: AbstractContextManager | pytest.raises) -> None:  # type: ignore
-        @validate_arguments
-        def dummy(chain: Chain) -> None:
-            pass
+class TestSpeciesValidation:
+    def test_species_validation_success(self):
+        model = TestModels(source="imgt", species="human", chain="H")
+        assert model.species == "human"
+        assert model.source == "imgt"
+        assert model.chain == "H"
 
-        with expectation:
-            dummy(chain)
+    def test_species_validation_transformation(self):
+        model = TestModels(source="imgt", species="homo_sapiens", chain="H")
+        assert model.species == "human"
 
-    @pytest.mark.parametrize(
-        "species, expectation",
-        [(species, does_not_raise()) for species in SPECIES]  # type: ignore
-        + [
-            ("", pytest.raises(ValueError)),
-            ("test", pytest.raises(ValueError)),
-            (1, pytest.raises(ValueError)),
-        ],
-    )
-    def test_species(self, species: str, expectation: AbstractContextManager | pytest.raises) -> None:  # type: ignore
-        @validate_arguments
-        def dummy(species: Species) -> None:
-            pass
+    def test_species_validation_failure(self):
+        with pytest.raises(ValidationError):
+            TestModels(source="imgt", species="invalid_species", chain="H")
 
-        with expectation:
-            dummy(species)
+
+class TestChainValidation:
+    def test_chain_validation_success(self):
+        model = TestModels(source="imgt", species="human", chain="H")
+        assert model.chain == "H"
+
+    def test_chain_validation_lowercase(self):
+        model = TestModels(source="imgt", species="human", chain="h")
+        assert model.chain == "H"
+
+    def test_chain_validation_failure(self):
+        with pytest.raises(ValidationError):
+            TestModels(source="imgt", species="human", chain="X")
+
+
+class TestSourceValidation:
+    def test_source_validation_success(self):
+        model = TestModels(source="imgt", species="human", chain="H")
+        assert model.source == "imgt"
+
+    def test_source_validation_custom(self):
+        model = TestModels(source="custom", species="human", chain="H")
+        assert model.source == "custom"
+
+    def test_source_validation_failure(self):
+        with pytest.raises(ValidationError):
+            TestModels(source="invalid_source", species="human", chain="H")

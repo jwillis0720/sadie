@@ -9,13 +9,13 @@ from pathlib import Path
 from typing import Union
 
 import pandas as pd
-from Bio.SeqIO import MultipleSeqAlignment
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from Bio import SeqIO
     from Bio.Align import substitution_matrices
     from Bio.Align import PairwiseAligner
+    from Bio.Align import MultipleSeqAlignment
 
 from sadie.utility.io import SadieInputFile
 
@@ -299,8 +299,8 @@ def get_consensus_of_paired_end_abi(abi_file_1: Union[str, Path], abi_file_2: Un
     phred_1_indexer, phred_2_indexer = 0, 0
     consensus_seq = ""
     for i in range(len(seq_1_aligned)):
-        seq_1_position = seq_1_aligned[i]
-        seq_2_position = seq_2_aligned[i]
+        seq_1_position = str(seq_1_aligned[i])
+        seq_2_position = str(seq_2_aligned[i])
         if seq_1_position == "-":
             consensus_seq += seq_2_position
             phred_2_indexer += 1
@@ -308,7 +308,7 @@ def get_consensus_of_paired_end_abi(abi_file_1: Union[str, Path], abi_file_2: Un
             consensus_seq += seq_1_position
             phred_1_indexer += 1
         elif seq_1_position == seq_2_position:
-            consensus_seq += seq_1_aligned[i]
+            consensus_seq += str(seq_1_aligned[i])
             phred_1_indexer += 1
             phred_2_indexer += 1
         elif seq_1_position != seq_2_position:

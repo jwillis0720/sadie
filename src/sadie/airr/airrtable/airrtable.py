@@ -78,7 +78,7 @@ class AirrSeries(pd.Series):  # type: ignore
 
     def _verify(self) -> None:
         """Verifies that the AirrSeries is valid"""
-        data: Dict[Any, Any] = AirrSeriesModel(**self).dict()  # type: ignore
+        data: Dict[Any, Any] = AirrSeriesModel(**self).model_dump()  # type: ignore
         self.update(data)
 
     def to_input_sequence_object(self) -> InputSequence:
@@ -134,7 +134,9 @@ class AirrSeries(pd.Series):  # type: ignore
         Converts the AirrSeries to a JunctionLengths
         """
         sequence_fields: pd.Index = pd.Index(JunctionLengths.get_airr_fields())
-        model = JunctionLengths(**self[sequence_fields].to_dict())
+        # Only use fields that actually exist in the series
+        available_fields = sequence_fields.intersection(self.index)
+        model = JunctionLengths(**self[available_fields].to_dict())
         return model
 
     def to_receptor_chain_object(self) -> ReceptorChain:

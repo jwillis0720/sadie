@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 
 class Species(BaseModel):
@@ -10,7 +10,7 @@ class Species(BaseModel):
 
 
 class Source(BaseModel):
-    """What database to retrieve"""
+    """What source to retrieve"""
 
     source: str
 
@@ -23,21 +23,21 @@ class GeneEntry(BaseModel):
     source: str
 
     # values: a dict containing the name-to-value mapping of any previously-validated fields
-    @validator("species")
+    @field_validator("species")
+    @classmethod
     def check_species(cls, v: str) -> str:
-        # pylint: disable=no-self-argument
         return Species(**{"species": v}).species
 
-    @validator("gene")
-    def check_vgene(cls, v: str, values: Dict[str, str]) -> str:
-        # pylint: disable=no-self-argument
+    @field_validator("gene")
+    @classmethod
+    def check_vgene(cls, v: str) -> str:
         if v[3] not in ["V", "D", "J"]:
             raise ValueError(f"gene must contain V,D or J at 3rd index, current have {v[3]} in {v} ")
         return v
 
-    @validator("source")
+    @field_validator("source")
+    @classmethod
     def check_source(cls, v: str) -> str:
-        # pylint: disable=no-self-argument
         if v not in ["imgt", "custom"]:
             raise ValueError(f"{v} is not a valid source, chocies are 'imgt' or 'custom'")
         return v
@@ -50,21 +50,22 @@ class GeneEntries(BaseModel):
     genes: List[str]
     source: str
 
-    @validator("species")
+    @field_validator("species")
+    @classmethod
     def check_species(cls, v: str) -> str:
-        # pylint: disable=no-self-argument
         return Species(**{"species": v}).species
 
-    @validator("genes", each_item=True)
-    def check_vgene(cls, v: str, values: Dict[str, str]) -> str:
-        # pylint: disable=no-self-argument
-        if v[3] not in ["V", "D", "J", "C", "A", "G", "M", "E"]:
-            raise ValueError(f"gene must contain V,D,J or C at 3rd index, current have {v[3]} in {v} ")
+    @field_validator("genes")
+    @classmethod
+    def check_vgene(cls, v: List[str]) -> List[str]:
+        for gene in v:
+            if gene[3] not in ["V", "D", "J", "C", "A", "G", "M", "E"]:
+                raise ValueError(f"gene must contain V,D,J or C at 3rd index, current have {gene[3]} in {gene} ")
         return v
 
-    @validator("source")
+    @field_validator("source")
+    @classmethod
     def check_source(cls, v: str) -> str:
-        # pylint: disable=no-self-argument
         if v not in ["imgt", "custom"]:
             raise ValueError(f"{v} is not a valid source, chocies are 'imgt' or 'custom'")
         return v

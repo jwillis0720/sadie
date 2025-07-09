@@ -1,4 +1,5 @@
 """This is our main entry point"""
+
 import logging
 import os
 import sys
@@ -6,7 +7,12 @@ from pathlib import Path
 from typing import Any, List, Union
 
 import click
-import pkg_resources
+
+try:
+    from importlib.metadata import version
+except ImportError:
+    # Fallback for Python < 3.8
+    from importlib_metadata import version
 
 # airr
 from sadie.airr import Airr
@@ -22,7 +28,7 @@ from sadie.renumbering import Renumbering
 from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
 from sadie.utility.util import get_project_root, getVerbosityLevel
 
-__version__ = pkg_resources.get_distribution("sadie-antibody").version
+__version__ = version("sadie-antibody")
 
 
 @click.group()
@@ -40,9 +46,7 @@ def sadie(verbose: int) -> None:
 
 
 @sadie.command("airr")
-@click.option(
-    "--name", "-n", type=click.Choice(Airr.get_available_species()), help="Species to annotate", default="human"
-)
+@click.option("--name", "-n", type=click.Choice(Airr.get_available_species()), help="Species to annotate", default="human")
 @click.option("--skip-igl", is_flag=True, help="Skip the igl assignment")
 @click.option("--skip-mutation", is_flag=True, help="Skip the somewhat time instansive mutational analysis")
 @click.argument(
@@ -50,9 +54,7 @@ def sadie(verbose: int) -> None:
     required=True,
     type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True, resolve_path=True),
 )
-@click.argument(
-    "output_path", required=False, type=click.Path(file_okay=True, dir_okay=False, writable=True, resolve_path=True)
-)
+@click.argument("output_path", required=False, type=click.Path(file_okay=True, dir_okay=False, writable=True, resolve_path=True))
 def airr(name: str, skip_igl: bool, skip_mutation: bool, input_path: Path, output_path: Union[None, Path, str]) -> None:
     """Run the AIRR annotation pipeline from the command line on a single file or a directory of abi files.
 

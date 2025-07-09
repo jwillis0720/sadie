@@ -23,7 +23,7 @@ from tests.conftest import SadieFixture
 
 def test_airr_model() -> None:
     # string nulls should be equal to None
-    assert AirrSeriesModel(**{field: str(nan) for field in AirrSeriesModel().__fields__}) == AirrSeriesModel()
+    assert AirrSeriesModel(**{field: str(nan) for field in AirrSeriesModel.model_fields}) == AirrSeriesModel()
 
 
 def test_airrtable_inheritance(fixture_setup) -> None:

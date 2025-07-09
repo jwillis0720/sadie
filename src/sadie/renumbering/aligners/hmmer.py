@@ -8,7 +8,6 @@ from typing import Dict, List, Optional, Tuple, Union
 import pyhmmer
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from pydantic import validate_arguments
 
 from sadie.renumbering.clients import G3
 from sadie.renumbering.numbering_translator import NumberingTranslator
@@ -21,9 +20,7 @@ class HMMER:
     """
 
     g3 = G3()
-    numbering = (
-        NumberingTranslator()
-    )  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
+    numbering = NumberingTranslator()  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
 
     def __init__(
         self,
@@ -33,13 +30,10 @@ class HMMER:
         use_numbering_hmms: bool = False,
     ) -> None:
         # Force Numbering local HMMs to be used -- mostely for primiary testing
-        self.hmms = self.get_hmm_models(
-            species=species, chains=chains, source=source, use_numbering_hmms=use_numbering_hmms
-        )
+        self.hmms = self.get_hmm_models(species=species, chains=chains, source=source, use_numbering_hmms=use_numbering_hmms)
         # place holders for hmmer
         self.alphabet = pyhmmer.easel.Alphabet.amino()
 
-    @validate_arguments
     def get_hmm_models(
         self,
         species: Optional[Union[List[Species], Species]] = None,
@@ -113,9 +107,7 @@ class HMMER:
             seq = str(seq)
         return pyhmmer.easel.TextSequence(name=name, sequence=seq).digitize(self.alphabet)
 
-    def transform_seqs(
-        self, seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
-    ) -> List[pyhmmer.easel.DigitalSequence]:
+    def transform_seqs(self, seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]) -> List[pyhmmer.easel.DigitalSequence]:
         """
         Transform sequences or Fasta files into a list of Easel Digital objects for hmmer.
 
@@ -310,17 +302,17 @@ class HMMER:
             ]
             # we want to keep every empty results as well for Numbering
             # TODO: this is per sequence so in the future we would want to expand this to no limit once the check_for_j is rooted out.
-            best_results = [
-                result[0] if result else None for result in best_results
-            ]  # Numbering only expects best result per query
+            best_results = [result[0] if result else None for result in best_results]  # Numbering only expects best result per query
             return [
                 (
-                    [numbering_keys, itemgetter(*numbering_keys)(result)],
-                    [self.get_vector_state(**result)],
-                    [result],
+                    (
+                        [numbering_keys, itemgetter(*numbering_keys)(result)],
+                        [self.get_vector_state(**result)],
+                        [result],
+                    )
+                    if result
+                    else default_out
                 )
-                if result
-                else default_out
                 for result in best_results
             ]
 
@@ -591,9 +583,7 @@ class HMMER:
                 last_state = ali[-1][0][0]
                 last_si = ali[-1][1]
                 if last_state < 120:  # No or very little J region
-                    if last_si + 30 < len(
-                        sequences[i][1]
-                    ):  # Considerable amount of sequence left...suspicious of a long CDR3
+                    if last_si + 30 < len(sequences[i][1]):  # Considerable amount of sequence left...suspicious of a long CDR3
                         # Find the position of the conserved cysteine (imgt 104).
                         cys_si = dict(ali).get((104, "m"), None)
                         if cys_si is not None:  # 104 found.
@@ -612,9 +602,7 @@ class HMMER:
                                 # Sandwich the presumed CDR3 region between the V and J regions.
 
                                 vRegion = ali[: cys_ai + 1]
-                                jRegion = [
-                                    (state, index + cys_si + 1) for state, index in re_states[0] if state[0] >= 117
-                                ]
+                                jRegion = [(state, index + cys_si + 1) for state, index in re_states[0] if state[0] >= 117]
                                 cdrRegion = []
                                 next = 105
                                 for si in range(cys_si + 1, jRegion[0][1]):
@@ -639,9 +627,7 @@ class HMMER:
         """
         Run a HMMER search on the given sequences using the J region HMMs.
         """
-        alignments = self.hmmsearch(
-            sequences=sequences, bit_score_threshold=bit_score_threshold, limit=limit, for_numbering=for_numbering
-        )
+        alignments = self.hmmsearch(sequences=sequences, bit_score_threshold=bit_score_threshold, limit=limit, for_numbering=for_numbering)
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Check for J regions. Modifies sequence and alignment in place.
         if for_numbering:
