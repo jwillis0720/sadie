@@ -5,7 +5,8 @@ set -e
 
 # Set working directory
 mkdir -p imgt_refs && cd imgt_refs
-BLASTPATH="/home/ckibet@iavi.org/repos/ncbi-igblast-1.22.0/bin/"
+
+BLASTPATH="../src/sadie/reference/bin/linux/makeblastdb"
 # Define IMGT FASTA URLs
 # declare -A urls=(
 #   [IGHV]="https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory/Homo_sapiens/IG/IGHV.fasta"
@@ -23,7 +24,7 @@ BLASTPATH="/home/ckibet@iavi.org/repos/ncbi-igblast-1.22.0/bin/"
 # done
 
 # Check for required tools
-if ! command -v $BLASTPATH/edit_imgt_file.pl &> /dev/null; then
+if ! command -v edit_imgt_file.pl &> /dev/null; then
     echo "[ERROR] edit_imgt_file.pl not found. Please add IgBLAST's bin directory to your PATH."
     exit 1
 fi
@@ -38,7 +39,7 @@ for gene in "${!urls[@]}"; do
     in_file="${gene}.fasta"
     out_file="${gene}_igblast.fasta"
     echo "Processing $in_file -> $out_file"
-    perl $BLASTPATH/edit_imgt_file.pl "$in_file" > "$out_file"
+    perl edit_imgt_file.pl "$in_file" > "$out_file"
 done
 
 echo "[Step 3] Combining files into V, D, J sets..."
