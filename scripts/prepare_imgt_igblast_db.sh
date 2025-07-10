@@ -15,6 +15,7 @@ declare -A urls=(
   [IGKV]="https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory/Homo_sapiens/IG/IGKV.fasta"
   [IGLV]="https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory/Homo_sapiens/IG/IGLV.fasta"
   [IGLJ]="https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory/Homo_sapiens/IG/IGLJ.fasta"
+  [IGKJ]="https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory/Homo_sapiens/IG/IGKJ.fasta"
 )
 
 
@@ -53,7 +54,7 @@ done
 echo "[Step 3] Combining files into V, D, J sets..."
 cat IGHV_igblast.fasta IGKV_igblast.fasta IGLV_igblast.fasta > human_V.fasta
 cp IGHD_igblast.fasta human_D.fasta
-cat IGHJ_igblast.fasta IGLJ_igblast.fasta > human_J.fasta
+cat IGHJ_igblast.fasta IGLJ_igblast.fasta IGKJ_igblast.fasta > human_J.fasta
 
 python ../convert_fasta.py human_V.fasta
 python ../convert_fasta.py human_D.fasta
