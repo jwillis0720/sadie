@@ -16,7 +16,7 @@ while(my $line=<in_handle>){
     if ($species =~ /Mus\s+spretus/i) { #deal with mixed mouse species
       $id = $id."_Mus_spretus";
     }
-    
+
     print(">$id\n");
   } else {
     $line =~ s/\.+//g;
