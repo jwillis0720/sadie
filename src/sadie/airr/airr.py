@@ -76,8 +76,8 @@ class Airr:
         igblast_exe: Path | str = "",
         adaptable: bool = False,
         v_gene_penalty: int = -1,
-        d_gene_penalty: int = -1,
-        j_gene_penalty: int = -2,
+        d_gene_penalty: int = -2,
+        j_gene_penalty: int = -3,
         allow_vdj_overlap: bool = False,
         correct_indel: bool = True,
         temp_directory: Optional[str | Path] = None,
@@ -85,8 +85,24 @@ class Airr:
         receptor: str = "Ig",
         scheme: str = "imgt",
         references: Optional[References] = None,
+        debug: bool = False,
+        # Additional IgBLAST parameters with SADIE defaults
+        num_alignments_v: int = 2,
+        num_alignments_d: int = 2,
+        num_alignments_j: int = 3,
+        extend_align5end: bool = True,
+        extend_align3end: bool = True,
+        min_d_match: int = 7,
+        word_size: int = 5,
+        gap_open: int = 4,
+        gap_extend: int = 1,
+        coerce: bool = False,
     ):
         """Airr constructor
+
+        Note: SADIE defaults differ from NCBI web IgBLAST defaults. To use web-like defaults, set:
+        d_gene_penalty=-2, num_alignments_v=1, num_alignments_d=1, num_alignments_j=1,
+        extend_align5end=False, extend_align3end=False
 
         Parameters
         ----------
@@ -111,11 +127,46 @@ class Airr:
             the temporary working directory, by default uses your enviroments tempdir
         references: Optional[References] = None
             A refernces class with custom references in it. If None, will default to SADIE shipped references
+        debug : bool
+            if True, print the IgBLAST command before execution, by default False
+        num_alignments_v : int
+            Number of V gene alignments to show, by default 3
+        num_alignments_d : int
+            Number of D gene alignments to show, by default 3
+        num_alignments_j : int
+            Number of J gene alignments to show, by default 3
+        extend_align5end : bool
+            Extend alignment at 5' end, by default True
+        extend_align3end : bool
+            Extend alignment at 3' end, by default True
+        min_d_match : int
+            Minimum D gene nucleotide matches, by default 5
+        word_size : int
+            Word size for alignment, by default 5
+        gap_open : int
+            Gap opening penalty, by default 5
+        gap_extend : int
+            Gap extension penalty, by default 2
+        coerce : bool
+            Accept the highest scored allele that exists in the auxiliary files when exact match not found, by default False
         """
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
         self.references = references
+        self.debug = debug
+
+        # Store IgBLAST parameters
+        self.num_alignments_v = num_alignments_v
+        self.num_alignments_d = num_alignments_d
+        self.num_alignments_j = num_alignments_j
+        self.extend_align5end = extend_align5end
+        self.extend_align3end = extend_align3end
+        self.min_d_match = min_d_match
+        self.word_size = word_size
+        self.gap_open = gap_open
+        self.gap_extend = gap_extend
+
         # check for package executable, then path igblastn in path
         if not igblast_exe:
             try:
@@ -134,6 +185,18 @@ class Airr:
 
         # give executable to IgBLASTN
         self.igblast = IgBLASTN(self.executable)
+        self.igblast.debug = debug
+
+        # Apply IgBLAST parameters
+        self.igblast.num_v = num_alignments_v
+        self.igblast.num_d = num_alignments_d
+        self.igblast.num_j = num_alignments_j
+        self.igblast.extend_5 = extend_align5end
+        self.igblast.extend_3 = extend_align3end
+        self.igblast.min_d_match = min_d_match
+        self.igblast.word_size = word_size
+        self.igblast.gap_open = gap_open
+        self.igblast.gap_extend = gap_extend
 
         # Properties of airr that will be shared with IgBlast class
         self._v_gene_penalty = v_gene_penalty
@@ -177,6 +240,7 @@ class Airr:
         # Properties that will be passed to germline Data Class.
         # Pass theese as private since germline class will handle setter logic
         self._name = reference_name
+        self.scheme = scheme  # Store scheme as instance attribute
         if isinstance(references, References):
             _custom_avail = list(references.get_dataframe()["name"].unique())
             if self.name not in _custom_avail:
@@ -219,6 +283,7 @@ class Airr:
 
         # set airr specific attributes
         self.correct_indel = correct_indel
+        self.coerce = coerce
         self.liable_seqs: List[str | int] = []
 
         # Init pre run check to make sure everything is good
@@ -477,6 +542,10 @@ class Airr:
             result["v_penalty"] = self._v_gene_penalty
             result["d_penalty"] = self._d_gene_penalty
             result["j_penalty"] = self._j_gene_penalty
+
+            # Apply coercion if enabled
+            if self.coerce:
+                result = self._apply_allele_coercion(result)
             if result["liable"].any():
                 # If we allow adaption,
                 if self.adapt_penalty:
@@ -500,6 +569,18 @@ class Airr:
                                 temp_directory=self.temp_directory,
                                 adaptable=False,
                                 references=self.references,
+                                debug=self.debug,
+                                # Pass through IgBLAST parameters
+                                num_alignments_v=self.num_alignments_v,
+                                num_alignments_d=self.num_alignments_d,
+                                num_alignments_j=self.num_alignments_j,
+                                extend_align5end=self.extend_align5end,
+                                extend_align3end=self.extend_align3end,
+                                min_d_match=self.min_d_match,
+                                word_size=self.word_size,
+                                gap_open=self.gap_open,
+                                gap_extend=self.gap_extend,
+                                coerce=self.coerce,
                             )
                             adapt_results = pd.DataFrame(adaptable_api.run_dataframe(_start_df, "index", "sequence"))
                             adapt_results = pd.DataFrame(
@@ -530,6 +611,18 @@ class Airr:
                             temp_directory=self.temp_directory,
                             adaptable=False,
                             references=self.references,
+                            debug=self.debug,
+                            # Pass through IgBLAST parameters
+                            num_alignments_v=self.num_alignments_v,
+                            num_alignments_d=self.num_alignments_d,
+                            num_alignments_j=self.num_alignments_j,
+                            extend_align5end=self.extend_align5end,
+                            extend_align3end=self.extend_align3end,
+                            min_d_match=self.min_d_match,
+                            word_size=self.word_size,
+                            gap_open=self.gap_open,
+                            gap_extend=self.gap_extend,
+                            coerce=self.coerce,
                         )
                         adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
                         adapt_results = (
@@ -665,6 +758,98 @@ class Airr:
 
     def __repr__(self) -> str:
         return self.igblast.__repr__()
+
+    def _apply_allele_coercion(self, result: AirrTable) -> AirrTable:
+        """Apply allele coercion to use available alleles when exact match not found
+
+        Parameters
+        ----------
+        result : AirrTable
+            The AIRR table with IgBLAST results
+
+        Returns
+        -------
+        AirrTable
+            Updated AIRR table with coerced alleles and comments
+        """
+        # Read the NDM file to get available alleles
+        ndm_path = self.germline_data.igdata / "internal_data" / self.name / f"{self.name}.ndm.{self.scheme}"
+        if not ndm_path.exists():
+            logger.warning(f"NDM file not found at {ndm_path}, skipping coercion")
+            return result
+
+        # Load available alleles from NDM file
+        available_alleles = set()
+        with open(ndm_path, "r") as f:
+            for line in f:
+                if line.strip():
+                    allele = line.split("\t")[0]
+                    available_alleles.add(allele)
+
+        # Initialize comments column if it doesn't exist
+        if "comments" not in result.columns:
+            result["comments"] = ""
+
+        # Process each row
+        for idx, row in result.iterrows():
+            # Process V, D, and J calls
+            for gene_type in ["v", "d", "j"]:
+                call_field = f"{gene_type}_call"
+                if pd.isna(row[call_field]) or not row[call_field]:
+                    continue
+
+                # Get all called alleles with scores
+                calls = str(row[call_field]).split(",")
+                if not calls:
+                    continue
+
+                # Check if top scoring allele is in available set
+                top_allele = calls[0]
+                if top_allele in available_alleles:
+                    continue  # No coercion needed
+
+                # Find best available allele
+                gene_family = top_allele.split("*")[0] if "*" in top_allele else top_allele
+                best_available = None
+
+                # Look through all called alleles to find one that's available
+                for called_allele in calls:
+                    if called_allele in available_alleles:
+                        best_available = called_allele
+                        break
+
+                # If no exact match found, look for same gene family
+                if not best_available:
+                    for avail_allele in available_alleles:
+                        if avail_allele.startswith(gene_family + "*"):
+                            best_available = avail_allele
+                            break
+
+                # Apply coercion if we found an available allele
+                if best_available and best_available != top_allele:
+                    # Get scores if available
+                    score_field = f"{gene_type}_score"
+                    top_score = row.get(score_field, "unknown")
+
+                    # Update the call to use the available allele
+                    new_calls = [best_available] + [c for c in calls if c != best_available]
+                    result.at[idx, call_field] = ",".join(new_calls)
+
+                    # Add comment about the coercion
+                    comment = f"FR/CDR boundaries derived from {best_available} due to missing annotation for top-scoring {top_allele}"
+                    if top_score != "unknown":
+                        comment += f" (score: {top_score})"
+
+                    # Add to comments field
+                    existing_comment = result.at[idx, "comments"]
+                    if existing_comment and not pd.isna(existing_comment) and existing_comment:
+                        result.at[idx, "comments"] = f"{existing_comment}; {comment}"
+                    else:
+                        result.at[idx, "comments"] = comment
+
+                    logger.info(f"Coerced {top_allele} to {best_available} for sequence {row.get('sequence_id', idx)}")
+
+        return result
 
     def __str__(self) -> str:
         return self.__repr__()
