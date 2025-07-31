@@ -56,3 +56,11 @@ src/site/
 !docs/
 !IGBLAST_PARAMETER_ANALYSIS.md
 !COERCE_FEATURE.md
+
+# testing files
+scrap.ipynb
+test.ipynb
+
+
+# ignore testing backup files
+*.bak.*

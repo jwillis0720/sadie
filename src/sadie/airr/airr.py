@@ -76,8 +76,8 @@ class Airr:
         igblast_exe: Path | str = "",
         adaptable: bool = False,
         v_gene_penalty: int = -1,
-        d_gene_penalty: int = -2,
-        j_gene_penalty: int = -3,
+        d_gene_penalty: int = -1,  # -2 is the default for NCBI web IgBLAST
+        j_gene_penalty: int = -2,
         allow_vdj_overlap: bool = False,
         correct_indel: bool = True,
         temp_directory: Optional[str | Path] = None,
@@ -87,22 +87,24 @@ class Airr:
         references: Optional[References] = None,
         debug: bool = False,
         # Additional IgBLAST parameters with SADIE defaults
-        num_alignments_v: int = 2,
-        num_alignments_d: int = 2,
+        num_alignments_v: int = 3,
+        num_alignments_d: int = 3,
         num_alignments_j: int = 3,
         extend_align5end: bool = True,
         extend_align3end: bool = True,
-        min_d_match: int = 7,
+        min_d_match: int = 5,
         word_size: int = 5,
-        gap_open: int = 4,
-        gap_extend: int = 1,
+        gap_open: int = 5,
+        gap_extend: int = 2,
         coerce: bool = False,
     ):
         """Airr constructor
 
-        Note: SADIE defaults differ from NCBI web IgBLAST defaults. To use web-like defaults, set:
-        d_gene_penalty=-2, num_alignments_v=1, num_alignments_d=1, num_alignments_j=1,
-        extend_align5end=False, extend_align3end=False
+        Note: SADIE uses the same penalty parameters as igblastn (V=-1, D=-1, J=-2),
+        maintains the same number of alignments (3 for V/D/J), and keeps the minimum D matches at the default 5 nucleotides.
+        The main differences are that SADIE still enables both 5' and 3' end extension by default (igblastn: disabled),
+        adds explicit gap penalties (open=5, extend=2), and includes the coerce option for handling missing allele annotations.
+        SADIE also retains its adaptive penalty adjustment feature when sequences fail initial annotation.
 
         Parameters
         ----------

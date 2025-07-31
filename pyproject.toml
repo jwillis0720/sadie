@@ -61,6 +61,7 @@ ipython = "^8.5.0"
 numpy = "1.26.3"
 pyhmmer = "^0.10.2"
 scipy = "^1.8.0"
+rich = "^14.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.0"

@@ -245,6 +245,15 @@ def correct_alignment(X: pd.Series, field_1: str, field_2: str) -> pd.Series:  #
     if any([isinstance(alignment_aa_1, float), isinstance(alignment_aa_2, float)]):
         return pd.Series({field_1: alignment_aa_1, field_2: alignment_aa_2})
 
+    # Check if sequences contain characters not in BLOSUM62 alphabet (like 'X', '*', etc.)
+    # If so, skip alignment correction to avoid alphabet errors
+    blosum_alphabet = set(blosum_matrix.alphabet)  # Get actual BLOSUM62 alphabet
+    seq1_chars = set(alignment_aa_1) if alignment_aa_1 else set()
+    seq2_chars = set(alignment_aa_2) if alignment_aa_2 else set()
+    if not (seq1_chars.issubset(blosum_alphabet) and seq2_chars.issubset(blosum_alphabet)):
+        logger.warning("Sequences contain unknown characters, skipping alignment correction")
+        return pd.Series({field_1: alignment_aa_1, field_2: alignment_aa_2})
+
     # alignments = pairwise2.align.globalms(
     #     alignment_aa_1,
     #     alignment_aa_2,

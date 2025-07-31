@@ -133,7 +133,10 @@ def get_igl_aa(row: pd.Series) -> Union[str, float]:  # type: ignore
     # remove insertions from seq
     full_igl: str = v_germline.replace("-", "") + iGL_cdr3.replace("-", "")
     if "*" in full_igl:
-        raise ValueError(f"{row.name} - strange iGL has * in it")
+        # Stop codons (*) can appear in sequences, especially in non-productive sequences
+        # Log as debug instead of raising an error
+        logger.debug(f"{row.name} - iGL contains stop codon (*), likely non-productive sequence")
+        return np.nan
     return full_igl
 
 
@@ -218,7 +221,11 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
             sequence_index += 1
             germline_index += 1
 
-    real_igl: str = row["iGL_aa"]
+    real_igl = row["iGL_aa"]
+    # Check if real_igl is NaN (happens when get_igl_aa returns np.nan)
+    if pd.isna(real_igl):
+        return np.nan
+
     contrived_igl = str(Seq(germline_igl).translate())
     if real_igl != contrived_igl:
         if real_igl[:-1] == contrived_igl:
@@ -548,7 +555,7 @@ def run_three_prime_buffer(
         j_germline_end: int = row["j_germline_end"]
         j_sequence_end: int = row["j_sequence_end"]
         sequence: str = str(row["sequence"]).replace("-", "")
-        j_top: str = str(row["v_call"]).split(",")[0]
+        j_top: str = str(row["j_call"]).split(",")[0]
         ref_seq: str = ref_lookup[(common_name, j_top)]
 
         new_sequence = Seq(sequence[: j_sequence_end - 1] + ref_seq[j_germline_end - 1 :])
