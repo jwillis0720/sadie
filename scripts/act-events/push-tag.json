@@ -1,0 +1,7 @@
+{
+  "ref": "refs/tags/v1.0.0",
+  "ref_type": "tag",
+  "repository": {
+    "default_branch": "main"
+  }
+}
