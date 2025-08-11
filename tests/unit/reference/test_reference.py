@@ -146,7 +146,7 @@ def test_missing_makeblast_df(tmp_path_factory: pytest.TempPathFactory, fixture_
 
 def test_cli(tmp_path_factory: pytest.TempPathFactory):
     """Confirm the CLI works as expected This runs the entire generation pipeline that ships with SADIE and checks that the file structure is exactly the same"""
-    runner = CliRunner(echo_stdin=True)
+    runner = CliRunner()
 
     # these are the expected file structures
     # make a hierarchy of directories
@@ -155,8 +155,7 @@ def test_cli(tmp_path_factory: pytest.TempPathFactory):
     # run the entire pipeline via CLICK cli
     result = runner.invoke(app.make_igblast_reference, ["--outpath", tmpdir], catch_exceptions=True)
     if result.exit_code != 0:
-        print(result)
-        assert result.exit_code == 0
+        assert result.exit_code == 0, f"Command failed with output:\n{result.output}\nException: {result.exception}"
 
     # was the file actually output?
     assert os.path.exists(tmpdir)
