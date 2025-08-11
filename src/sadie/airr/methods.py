@@ -337,6 +337,7 @@ def run_mutational_analysis(
             germline_results_renumbering_at.drop(["chain_type", "scheme"], axis=1).set_index("Id").transpose(),
             lsuffix="_mature",
             rsuffix="_germ",
+            how="outer",
         )
     )
     lookup_dataframe = lookup_dataframe[sorted(lookup_dataframe.columns)].fillna("-")

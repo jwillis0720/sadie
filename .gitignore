@@ -64,3 +64,4 @@ test.ipynb
 
 # ignore testing backup files
 *.bak.*
+nb/
