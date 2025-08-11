@@ -12,6 +12,7 @@ import pandas as pd
 import requests
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from requests.exceptions import RequestException
 
 from sadie.reference.models import GeneEntries, GeneEntry
 from sadie.reference.util import (
@@ -61,7 +62,12 @@ class Reference:
     def endpoint(self, endpoint: str) -> None:
         _counter = 0
         while True:
-            _get = requests.get(endpoint)
+            try:
+                _get = requests.get(endpoint)
+            except RequestException as e:
+                # Handle connection errors (DNS failures, connection refused, etc.)
+                raise G3Error(f"Failed to connect to {endpoint}: {str(e)}")
+
             if _get.status_code == 503:
                 _counter += 1
                 sleep(5)
