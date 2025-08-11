@@ -11,8 +11,8 @@ def test_airr_cli(fixture_setup: SadieFixture):
     tmp_path = fixture_setup.tmp_path
     runner = CliRunner()
 
-    # check that sadie can be invoked alone
-    results = runner.invoke(sadie)
+    # check that sadie can be invoked alone (with --help)
+    results = runner.invoke(sadie, ["--help"])
     assert results.exit_code == 0
 
     input_file = fixture_setup.get_catnap_heavy_nt()

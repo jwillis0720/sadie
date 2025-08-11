@@ -3,11 +3,11 @@ import logging
 import os
 import subprocess
 import sys
+from importlib import metadata
 from pathlib import Path
 from typing import Any, List, Optional, Union
 
 import click
-import pkg_resources
 
 # airr
 from sadie.airr import Airr
@@ -23,7 +23,7 @@ from sadie.renumbering import Renumbering
 from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
 from sadie.utility.util import get_project_root, getVerbosityLevel
 
-__version__ = pkg_resources.get_distribution("sadie-antibody").version
+__version__ = metadata.version("sadie-antibody")
 
 
 @click.group()
