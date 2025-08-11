@@ -187,6 +187,7 @@ def _test_auxilary_file_structure(tmpdir: Path, fixture_setup: SadieFixture) -> 
 
 def test_make_igblast_reference(fixture_setup: SadieFixture, tmp_path_factory: pytest.TempPathFactory):
     """Confirm the CLI works as expected This runs the entire generation pipeline that ships with SADIE and checks that the file structure is exactly the same"""
+    # Create runner
     runner = CliRunner()
 
     # these are the expected file structures
@@ -197,9 +198,21 @@ def test_make_igblast_reference(fixture_setup: SadieFixture, tmp_path_factory: p
     tmpdir = tmp_path_factory.mktemp("igblast_dir")
 
     # run the entire pipeline via CLICK cli
-    result = runner.invoke(app.make_igblast_reference, ["--outpath", tmpdir], catch_exceptions=True)
+    # Pass string path to avoid any Path object serialization issues
+    result = runner.invoke(app.make_igblast_reference, ["--outpath", str(tmpdir)], catch_exceptions=True)
     if result.exit_code != 0:
-        assert result.exit_code == 0, f"Command failed with output:\n{result.output}\nException: {result.exception}"
+        # Check if there's an exception before accessing output
+        if result.exception:
+            import traceback
+
+            tb = "".join(
+                traceback.format_exception(type(result.exception), result.exception, result.exception.__traceback__)
+            )
+            assert False, f"Command failed with exception:\n{tb}"
+        else:
+            # Only try to access output if no exception
+            output = getattr(result, "output", "No output available")
+            assert result.exit_code == 0, f"Command failed with output:\n{output}"
 
     # was the file actually output?
     assert os.path.exists(tmpdir)
