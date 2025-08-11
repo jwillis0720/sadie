@@ -640,7 +640,7 @@ class Airr:
                             result.update(adapt_results[~adapt_results["liable"]])
 
         if self.correct_indel:
-            result.correct_indel()
+            result.correct_indel()  # type: ignore[attr-defined]
 
         return result
 
@@ -729,8 +729,7 @@ class Airr:
         _heavy_airr = AirrTable(heavy_chain_table.reset_index(drop=True))
         _light_airr = AirrTable(light_chain_table.reset_index(drop=True))
         linked_table = _heavy_airr.merge(_light_airr, suffixes=("_heavy", "_light"), on="sequence_id")
-        linked_table = LinkedAirrTable(linked_table)
-        return linked_table
+        return LinkedAirrTable(linked_table)
 
     def _get_package_igblast_exe(self) -> Path:
         """Get package igblastn"""

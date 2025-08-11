@@ -143,7 +143,7 @@ class IgBLASTArgument:
         return self._value
 
     @value.setter
-    def value(self, v: Union[str, int, bool]) -> None:
+    def value(self, v: Union[str, int, bool, Path]) -> None:
         self._value = v
 
     @property

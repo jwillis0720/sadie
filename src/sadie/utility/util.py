@@ -247,7 +247,7 @@ def correct_alignment(X: pd.Series, field_1: str, field_2: str) -> pd.Series:  #
 
     # Check if sequences contain characters not in BLOSUM62 alphabet (like 'X', '*', etc.)
     # If so, skip alignment correction to avoid alphabet errors
-    blosum_alphabet = set(blosum_matrix.alphabet)  # Get actual BLOSUM62 alphabet
+    blosum_alphabet = set(getattr(blosum_matrix, "alphabet", []))  # Get actual BLOSUM62 alphabet
     seq1_chars = set(alignment_aa_1) if alignment_aa_1 else set()
     seq2_chars = set(alignment_aa_2) if alignment_aa_2 else set()
     if not (seq1_chars.issubset(blosum_alphabet) and seq2_chars.issubset(blosum_alphabet)):
@@ -311,25 +311,25 @@ def get_consensus_of_paired_end_abi(abi_file_1: Union[str, Path], abi_file_2: Un
         seq_1_position = seq_1_aligned[i]
         seq_2_position = seq_2_aligned[i]
         if seq_1_position == "-":
-            consensus_seq += seq_2_position
+            consensus_seq += str(seq_2_position)
             phred_2_indexer += 1
         elif seq_2_position == "-":
-            consensus_seq += seq_1_position
+            consensus_seq += str(seq_1_position)
             phred_1_indexer += 1
         elif seq_1_position == seq_2_position:
-            consensus_seq += seq_1_aligned[i]
+            consensus_seq += str(seq_1_aligned[i])
             phred_1_indexer += 1
             phred_2_indexer += 1
         elif seq_1_position != seq_2_position:
             if seq_1_position == "N" and seq_2_position != "N":
-                consensus_seq += seq_2_position
+                consensus_seq += str(seq_2_position)
             elif seq_2_position == "N" and seq_1_position != "N":
-                consensus_seq += seq_1_position
+                consensus_seq += str(seq_1_position)
             else:
                 if phred_1[phred_1_indexer] > phred_2[phred_2_indexer]:
-                    consensus_seq += seq_1_position
+                    consensus_seq += str(seq_1_position)
                 else:
-                    consensus_seq += seq_2_position
+                    consensus_seq += str(seq_2_position)
             phred_1_indexer += 1
             phred_2_indexer += 1
 

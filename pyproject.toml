@@ -142,6 +142,10 @@ reportOptionalOperand = false
 # TODO: old anacri code using short one time variables
 reportUnboundVariable = false
 reportMissingImports = false  # TODO: should move biopythn 1.79 dep into own folder
+reportArgumentType = false  # TODO: many 3rd party functions have no type hints
+reportCallIssue = false  # TODO: many 3rd party functions have no type hints
+reportOperatorIssue = false  # TODO: many 3rd party functions have no type hints
+reportReturnType = false  # TODO: many 3rd party functions have no type hints
 
 [tool.isort]
 profile = "black"

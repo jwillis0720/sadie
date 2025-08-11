@@ -92,11 +92,11 @@ def airr(name: str, skip_igl: bool, skip_mutation: bool, input_path: Path, outpu
 
     # output handler
     if output_object.output_format in ["airr", "tsv"]:
-        airr_table.to_airr(output_object.output_path)
+        airr_table.to_airr(str(output_object.output_path))
     elif output_object.output_format == "csv":
         airr_table.to_csv(output_object.output_path)
     elif output_object.output_format == "gb":
-        airr_table.to_genbank(output_object.output_path)
+        airr_table.to_genbank(str(output_object.output_path))
     elif output_object.output_format == "feather":
         airr_table.to_feather(output_object.output_path)
     else:
@@ -487,7 +487,6 @@ def make_all(
         click.echo("\n" + "=" * 60)
         click.echo("STEP 3: Regenerating CATNAP references")
         click.echo("=" * 60)
-        import subprocess
         from pathlib import Path
 
         script_path = Path(__file__).parent.parent.parent / "scripts" / "regenerate_catnap_references.py"
@@ -524,7 +523,7 @@ def make_all(
 
     try:
         # The make_airr_database method handles all three components
-        germline_path = reference_object.make_airr_database(outpath)
+        germline_path = reference_object.make_airr_database(Path(outpath) if outpath else Path.cwd())
 
         click.echo("\n✓ Database generation completed successfully!")
         click.echo(f"  - BLAST databases: {outpath}/Ig/blastdb/")
@@ -544,7 +543,7 @@ def make_all(
     verification_passed = True
 
     # Check BLAST databases
-    blast_dir = Path(outpath) / "Ig" / "blastdb"
+    blast_dir = Path(outpath) / "Ig" / "blastdb" if outpath else Path.cwd() / "Ig" / "blastdb"
     if blast_dir.exists():
         species_dirs = list(blast_dir.glob("*/"))
         click.echo(f"✓ Found {len(species_dirs)} species BLAST databases")
@@ -558,7 +557,7 @@ def make_all(
         verification_passed = False
 
     # Check auxiliary files
-    aux_dir = Path(outpath) / "aux_db" / "imgt"
+    aux_dir = Path(outpath) / "aux_db" / "imgt" if outpath else Path.cwd() / "aux_db" / "imgt"
     if aux_dir.exists():
         aux_files = list(aux_dir.glob("*.aux"))
         click.echo(f"✓ Found {len(aux_files)} auxiliary files")
@@ -567,7 +566,7 @@ def make_all(
         verification_passed = False
 
     # Check internal annotation files
-    internal_dir = Path(outpath) / "Ig" / "internal_data"
+    internal_dir = Path(outpath) / "Ig" / "internal_data" if outpath else Path.cwd() / "Ig" / "internal_data"
     if internal_dir.exists():
         ndm_files = list(internal_dir.glob("*/*.ndm.imgt"))
         click.echo(f"✓ Found {len(ndm_files)} internal annotation files")
@@ -576,7 +575,9 @@ def make_all(
         verification_passed = False
 
     # Check reference index
-    ref_index = Path(outpath) / ".references_dataframe.csv.gz"
+    ref_index = (
+        Path(outpath) / ".references_dataframe.csv.gz" if outpath else Path.cwd() / ".references_dataframe.csv.gz"
+    )
     if ref_index.exists():
         click.echo(f"✓ Reference index file created: {ref_index}")
     else:
@@ -599,4 +600,4 @@ def make_all(
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
-    sadie()
+    sadie(verbose=3)
