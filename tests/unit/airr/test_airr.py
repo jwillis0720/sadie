@@ -96,8 +96,9 @@ def test_germline_init() -> None:
         gd.d_gene_dir = "/non/existant/path"
 
 
-def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest.MonkeyPatch, caplog) -> None:
     """Test if we can init airr"""
+    import logging
 
     tmpdir = tmp_path_factory.mktemp("test_airr_init")
     # this will make our tmpdir discoverable by the AIRR
@@ -134,13 +135,15 @@ def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest
 
     # test air init with bad igblastn executable.
     # this mocks that igblastn was not shipped in the repo and to search along path
-    monkeypatch.setenv("IGBLASTN_MONEKY_PATCH", "blastp")
-    with pytest.raises(airr_exceptions.BadIgBLASTExe):
-        air_api = Airr("human")
-    with pytest.raises(airr_exceptions.BadIgBLASTExe):
-        air_api = Airr("human", igblast_exe="robot")
+    # Suppress expected error logs when testing bad executable paths
+    with caplog.at_level(logging.CRITICAL, logger="AIRR"):
+        monkeypatch.setenv("IGBLASTN_MONEKY_PATCH", "blastp")
+        with pytest.raises(airr_exceptions.BadIgBLASTExe):
+            air_api = Airr("human")
+        with pytest.raises(airr_exceptions.BadIgBLASTExe):
+            air_api = Airr("human", igblast_exe="robot")
 
-    monkeypatch.delenv("IGBLASTN_MONEKY_PATCH")
+        monkeypatch.delenv("IGBLASTN_MONEKY_PATCH")
     air_api = Airr("human")
 
     # coverage for string and executable not being an executable file
@@ -253,7 +256,7 @@ def test_airr_from_file(fixture_setup: SadieFixture) -> None:
 
     # cleanup just in case test fails
     if Path("a_non_existant_directory").exists():
-        Path("a_non_existant_directory").rmdir()
+        shutil.rmtree("a_non_existant_directory")
 
     # more coverage
     airr_api = Airr("human")
