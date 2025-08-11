@@ -187,7 +187,7 @@ def _test_auxilary_file_structure(tmpdir: Path, fixture_setup: SadieFixture) -> 
 
 def test_make_igblast_reference(fixture_setup: SadieFixture, tmp_path_factory: pytest.TempPathFactory):
     """Confirm the CLI works as expected This runs the entire generation pipeline that ships with SADIE and checks that the file structure is exactly the same"""
-    runner = CliRunner(echo_stdin=True)
+    runner = CliRunner()
 
     # these are the expected file structures
     expected_blast_dir = fixture_setup.get_known_blast_dir_structure()
@@ -199,8 +199,7 @@ def test_make_igblast_reference(fixture_setup: SadieFixture, tmp_path_factory: p
     # run the entire pipeline via CLICK cli
     result = runner.invoke(app.make_igblast_reference, ["--outpath", tmpdir], catch_exceptions=True)
     if result.exit_code != 0:
-        print(result)
-        assert result.exit_code == 0
+        assert result.exit_code == 0, f"Command failed with output:\n{result.output}\nException: {result.exception}"
 
     # was the file actually output?
     assert os.path.exists(tmpdir)
