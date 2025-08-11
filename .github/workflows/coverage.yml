@@ -35,13 +35,14 @@ jobs:
           poetry run coverage xml
           poetry run coverage report
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report
           path: ./coverage
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
-          directory: ./coverage/reports/xml
+          files: ./coverage.xml
           name: codecov-umbrella
+          fail_ci_if_error: false
           verbose: true
