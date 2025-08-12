@@ -277,7 +277,9 @@ class G3:
 
         return _hmms
 
-    def _build_hmm_single(self, species: Species = "human", chain: Chain = "H", source: Source = "imgt") -> pyhmmer.plan7.HMM:
+    def _build_hmm_single(
+        self, species: Species = "human", chain: Chain = "H", source: Source = "imgt"
+    ) -> pyhmmer.plan7.HMM:
         sto_path = self.build_stockholm(source=source, chain=chain, species=species)
 
         with pyhmmer.easel.MSAFile(sto_path, digital=True, alphabet=self.alphabet, format="stockholm") as msa_file:

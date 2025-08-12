@@ -264,7 +264,7 @@ class PrimaryAnnotations(BaseModel):
         "j_call_top_allele",
         "c_call_allele",
         "reference_name",
-        mode="before"
+        mode="before",
     )
     @classmethod
     def validate_string_fields(cls, v: Any) -> Any:
@@ -428,7 +428,7 @@ class AlignmentAnnotations(BaseModel):
         "d2_cigar",
         "j_cigar",
         "c_cigar",
-        mode="before"
+        mode="before",
     )
     @classmethod
     def validate_sequence_fields(cls, v: Any) -> Any:

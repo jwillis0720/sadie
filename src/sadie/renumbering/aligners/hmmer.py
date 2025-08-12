@@ -20,7 +20,9 @@ class HMMER:
     """
 
     g3 = G3()
-    numbering = NumberingTranslator()  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
+    numbering = (
+        NumberingTranslator()
+    )  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
 
     def __init__(
         self,
@@ -30,7 +32,9 @@ class HMMER:
         use_numbering_hmms: bool = False,
     ) -> None:
         # Force Numbering local HMMs to be used -- mostely for primiary testing
-        self.hmms = self.get_hmm_models(species=species, chains=chains, source=source, use_numbering_hmms=use_numbering_hmms)
+        self.hmms = self.get_hmm_models(
+            species=species, chains=chains, source=source, use_numbering_hmms=use_numbering_hmms
+        )
         # place holders for hmmer
         self.alphabet = pyhmmer.easel.Alphabet.amino()
 
@@ -107,7 +111,9 @@ class HMMER:
             seq = str(seq)
         return pyhmmer.easel.TextSequence(name=name, sequence=seq).digitize(self.alphabet)
 
-    def transform_seqs(self, seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]) -> List[pyhmmer.easel.DigitalSequence]:
+    def transform_seqs(
+        self, seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
+    ) -> List[pyhmmer.easel.DigitalSequence]:
         """
         Transform sequences or Fasta files into a list of Easel Digital objects for hmmer.
 
@@ -302,7 +308,9 @@ class HMMER:
             ]
             # we want to keep every empty results as well for Numbering
             # TODO: this is per sequence so in the future we would want to expand this to no limit once the check_for_j is rooted out.
-            best_results = [result[0] if result else None for result in best_results]  # Numbering only expects best result per query
+            best_results = [
+                result[0] if result else None for result in best_results
+            ]  # Numbering only expects best result per query
             return [
                 (
                     (
@@ -631,7 +639,9 @@ class HMMER:
         """
         Run a HMMER search on the given sequences using the J region HMMs.
         """
-        alignments = self.hmmsearch(sequences=sequences, bit_score_threshold=bit_score_threshold, limit=limit, for_numbering=for_numbering)
+        alignments = self.hmmsearch(
+            sequences=sequences, bit_score_threshold=bit_score_threshold, limit=limit, for_numbering=for_numbering
+        )
         # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
         # Check for J regions. Modifies sequence and alignment in place.
         if for_numbering:
