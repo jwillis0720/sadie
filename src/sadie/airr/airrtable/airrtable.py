@@ -558,8 +558,8 @@ class AirrTable(pd.DataFrame):
 
     def _get_aa_distance(self, X: pd.Series) -> float:
         "get character levenshtein distance, will work with '-' on alignments"
-        first: str = X[0]
-        second: str = X[1]
+        first: str = X.iloc[0]
+        second: str = X.iloc[1]
         if not first or not second or isinstance(first, float) or isinstance(second, float):
             return nan
         d: int = distance(first, second)
@@ -619,13 +619,13 @@ class AirrTable(pd.DataFrame):
         bool
            if the entry is liable or not based
         """
-        fw1 = X[0]
-        cdr1 = X[1]
-        fw2 = X[2]
-        cdr2 = X[3]
-        fw3 = X[4]
-        cdr3 = X[5]
-        fw4 = X[6]
+        fw1 = X.iloc[0]
+        cdr1 = X.iloc[1]
+        fw2 = X.iloc[2]
+        cdr2 = X.iloc[3]
+        fw3 = X.iloc[4]
+        cdr3 = X.iloc[5]
+        fw4 = X.iloc[6]
         isna = [isinstance(i, float) for i in [fw1, cdr1, fw2, cdr2, fw3, cdr3, fw4]]
         # if they are all nan:
         if all(isna):
