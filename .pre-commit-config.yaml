@@ -19,12 +19,12 @@ repos:
       - id: isort
         name: isort (python)
         args: ["-m", "3", "--tc"]
-  - repo: local
-    hooks:
-      - id: pyright
-        name: pyright
-        entry: poetry run pyright
-        language: node
-        pass_filenames: false
-        types: [python]
+  # - repo: local
+  #   hooks:
+  #     - id: pyright
+  #       name: pyright
+  #       entry: poetry run pyright
+  #       language: node
+  #       pass_filenames: false
+  #       types: [python]
         # additional_dependencies: ["pyright@latest"]

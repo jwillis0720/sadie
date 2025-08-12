@@ -133,7 +133,10 @@ def get_igl_aa(row: pd.Series) -> Union[str, float]:  # type: ignore
     # remove insertions from seq
     full_igl: str = v_germline.replace("-", "") + iGL_cdr3.replace("-", "")
     if "*" in full_igl:
-        raise ValueError(f"{row.name} - strange iGL has * in it")
+        # Stop codons (*) can appear in sequences, especially in non-productive sequences
+        # Log as debug instead of raising an error
+        logger.debug(f"{row.name} - iGL contains stop codon (*), likely non-productive sequence")
+        return np.nan
     return full_igl
 
 
@@ -218,7 +221,11 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
             sequence_index += 1
             germline_index += 1
 
-    real_igl: str = row["iGL_aa"]
+    real_igl = row["iGL_aa"]
+    # Check if real_igl is NaN (happens when get_igl_aa returns np.nan)
+    if pd.isna(real_igl):
+        return np.nan
+
     contrived_igl = str(Seq(germline_igl).translate())
     if real_igl != contrived_igl:
         if real_igl[:-1] == contrived_igl:
@@ -244,7 +251,7 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
                     logger.warning(
                         f"{row.name} - is productive, but has incomplete vdj with a v_germline_start at {row['v_germline_start']} and j_germline_end at {row['j_germline_end']}, consider running methods.run_termini_buffers"
                     )
-                return
+                return np.nan
     return germline_igl
 
 
@@ -276,7 +283,7 @@ def run_mutational_analysis(
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
     key = airrtable.key_column
-    if airrtable.__class__ == LinkedAirrTable:
+    if isinstance(airrtable, LinkedAirrTable):
         # split table into left and right (heavy and light) tables
         left_table, right_table = airrtable.get_split_table()
         left_table = run_mutational_analysis(left_table, scheme, run_multiproc)
@@ -330,6 +337,7 @@ def run_mutational_analysis(
             germline_results_renumbering_at.drop(["chain_type", "scheme"], axis=1).set_index("Id").transpose(),
             lsuffix="_mature",
             rsuffix="_germ",
+            how="outer",
         )
     )
     lookup_dataframe = lookup_dataframe[sorted(lookup_dataframe.columns)].fillna("-")
@@ -353,14 +361,14 @@ def run_mutational_analysis(
         mutation_arrays.append(mutation_array)
 
     mature_results_renumbering["mutations"] = mutation_arrays
-    return AirrTable(
+    merged_df = (
         pd.DataFrame(airrtable)
         .astype({key: "str"})
         .merge(
             pd.DataFrame(mature_results_renumbering).rename({"Id": key}, axis=1)[[key, "scheme", "mutations"]], on=key
-        ),
-        key_column=key,
+        )
     )
+    return AirrTable(merged_df, key_column=key)
 
 
 def run_igl_assignment(airrtable: Union[AirrTable, LinkedAirrTable]) -> Union[AirrTable, LinkedAirrTable]:
@@ -385,7 +393,7 @@ def run_igl_assignment(airrtable: Union[AirrTable, LinkedAirrTable]) -> Union[Ai
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
     key = airrtable.key_column
-    if airrtable.__class__ == LinkedAirrTable:
+    if isinstance(airrtable, LinkedAirrTable):
         # split table into left and right (heavy and light) tables
         left_table, right_table = airrtable.get_split_table()
         left_table = run_igl_assignment(left_table)
@@ -395,9 +403,10 @@ def run_igl_assignment(airrtable: Union[AirrTable, LinkedAirrTable]) -> Union[Ai
         r_suffix = airrtable.suffixes[1]
         return LinkedAirrTable(left_table.merge(right_table, on=key, suffixes=(l_suffix, r_suffix)), key_column=key)
 
-    airrtable["iGL_aa"] = airrtable.apply(get_igl_aa, axis=1)
-    airrtable["iGL"] = airrtable.apply(get_igl_nt, axis=1)
-    return AirrTable(airrtable, key_column=key)
+    airrtable_df = pd.DataFrame(airrtable)
+    airrtable_df["iGL_aa"] = airrtable_df.apply(get_igl_aa, axis=1)  # type: ignore[arg-type]
+    airrtable_df["iGL"] = airrtable_df.apply(get_igl_nt, axis=1)  # type: ignore[arg-type]
+    return type(airrtable)(airrtable_df, key_column=key)  # type: ignore[call-arg]
 
 
 def run_five_prime_buffer(
@@ -427,7 +436,7 @@ def run_five_prime_buffer(
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
     key = airrtable.key_column
-    if airrtable.__class__ == LinkedAirrTable:
+    if isinstance(airrtable, LinkedAirrTable):
         # split table into left and right (heavy and light) tables
         left_table, right_table = airrtable.get_split_table()
         left_table = run_five_prime_buffer(left_table, cutoff, references)
@@ -480,7 +489,7 @@ def run_five_prime_buffer(
     airrtable.update(pd.DataFrame(new_airr_table).astype({"sequence_id": int}).set_index("sequence_id"))
     airrtable["padded_five_prime"] = False
     airrtable.loc[candidate_airrtable.index, "padded_five_prime"] = True
-    return AirrTable(airrtable, key_column=key)
+    return type(airrtable)(airrtable, key_column=key)  # type: ignore[call-arg]
 
 
 def run_three_prime_buffer(
@@ -511,7 +520,7 @@ def run_three_prime_buffer(
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
     key = airrtable.key_column
-    if airrtable.__class__ == LinkedAirrTable:
+    if isinstance(airrtable, LinkedAirrTable):
         # split table into left and right (heavy and light) tables
         left_table, right_table = airrtable.get_split_table()
         left_table = run_three_prime_buffer(left_table, references)
@@ -548,7 +557,7 @@ def run_three_prime_buffer(
         j_germline_end: int = row["j_germline_end"]
         j_sequence_end: int = row["j_sequence_end"]
         sequence: str = str(row["sequence"]).replace("-", "")
-        j_top: str = str(row["v_call"]).split(",")[0]
+        j_top: str = str(row["j_call"]).split(",")[0]
         ref_seq: str = ref_lookup[(common_name, j_top)]
 
         new_sequence = Seq(sequence[: j_sequence_end - 1] + ref_seq[j_germline_end - 1 :])
@@ -559,7 +568,7 @@ def run_three_prime_buffer(
     airrtable.update(pd.DataFrame(new_airr_table).astype({"sequence_id": int}).set_index("sequence_id"))
     airrtable["padded_three_prime"] = False
     airrtable.loc[candidate_airrtable.index, "padded_three_prime"] = True
-    return AirrTable(airrtable, key_column=key)
+    return type(airrtable)(airrtable, key_column=key)  # type: ignore[call-arg]
 
 
 def run_termini_buffers(

@@ -1,12 +1,13 @@
 """This is our main entry point"""
 import logging
 import os
+import subprocess
 import sys
+from importlib import metadata
 from pathlib import Path
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 
 import click
-import pkg_resources
 
 # airr
 from sadie.airr import Airr
@@ -22,7 +23,7 @@ from sadie.renumbering import Renumbering
 from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
 from sadie.utility.util import get_project_root, getVerbosityLevel
 
-__version__ = pkg_resources.get_distribution("sadie-antibody").version
+__version__ = metadata.version("sadie-antibody")
 
 
 @click.group()
@@ -91,11 +92,11 @@ def airr(name: str, skip_igl: bool, skip_mutation: bool, input_path: Path, outpu
 
     # output handler
     if output_object.output_format in ["airr", "tsv"]:
-        airr_table.to_airr(output_object.output_path)
+        airr_table.to_airr(str(output_object.output_path))
     elif output_object.output_format == "csv":
         airr_table.to_csv(output_object.output_path)
     elif output_object.output_format == "gb":
-        airr_table.to_genbank(output_object.output_path)
+        airr_table.to_genbank(str(output_object.output_path))
     elif output_object.output_format == "feather":
         airr_table.to_feather(output_object.output_path)
     else:
@@ -330,6 +331,273 @@ def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None
     click.echo("Done!")
 
 
+@sadie.command()
+@click.option(
+    "-o",
+    "--outpath",
+    help="Output path for all generated files",
+    type=click.Path(resolve_path=True, dir_okay=True, exists=False, file_okay=False),
+    required=False,
+)
+@click.option(
+    "-r",
+    "--reference",
+    help="Path to reference.yml file",
+    type=click.Path(resolve_path=True, exists=False),
+    default=os.path.join(os.path.dirname(__file__), "reference/data/reference.yml"),
+    show_default=True,
+)
+@click.option(
+    "--species",
+    "-s",
+    help="Comma-separated list of species to build databases for (default: all)",
+    type=str,
+    default="all",
+    show_default=True,
+)
+@click.option("--regenerate-catnap", is_flag=True, help="Regenerate CATNAP references from FASTA files", default=False)
+@click.option("--regenerate-igl", is_flag=True, help="Regenerate IGL references from FASTA files", default=False)
+@click.option(
+    "--generate-reference",
+    is_flag=True,
+    help="Generate reference.yml file interactively or regenerate if missing",
+    default=False,
+)
+@click.option("--skip-blast", is_flag=True, help="Skip BLAST database generation", default=False)
+@click.option("--skip-aux", is_flag=True, help="Skip auxiliary file generation", default=False)
+@click.option("--skip-internal", is_flag=True, help="Skip internal annotation file generation", default=False)
+@click.option(
+    "-v",
+    "--verbose",
+    count=True,
+    default=3,
+    help="Vebosity level, ex. -vvvvv for debug level logging",
+)
+def make_all(
+    verbose: int,
+    outpath: Optional[Path],
+    reference: Path,
+    species: str,
+    regenerate_catnap: bool,
+    regenerate_igl: bool,
+    generate_reference: bool,
+    skip_blast: bool,
+    skip_aux: bool,
+    skip_internal: bool,
+) -> None:
+    """Comprehensive database generation for SADIE AIRR analysis
+
+    This command performs all necessary steps to set up a complete AIRR analysis environment:
+
+    1. Generates or updates reference.yml configuration (if needed)
+    2. Downloads IMGT germline sequences (if needed)
+    3. Generates IgBLAST reference databases
+    4. Creates auxiliary files for IgBLAST
+    5. Generates internal annotation files (ndm.imgt)
+    6. Optionally regenerates CATNAP and IGL references
+    7. Creates reference index files
+
+    The process creates the following directory structure:
+
+    \b
+    outpath/
+    ├── reference.yml            # Reference configuration (if generated)
+    ├── Ig/
+    │   ├── blastdb/         # BLAST databases
+    │   │   ├── human/
+    │   │   ├── mouse/
+    │   │   └── ...
+    │   └── internal_data/   # Internal annotation files
+    │       ├── human/
+    │       ├── mouse/
+    │       └── ...
+    ├── aux_db/              # Auxiliary files
+    │   └── imgt/
+    │       ├── human_gl.aux
+    │       ├── mouse_gl.aux
+    │       └── ...
+    └── .references_dataframe.csv.gz  # Reference index
+    """
+    # Set logging level
+    numeric_level = getVerbosityLevel(verbose)
+    logging.basicConfig(level=numeric_level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    logger = logging.getLogger(__name__)
+
+    # Default output path
+    if not outpath:
+        outpath = Path(__file__).parent.joinpath("airr/data/germlines").resolve()
+        click.echo(f"No outpath specified, using {outpath}")
+
+    # Ensure output directory exists
+    Path(outpath).mkdir(parents=True, exist_ok=True)
+
+    # Step 1: Generate reference.yml if requested or missing
+    if generate_reference or not Path(reference).exists():
+        click.echo("\n" + "=" * 60)
+        click.echo("STEP 1: Generating reference.yml configuration")
+        click.echo("=" * 60)
+
+        if not Path(reference).exists():
+            click.echo(f"Reference file not found at {reference}")
+
+        script_path = Path(__file__).parent.parent.parent / "scripts" / "generate_reference_yaml.py"
+        if script_path.exists():
+            # Determine if we should use interactive mode
+            cmd = [sys.executable, str(script_path)]
+
+            if generate_reference and Path(reference).exists():
+                # User explicitly requested regeneration
+                click.echo("Regenerating reference.yml file...")
+                cmd.extend(["--update", "--output", str(reference)])
+            elif not Path(reference).exists():
+                # File doesn't exist, create it
+                click.echo("Creating new reference.yml file...")
+                cmd.extend(["--interactive", "--output", str(reference)])
+
+            if species != "all":
+                # Use specified species
+                for sp in species.split(","):
+                    cmd.extend(["--species", sp.strip(), "--all-functional"])
+
+            result = subprocess.run(cmd, capture_output=False, text=True)
+            if result.returncode != 0:
+                click.echo(f"Error: Reference generation failed", err=True)
+                raise click.ClickException("Failed to generate reference.yml")
+            else:
+                click.echo("Reference.yml generated successfully")
+        else:
+            click.echo(f"Warning: Reference generation script not found at {script_path}", err=True)
+            if not Path(reference).exists():
+                raise click.ClickException(f"Reference file not found and cannot generate: {reference}")
+
+    # Step 2: Load reference configuration
+    click.echo("\n" + "=" * 60)
+    click.echo("STEP 2: Loading reference configuration")
+    click.echo("=" * 60)
+    reference_object = References.from_yaml(reference)
+
+    # Parse species list
+    if species == "all":
+        species_list = None  # Process all species in reference.yml
+    else:
+        species_list = [s.strip() for s in species.split(",")]
+
+    # Step 3: Regenerate CATNAP references if requested
+    if regenerate_catnap:
+        click.echo("\n" + "=" * 60)
+        click.echo("STEP 3: Regenerating CATNAP references")
+        click.echo("=" * 60)
+        from pathlib import Path
+
+        script_path = Path(__file__).parent.parent.parent / "scripts" / "regenerate_catnap_references.py"
+        if script_path.exists():
+            cmd = [sys.executable, str(script_path), "--verbose"]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                click.echo(f"Warning: CATNAP regeneration failed: {result.stderr}", err=True)
+            else:
+                click.echo("CATNAP references regenerated successfully")
+        else:
+            click.echo(f"Warning: CATNAP regeneration script not found at {script_path}", err=True)
+
+    # Step 4: Regenerate IGL references if requested
+    if regenerate_igl:
+        click.echo("\n" + "=" * 60)
+        click.echo("STEP 4: Regenerating IGL references")
+        click.echo("=" * 60)
+        script_path = Path(__file__).parent.parent.parent / "scripts" / "regenerate_igl_reference.py"
+        if script_path.exists():
+            cmd = [sys.executable, str(script_path), "--verbose"]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                click.echo(f"Warning: IGL regeneration failed: {result.stderr}", err=True)
+            else:
+                click.echo("IGL references regenerated successfully")
+        else:
+            click.echo(f"Warning: IGL regeneration script not found at {script_path}", err=True)
+
+    # Step 5: Generate all database files
+    click.echo("\n" + "=" * 60)
+    click.echo("STEP 5: Generating database files")
+    click.echo("=" * 60)
+
+    try:
+        # The make_airr_database method handles all three components
+        germline_path = reference_object.make_airr_database(Path(outpath) if outpath else Path.cwd())
+
+        click.echo("\n✓ Database generation completed successfully!")
+        click.echo(f"  - BLAST databases: {outpath}/Ig/blastdb/")
+        click.echo(f"  - Internal annotation files: {outpath}/Ig/internal_data/")
+        click.echo(f"  - Auxiliary files: {outpath}/aux_db/")
+        click.echo(f"  - Reference index: {outpath}/.references_dataframe.csv.gz")
+
+    except Exception as e:
+        click.echo(f"\n✗ Error during database generation: {str(e)}", err=True)
+        raise click.ClickException(str(e))
+
+    # Step 6: Verify generated files
+    click.echo("\n" + "=" * 60)
+    click.echo("STEP 6: Verifying generated files")
+    click.echo("=" * 60)
+
+    verification_passed = True
+
+    # Check BLAST databases
+    blast_dir = Path(outpath) / "Ig" / "blastdb" if outpath else Path.cwd() / "Ig" / "blastdb"
+    if blast_dir.exists():
+        species_dirs = list(blast_dir.glob("*/"))
+        click.echo(f"✓ Found {len(species_dirs)} species BLAST databases")
+        for sp_dir in species_dirs:
+            v_files = list(sp_dir.glob("*_V.*"))
+            d_files = list(sp_dir.glob("*_D.*"))
+            j_files = list(sp_dir.glob("*_J.*"))
+            click.echo(f"  - {sp_dir.name}: V={len(v_files)>0}, D={len(d_files)>0}, J={len(j_files)>0}")
+    else:
+        click.echo("✗ BLAST database directory not found", err=True)
+        verification_passed = False
+
+    # Check auxiliary files
+    aux_dir = Path(outpath) / "aux_db" / "imgt" if outpath else Path.cwd() / "aux_db" / "imgt"
+    if aux_dir.exists():
+        aux_files = list(aux_dir.glob("*.aux"))
+        click.echo(f"✓ Found {len(aux_files)} auxiliary files")
+    else:
+        click.echo("✗ Auxiliary file directory not found", err=True)
+        verification_passed = False
+
+    # Check internal annotation files
+    internal_dir = Path(outpath) / "Ig" / "internal_data" if outpath else Path.cwd() / "Ig" / "internal_data"
+    if internal_dir.exists():
+        ndm_files = list(internal_dir.glob("*/*.ndm.imgt"))
+        click.echo(f"✓ Found {len(ndm_files)} internal annotation files")
+    else:
+        click.echo("✗ Internal annotation directory not found", err=True)
+        verification_passed = False
+
+    # Check reference index
+    ref_index = (
+        Path(outpath) / ".references_dataframe.csv.gz" if outpath else Path.cwd() / ".references_dataframe.csv.gz"
+    )
+    if ref_index.exists():
+        click.echo(f"✓ Reference index file created: {ref_index}")
+    else:
+        click.echo("✗ Reference index file not found", err=True)
+        verification_passed = False
+
+    if verification_passed:
+        click.echo("\n" + "=" * 60)
+        click.echo("✅ All database files generated successfully!")
+        click.echo("=" * 60)
+        click.echo(f"\nDatabase location: {outpath}")
+        click.echo("\nTo use these databases with SADIE AIRR:")
+        click.echo(f"  export IGDATA={outpath}/Ig")
+        click.echo("  sadie airr <your_sequence.fasta>")
+    else:
+        click.echo("\n" + "=" * 60)
+        click.echo("⚠️  Some files were not generated correctly", err=True)
+        click.echo("=" * 60)
+
+
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
-    sadie()
+    sadie(verbose=3)

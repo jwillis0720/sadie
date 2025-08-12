@@ -143,7 +143,7 @@ class IgBLASTArgument:
         return self._value
 
     @value.setter
-    def value(self, v: Union[str, int, bool]) -> None:
+    def value(self, v: Union[str, int, bool, Path]) -> None:
         self._value = v
 
     @property
@@ -240,6 +240,7 @@ class IgBLASTN:
         "_igdata",
         "_temp_dir",
         "_allow_vdj_overlap",
+        "debug",
     ]
 
     def __init__(self, executable: Union[Path, str] = "igblastn", tmp_dir: Union[Path, str] = None):
@@ -287,6 +288,9 @@ class IgBLASTN:
         # Igdata is not an official blast argument, it is an enviroment
         self._igdata = Path(".")
         self.temp_dir = tmp_dir or Path(".")
+
+        # Debug mode - prints commands before execution
+        self.debug = False
 
     def _get_version(self) -> semantic_version.Version:
         """Private method to parse igblast -version and get semantic_version
@@ -944,6 +948,34 @@ class IgBLASTN:
 
         # run a precheck to make sure everything passed was working
         self.pre_check()
+
+        # Print debug info if debug mode is enabled
+        if self.debug:
+            # Clean up the command for display by resolving paths
+            display_cmd = []
+            i = 0
+            while i < len(cmd):
+                if i < len(cmd) - 1 and cmd[i].startswith("-") and not cmd[i + 1].startswith("-"):
+                    # This is a parameter with a value
+                    display_cmd.append(cmd[i])
+                    # Check if the value looks like a path
+                    if "/" in cmd[i + 1] or "\\" in cmd[i + 1]:
+                        try:
+                            # Try to resolve the path to remove ".."
+                            resolved_path = str(Path(cmd[i + 1]).resolve())
+                            display_cmd.append(resolved_path)
+                        except:
+                            # If path resolution fails, use original
+                            display_cmd.append(cmd[i + 1])
+                    else:
+                        display_cmd.append(cmd[i + 1])
+                    i += 2
+                else:
+                    display_cmd.append(cmd[i])
+                    i += 1
+
+            logger.info(f"IgBLAST command: {' '.join(display_cmd)}")
+            logger.info(f"IGDATA environment variable: {self.igdata.resolve()}")
 
         # while we can certainly do this as an output stream on stdout,
         # It's probably best to take advantage of IGblast output and tempfile

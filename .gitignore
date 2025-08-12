@@ -51,3 +51,17 @@ docs/docs_src/reference/my_output_database_path
 
 # mkdocs?
 src/site/
+*.md
+!README.md
+!docs/
+!IGBLAST_PARAMETER_ANALYSIS.md
+!COERCE_FEATURE.md
+
+# testing files
+scrap.ipynb
+test.ipynb
+
+
+# ignore testing backup files
+*.bak.*
+nb/

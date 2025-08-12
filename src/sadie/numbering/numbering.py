@@ -43,10 +43,17 @@ class Numbering:
         }
 
     def __len__(self):
-        return len(self._numbering)
+        # Return the combined length of heavy and light numbering
+        return len(self.heavy) + len(self.light)
 
     def __getitem__(self, key):
-        return self._numbering[key]
+        # Try to get from heavy first, then light
+        if key in self.heavy:
+            return self.heavy[key]
+        elif key in self.light:
+            return self.light[key]
+        else:
+            raise KeyError(f"Key {key} not found in numbering")
 
     @lru_cache(maxsize=None)
     def get_identity(self, state_sequence, germline_sequence):

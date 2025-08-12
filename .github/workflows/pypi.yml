@@ -15,6 +15,49 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: "0"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry self add poetry-bumpversion
+      - name: Check and sync versions
+        run: |
+          # Get current version from pyproject.toml
+          CURRENT_VERSION=$(poetry version -s)
+          echo "Current pyproject.toml version: $CURRENT_VERSION"
+
+          # Get latest tag (if exists)
+          if git describe --tags --abbrev=0 2>/dev/null; then
+            LATEST_TAG=$(git describe --tags --abbrev=0)
+            TAG_VERSION=${LATEST_TAG#v}
+            echo "Latest git tag version: $TAG_VERSION"
+
+            # If versions don't match, use the higher one
+            if [ "$CURRENT_VERSION" != "$TAG_VERSION" ]; then
+              echo "Version mismatch detected!"
+              # Compare versions and use the higher one
+              if [ "$(printf '%s\n' "$CURRENT_VERSION" "$TAG_VERSION" | sort -V | tail -n1)" = "$CURRENT_VERSION" ]; then
+                echo "Using pyproject.toml version: $CURRENT_VERSION"
+                NEW_VERSION=$CURRENT_VERSION
+              else
+                echo "Using git tag version: $TAG_VERSION"
+                NEW_VERSION=$TAG_VERSION
+                poetry version $NEW_VERSION
+              fi
+            else
+              echo "Versions are in sync"
+              NEW_VERSION=$CURRENT_VERSION
+            fi
+          else
+            echo "No tags found, using pyproject.toml version"
+            NEW_VERSION=$CURRENT_VERSION
+          fi
+
+          # Save for next step
+          echo "BASE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.64.0
         env:
@@ -22,24 +65,23 @@ jobs:
           WITH_V: true
           DEFAULT_BUMP: patch
           BRANCH_HISTORY: last
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: |
-          pip install poetry
-          poetry self add poetry-bumpversion
-      - name: Build and publish
+          INITIAL_VERSION: ${{ env.BASE_VERSION }}
+      - name: Update version in files
         env:
           PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
           PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
-          poetry version $(git describe --tags --abbrev=0)
+          # Get the newly created tag
+          TAG_WITH_V=$(git describe --tags --abbrev=0)
+          VERSION_WITHOUT_V=${TAG_WITH_V#v}
+
+          # Update poetry to match the new tag
+          poetry version $VERSION_WITHOUT_V
+
           git config user.name $PYPI_USERNAME
           git config user.email jwillis0720@gmail.com
           git add pyproject.toml src/sadie/__init__.py
-          git commit -m "bump up $(git describe --tags --abbrev=0) version from workflow"
+          git commit -m "bump up $TAG_WITH_V version from workflow"
           git push --force
       - name: Dump GitHub context
         env:
@@ -51,12 +93,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.10"]
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref_name }}
+          ref: main
           fetch-depth: "0"
+      - name: Pull latest changes
+        run: |
+          git pull origin main
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -69,8 +114,6 @@ jobs:
           PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
           PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
-          git config user.name $PYPI_USERNAME
-          git config user.email jwillis0720@gmail.com
           poetry build
           poetry publish --username "$PYPI_USERNAME" --password "$PYPI_PASSWORD"
       - name: Dump GitHub context

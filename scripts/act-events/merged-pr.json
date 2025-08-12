@@ -1,0 +1,16 @@
+{
+  "action": "closed",
+  "pull_request": {
+    "merged": true,
+    "merge_commit_sha": "abc123",
+    "base": {
+      "ref": "main"
+    },
+    "head": {
+      "ref": "feature-branch"
+    }
+  },
+  "repository": {
+    "default_branch": "main"
+  }
+}
