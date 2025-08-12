@@ -48,7 +48,7 @@ sadie = "sadie.app:sadie"
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
 biopython = "1.83"
-click = ">=8.1.0,<8.3"
+click = ">=8.1.0,<8.2"
 filetype = "^1.1.0"
 pandas = ">=1.0,<1.5.0"
 requests = "^2.28.1"
