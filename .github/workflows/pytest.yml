@@ -21,6 +21,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install macOS dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew install gcc make
       - name: Install system dependencies
         if: runner.os == 'Linux'
         run: |
