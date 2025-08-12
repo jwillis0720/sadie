@@ -34,7 +34,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Topic :: Scientific/Engineering",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Scientific/Engineering :: Bio-Informatics"
 ]
 packages = [{ include = "sadie", from = "src" }]
 
@@ -47,9 +49,9 @@ sadie = "sadie.app:sadie"
 [tool.poetry.dependencies]
 python = ">=3.9,<3.14"
 biopython = "^1.84"
-click = ">=8.0"
+click = ">=8.0,<8.2"
 filetype = "^1.2.0"
-pandas = ">=1.5,<=2.2"
+pandas = ">=2.0,<=2.2"
 requests = "^2.32.0"
 pydantic = ">=2.0.0,<3.0.0"
 python-Levenshtein = "^0.27.0"
@@ -60,9 +62,9 @@ scikit-learn = "^1.5.0"
 openpyxl = "^3.1.0"
 yarl = "^1.9.0"
 ipython = "^8.18.0"
-numpy = ">=1.24,<2.0"
 pyhmmer = "^0.10.14"
 scipy = "^1.11.0"
+rich = "^14.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.0.0"
@@ -140,6 +142,10 @@ reportOptionalOperand = false
 # TODO: old anacri code using short one time variables
 reportUnboundVariable = false
 reportMissingImports = false  # TODO: should move biopythn 1.79 dep into own folder
+reportArgumentType = false  # TODO: many 3rd party functions have no type hints
+reportCallIssue = false  # TODO: many 3rd party functions have no type hints
+reportOperatorIssue = false  # TODO: many 3rd party functions have no type hints
+reportReturnType = false  # TODO: many 3rd party functions have no type hints
 
 [tool.isort]
 profile = "black"

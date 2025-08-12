@@ -64,8 +64,9 @@ class AirrSeries(pd.Series):  # type: ignore
 
     def __init__(self, data: Any, copy: bool = False, *args, **kwargs):
         super(AirrSeries, self).__init__(data=data, copy=copy, *args, **kwargs)  # type: ignore
-        if not isinstance(data, pd.core.internals.managers.SingleBlockManager):
-            if isinstance(data, pd.core.series.Series):
+        # Only run verification if data is not from internal operations (SingleBlockManager)
+        if not (data.__class__.__name__ == "SingleBlockManager"):
+            if isinstance(data, pd.Series):
                 self._verify()
 
     @property
@@ -208,7 +209,9 @@ class AirrTable(pd.DataFrame):
 
     def __init__(self, data: Any = None, key_column: str = "sequence_id", copy: bool = False):
         super(AirrTable, self).__init__(data=data, copy=copy)  # type: ignore
-        if not isinstance(data, pd.core.internals.managers.BlockManager):
+        # Only run initialization if data is not a BlockManager (internal pandas object)
+        # BlockManager is passed during internal pandas operations like copy(), reindex(), etc.
+        if not (data.__class__.__name__ == "BlockManager"):
             if self.__class__ is AirrTable:
                 self._islinked: bool = False
                 self._key_column: str = key_column
@@ -216,17 +219,17 @@ class AirrTable(pd.DataFrame):
                 self._verify()
                 key: str
                 for key, value in IGBLAST_AIRR.items():
-                    self[key] = self[key].astype(value)
+                    self[key] = self[key].astype(value)  # type: ignore[arg-type]
 
                 # what about the non Airr columns?
-                _have_other = self.columns.intersection(OTHER_COLS.keys())
+                _have_other = self.columns.intersection(list(OTHER_COLS.keys()))
                 for key in _have_other:
-                    self[key] = self[key].astype(OTHER_COLS[key])
+                    self[key] = self[key].astype(OTHER_COLS[key])  # type: ignore[arg-type]
 
                 # what about the constant Airr columns?
-                _have_constant = self.columns.intersection(CONSTANTS_AIRR.keys())
+                _have_constant = self.columns.intersection(list(CONSTANTS_AIRR.keys()))
                 for key in _have_constant:
-                    self[key] = self[key].astype(CONSTANTS_AIRR[key])
+                    self[key] = self[key].astype(CONSTANTS_AIRR[key])  # type: ignore[arg-type]
 
     @property
     def _constructor_sliced(self) -> Type[AirrSeries]:
@@ -690,9 +693,7 @@ class AirrTable(pd.DataFrame):
         return self
 
     @staticmethod
-    def parse_row_to_genbank(
-        row: Tuple[Optional[Hashable], pd.core.series.Series], suffix: str = ""
-    ) -> SeqRecord.SeqRecord:
+    def parse_row_to_genbank(row: Tuple[Optional[Hashable], pd.Series], suffix: str = "") -> SeqRecord.SeqRecord:
         single_seq = row[1]
         # these should be joined by sequence, so even if its heavy or light suffix, sequence should be in common
         sequence = single_seq["sequence"]
@@ -928,8 +929,9 @@ class LinkedAirrTable(AirrTable):
         copy: bool = False,
     ):
         super(LinkedAirrTable, self).__init__(data=data, copy=copy)
-        if not isinstance(data, pd.core.internals.managers.BlockManager):
-            if self.__class__ == LinkedAirrTable:
+        # Only run initialization if data is not a BlockManager (internal pandas object)
+        if not (data.__class__.__name__ == "BlockManager"):
+            if isinstance(self, LinkedAirrTable):
                 self._islinked = True
                 self._key_column = key_column
                 self._suffixes = suffixes

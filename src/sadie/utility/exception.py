@@ -21,10 +21,6 @@ class NotAValidCompression(NotImplementedError):
     pass
 
 
-class Error(Exception):
-    """Base class for exceptions in this module."""
-
-
 class LongHCDR3Error(Error):
     """Exception raised for HCDR3 being too long for chosen numbering scheme.
 

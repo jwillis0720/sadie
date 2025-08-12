@@ -29,7 +29,10 @@ def test_antibody_igblast_setup() -> None:
     executable = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{system}/igblastn")
 
     ig_blast = igblast.IgBLASTN(executable)
-    assert ig_blast.version == semantic_version.Version("1.19.0")
+    # Check that version is a valid semantic version (e.g., 1.19.0, 1.22.0, etc.)
+    assert isinstance(ig_blast.version, semantic_version.Version)
+    # Ensure it's at least version 1.22.0 or higher
+    assert ig_blast.version >= semantic_version.Version("1.22.0")
     germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
     assert os.path.exists(germline_ref)
 

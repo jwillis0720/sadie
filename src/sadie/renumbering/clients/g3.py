@@ -54,7 +54,7 @@ class G3:
         species: Species = "human",
         segment: str = "V",
         limit: Optional[int] = None,
-    ):
+    ) -> r.Response:
         params = {
             "source": source,
             "common": species,

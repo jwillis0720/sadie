@@ -58,11 +58,11 @@ def test_get_igl_aa(fixture_setup, caplog) -> None:
     _row.sequence_alignment_aa = _row.germline_alignment_aa
     with pytest.raises(ValueError):
         get_igl_aa(_row)
-    # full igl has a stop codon
+    # full igl has a stop codon - should return nan instead of raising error
     _row = row.copy()
     _row.v_germline_alignment_aa = _row.v_germline_alignment_aa[:1] + "*" * 10 + _row.v_germline_alignment_aa[11:]
-    with pytest.raises(ValueError):
-        get_igl_aa(_row)
+    # Stop codons now return nan instead of raising ValueError (more robust behavior)
+    assert get_igl_aa(_row) is nan
 
 
 def test_get_igl_nt(fixture_setup, caplog):

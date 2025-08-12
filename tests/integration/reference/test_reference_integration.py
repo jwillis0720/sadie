@@ -1,4 +1,5 @@
 import glob
+import io
 import os
 from pathlib import Path
 from typing import Any
@@ -187,7 +188,8 @@ def _test_auxilary_file_structure(tmpdir: Path, fixture_setup: SadieFixture) -> 
 
 def test_make_igblast_reference(fixture_setup: SadieFixture, tmp_path_factory: pytest.TempPathFactory):
     """Confirm the CLI works as expected This runs the entire generation pipeline that ships with SADIE and checks that the file structure is exactly the same"""
-    runner = CliRunner(echo_stdin=True)
+    # Create runner
+    runner = CliRunner()
 
     # these are the expected file structures
     expected_blast_dir = fixture_setup.get_known_blast_dir_structure()
@@ -197,10 +199,46 @@ def test_make_igblast_reference(fixture_setup: SadieFixture, tmp_path_factory: p
     tmpdir = tmp_path_factory.mktemp("igblast_dir")
 
     # run the entire pipeline via CLICK cli
-    result = runner.invoke(app.make_igblast_reference, ["--outpath", tmpdir], catch_exceptions=True)
+    # Pass string path to avoid any Path object serialization issues
+    # Capture output to avoid I/O closed file errors in CI
+    stdout_capture = io.StringIO()
+    stderr_capture = io.StringIO()
+
+    # Use environment variables to avoid I/O issues in CI
+    import sys
+
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+
+    try:
+        # Only redirect if we're in CI environment
+        if os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true":
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+
+        result = runner.invoke(app.make_igblast_reference, ["--outpath", str(tmpdir)], catch_exceptions=True)
+    finally:
+        # Restore original stdout/stderr
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
+
     if result.exit_code != 0:
-        print(result)
-        assert result.exit_code == 0
+        # Check if there's an exception before accessing output
+        if result.exception:
+            import traceback
+
+            tb = "".join(
+                traceback.format_exception(type(result.exception), result.exception, result.exception.__traceback__)
+            )
+            assert False, f"Command failed with exception:\n{tb}"
+        else:
+            # Only try to access output if no exception
+            # Safely handle potential I/O errors
+            try:
+                output = result.output if hasattr(result, "output") else "No output available"
+            except (ValueError, IOError):
+                output = "Output unavailable due to I/O error"
+            assert result.exit_code == 0, f"Command failed with output:\n{output}"
 
     # was the file actually output?
     assert os.path.exists(tmpdir)
