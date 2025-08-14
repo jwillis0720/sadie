@@ -1,13 +1,6 @@
-name: Coverage Report
-
+name: Coverage Report (Local)
 on:
-  push:
-    tags:
-      - '*'
-    branches: ['main']
-  pull_request:
-    branches: ['main', 'update_doc', 'development']
-
+  workflow_dispatch:  # Manual trigger only - for local testing with act
 jobs:
   coverage:
     runs-on: ${{ matrix.os }}
@@ -26,27 +19,15 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libuv1 ncbi-blast+
+          sudo apt-get install -y libuv1 ncbi-blast+ git
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install poetry
           poetry install --with dev
-      - name: Test
+      - name: Test with Coverage
         run: |
           poetry run coverage run --source=sadie -m pytest tests/unit/
           poetry run coverage html
           poetry run coverage xml
           poetry run coverage report
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage-report
-          path: ./coverage
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage.xml
-          name: codecov-umbrella
-          fail_ci_if_error: false
-          verbose: true

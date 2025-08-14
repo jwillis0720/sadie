@@ -32,8 +32,8 @@ jobs:
           sudo apt-get install -y libuv1 ncbi-blast+
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip setuptools wheel
           pip install poetry
-          pip install wheel
           poetry install --with dev
       - name: PreCommit
         uses: pre-commit/action@v3.0.0
