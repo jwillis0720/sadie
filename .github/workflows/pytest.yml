@@ -14,6 +14,11 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python-version: ['3.10', '3.11', '3.12', '3.13']
         poetry-version: ['1.8']
+        exclude:
+          # Temporarily exclude macOS + Python 3.13 if it continues to fail
+          # Remove this exclusion once the build issues are resolved
+          # - os: macos-latest
+          #   python-version: '3.13'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,20 +26,56 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pypoetry
+            ~/Library/Caches/pypoetry
+            ~/.local/share/pypoetry
+            ~/Library/Application Support/pypoetry
+          key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-${{ matrix.python-version }}-
+            ${{ runner.os }}-poetry-
       - name: Install macOS dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install gcc make
+          # Install build tools
+          brew install gcc make rust
+          # Set environment for macOS compatibility
+          echo "SYSTEM_VERSION_COMPAT=1" >> $GITHUB_ENV
+          # Install BLAST for bioinformatics tools
+          brew install blast || true
       - name: Install system dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libuv1 ncbi-blast+
-      - name: Install dependencies
+          sudo apt-get install -y libuv1 ncbi-blast+ build-essential
+      - name: Setup build environment
         run: |
           python -m pip install --upgrade pip setuptools wheel
+          # Pre-install problematic packages with binary wheels if available
+          python -m pip install --prefer-binary numpy scipy scikit-learn pandas
+          # Install yarl and multidict with proper build flags
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            export CFLAGS="-Wno-error=implicit-function-declaration"
+            python -m pip install --no-binary :all: yarl multidict || python -m pip install yarl multidict
+          else
+            python -m pip install yarl multidict
+          fi
+          # Install poetry
           pip install poetry
-          poetry install --with dev
+      - name: Install dependencies
+        run: |
+          # Try to install with retries and better error handling
+          poetry install --with dev || {
+            echo "First attempt failed, trying with verbose output..."
+            poetry install --with dev -vvv || {
+              echo "Installation failed. Attempting to install without optional dependencies..."
+              poetry install --with dev --no-interaction || exit 1
+            }
+          }
       - name: PreCommit
         uses: pre-commit/action@v3.0.0
       - name: Unit Testing
