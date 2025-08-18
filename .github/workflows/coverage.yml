@@ -1,4 +1,4 @@
-name: Coverage Report
+name: Coverage Report (pytest-cov)
 
 on:
   push:
@@ -31,13 +31,28 @@ jobs:
         run: |
           pip install poetry
           pip install wheel
+          # Install pytest-cov separately
+          pip install pytest-cov
           poetry install --with dev
-      - name: Test
+      - name: Test with pytest-cov
+        env:
+          # Add debugging for segfaults
+          PYTHONFAULTHANDLER: 1
+          PYTHONMALLOC: malloc
         run: |
-          poetry run coverage run --source=sadie -m pytest tests/unit/
-          poetry run coverage html
-          poetry run coverage xml
-          poetry run coverage report
+          echo "Running tests with pytest-cov..."
+          # Use pytest-cov instead of coverage directly
+          poetry run pytest tests/unit/ \
+            --cov=sadie \
+            --cov-report=html:coverage/reports/html \
+            --cov-report=xml:coverage.xml \
+            --cov-report=term \
+            --cov-config=pyproject.toml \
+            -v || {
+              echo "pytest-cov failed. Running tests without coverage..."
+              poetry run pytest tests/unit/ -v
+              exit 1
+            }
       - name: Archive code coverage results
         uses: actions/upload-artifact@v4
         with:

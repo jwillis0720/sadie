@@ -119,6 +119,41 @@ defaultsignore = "B008"
 [tool."pylint.MASTER"]
 extension-pkg-whitelist = "pydantic"
 
+[tool.coverage.run]
+source = ["sadie"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+    # Exclude C extension modules that might cause segfaults
+    "*/pyhmmer/*",
+    "*/scipy/*",
+    "*/numpy/*",
+    "*/pandas/*",
+    "*/sklearn/*",
+    "*/Bio/*",
+]
+# Use pure Python tracer to avoid C extension conflicts
+# Can be overridden with COVERAGE_CORE env var
+concurrency = ["thread"]
+parallel = false
+sigterm = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+precision = 2
+skip_covered = false
+skip_empty = true
+
 [tool.coverage.html]
 directory = "coverage/reports/html/"
 
