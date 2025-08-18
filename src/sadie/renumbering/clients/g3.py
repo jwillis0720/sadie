@@ -257,9 +257,9 @@ class G3:
         """
 
         if not species:
-            species = ["human"]
+            species = ["human"]  # type: ignore
         if not chains:
-            chains = ["L", "H", "K"]
+            chains = ["L", "H", "K"]  # type: ignore
 
         # no reason to have this call since its the default
         assert source == "imgt", f"Only IMGT genes are supported in {source}"
