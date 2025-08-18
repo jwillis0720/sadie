@@ -32,7 +32,6 @@ jobs:
           pip install poetry
           pip install wheel
           # Install pytest-cov separately
-          pip install pytest-cov
           poetry install --with dev
       - name: Test with pytest-cov
         env:
@@ -42,7 +41,7 @@ jobs:
         run: |
           echo "Running tests with pytest-cov..."
           # Use pytest-cov instead of coverage directly
-          poetry run pytest tests/unit/ \
+          poetry run pytest -xsv tests/unit/ \
             --cov=sadie \
             --cov-report=html:coverage/reports/html \
             --cov-report=xml:coverage.xml \

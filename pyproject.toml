@@ -89,6 +89,7 @@ mypy = "^1.8.0"
 bump2version = "^1.0.1"
 Markdown = "^3.5.0"
 pyright = "^1.1.350"
+pytest-cov = "^6.2.1"
 
 [build-system]
 requires = ["poetry-core"]
