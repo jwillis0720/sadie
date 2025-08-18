@@ -1,11 +1,13 @@
 [build]
-command = """
-pip3 install -q poetry &&
-poetry config virtualenvs.in-project true &&
-poetry install -v --with dev &&
-mkdocs build
-"""
 publish = "site"
+command = """
+set -euo pipefail
+python3 -m pip install --upgrade pip
+python3 -m pip install poetry
+python3 -m poetry config virtualenvs.in-project true
+python3 -m poetry install --no-interaction --no-ansi --with dev
+python3 -m poetry run mkdocs build --site-dir site
+"""
 
 [build.environment]
 PYTHON_VERSION = "3.11"
