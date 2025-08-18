@@ -18,46 +18,20 @@ jobs:
         os: [ubuntu-latest]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Cache Poetry dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pypoetry
-            ~/Library/Caches/pypoetry
-            ~/.local/share/pypoetry
-            ~/Library/Application Support/pypoetry
-          key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-${{ matrix.python-version }}-
-            ${{ runner.os }}-poetry-
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libuv1 ncbi-blast+ build-essential
-      - name: Setup build environment
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
-          # Pre-install problematic packages with binary wheels if available
-          python -m pip install --prefer-binary numpy scipy scikit-learn pandas
-          # Install yarl and multidict (not needed for Ubuntu but keeping for consistency)
-          python -m pip install yarl multidict
-          # Install poetry
-          pip install poetry
+          sudo apt-get install -y libuv1 ncbi-blast+
       - name: Install dependencies
         run: |
-          # Try to install with retries and better error handling
-          poetry install --with dev || {
-            echo "First attempt failed, trying with verbose output..."
-            poetry install --with dev -vvv || {
-              echo "Installation failed. Attempting to install without optional dependencies..."
-              poetry install --with dev --no-interaction || exit 1
-            }
-          }
+          pip install poetry
+          pip install wheel
+          poetry install --with dev
       - name: Test
         run: |
           poetry run coverage run --source=sadie -m pytest tests/unit/
@@ -70,7 +44,7 @@ jobs:
           name: code-coverage-report
           path: ./coverage
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3
         with:
           files: ./coverage.xml
           name: codecov-umbrella
