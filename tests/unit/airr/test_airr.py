@@ -23,7 +23,7 @@ from tests.conftest import SadieFixture
 
 def test_airr_model() -> None:
     # string nulls should be equal to None
-    assert AirrSeriesModel(**{field: str(nan) for field in AirrSeriesModel().__fields__}) == AirrSeriesModel()
+    assert AirrSeriesModel(**{field: str(nan) for field in AirrSeriesModel.model_fields}) == AirrSeriesModel()
 
 
 def test_airrtable_inheritance(fixture_setup) -> None:
@@ -130,8 +130,12 @@ def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest
         air_api = Airr("human", temp_directory=30)
 
     # test a non writeable file
-    with pytest.raises(IOError):
-        air_api = Airr("human", temp_directory="/usr/bin")
+    # Skip this test in Docker containers where we might be running as root
+    import os
+
+    if os.getuid() != 0:  # Not running as root
+        with pytest.raises(IOError):
+            air_api = Airr("human", temp_directory="/usr/bin")
 
     # test air init with bad igblastn executable.
     # this mocks that igblastn was not shipped in the repo and to search along path

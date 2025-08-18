@@ -1,0 +1,57 @@
+name: Build and Test (Local)
+on:
+  workflow_dispatch:  # Manual trigger only - for local testing with act
+jobs:
+  pytest:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.13']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libuv1 ncbi-blast+ git
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install poetry
+          poetry install --with dev || {
+            echo "## ❌ Dependency Installation Failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "Failed to install dependencies on ${{ matrix.os }} / Python ${{ matrix.python-version }}" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          }
+      - name: Run pre-commit
+        run: |
+          pip install pre-commit
+          pre-commit run --all-files || {
+            echo "## ❌ Pre-commit Checks Failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "Pre-commit failed on ${{ matrix.os }} / Python ${{ matrix.python-version }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "Run 'pre-commit run --all-files' locally to see details" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          }
+      - name: Unit Testing (fail-fast, summarize on failure)
+        run: |
+          set -o pipefail
+          poetry run pytest -xsv -ra tests/unit/airr/test_airr.py 2>&1 | tee unit_output.txt
+          status=${PIPESTATUS[0]}
+          if [ $status -ne 0 ]; then
+            {
+              echo "## ❌ Unit Tests Failed";
+              echo "**Environment:** ${{ matrix.os }} / Python ${{ matrix.python-version }}";
+              echo "";
+              echo '```';
+              tail -n 200 unit_output.txt;
+              echo '```';
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit $status
+          fi

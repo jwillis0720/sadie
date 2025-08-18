@@ -487,8 +487,7 @@ def run_five_prime_buffer(
     airr_api = Airr(refs_name[0], adaptable=True)
     new_airr_table = airr_api.run_records(new_records)
     airrtable.update(pd.DataFrame(new_airr_table).astype({"sequence_id": int}).set_index("sequence_id"))
-    airrtable["padded_five_prime"] = False
-    airrtable.loc[candidate_airrtable.index, "padded_five_prime"] = True
+    # Don't add the padded_five_prime column - it will be removed anyway
     return type(airrtable)(airrtable, key_column=key)  # type: ignore[call-arg]
 
 
@@ -557,17 +556,50 @@ def run_three_prime_buffer(
         j_germline_end: int = row["j_germline_end"]
         j_sequence_end: int = row["j_sequence_end"]
         sequence: str = str(row["sequence"]).replace("-", "")
-        j_top: str = str(row["j_call"]).split(",")[0]
-        ref_seq: str = ref_lookup[(common_name, j_top)]
 
+        # Use the correct J gene call (not V gene!)
+        j_top: str = str(row["j_call"]).split(",")[0]
+        ref_key = (common_name, j_top)
+
+        # Check if the J gene reference exists
+        if ref_key not in ref_lookup:
+            # Try the original J gene assignment as a fallback
+            # (IgBLAST re-annotation after 5' extension can change J gene assignments)
+            if "original_j_call" in row and pd.notna(row["original_j_call"]):
+                original_j_top = str(row["original_j_call"]).split(",")[0]
+                original_ref_key = (common_name, original_j_top)
+
+                if original_ref_key in ref_lookup:
+                    logger.debug(
+                        f"J gene {j_top} not found, using original J gene {original_j_top} for sequence {index}"
+                    )
+                    ref_seq: str = ref_lookup[original_ref_key]
+                    new_sequence = Seq(sequence[: j_sequence_end - 1] + ref_seq[j_germline_end - 1 :])
+                    new_records.append(SeqRecord(new_sequence, id=str(index), name=str(index)))
+                    continue
+
+            # Neither current nor original J gene found - skip this sequence
+            logger.warning(
+                f"J gene reference not found for {ref_key}, skipping 3' buffer extension for sequence {index}"
+            )
+            # Keep the original sequence without extension
+            new_records.append(SeqRecord(Seq(sequence), id=str(index), name=str(index)))
+            continue
+
+        # J gene reference found - use it for extension
+        ref_seq: str = ref_lookup[ref_key]
         new_sequence = Seq(sequence[: j_sequence_end - 1] + ref_seq[j_germline_end - 1 :])
         new_records.append(SeqRecord(new_sequence, id=str(index), name=str(index)))
 
-    airr_api = Airr(refs_name[0], adaptable=True)
-    new_airr_table = airr_api.run_records(new_records)
-    airrtable.update(pd.DataFrame(new_airr_table).astype({"sequence_id": int}).set_index("sequence_id"))
-    airrtable["padded_three_prime"] = False
-    airrtable.loc[candidate_airrtable.index, "padded_three_prime"] = True
+    # Only run IgBLAST if we have sequences to process
+    if new_records:
+        airr_api = Airr(refs_name[0], adaptable=True)
+        new_airr_table = airr_api.run_records(new_records)
+        airrtable.update(pd.DataFrame(new_airr_table).astype({"sequence_id": int}).set_index("sequence_id"))
+    else:
+        logger.warning("No sequences could be extended with 3' buffer due to missing J gene references")
+
+    # Don't add the padded_three_prime column - it will be removed anyway
     return type(airrtable)(airrtable, key_column=key)  # type: ignore[call-arg]
 
 
@@ -598,8 +630,32 @@ def run_termini_buffers(
         raise TypeError(f"{type(airrtable)} must be an instance of AirrTable")
 
     logger.debug("Running termini buffers")
+
+    # Preserve original J gene assignments before 5' extension changes them
+    # This is needed because IgBLAST re-annotation after 5' extension can assign
+    # different J genes that might not exist in the reference database
+    original_j_calls = airrtable["j_call"].copy() if "j_call" in airrtable.columns else None
+
     logger.debug("Running five prime buffer")
     airrtable = run_five_prime_buffer(airrtable, cutoff, references)
+
+    # Store the original J calls for fallback use in 3' extension
+    if original_j_calls is not None:
+        airrtable["original_j_call"] = original_j_calls
+
     logger.debug("Running three prime buffer")
     airrtable = run_three_prime_buffer(airrtable, references)
+
+    # Clean up temporary columns - remove all extension-related tracking columns
+    columns_to_drop = []
+    if "original_j_call" in airrtable.columns:
+        columns_to_drop.append("original_j_call")
+    if "padded_five_prime" in airrtable.columns:
+        columns_to_drop.append("padded_five_prime")
+    if "padded_three_prime" in airrtable.columns:
+        columns_to_drop.append("padded_three_prime")
+
+    if columns_to_drop:
+        airrtable = airrtable.drop(columns=columns_to_drop)
+
     return airrtable

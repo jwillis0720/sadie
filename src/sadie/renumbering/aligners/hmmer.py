@@ -8,7 +8,6 @@ from typing import Dict, List, Optional, Tuple, Union
 import pyhmmer
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from pydantic import validate_arguments
 
 from sadie.renumbering.clients import G3
 from sadie.renumbering.numbering_translator import NumberingTranslator
@@ -39,7 +38,6 @@ class HMMER:
         # place holders for hmmer
         self.alphabet = pyhmmer.easel.Alphabet.amino()
 
-    @validate_arguments
     def get_hmm_models(
         self,
         species: Optional[Union[List[Species], Species]] = None,
@@ -315,12 +313,14 @@ class HMMER:
             ]  # Numbering only expects best result per query
             return [
                 (
-                    [numbering_keys, itemgetter(*numbering_keys)(result)],
-                    [self.get_vector_state(**result)],
-                    [result],
+                    (
+                        [numbering_keys, itemgetter(*numbering_keys)(result)],
+                        [self.get_vector_state(**result)],
+                        [result],
+                    )
+                    if result
+                    else default_out
                 )
-                if result
-                else default_out
                 for result in best_results
             ]
 

@@ -1,13 +1,19 @@
 """This is our main entry point"""
+
 import logging
 import os
 import subprocess
 import sys
-from importlib import metadata
 from pathlib import Path
 from typing import Any, List, Optional, Union
 
 import click
+
+try:
+    from importlib.metadata import version
+except ImportError:
+    # Fallback for Python < 3.8
+    from importlib_metadata import version
 
 # airr
 from sadie.airr import Airr
@@ -23,7 +29,7 @@ from sadie.renumbering import Renumbering
 from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
 from sadie.utility.util import get_project_root, getVerbosityLevel
 
-__version__ = metadata.version("sadie-antibody")
+__version__ = version("sadie-antibody")
 
 
 @click.group()

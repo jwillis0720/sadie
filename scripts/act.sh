@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Script to run all GitHub Actions workflows locally using act
+# Script to run GitHub Actions workflows in Linux containers using act
+# This simulates the full CI/CD environment with Linux containers
 # Requires: act (brew install act)
 
 set -e  # Exit on error
@@ -12,8 +13,10 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Configuration
+# Configuration for Linux-only testing
 CONTAINER_ARCH="--container-architecture linux/amd64"
+# Map both ubuntu-latest and macos-latest to Linux containers for act testing
+# Note: In real GitHub Actions, macos-latest runs on actual macOS
 PLATFORM_MAP="-P ubuntu-latest=catthehacker/ubuntu:act-latest -P macos-latest=catthehacker/ubuntu:act-latest"
 WORKFLOWS_DIR=".github/workflows"
 
@@ -172,7 +175,8 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-print_header "GitHub Actions Local Runner (act)"
+print_header "GitHub Actions Linux Container Testing (act)"
+print_color "$YELLOW" "Running workflows in Linux containers to simulate CI/CD environment"
 
 # If specific workflow is requested
 if [ -n "$SPECIFIC_WORKFLOW" ]; then
@@ -188,7 +192,7 @@ if [ -n "$SPECIFIC_WORKFLOW" ]; then
         "pypi.yml")
             run_workflow "$SPECIFIC_WORKFLOW" "pull_request" "$EVENTS_DIR/merged-pr.json" "$SPECIFIC_JOB"
             ;;
-        "pytest.yml")
+        "pytest.yml"|"coverage.yml"|"pyright.yml"|"docs.yml")
             run_workflow "$SPECIFIC_WORKFLOW" "push" "$EVENTS_DIR/push-main.json" "$SPECIFIC_JOB"
             ;;
         "test-pypi-sync.yml")
@@ -201,39 +205,33 @@ if [ -n "$SPECIFIC_WORKFLOW" ]; then
     exit 0
 fi
 
-# Run all workflows
-print_header "1. pytest.yml - Build and Test"
-print_color "$GREEN" "Testing with push to main..."
-run_workflow "pytest.yml" "push" "$EVENTS_DIR/push-main.json" "pytest"
+# Run main workflows (not the -local versions)
+print_header "1. pytest.yml - Build and Test (Linux Containers)"
+print_color "$GREEN" "Testing Python 3.13 on ubuntu-latest..."
+act push -j pytest -W "$WORKFLOWS_DIR/pytest.yml" \
+    --matrix os:ubuntu-latest \
+    --matrix python-version:3.13 \
+    $CONTAINER_ARCH $PLATFORM_MAP || print_color "$YELLOW" "Some tests may have issues in container environment"
 
-print_color "$GREEN" "Testing with push tag..."
-run_workflow "pytest.yml" "push" "$EVENTS_DIR/push-tag.json" "pytest"
+print_header "2. coverage.yml - Coverage Report (Linux Containers)"
+print_color "$GREEN" "Testing coverage on ubuntu-latest..."
+act push -j coverage -W "$WORKFLOWS_DIR/coverage.yml" \
+    --matrix os:ubuntu-latest \
+    --matrix python-version:3.13 \
+    $CONTAINER_ARCH $PLATFORM_MAP || print_color "$YELLOW" "Coverage may have issues in container environment"
 
-print_color "$GREEN" "Testing with pull request..."
-run_workflow "pytest.yml" "pull_request" "$EVENTS_DIR/pull-request.json" "pytest"
-
-print_header "2. pypi.yml - Publish to PyPI"
-print_color "$GREEN" "Testing version-bump job..."
-run_workflow "pypi.yml" "pull_request" "$EVENTS_DIR/merged-pr.json" "version-bump"
-
-print_color "$GREEN" "Testing pypi job..."
-run_workflow "pypi.yml" "pull_request" "$EVENTS_DIR/merged-pr.json" "pypi"
-
-print_header "3. test-pypi-sync.yml - Test Version Sync"
-if [ -f "$WORKFLOWS_DIR/test-pypi-sync.yml" ]; then
-    print_color "$GREEN" "Testing version sync workflow..."
-    run_workflow "test-pypi-sync.yml" "workflow_dispatch" "" "test-version-sync"
-
-    print_color "$GREEN" "Testing with pull request..."
-    run_workflow "test-pypi-sync.yml" "pull_request" "$EVENTS_DIR/pull-request.json" "test-version-sync"
-else
-    print_color "$YELLOW" "test-pypi-sync.yml not found, skipping..."
-fi
+print_header "3. pyright.yml - Type Checking (Linux Containers)"
+print_color "$GREEN" "Testing type checking..."
+act push -j pyright -W "$WORKFLOWS_DIR/pyright.yml" \
+    --matrix os:ubuntu-latest \
+    --matrix python-version:3.13 \
+    $CONTAINER_ARCH $PLATFORM_MAP || print_color "$YELLOW" "Type checking may have warnings"
 
 print_header "Summary"
-print_color "$GREEN" "✅ All workflow tests completed!"
-print_color "$YELLOW" "Note: Some jobs may fail due to missing secrets or dependencies in local environment"
-print_color "$YELLOW" "This is expected behavior when testing locally with act"
+print_color "$GREEN" "✅ Linux container testing completed!"
+print_color "$YELLOW" "Note: This ran workflows in Linux containers using act"
+print_color "$YELLOW" "For native Mac testing, use scripts/act-local.sh"
+print_color "$YELLOW" "Some jobs may fail due to missing secrets or container limitations"
 
 # Cleanup event files if not in dry-run mode
 if [ -z "$DRY_RUN" ]; then

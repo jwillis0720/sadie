@@ -2,11 +2,11 @@
 
 ```python
 from sadie.typing import Source, Species, Chain
-from pydantic import ValidationError, validate_arguments
+from pydantic import ValidationError, BaseModel, Field
+from typing import List, Union
 
-class MyClass:
-
-    @validate_arguments
-    def test(source: Source, species: Union[List[Species], Species], chain: Chain):
-        return source, species, chain
+class MyClass(BaseModel):
+    source: Source
+    species: Union[List[Species], Species]
+    chain: Chain
 ```
