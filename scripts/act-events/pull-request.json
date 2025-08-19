@@ -1,0 +1,14 @@
+{
+  "action": "opened",
+  "pull_request": {
+    "base": {
+      "ref": "main"
+    },
+    "head": {
+      "ref": "feature-branch"
+    }
+  },
+  "repository": {
+    "default_branch": "main"
+  }
+}

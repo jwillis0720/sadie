@@ -8,7 +8,6 @@ from typing import Dict, List, Optional, Tuple, Union
 import pyhmmer
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from pydantic import validate_arguments
 
 from sadie.renumbering.clients import G3
 from sadie.renumbering.numbering_translator import NumberingTranslator
@@ -39,7 +38,6 @@ class HMMER:
         # place holders for hmmer
         self.alphabet = pyhmmer.easel.Alphabet.amino()
 
-    @validate_arguments
     def get_hmm_models(
         self,
         species: Optional[Union[List[Species], Species]] = None,
@@ -61,8 +59,8 @@ class HMMER:
             HMM model for specific species
         """
         hmms = []
-        species = species if species else set(Species.species.values())
-        chains = chains if chains else Chain.chains
+        species = species if species else list(Species.species.values())  # type: ignore[assignment]
+        chains = chains if chains else list(Chain.chains)  # type: ignore[assignment]
         for single_species in species:
             for chain in chains:
                 # If not in G3 -- try Numbering
@@ -248,7 +246,7 @@ class HMMER:
             List of HMMER hits for NUMBERING numbering.
         """
         # Convert sequences to Easel sequences
-        sequences = self.transform_seqs(sequences)
+        sequences = self.transform_seqs(sequences)  # type: ignore[assignment]
 
         # Multiprocessing might scramble actual seq from order
         seq_name_2_seq = {seq.name.decode(): seq.textize().sequence for seq in sequences}
@@ -315,12 +313,14 @@ class HMMER:
             ]  # Numbering only expects best result per query
             return [
                 (
-                    [numbering_keys, itemgetter(*numbering_keys)(result)],
-                    [self.get_vector_state(**result)],
-                    [result],
+                    (
+                        [numbering_keys, itemgetter(*numbering_keys)(result)],
+                        [self.get_vector_state(**result)],
+                        [result],
+                    )
+                    if result
+                    else default_out
                 )
-                if result
-                else default_out
                 for result in best_results
             ]
 
@@ -588,30 +588,30 @@ class HMMER:
                 ali = alignments[i][1][0]
 
                 # Find the last match position.
-                last_state = ali[-1][0][0]
-                last_si = ali[-1][1]
+                last_state = ali[-1][0][0]  # type: ignore[index]
+                last_si = ali[-1][1]  # type: ignore[index]
                 if last_state < 120:  # No or very little J region
                     if last_si + 30 < len(
-                        sequences[i][1]
+                        sequences[i][1]  # type: ignore[index]
                     ):  # Considerable amount of sequence left...suspicious of a long CDR3
                         # Find the position of the conserved cysteine (imgt 104).
                         cys_si = dict(ali).get((104, "m"), None)
                         if cys_si is not None:  # 104 found.
                             # Find the corresponding index in the alignment.
-                            cys_ai = ali.index(((104, "m"), cys_si))
+                            cys_ai = ali.index(((104, "m"), cys_si))  # type: ignore[attr-defined]
 
                             # Try to identify a J region in the remaining sequence after the 104. A low bit score threshold is used.
                             _, re_states, re_details = self.hmmsearch(
-                                sequences=[(sequences[i][0], sequences[i][1][cys_si + 1 :])],
+                                sequences=[(sequences[i][0], sequences[i][1][cys_si + 1 :])],  # type: ignore[index]
                                 bit_score_threshold=10,
                                 for_numbering=True,
                             )[0]
 
                             # Check if a J region was detected in the remaining sequence.
-                            if re_states and re_states[0][-1][0][0] >= 126 and re_states[0][0][0][0] <= 117:
+                            if re_states and re_states[0][-1][0][0] >= 126 and re_states[0][0][0][0] <= 117:  # type: ignore[index]
                                 # Sandwich the presumed CDR3 region between the V and J regions.
 
-                                vRegion = ali[: cys_ai + 1]
+                                vRegion = ali[: cys_ai + 1]  # type: ignore[index]
                                 jRegion = [
                                     (state, index + cys_si + 1) for state, index in re_states[0] if state[0] >= 117
                                 ]
@@ -626,7 +626,7 @@ class HMMER:
 
                                 # Update the alignment entry.
                                 alignments[i][1][0] = vRegion + cdrRegion + jRegion
-                                alignments[i][2][0]["query_end"] = jRegion[-1][1] + 1
+                                alignments[i][2][0]["query_end"] = jRegion[-1][1] + 1  # type: ignore[index]
 
     def hmmersearch_with_j(
         self,

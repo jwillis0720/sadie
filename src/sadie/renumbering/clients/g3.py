@@ -1,11 +1,10 @@
 from functools import lru_cache
 from itertools import product
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import pyhmmer
 import requests as r
-from pydantic import validate_arguments
 from yarl import URL
 
 from sadie.typing import Chain, Source, Species
@@ -49,14 +48,13 @@ class G3:
         return [single_species for single_species in species if single_species not in self.not_usable_species]
 
     @lru_cache(maxsize=None)
-    @validate_arguments
     def __get_gene_resp(
         self,
         source: Source = "imgt",
         species: Species = "human",
         segment: str = "V",
         limit: Optional[int] = None,
-    ) -> str:
+    ) -> r.Response:
         params = {
             "source": source,
             "common": species,
@@ -67,7 +65,6 @@ class G3:
         resp.raise_for_status()
         return resp
 
-    @validate_arguments
     def get_gene(
         self,
         source: Source = "imgt",
@@ -75,7 +72,7 @@ class G3:
         chain: Chain = "H",
         segment: str = "V",
         limit: Optional[int] = None,
-    ) -> str:
+    ):
         resp = self.__get_gene_resp(source=source, species=species, segment=segment, limit=limit)
         return [x for x in resp.json() if x["gene"][2].lower() == chain.lower()]
 
@@ -234,3 +231,59 @@ class G3:
             hmm = next(hmm_file)
 
         return hmm  # type: ignore
+
+    def get_g3_hmms(
+        self,
+        species: Optional[List[Species]] = None,
+        chains: Optional[List[Chain]] = None,
+        source: Source = "imgt",
+    ) -> Dict[str, pyhmmer.plan7.HMM]:
+        """Gets HMMs from g3
+
+        Parameters
+        ----------
+        species : List[Species], optional
+            the species/animals to use for HMMs, by default ["human"]
+        chains : List[Chain], optional
+            The chains to include, by default ["L", "H", "K"]
+        source : Source, optional
+            the source to build HMMs from, by default "imgt"
+
+        Returns
+        -------
+        Dict[str, pyhmmer.plan7.HMM]
+            hmms returned as a dict with string tag as the key and the hmm as the value
+
+        """
+
+        if not species:
+            species = ["human"]  # type: ignore
+        if not chains:
+            chains = ["L", "H", "K"]  # type: ignore
+
+        # no reason to have this call since its the default
+        assert source == "imgt", f"Only IMGT genes are supported in {source}"
+
+        _hmms = {}
+        for _species, _chain in product(species, chains):
+            _identifier = f"{_species}_{_chain}_{source}"
+            # get a single HMM
+            try:
+                _hmm = self._build_hmm_single(species=_species, chain=_chain, source=source)
+                _hmms[_identifier] = _hmm
+            except Exception as e:
+                # TODO: add a custom exception
+                print(f"Problem with getting {_identifier}: {e}")
+
+        return _hmms
+
+    def _build_hmm_single(
+        self, species: Species = "human", chain: Chain = "H", source: Source = "imgt"
+    ) -> pyhmmer.plan7.HMM:
+        sto_path = self.build_stockholm(source=source, chain=chain, species=species)
+
+        with pyhmmer.easel.MSAFile(sto_path, digital=True, alphabet=self.alphabet, format="stockholm") as msa_file:
+            msa = next(msa_file)
+            hmm, _, _ = self.builder.build_msa(msa, self.background)
+
+        return hmm

@@ -104,10 +104,14 @@ class NumberingResults(pd.DataFrame):
             return_frames.append(sub_df)
         segmented_df = pd.concat(return_frames).reset_index(drop=True)
         # everything preceding the antibody
-        segmented_df["leader"] = segmented_df[["sequence", "seqstart_index"]].apply(lambda x: x[0][: x[1]], axis=1)
+        segmented_df["leader"] = segmented_df[["sequence", "seqstart_index"]].apply(
+            lambda x: x.iloc[0][: x.iloc[1]], axis=1
+        )
 
         # everything following the antibody. keyword tail will clash with pandas
-        segmented_df["follow"] = segmented_df[["sequence", "seqend_index"]].apply(lambda x: x[0][x[1] + 1 :], axis=1)
+        segmented_df["follow"] = segmented_df[["sequence", "seqend_index"]].apply(
+            lambda x: x.iloc[0][x.iloc[1] + 1 :], axis=1
+        )
         return segmented_df
 
     def _pivot_alignment(self, row: pd.Series) -> pd.DataFrame:
@@ -128,7 +132,7 @@ class NumberingResults(pd.DataFrame):
                 columns=["numbering", "insertion", "sequence"],
             )
             .assign(Id=row["Id"])
-            .pivot("Id", ["numbering", "insertion"], "sequence")
+            .pivot(index="Id", columns=["numbering", "insertion"], values="sequence")
         )
         return pivoted_df
 

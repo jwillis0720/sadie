@@ -29,10 +29,14 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Topic :: Scientific/Engineering",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Scientific/Engineering :: Bio-Informatics"
 ]
 packages = [{ include = "sadie", from = "src" }]
 
@@ -43,48 +47,49 @@ issues = "https://github.com/jwillis0720/sadie/issues"
 sadie = "sadie.app:sadie"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
-biopython = "^1.80"
-click = ">=8.0"
-filetype = "^1.1.0"
-pandas = ">=1.0,<=1.5.0"
-requests = "^2.28.1"
-pydantic = ">=1.9.0,<2.0.0"
-Levenshtein = "^0.20.5"
-pyarrow = ">=6.0.1,<16.0.0"
+python = ">=3.9,<3.14"
+biopython = "^1.84"
+click = ">=8.0,<8.2"
+filetype = "^1.2.0"
+pandas = ">=2.3,<3"
+requests = "^2.32.0"
+pydantic = ">=2.0.0,<3.0.0"
+python-Levenshtein = "^0.27.0"
+pyarrow = "^20.0.0"
 semantic-version = "^2.10.0"
 PyYAML = "^6.0"
-scikit-learn = "^1.3.2"
-openpyxl = "^3.0.10"
-yarl = "^1.8.1"
-ipython = "^8.5.0"
-numpy = "1.26.3"
-pyhmmer = "^0.10.2"
-scipy = "^1.8.0"
+scikit-learn = "^1.5.0"
+openpyxl = "^3.1.0"
+yarl = "^1.9.0"
+ipython = "^8.18.0"
+pyhmmer = "^0.11.1"
+scipy = "^1.11.0"
+rich = "^14.1.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = ">=7.1.0"
-flake8 = "4.0.1"
-pre-commit = "2.16.0"
-coverage = "6.2"
-airr = "1.4.1"
-black = "22.3.0"
-pyinstrument = "^4.3.0"
+pytest = ">=8.0.0"
+flake8 = "^7.0.0"
+pre-commit = "^3.6.0"
+coverage = "^7.0"
+airr = "^1.5.0"
+black = "^24.0.0"
+pyinstrument = "^4.6.0"
 types-PyYAML = "^6.0.12"
-pandas-stubs = "^1.5.0.221003"
-types-requests = "^2.28.11.1"
-mkdocs = "1.2.3"
-mkdocs-material = "8.1.3"
-mkdocs-material-extensions = "1.0.3"
-mkdocs-git-revision-date-plugin = "0.3.1"
-mkdocs-redirects = "1.0.3"
-markdown-include = "0.6.0"
-mdx-include = "1.4.1"
-Jinja2 = "3.0.3"
-mypy = "0.982"
-bump2version = "1.0.1"
-Markdown = "3.3.7"
-pyright = ">=1.1.275"
+pandas-stubs = "^2.1.0"
+types-requests = "^2.31.0"
+mkdocs = "^1.5.0"
+mkdocs-material = "^9.5.0"
+mkdocs-material-extensions = "^1.3.0"
+mkdocs-git-revision-date-plugin = "^0.3.2"
+mkdocs-redirects = "^1.2.0"
+markdown-include = "^0.8.0"
+mdx-include = "^1.4.2"
+Jinja2 = "^3.1.0"
+mypy = "^1.8.0"
+bump2version = "^1.0.1"
+Markdown = "^3.5.0"
+pyright = "^1.1.350"
+pytest-cov = "^6.2.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -98,7 +103,7 @@ replace = '__version__ = "{new_version}"'
 
 [tool.black]
 line-length = 120
-target-version = ['py38', 'py39', 'py310']
+target-version = ['py39', 'py310', 'py311', 'py312']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -114,6 +119,41 @@ defaultsignore = "B008"
 
 [tool."pylint.MASTER"]
 extension-pkg-whitelist = "pydantic"
+
+[tool.coverage.run]
+source = ["sadie"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+    # Exclude C extension modules that might cause segfaults
+    "*/pyhmmer/*",
+    "*/scipy/*",
+    "*/numpy/*",
+    "*/pandas/*",
+    "*/sklearn/*",
+    "*/Bio/*",
+]
+# Use pure Python tracer to avoid C extension conflicts
+# Can be overridden with COVERAGE_CORE env var
+concurrency = ["thread"]
+parallel = false
+sigterm = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+precision = 2
+skip_covered = false
+skip_empty = true
 
 [tool.coverage.html]
 directory = "coverage/reports/html/"
@@ -138,6 +178,10 @@ reportOptionalOperand = false
 # TODO: old anacri code using short one time variables
 reportUnboundVariable = false
 reportMissingImports = false  # TODO: should move biopythn 1.79 dep into own folder
+reportArgumentType = false  # TODO: many 3rd party functions have no type hints
+reportCallIssue = false  # TODO: many 3rd party functions have no type hints
+reportOperatorIssue = false  # TODO: many 3rd party functions have no type hints
+reportReturnType = false  # TODO: many 3rd party functions have no type hints
 
 [tool.isort]
 profile = "black"

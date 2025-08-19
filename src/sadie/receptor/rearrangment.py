@@ -2,6 +2,8 @@
 This file contains objects to represent the rearrangemnt scheme
 https://docs.airr-community.org/en/stable/datarep/rearrangements.html
 """
+
+import math
 import re
 from functools import lru_cache
 from typing import Any, List, Optional, Set, Union
@@ -9,7 +11,7 @@ from uuid import UUID, uuid4
 
 from Bio.Seq import Seq
 from pandas._libs.missing import NAType
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 @lru_cache(maxsize=1)
@@ -61,7 +63,7 @@ class RearrargmentCategory(BaseModel):
 
     category: str
 
-    @validator("category")
+    @field_validator("category")
     @classmethod
     def validate_category(cls, v: str) -> str:
         valid_categories: Set[str] = {
@@ -102,13 +104,15 @@ class InputSequence(BaseModel):
         The category of rearrangement objectect
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     sequence_id: Optional[Union[str, UUID]]
     sequence: Union[Seq, str]
     raw_sequence: Optional[Union[Seq, str]] = None  # non airr
     sequence_aa: Optional[Union[Seq, str]] = None
     category: Optional[RearrargmentCategory] = RearrargmentCategory(category="input")
 
-    @validator("sequence_id", always=True)
+    @field_validator("sequence_id", mode="before")
     @classmethod
     def validate_sequence_id(cls, v: Optional[Union[str, UUID]]) -> str:
         """If no sequence id is provided, use a unique UUID"""
@@ -116,7 +120,7 @@ class InputSequence(BaseModel):
             v = uuid4()
         return str(v)
 
-    @validator("sequence")
+    @field_validator("sequence")
     @classmethod
     def validate_sequence(cls, v: Union[Seq, str]) -> Seq:
         """Check for valid nt sequence"""
@@ -128,7 +132,7 @@ class InputSequence(BaseModel):
         else:
             return Seq(v)
 
-    @validator("raw_sequence")
+    @field_validator("raw_sequence")
     @classmethod
     def validate_raw_sequence(cls, v: Union[Seq, str]) -> Seq:
         """Check for valid nt sequence"""
@@ -140,7 +144,7 @@ class InputSequence(BaseModel):
         else:
             return Seq(v)
 
-    @validator("sequence_aa")
+    @field_validator("sequence_aa")
     @classmethod
     def validate_sequence_aa(cls, v: Union[Seq, str]) -> Union[None, Seq]:
         aa_validator: re.Pattern[Any] = get_aa_validator_regex()
@@ -154,9 +158,6 @@ class InputSequence(BaseModel):
     def get_airr_fields() -> List[str]:
         return ["sequence_id", "sequence"]
 
-    class Config:
-        arbitrary_types_allowed = True
-
 
 class PrimaryAnnotations(BaseModel):
     """
@@ -166,7 +167,7 @@ class PrimaryAnnotations(BaseModel):
     Attributes - AIRR 1.3
     ---------------------
     rev_comp: bool
-        True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of ‘sequence’.
+        True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of 'sequence'.
     productive: bool
         True if the V(D)J sequence is predicted to be productive:
             1. Coding region has an open reading frame
@@ -218,6 +219,8 @@ class PrimaryAnnotations(BaseModel):
         The category of the rearrangement object
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     # Airr fields
     rev_comp: bool
     productive: bool
@@ -245,6 +248,37 @@ class PrimaryAnnotations(BaseModel):
     reference_name: Optional[str] = None
     category: Optional[RearrargmentCategory] = RearrargmentCategory(category="primary_annotations")
 
+    @field_validator(
+        "d_call",
+        "d2_call",
+        "c_call",
+        "locus",
+        "v_call_top",
+        "d_call_top",
+        "j_call_top",
+        "v_call_top_gene",
+        "v_call_top_allele",
+        "d_call_gene",
+        "d_call_allele",
+        "j_call_top_gene",
+        "j_call_top_allele",
+        "c_call_allele",
+        "reference_name",
+        mode="before",
+    )
+    @classmethod
+    def validate_string_fields(cls, v: Any) -> Any:
+        """Handle nan values and convert them to None for string/list fields"""
+        # Handle various nan representations
+        if v is None:
+            return None
+        if isinstance(v, float) and math.isnan(v):
+            return None
+        if isinstance(v, str):
+            if v.lower() in ["<na>", "na", "nan", "", "none"]:
+                return None
+        return v
+
     @staticmethod
     def get_airr_fields() -> List[str]:
         return [
@@ -262,9 +296,6 @@ class PrimaryAnnotations(BaseModel):
             "d_call_top",
             "j_call_top",
         ]
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class AlignmentAnnotations(BaseModel):
@@ -344,6 +375,8 @@ class AlignmentAnnotations(BaseModel):
         The category of the rearrangement object
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     sequence_alignment: Union[str, Seq]
     sequence_alignment_aa: Optional[Union[str, Seq]] = None
     germline_alignment: Union[str, Seq]
@@ -351,11 +384,11 @@ class AlignmentAnnotations(BaseModel):
     v_score: Optional[float] = None
     v_identity: Optional[float] = None
     v_support: Optional[float] = None
-    v_cigar: str
+    v_cigar: Optional[str] = None
     d_score: Optional[float] = None
     d_identity: Optional[float] = None
     d_support: Optional[float] = None
-    d_cigar: str
+    d_cigar: Optional[str] = None
     d2_score: Optional[float] = None
     d2_identity: Optional[float] = None
     d2_support: Optional[float] = None
@@ -363,7 +396,7 @@ class AlignmentAnnotations(BaseModel):
     j_score: Optional[float] = None
     j_identity: Optional[float] = None
     j_support: Optional[float] = None
-    j_cigar: str
+    j_cigar: Optional[str] = None
     junction: Union[str, Seq]
     junction_aa: Optional[Union[str, Seq]] = None
     np1: Optional[Union[str, Seq]] = None
@@ -380,8 +413,35 @@ class AlignmentAnnotations(BaseModel):
     # Non Airr
     category: Optional[RearrargmentCategory] = RearrargmentCategory(category="alignment_annotations")
 
-    class Config:
-        arbitrary_types_allowed = True
+    @field_validator(
+        "sequence_alignment_aa",
+        "germline_alignment_aa",
+        "junction_aa",
+        "np1",
+        "np1_aa",
+        "np2",
+        "np2_aa",
+        "np3",
+        "np3_aa",
+        "v_cigar",
+        "d_cigar",
+        "d2_cigar",
+        "j_cigar",
+        "c_cigar",
+        mode="before",
+    )
+    @classmethod
+    def validate_sequence_fields(cls, v: Any) -> Any:
+        """Handle nan values and convert them to None for sequence fields"""
+        # Handle various nan representations
+        if v is None:
+            return None
+        if isinstance(v, float) and math.isnan(v):
+            return None
+        if isinstance(v, str):
+            if v.lower() in ["<na>", "na", "nan", "", "none"]:
+                return None
+        return v
 
     @staticmethod
     def get_airr_fields() -> List[str]:
@@ -489,6 +549,8 @@ class AlignmentPositions(BaseModel):
         End position of the J gene alignment in both the sequence_alignment and germline_alignment fields (1-based closed interval).
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     v_sequence_start: Optional[Union[int, NAType]] = None
     v_sequence_end: Optional[Union[int, NAType]] = None
     v_germline_start: Optional[Union[int, NAType]] = None
@@ -515,7 +577,7 @@ class AlignmentPositions(BaseModel):
     j_alignment_end: Optional[int] = None
     category: Optional[RearrargmentCategory] = RearrargmentCategory(category="alignment_positions")
 
-    @validator(
+    @field_validator(
         "v_sequence_start",
         "v_sequence_end",
         "v_germline_start",
@@ -543,14 +605,11 @@ class AlignmentPositions(BaseModel):
     )
     @classmethod
     def validate_with_na(cls, v: Union[int, NAType]) -> Union[int, None]:
-        if v is None or isinstance(v, int):
-            return v
-        if isinstance(v, NAType):
+        """Check for valid ints or NA"""
+        try:
+            return int(v)
+        except (ValueError, TypeError):
             return None
-        raise ValueError(f"Invalid value for alignment_positions: {v}")
-
-    class Config:
-        arbitrary_types_allowed = True
 
     @staticmethod
     def get_airr_fields() -> List[str]:
@@ -612,6 +671,8 @@ class RegionSequences(BaseModel):
         Amino acid translation of the fwr4 field.
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     fwr1: Optional[Union[str, Seq]] = None
     fwr1_aa: Optional[Union[str, Seq]] = None
     cdr1: Optional[Union[str, Seq]] = None
@@ -627,9 +688,6 @@ class RegionSequences(BaseModel):
     fwr4: Optional[Union[str, Seq]] = None
     fwr4_aa: Optional[Union[str, Seq]] = None
     category: Optional[RearrargmentCategory] = RearrargmentCategory(category="region_sequence_annotations")
-
-    class Config:
-        arbitrary_types_allowed = True
 
     @staticmethod
     def get_airr_fields() -> List[str]:
@@ -687,6 +745,8 @@ class RegionPositions(BaseModel):
         FWR4 end position in the query sequence (1-based closed interval).
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     fwr1_start: Optional[int] = None
     fwr1_end: Optional[int] = None
     cdr1_start: Optional[int] = None
@@ -702,9 +762,6 @@ class RegionPositions(BaseModel):
     fwr4_start: Optional[int] = None
     fwr4_end: Optional[int] = None
     category: Optional[RearrargmentCategory] = RearrargmentCategory(category="region_positions")
-
-    class Config:
-        arbitrary_types_allowed = True
 
     @staticmethod
     def get_airr_fields() -> List[str]:
@@ -743,24 +800,26 @@ class JunctionLengths(BaseModel):
     np3_length: Optinal[int]
         Number of nucleotides between the second D gene and J gene alignments.
     n1_length: Optinal[int]
-        Number of untemplated nucleotides 5’ of the first or only D gene alignment.
+        Number of untemplated nucleotides 5' of the first or only D gene alignment.
     n2_length: Optinal[int]
-        Number of untemplated nucleotides 3’ of the first or only D gene alignment.
+        Number of untemplated nucleotides 3' of the first or only D gene alignment.
     n3_length: Optinal[int]
-        Number of untemplated nucleotides 3’ of the second D gene alignment.
+        Number of untemplated nucleotides 3' of the second D gene alignment.
     p3v_length: Optinal[int]
-        Number of palindromic nucleotides 3’ of the V gene alignment.
+        Number of palindromic nucleotides 3' of the V gene alignment.
     p5d_length: Optinal[int]
-        Number of palindromic nucleotides 5’ of the first or only D gene alignment.
+        Number of palindromic nucleotides 5' of the first or only D gene alignment.
     p3d_length: Optinal[int]
-        Number of palindromic nucleotides 3’ of the first or only D gene alignment.
+        Number of palindromic nucleotides 3' of the first or only D gene alignment.
     p5d2_length: Optinal[int]
-        Number of palindromic nucleotides 5’ of the second D gene alignment.
+        Number of palindromic nucleotides 5' of the second D gene alignment.
     p3d2_length: Optinal[int]
-        Number of palindromic nucleotides 3’ of the second D gene alignment.
+        Number of palindromic nucleotides 3' of the second D gene alignment.
     p5j_length: Optinal[int]
-        Number of palindromic nucleotides 5’ of the J gene alignment.
+        Number of palindromic nucleotides 5' of the J gene alignment.
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     junction_length: Optional[int] = None
     junction_aa_length: Optional[int] = None
@@ -778,14 +837,23 @@ class JunctionLengths(BaseModel):
     p5j_length: Optional[int] = None
     category: Optional[RearrargmentCategory] = RearrargmentCategory(category="junction_lengths")
 
-    class Config:
-        arbitrary_types_allowed = True
-
     @staticmethod
     def get_airr_fields() -> List[str]:
         return [
             "junction_length",
             "junction_aa_length",
+            "np1_length",
+            "np2_length",
+            "np3_length",
+            "n1_length",
+            "n2_length",
+            "n3_length",
+            "p3v_length",
+            "p5d_length",
+            "p3d_length",
+            "p5d2_length",
+            "p3d2_length",
+            "p5j_length",
         ]
 
 
@@ -805,41 +873,37 @@ class ReceptorChain(BaseModel):
         reference_name: str = "human",
         database: str = "imgt",
     ) -> "ReceptorChain":
-        """
-        Create a receptor chain from a single sequence.
+        """Build a single receptor chain from a single input
 
         Parameters
         ----------
-        sequence_id: str
-            Identifier for the sequence.
-        sequence: Union[str,Seq]
-            Sequence data.
+        sequence_id : str
+            _description_
+        sequence : Union[str, Seq]
+            _description_
+        reference_name : str, optional
+            _description_, by default "human"
+        database : str, optional
+            _description_, by default "imgt"
 
         Returns
         -------
-        receptor_chain: ReceptorChain
-            Receptor chain.
+        "ReceptorChain"
+            _description_
         """
         from sadie.airr import Airr
-        from sadie.airr.airrtable import AirrSeries, AirrTable
 
-        airr_api = Airr(reference_name)
-        result: AirrTable = airr_api.run_single(sequence_id, str(sequence))
-        result_sliced: AirrSeries = result.iloc[0]  # type: ignore
-
-        # my py won't stop complaining unless I pass the sliced object back through itself
-        return ReceptorChain(**result_sliced.to_receptor_chain_object().__dict__)
+        airr = Airr(reference_name=reference_name)
+        airr_table = airr.run_single(seq_id=sequence_id, seq=sequence)
+        if airr_table is None:
+            raise ValueError("could not annotate the sequence")
+        return airr_table.iloc[0].to_receptor_chain_object()
 
     def __str__(self) -> str:
-        printable: List[str] = []
-        for key in self.__fields__.keys():
-            sub_obj = self.__dict__[key].__dict__
-            printable.append(key)
-            printable.append("-" * len(key))
-            for sub_key in sub_obj.keys():
-                printable.append(f"{sub_key} : {sub_obj[sub_key]}")
-            printable.append("\n")
-        return "\n".join(printable)
+        return str(self.input_sequence.sequence_id) + "_" + str(self.primary_annotations.locus)
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
 
 class Antibody(BaseModel):
