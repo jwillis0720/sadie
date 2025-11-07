@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sadie-antibody"
-version = "2.0.0" # run 'sadie --version' to get the current version
+version = "0.0.0" # Placeholder - actual version from git tags via poetry-dynamic-versioning
 license = "MIT"
 description = "\"The Complete Antibody Library\""
 authors = [
@@ -29,7 +29,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -47,15 +46,16 @@ issues = "https://github.com/jwillis0720/sadie/issues"
 sadie = "sadie.app:sadie"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.14"
-biopython = "^1.84"
+python = ">=3.10"
+biopython = ">=1.80"
 click = ">=8.0,<8.2"
 filetype = "^1.2.0"
-pandas = ">=2.3,<3"
+pandas = ">=1.5"
 requests = "^2.32.0"
 pydantic = ">=2.0.0,<3.0.0"
 python-Levenshtein = "^0.27.0"
-pyarrow = "^20.0.0"
+pyarrow = "*"
+numpy = "*"
 semantic-version = "^2.10.0"
 PyYAML = "^6.0"
 scikit-learn = "^1.5.0"
@@ -92,8 +92,25 @@ pyright = "^1.1.350"
 pytest-cov = "^6.2.1"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "pep440"
+pattern = "^(?:test-)?v(?P<base>\\d+\\.\\d+\\.\\d+)"
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ base }}
+    {%- else -%}
+        {{ base }}.dev{{ distance }}
+    {%- endif -%}
+"""
+
+[tool.poetry-dynamic-versioning.substitution]
+files = ["src/sadie/__init__.py"]
+patterns = ["(^__version__\\s*=\\s*['\"])[^'\"]*(['\"])"]
 
 # ------------------------------------------------ External Tools ------------------------------------------------ #
 [[tool.poetry_bumpversion.replacements]]

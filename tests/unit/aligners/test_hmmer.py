@@ -33,7 +33,7 @@ class TestHMMER:
         assert seqs is not None
         seqs = self.hmmer.transform_seqs(self.aa)
         assert seqs[0].textize().sequence == self.aa
-        seqs = self.hmmer.transform_seqs(SeqRecord(self.aa, id="test"))
+        seqs = self.hmmer.transform_seqs(SeqRecord(Seq(self.aa), id="test"))
         assert seqs[0].textize().sequence == self.aa
         seqs = self.hmmer.transform_seqs((self.aa, "test"))
         assert seqs[0].textize().sequence == self.aa

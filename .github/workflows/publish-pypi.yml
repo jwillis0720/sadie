@@ -1,0 +1,110 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v2.0.0
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  contents: read
+  id-token: write  # Required for trusted publishing
+
+jobs:
+  build:
+    name: Build distribution packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Important for poetry-dynamic-versioning to read tags
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install poetry-dynamic-versioning plugin
+        run: |
+          poetry self add "poetry-dynamic-versioning[plugin]"
+
+      - name: Verify version from tag
+        run: |
+          echo "Git tag: ${GITHUB_REF#refs/tags/}"
+          poetry version
+          echo "Package version: $(poetry version -s)"
+
+      - name: Build source distribution and wheel
+        run: |
+          poetry build -vvv
+
+      - name: Display built packages
+        run: |
+          ls -lh dist/
+
+      - name: Upload distribution packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-packages
+          path: dist/
+
+  test-package:
+    name: Test built package
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12", "3.13"]
+
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Download built packages
+        uses: actions/download-artifact@v4
+        with:
+          name: python-packages
+          path: dist/
+
+      - name: Install package from wheel
+        run: |
+          pip install dist/*.whl
+
+      - name: Test import and version
+        run: |
+          python -c "import sadie; print(f'Sadie version: {sadie.__version__}')"
+          python -c "from sadie import airr, receptor, reference; print('All imports successful')"
+
+      - name: Display installed package info
+        run: |
+          pip show sadie-antibody
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: test-package
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/sadie-antibody
+
+    steps:
+      - name: Download built packages
+        uses: actions/download-artifact@v4
+        with:
+          name: python-packages
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          print-hash: true
+          verbose: true

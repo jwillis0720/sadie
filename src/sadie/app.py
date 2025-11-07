@@ -29,7 +29,13 @@ from sadie.renumbering import Renumbering
 from sadie.utility import SadieInputDir, SadieInputFile, SadieOutput
 from sadie.utility.util import get_project_root, getVerbosityLevel
 
-__version__ = version("sadie-antibody")
+try:
+    __version__ = version("sadie-antibody")
+except Exception:
+    try:
+        __version__ = version("sadie-test")
+    except Exception:
+        __version__ = "unknown"
 
 
 @click.group()

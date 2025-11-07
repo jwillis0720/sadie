@@ -1,0 +1,94 @@
+name: Test Matrix
+
+on:
+  push:
+    branches: [main, development, pypi]
+  pull_request:
+    branches: [main, development]
+  workflow_dispatch:
+
+jobs:
+  test-compatibility:
+    name: Test Python ${{ matrix.python-version }} / ${{ matrix.deps }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        deps: ["latest"]
+        experimental: [false]
+        include:
+          # Test with pandas 2.x explicitly on both OS
+          - os: ubuntu-latest
+            python-version: "3.12"
+            deps: "pandas2"
+            experimental: false
+          - os: macos-latest
+            python-version: "3.12"
+            deps: "pandas2"
+            experimental: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Important for poetry-dynamic-versioning
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.deps }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies (latest)
+        if: matrix.deps == 'latest'
+        run: |
+          poetry install --no-interaction
+
+      - name: Install dependencies (minimum)
+        if: matrix.deps == 'minimum'
+        run: |
+          poetry install --no-interaction
+          # Install minimum supported versions
+          poetry run pip install \
+            "biopython==1.80" \
+            "pandas==1.5.0" \
+            "numpy==1.21.0"
+
+      - name: Install dependencies (pandas2)
+        if: matrix.deps == 'pandas2'
+        run: |
+          poetry install --no-interaction
+          poetry run pip install "pandas>=2.0,<3.0"
+
+      - name: Display installed versions
+        run: |
+          poetry run python --version
+          poetry run pip list | grep -E "biopython|pandas|numpy|pyarrow"
+
+      - name: Run tests
+        run: |
+          poetry run pytest -v --tb=short
+
+      - name: Test import and basic functionality
+        run: |
+          poetry run python -c "import sadie; print(f'Sadie version: {sadie.__version__}')"
+          poetry run python -c "from sadie import airr, receptor, reference; print('All imports successful')"
