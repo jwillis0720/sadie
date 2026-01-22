@@ -64,6 +64,30 @@ def _save_checkpoint(checkpoint_path: Path, data: dict):
 # IMGT V-QUEST reference directory base URL
 IMGT_BASE_URL = "https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory"
 
+# IMGT GENE-DB URL for C genes (not available in V-QUEST)
+IMGT_GENEDB_URL = "https://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP"
+
+# Species name mapping for GENE-DB (uses spaces instead of underscores)
+SPECIES_GENEDB_MAP = {
+    "human": "Homo sapiens",
+    "mouse": "Mus musculus",
+    "mouse_c57bl6j": "Mus musculus C57BL/6J",
+    "rat": "Rattus norvegicus",
+    "rabbit": "Oryctolagus cuniculus",
+    "rhesus_macaque": "Macaca mulatta",
+    "cynomolgus": "Macaca fascicularis",
+    "dog": "Canis lupus familiaris",
+    "cat": "Felis catus",
+    "pig": "Sus scrofa",
+    "cow": "Bos taurus",
+    "sheep": "Ovis aries",
+    "goat": "Capra hircus",
+    "horse": "Equus caballus",
+    "chicken": "Gallus gallus",
+    "alpaca": "Vicugna pacos",
+    "camel": "Camelus dromedarius",
+}
+
 # Species name mapping (internal names to IMGT directory names)
 SPECIES_MAP = {
     "human": "Homo_sapiens",
@@ -321,7 +345,238 @@ class IMGTDownloader:
         if checkpoint_path.exists():
             checkpoint_path.unlink()
 
+        # Download C genes from GENE-DB (not available in V-QUEST)
+        c_count = self._download_c_genes_from_genedb(internal_name, force)
+        total_count += c_count
+
         return total_count
+
+    def _download_c_genes_from_genedb(
+        self,
+        internal_name: str,
+        force: bool = False
+    ) -> int:
+        """
+        Download C genes from IMGT GENE-DB.
+
+        C genes are not available in V-QUEST reference directory, they must
+        be fetched from the GENE-DB bulk FASTA file.
+
+        Parameters
+        ----------
+        internal_name : str
+            Internal species name (e.g., "human")
+        force : bool
+            Force re-download
+
+        Returns
+        -------
+        int
+            Number of C gene sequences downloaded
+        """
+        species_dir = self.output_dir / internal_name
+
+        # Check if C gene files already exist
+        c_files_exist = all(
+            (species_dir / f"IG{chain}C.fasta").exists()
+            for chain in ["H", "K", "L"]
+        )
+        if c_files_exist and not force:
+            # Count existing sequences
+            count = sum(
+                self._count_sequences(species_dir / f"IG{chain}C.fasta")
+                for chain in ["H", "K", "L"]
+                if (species_dir / f"IG{chain}C.fasta").exists()
+            )
+            logger.debug(f"Skipping C genes (exists with {count} sequences)")
+            return count
+
+        # Get GENE-DB species name
+        genedb_species = SPECIES_GENEDB_MAP.get(internal_name)
+        if not genedb_species:
+            logger.debug(f"No GENE-DB species mapping for {internal_name}")
+            return 0
+
+        logger.info(f"Downloading C genes from GENE-DB for {internal_name}...")
+
+        # Download and cache GENE-DB file
+        genedb_content = self._get_genedb_content(force)
+        if not genedb_content:
+            logger.warning("Failed to get GENE-DB content")
+            return 0
+
+        # Parse and filter C genes for this species
+        c_genes = self._parse_genedb_c_genes(genedb_content, genedb_species)
+
+        if not c_genes:
+            logger.info(f"No C genes found in GENE-DB for {genedb_species}")
+            return 0
+
+        # Group by chain and write FASTA files
+        total_count = 0
+        for chain in ["H", "K", "L"]:
+            chain_genes = c_genes.get(chain, [])
+            if chain_genes:
+                fasta_path = species_dir / f"IG{chain}C.fasta"
+                with open(fasta_path, "w") as f:
+                    for gene_name, sequence in chain_genes:
+                        f.write(f">{gene_name}\n{sequence}\n")
+                logger.info(f"  IG{chain}C: {len(chain_genes)} sequences")
+                total_count += len(chain_genes)
+
+        return total_count
+
+    def _get_genedb_content(self, force: bool = False) -> Optional[str]:
+        """
+        Get GENE-DB FASTA content, with caching.
+
+        Parameters
+        ----------
+        force : bool
+            Force re-download
+
+        Returns
+        -------
+        str or None
+            GENE-DB FASTA content
+        """
+        cache_dir = Path.home() / ".cache" / "sadie" / "imgt"
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_path = cache_dir / "GENEDB_C_genes.fasta"
+
+        if cache_path.exists() and not force:
+            logger.debug("Using cached GENE-DB file")
+            return cache_path.read_text()
+
+        try:
+            logger.info(f"Downloading GENE-DB from {IMGT_GENEDB_URL}...")
+            req = Request(IMGT_GENEDB_URL, headers={"User-Agent": "SADIE-Germlines/1.0"})
+            with urlopen(req, timeout=self.timeout) as response:
+                content = response.read().decode("utf-8")
+
+            # Cache the content
+            cache_path.write_text(content)
+            logger.info(f"Cached GENE-DB to {cache_path}")
+            return content
+
+        except (URLError, HTTPError) as e:
+            logger.error(f"Failed to download GENE-DB: {e}")
+            return None
+
+    def _parse_genedb_c_genes(
+        self,
+        content: str,
+        target_species: str
+    ) -> Dict[str, List[Tuple[str, str]]]:
+        """
+        Parse GENE-DB FASTA to extract C genes for a species.
+
+        GENE-DB header format:
+        >ACCESSION|GENE*ALLELE|SPECIES|FUNCTIONALITY|REGION|...
+
+        Parameters
+        ----------
+        content : str
+            GENE-DB FASTA content
+        target_species : str
+            Target species name (e.g., "Homo sapiens")
+
+        Returns
+        -------
+        Dict[str, List[Tuple[str, str]]]
+            C genes grouped by chain (H, K, L) as (gene_name, sequence) tuples
+        """
+        c_genes: Dict[str, List[Tuple[str, str]]] = {"H": [], "K": [], "L": []}
+
+        # C gene name patterns (including isotype genes)
+        # IGHC: IGHA1, IGHA2, IGHD, IGHE, IGHG1-4, IGHM, IGHGP
+        # IGKC: IGKC
+        # IGLC: IGLC1-7
+        c_gene_patterns = {
+            "H": re.compile(r"^IGH[ADEGM]", re.IGNORECASE),  # IGHA, IGHD, IGHE, IGHG, IGHM
+            "K": re.compile(r"^IGKC", re.IGNORECASE),         # IGKC
+            "L": re.compile(r"^IGLC", re.IGNORECASE),         # IGLC1-7
+        }
+
+        current_header = None
+        current_seq = []
+
+        for line in content.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+
+            if line.startswith(">"):
+                # Save previous sequence
+                if current_header:
+                    gene_info = self._parse_genedb_header(current_header, target_species, c_gene_patterns)
+                    if gene_info:
+                        chain, gene_name = gene_info
+                        sequence = "".join(current_seq)
+                        c_genes[chain].append((gene_name, sequence))
+
+                current_header = line[1:]  # Remove ">"
+                current_seq = []
+            else:
+                current_seq.append(line)
+
+        # Save last sequence
+        if current_header:
+            gene_info = self._parse_genedb_header(current_header, target_species, c_gene_patterns)
+            if gene_info:
+                chain, gene_name = gene_info
+                sequence = "".join(current_seq)
+                c_genes[chain].append((gene_name, sequence))
+
+        return c_genes
+
+    def _parse_genedb_header(
+        self,
+        header: str,
+        target_species: str,
+        c_gene_patterns: Dict[str, re.Pattern]
+    ) -> Optional[Tuple[str, str]]:
+        """
+        Parse GENE-DB header to extract C gene info.
+
+        Parameters
+        ----------
+        header : str
+            FASTA header (without ">")
+        target_species : str
+            Target species
+        c_gene_patterns : Dict
+            Regex patterns for C gene identification
+
+        Returns
+        -------
+        Tuple[str, str] or None
+            (chain, gene_name) or None if not a C gene for this species
+        """
+        parts = header.split("|")
+        if len(parts) < 4:
+            return None
+
+        # GENE-DB format: ACCESSION|GENE*ALLELE|SPECIES|FUNCTIONALITY|...
+        gene_name = parts[1]
+        species = parts[2]
+        functionality = parts[3] if len(parts) > 3 else "F"
+
+        # Filter by species
+        if species.lower() != target_species.lower():
+            return None
+
+        # Filter by functionality (F = functional, ORF = open reading frame)
+        # Include F and ORF, exclude P (pseudogene)
+        if functionality not in ["F", "ORF"]:
+            return None
+
+        # Check if this is a C gene
+        for chain, pattern in c_gene_patterns.items():
+            if pattern.match(gene_name):
+                return (chain, gene_name)
+
+        return None
     
     def _download_segment(
         self,
