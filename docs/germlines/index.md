@@ -125,7 +125,6 @@ sadie germlines populate -p imgt -s human -s mouse
 
 - **Issues**: [GitHub Issues](https://github.com/jwillis0720/sadie/issues)
 - **Documentation Feedback**: Use our [feedback template](https://github.com/jwillis0720/sadie/issues/new?template=documentation-feedback.md)
-- **Email**: jwillis0720@gmail.com
 
 ## Key Features
 

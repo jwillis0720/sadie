@@ -617,7 +617,7 @@ ls -lh ~/.sadie/germlines/databases/human/
 
 1. **GitHub Issues**: [https://github.com/jwillis0720/sadie/issues](https://github.com/jwillis0720/sadie/issues)
 2. **Documentation Feedback**: Use the [documentation feedback template](https://github.com/jwillis0720/sadie/issues/new?template=documentation-feedback.md)
-3. **Email**: jwillis0720@gmail.com
+
 
 ### Additional Resources
 
