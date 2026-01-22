@@ -5,16 +5,18 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Enable researchers to select germline database for AIRR annotation and renumbering
-**Current focus:** v1.1 Audit — CDR3 annotation investigation
+**Current focus:** v1.1 Audit — Backend parity improvement
 
 ## Current Position
 
-Phase: 14 Complete
+Phase: 15 Complete
 Plan: Completed
-Status: C gene integration done; CDR3 issue identified
-Last activity: 2026-01-22 — Phase 14 completed
+Status: J gene matching fixed; CDR3 annotation working
+Last activity: 2026-01-22 — Phase 15 completed
 
-Progress: ██████████░░░░░░░░░░ 55% (5/8 requirements)
+Progress: ████████████░░░░░░░░ 65% (6/9 requirements)
+
+**Next Phase:** Phase 16 - Backend parity investigation (optional)
 
 ## Milestone v1.1 Progress
 
@@ -30,30 +32,31 @@ Progress: ██████████░░░░░░░░░░ 55% (5/8 
 - All 129 columns now present
 - CDR3 annotation issue identified as pre-existing (separate from C genes)
 
-### Phase 15: CDR3 Annotation Fix ○ (Next)
-- Investigate J gene matching failure
-- Debug IgBLAST configuration
-- Target: CDR3/junction annotation working
+### Phase 15: J Gene Matching & CDR3 Annotation Fix ✓
+- Root cause: Aux file J gene format was 3 columns instead of 5
+- Fix: Created `j_gene_data.py` module with CDR3 end positions
+- Fix: Modified `aux.py` to generate correct 5-column format
+- Results: j_call 100%, cdr3 98.7%, junction 98.7%, fwr4 98.7%, complete_vdj 97.4%
+- Backend parity improved: 72.19% → 77.60%
 
-## Key Discovery
+## Key Achievements (Phase 15)
 
-**CDR3 annotation failure is PRE-EXISTING** (not caused by C gene absence):
-- J genes not being matched (j_call = NaN)
-- CDR3, junction, fwr4 all return NaN
-- Affects 99% of sequences
-- Requires IgBLAST configuration investigation
+| Metric | Before | After | Target |
+|--------|--------|-------|--------|
+| j_call populated | 0% | 100% | >95% ✓ |
+| cdr3 populated | 0% | 98.7% | >95% ✓ |
+| junction populated | 0% | 98.7% | >95% ✓ |
+| fwr4 populated | 0% | 98.7% | >95% ✓ |
+| complete_vdj = True | 0% | 97.4% | >95% ✓ |
 
 ## Key Files
 
-### Phase 14 Completed
-- `src/sadie/germlines/scripts/download_imgt.py` — GENE-DB C gene download
-- `src/sadie/germlines/igblast/database/human/human_C.*` — C gene BLAST DBs
-- `.planning/phases/phase-14/SUMMARY.md` — Phase summary
-
-### Phase 15 Targets
-- `src/sadie/airr/igblast/igblast.py` — IgBLAST execution
-- `src/sadie/germlines/igblast/aux_db/` — Aux files
-- `src/sadie/germlines/igblast/Ig/internal_data/` — Internal data
+### Phase 15 Completed
+- `src/sadie/germlines/builders/j_gene_data.py` — J gene reference data module
+- `src/sadie/germlines/builders/aux.py` — Fixed aux file builder
+- `src/sadie/germlines/igblast/aux_db/human_gl.aux` — Corrected aux file
+- `audit/validate_j_gene_fix.py` — Validation script
+- `.planning/phases/phase-15/SUMMARY.md` — Phase summary
 
 ### Audit Artifacts
 - `audit/audit.ipynb` — Comparison notebook
