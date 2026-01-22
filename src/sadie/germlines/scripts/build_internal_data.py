@@ -135,7 +135,7 @@ def generate_ndm_entry(gene_name: str, gapped_seq: str, chain: str) -> Optional[
         f"{regions['CDR1'][0]}\t{regions['CDR1'][1]}\t"
         f"{regions['FR2'][0]}\t{regions['FR2'][1]}\t"
         f"{regions['CDR2'][0]}\t{regions['CDR2'][1]}\t"
-        f"{regions['FR3'][0]}\t{seq_len}\t"
+        f"{regions['FR3'][0]}\t{regions['FR3'][1]}\t"
         f"{chain_type}\t0"
     )
     
