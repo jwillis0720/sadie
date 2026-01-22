@@ -465,7 +465,7 @@ class GermlinePipeline:
         data["organisms"][species] = {
             "database_path": f"../database/{species}",
             "aux_file": f"../aux_db/{species}_gl.aux",
-            "segments": ["V", "D", "J"],
+            "segments": ["V", "D", "J", "C"],
         }
 
         with open(yaml_path, "w") as f:
