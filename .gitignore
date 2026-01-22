@@ -54,6 +54,8 @@ src/site/
 *.md
 !README.md
 !docs/
+!docs/**/*.md
+!.github/**/*.md
 !IGBLAST_PARAMETER_ANALYSIS.md
 !COERCE_FEATURE.md
 !specs/
