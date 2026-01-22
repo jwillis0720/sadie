@@ -5,50 +5,37 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Enable researchers to select germline database for AIRR annotation and renumbering
-**Current focus:** v1.0 complete — planning next milestone
+**Current focus:** v1.1 Audit — validate germlines backend parity with G3
 
 ## Current Position
 
-Phase: v1.0 Complete
-Plan: All plans complete
-Status: Milestone shipped
-Last activity: 2026-01-22 — v1.0 milestone complete
+Phase: 13
+Plan: Not started
+Status: Defining requirements
+Last activity: 2026-01-22 — Milestone v1.1 started
 
-Progress: ████████████████████ 100% (92/92 tasks)
+Progress: ░░░░░░░░░░░░░░░░░░░░ 0% (0/4 requirements)
 
-## Milestone Summary
+## Milestone v1.1 Goals
 
-**v1.0 Germline Database Integration** shipped 2026-01-22
+- Validate germlines backend produces identical AIRR results to G3
+- Create audit notebook with side-by-side comparison
+- Document any discrepancies with root cause analysis
 
-- 12 phases, 92 tasks completed
-- 18/18 requirements validated
-- 88 integration tests passing
-- 29 species with IgBLAST databases
+## Test Data
 
-## Archives
-
-- `.planning/milestones/v1.0-ROADMAP.md` — Full phase details
-- `.planning/milestones/v1.0-REQUIREMENTS.md` — All requirements with traceability
-- `.planning/milestones/v1.0-MILESTONE-AUDIT.md` — Integration verification
-
-## Next Steps
-
-Run `/gsd:new-milestone` to:
-1. Define v1.1 or v2.0 scope
-2. Create new REQUIREMENTS.md
-3. Create new ROADMAP.md
-4. Begin next milestone
+- `audit/20260112_HCV_DB_example.csv` — 95 HCV antibody sequences
 
 ## Key Files
 
-### Integration Points (Complete)
+### v1.1 Audit
+- `audit/audit.ipynb` — Comparison notebook (to create)
+
+### Integration Points (from v1.0)
 - `src/sadie/airr/igblast/germline.py` — IgBLAST paths
 - `src/sadie/renumbering/aligners/hmmer.py` — HMM generation
 - `src/sadie/reference/reference.py` — Reference system
 - `src/sadie/germlines/cli.py` — CLI commands
-
-### Test Suite (Complete)
-- `tests/unit/germlines/` — 88 tests
 
 ---
 *Last updated: 2026-01-22*

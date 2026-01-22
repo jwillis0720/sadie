@@ -33,7 +33,10 @@ Enable researchers to select which germline database their AIRR annotation and a
 
 ### Active
 
-(None — v1.0 complete)
+- [ ] AUDIT-01: Run AIRR annotation with germlines backend on test sequences
+- [ ] AUDIT-02: Run AIRR annotation with G3 backend on same sequences
+- [ ] AUDIT-03: Compare results for column-level identity (excluding source column)
+- [ ] AUDIT-04: Document any discrepancies with root cause analysis
 
 ### Out of Scope
 
@@ -81,5 +84,14 @@ Enable researchers to select which germline database their AIRR annotation and a
 - Single provider selection per run (no per-segment mixing)
 - Default priority: custom > ogrdb > vdjbase > imgt
 
+## Current Milestone: v1.1 Audit
+
+**Goal:** Validate that germlines backend produces identical AIRR results to G3 backend using real HCV antibody sequences.
+
+**Target features:**
+- Backend comparison notebook (audit/audit.ipynb)
+- Side-by-side AIRR output comparison
+- Parity validation with documented results
+
 ---
-*Last updated: 2026-01-22 after v1.0 milestone*
+*Last updated: 2026-01-22 after v1.1 milestone start*
