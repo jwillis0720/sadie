@@ -296,7 +296,7 @@ class OGRDBProvider(GermlineProvider):
         GermlineGene or None
             Gene if found
         """
-        for segment in ["V", "D", "J"]:
+        for segment in ["V", "D", "J", "C"]:
             for chain in ["H", "K", "L"]:
                 genes = self.fetch_genes(species, segment, chain)
                 for gene in genes:
