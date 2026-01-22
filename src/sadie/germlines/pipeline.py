@@ -63,7 +63,7 @@ def _check_offline_ready(sources_dir: Path, species: str) -> tuple[bool, str]:
 
 
 # Constants (extracted magic numbers per Zen)
-SEGMENTS = ["V", "D", "J"]
+SEGMENTS = ["V", "D", "J", "C"]
 CHAINS = ["H", "K", "L"]
 
 
@@ -351,7 +351,7 @@ class GermlinePipeline:
                 description=f"source={gene.source}"
             )
             for gene in genes
-            if gene.sequence_gapped or segment == "D"
+            if gene.sequence_gapped or segment in ["D", "C"]  # D and C segments may be ungapped
         ]
 
         # Guard: no gapped sequences
