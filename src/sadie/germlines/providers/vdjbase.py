@@ -287,7 +287,7 @@ class VDJbaseProvider(GermlineProvider):
         GermlineGene or None
             Gene if found
         """
-        for segment in ["V", "D", "J"]:
+        for segment in ["V", "D", "J", "C"]:
             for chain in ["H", "K", "L"]:
                 genes = self.fetch_genes(species, segment, chain)
                 for gene in genes:
@@ -427,8 +427,8 @@ class VDJbaseProvider(GermlineProvider):
             f"Deduplicated {len(sequences)} sequences to {len(unique_sequences)} unique alleles"
         )
 
-        # Group by segment type
-        segments = {"V": [], "D": [], "J": []}
+        # Group by segment type (V, D, J, C)
+        segments = {"V": [], "D": [], "J": [], "C": []}
         
         for seq_data in unique_sequences.values():
             seq_type = seq_data.get("type", "")
@@ -438,6 +438,8 @@ class VDJbaseProvider(GermlineProvider):
                 segments["D"].append(seq_data)
             elif seq_type.endswith("J"):
                 segments["J"].append(seq_data)
+            elif seq_type.endswith("C"):
+                segments["C"].append(seq_data)
 
         # Write FASTA files for each segment
         for segment, seqs in segments.items():
