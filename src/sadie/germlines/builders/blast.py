@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 # Constants
-SEGMENTS = ["V", "D", "J"]
+SEGMENTS = ["V", "D", "J", "C"]
 CHAINS = ["H", "K", "L"]
 
 
