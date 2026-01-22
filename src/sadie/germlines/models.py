@@ -31,7 +31,7 @@ class GermlineGene(BaseModel):
     species : str
         Species name (e.g., "human", "mouse")
     segment : str
-        Segment type: "V", "D", or "J"
+        Segment type: "V", "D", "J", or "C"
     chain : str
         Chain type: "H" (Heavy), "K" (Kappa), or "L" (Lambda)
     sequence : str
@@ -101,10 +101,10 @@ class GermlineGene(BaseModel):
     @field_validator("segment")
     @classmethod
     def validate_segment(cls, v: str) -> str:
-        """Validate segment is V, D, or J."""
+        """Validate segment is V, D, J, or C."""
         v = v.upper()
-        if v not in ["V", "D", "J"]:
-            raise ValueError(f"Segment must be V, D, or J, got: {v}")
+        if v not in ["V", "D", "J", "C"]:
+            raise ValueError(f"Segment must be V, D, J, or C, got: {v}")
         return v
 
     @field_validator("chain")
