@@ -1,0 +1,174 @@
+organisms:
+  alpaca:
+    database_path: ../database/alpaca
+    segments:
+    - V
+    - D
+    - J
+  atlantic_cod:
+    database_path: ../database/atlantic_cod
+    segments:
+    - V
+  atlantic_salmon:
+    database_path: ../database/atlantic_salmon
+    segments:
+    - V
+    - D
+    - J
+  camel:
+    database_path: ../database/camel
+    segments:
+    - V
+    - J
+  cat:
+    database_path: ../database/cat
+    segments:
+    - V
+    - D
+    - J
+    aux_file: ../aux_db/cat_gl.aux
+  channel_catfish:
+    database_path: ../database/channel_catfish
+    segments:
+    - V
+  chicken:
+    database_path: ../database/chicken
+    segments:
+    - V
+    - D
+    - J
+  cow:
+    database_path: ../database/cow
+    segments:
+    - V
+    - D
+    - J
+  cynomolgus:
+    database_path: ../database/cynomolgus
+    segments:
+    - V
+    - D
+    - J
+  dog:
+    database_path: ../database/dog
+    segments:
+    - V
+    - D
+    - J
+    aux_file: ../aux_db/dog_gl.aux
+  ferret:
+    database_path: ../database/ferret
+    segments:
+    - V
+    - D
+    - J
+  goat:
+    database_path: ../database/goat
+    segments:
+    - V
+    - J
+  gorilla:
+    database_path: ../database/gorilla
+    segments:
+    - V
+    - D
+    - J
+  horse:
+    database_path: ../database/horse
+    segments:
+    - V
+    - D
+    - J
+  human:
+    database_path: ../database/human
+    segments:
+    - V
+    - D
+    - J
+    aux_file: ../aux_db/human_gl.aux
+  lemur:
+    database_path: ../database/lemur
+    segments:
+    - V
+    - D
+    - J
+  mink:
+    database_path: ../database/mink
+    segments:
+    - V
+    - D
+    - J
+  mouse:
+    database_path: ../database/mouse
+    segments:
+    - V
+    - D
+    - J
+    aux_file: ../aux_db/mouse_gl.aux
+  mouse_c57bl6j:
+    database_path: ../database/mouse_c57bl6j
+    segments:
+    - V
+    - D
+    - J
+  orangutan_bornean:
+    database_path: ../database/orangutan_bornean
+    segments:
+    - V
+    - D
+    - J
+  orangutan_sumatran:
+    database_path: ../database/orangutan_sumatran
+    segments:
+    - V
+    - D
+    - J
+  pig:
+    database_path: ../database/pig
+    segments:
+    - V
+    - D
+    - J
+  platypus:
+    database_path: ../database/platypus
+    segments:
+    - V
+    - D
+    - J
+  rabbit:
+    database_path: ../database/rabbit
+    segments:
+    - V
+    - D
+    - J
+  rainbow_trout:
+    database_path: ../database/rainbow_trout
+    segments:
+    - V
+    - D
+    - J
+  rat:
+    database_path: ../database/rat
+    segments:
+    - V
+    - D
+    - J
+  rhesus_macaque:
+    database_path: ../database/rhesus_macaque
+    segments:
+    - V
+    - D
+    - J
+    aux_file: ../aux_db/rhesus_macaque_gl.aux
+  sheep:
+    database_path: ../database/sheep
+    segments:
+    - V
+    - D
+    - J
+  zebrafish:
+    database_path: ../database/zebrafish
+    segments:
+    - V
+    - D
+    - J

@@ -25,7 +25,7 @@ def test_manager_default_providers():
     from sadie.germlines.manager import GermlineManager
 
     manager = GermlineManager()
-    assert manager.provider_names == ["custom", "imgt", "ogrdb"]
+    assert manager.provider_names == ["custom", "imgt", "ogrdb", "vdjbase"]
 
 
 def test_manager_custom_providers():

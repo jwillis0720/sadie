@@ -19,7 +19,7 @@ Current Status: Stub implementation - reads from pre-downloaded FASTA files
 
 import logging
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 from datetime import datetime
 from Bio import SeqIO
 
@@ -88,6 +88,7 @@ class IMGTProvider(GermlineProvider):
             IMGT genes
         """
         fasta_path = self.get_fasta_path(species, segment, chain)
+        gapped_path = self._get_gapped_fasta_path(species, segment, chain)
 
         # Guard: file doesn't exist
         if not fasta_path.exists():
@@ -98,9 +99,15 @@ class IMGTProvider(GermlineProvider):
             )
             return []
 
+        # Load gapped sequences if available
+        gapped_sequences: Dict[str, str] = {}
+        if gapped_path.exists():
+            gapped_sequences = self._load_gapped_sequences(gapped_path)
+            logger.debug(f"Loaded {len(gapped_sequences)} gapped sequences from {gapped_path}")
+
         logger.info(f"Loading IMGT FASTA: {fasta_path}")
 
-        genes = self._parse_imgt_fasta(fasta_path, species, segment, chain)
+        genes = self._parse_imgt_fasta(fasta_path, species, segment, chain, gapped_sequences)
 
         logger.info(f"Loaded {len(genes)} IMGT genes")
 
@@ -111,7 +118,8 @@ class IMGTProvider(GermlineProvider):
         fasta_path: Path,
         species: str,
         segment: str,
-        chain: str
+        chain: str,
+        gapped_sequences: Optional[Dict[str, str]] = None
     ) -> List[GermlineGene]:
         """
         Parse IMGT FASTA file.
@@ -131,6 +139,8 @@ class IMGTProvider(GermlineProvider):
             Segment type
         chain : str
             Chain type
+        gapped_sequences : Dict[str, str], optional
+            Pre-loaded gapped sequences mapping gene name to gapped sequence
 
         Returns
         -------
@@ -138,6 +148,7 @@ class IMGTProvider(GermlineProvider):
             Parsed genes
         """
         genes = []
+        gapped_sequences = gapped_sequences or {}
 
         try:
             records = list(SeqIO.parse(fasta_path, "fasta"))
@@ -146,7 +157,7 @@ class IMGTProvider(GermlineProvider):
             return []
 
         for record in records:
-            gene = self._create_imgt_gene(record, species, segment, chain)
+            gene = self._create_imgt_gene(record, species, segment, chain, gapped_sequences)
             if gene:
                 genes.append(gene)
 
@@ -157,7 +168,8 @@ class IMGTProvider(GermlineProvider):
         record,
         species: str,
         segment: str,
-        chain: str
+        chain: str,
+        gapped_sequences: Optional[Dict[str, str]] = None
     ) -> Optional[GermlineGene]:
         """
         Create GermlineGene from IMGT SeqRecord.
@@ -177,24 +189,38 @@ class IMGTProvider(GermlineProvider):
             Segment type
         chain : str
             Chain type
+        gapped_sequences : Dict[str, str], optional
+            Pre-loaded gapped sequences from *_gapped.fasta file
 
         Returns
         -------
         GermlineGene or None
             Gene object if successful
         """
+        gapped_sequences = gapped_sequences or {}
+
         # Parse header
+        # IMGT format: >ACCESSION|GENE_NAME|SPECIES|FUNCTIONALITY|REGION|...
         header_parts = record.id.split("|")
-        gene_name = header_parts[0]
+        gene_name = header_parts[1] if len(header_parts) > 1 else header_parts[0]
 
-        # Extract functionality if present
+        # Extract functionality if present (index 3 in IMGT format)
         functionality = "F"  # Default to functional
-        if len(header_parts) > 2:
-            functionality = header_parts[2]
+        if len(header_parts) > 3:
+            functionality = header_parts[3]
 
-        # Get sequence
-        sequence_gapped = str(record.seq).upper()
-        sequence_ungapped = sequence_gapped.replace(".", "").replace("-", "")
+        # Get sequence from main file
+        sequence_raw = str(record.seq).upper()
+        is_gapped = "." in sequence_raw
+
+        if is_gapped:
+            # Main file has gapped sequences (e.g., human)
+            sequence_gapped = sequence_raw
+            sequence_ungapped = sequence_raw.replace(".", "").replace("-", "")
+        else:
+            # Main file is ungapped, look up from gapped file
+            sequence_ungapped = sequence_raw
+            sequence_gapped = gapped_sequences.get(gene_name)
 
         # Determine if functional
         is_functional = functionality == "F"
@@ -206,7 +232,7 @@ class IMGTProvider(GermlineProvider):
                 segment=segment,
                 chain=chain,
                 sequence=sequence_ungapped,
-                sequence_gapped=sequence_gapped if "." in sequence_gapped else None,
+                sequence_gapped=sequence_gapped,
                 is_functional=is_functional,
                 functionality=functionality,
                 source="imgt",
@@ -216,6 +242,56 @@ class IMGTProvider(GermlineProvider):
         except Exception as e:
             logger.error(f"Failed to create IMGT gene {gene_name}: {e}")
             return None
+
+    def _get_gapped_fasta_path(
+        self,
+        species: str,
+        segment: str,
+        chain: str
+    ) -> Path:
+        """
+        Get path to gapped FASTA file.
+
+        Parameters
+        ----------
+        species : str
+            Species name
+        segment : str
+            Segment type
+        chain : str
+            Chain type
+
+        Returns
+        -------
+        Path
+            Path to gapped FASTA file
+        """
+        return self.data_dir / species / f"IG{chain}{segment}_gapped.fasta"
+
+    def _load_gapped_sequences(self, fasta_path: Path) -> Dict[str, str]:
+        """
+        Load gapped sequences from FASTA file.
+
+        Parameters
+        ----------
+        fasta_path : Path
+            Path to gapped FASTA file
+
+        Returns
+        -------
+        Dict[str, str]
+            Mapping of gene name to gapped sequence
+        """
+        gapped = {}
+        try:
+            for record in SeqIO.parse(fasta_path, "fasta"):
+                # IMGT format: >ACCESSION|GENE_NAME|...
+                header_parts = record.id.split("|")
+                gene_name = header_parts[1] if len(header_parts) > 1 else header_parts[0]
+                gapped[gene_name] = str(record.seq).upper()
+        except Exception as e:
+            logger.warning(f"Failed to load gapped sequences from {fasta_path}: {e}")
+        return gapped
 
     def fetch_gene_by_name(
         self,
@@ -292,24 +368,30 @@ class IMGTProvider(GermlineProvider):
             url="https://www.imgt.org/",
         )
 
-    def download(self, species: List[str]) -> None:
+    def download(self, species: List[str], force: bool = False) -> None:
         """
         Download IMGT data for species.
 
-        TODO: Implement IMGT download automation
-        See scripts/download_imgt.py for manual download instructions
+        Uses the IMGTDownloader to fetch germline sequences from
+        the IMGT V-QUEST reference directory.
 
         Parameters
         ----------
         species : List[str]
-            Species to download
-
-        Raises
-        ------
-        NotImplementedError
-            Automatic download not yet implemented
+            Species to download. If empty, downloads all available species.
+        force : bool
+            Force re-download even if files exist
         """
-        raise NotImplementedError(
-            "IMGT automatic download not yet implemented. "
-            "See scripts/download_imgt.py for manual download instructions."
-        )
+        from ..scripts.download_imgt import IMGTDownloader, SPECIES_MAP
+
+        downloader = IMGTDownloader(output_dir=self.data_dir)
+
+        if not species:
+            species = list(SPECIES_MAP.keys())
+
+        logger.info(f"Downloading IMGT data for {len(species)} species...")
+
+        results = downloader.download(species, force=force)
+
+        total_seqs = sum(results.values())
+        logger.info(f"Downloaded {total_seqs} sequences for {len(results)} species")

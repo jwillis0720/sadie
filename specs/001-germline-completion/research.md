@@ -261,38 +261,229 @@ Output location: `igblast/aux_db/{scheme}/{species}_gl.aux`
 
 ## 5. IMGT/OGRDB Download URLs
 
-**Status**: PARTIALLY RESOLVED
+**Status**: RESOLVED
 
 ### Question
 Current stable URLs for bulk FASTA downloads from IMGT and OGRDB?
 
 ### IMGT
 
-- **IMGT/GENE-DB**: http://www.imgt.org/genedb/
-- **Reference Directory**: http://www.imgt.org/download/GENE-DB/
-- Bulk download requires programmatic parsing of HTML or FTP access
-- Current `download_imgt.py` is a stub with manual instructions
+**Status**: RESOLVED (2026-01-16)
+
+**Data Source**: V-QUEST Reference Directory
+- **Base URL**: `https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory/`
+- **URL Pattern**: `{BASE_URL}/{Species}/IG/{segment}.fasta`
+- **Example**: `https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory/Homo_sapiens/IG/IGHV.fasta`
+
+#### Available Species (36+)
+
+| Internal Name | IMGT Directory Name |
+|---------------|---------------------|
+| human | Homo_sapiens |
+| mouse | Mus_musculus |
+| mouse_c57bl6j | Mus_musculus_C57BL6J |
+| rat | Rattus_norvegicus |
+| rabbit | Oryctolagus_cuniculus |
+| rhesus_macaque | Macaca_mulatta |
+| cynomolgus | Macaca_fascicularis |
+| dog | Canis_lupus_familiaris |
+| pig | Sus_scrofa |
+| cow | Bos_taurus |
+| alpaca | Vicugna_pacos |
+| camel | Camelus_dromedarius |
+| chicken | Gallus_gallus |
+| zebrafish | Danio_rerio |
+
+#### Segment Files Per Species
+
+Standard IG segments available:
+- `IGHV.fasta`, `IGHD.fasta`, `IGHJ.fasta` (Heavy chain)
+- `IGKV.fasta`, `IGKJ.fasta` (Kappa chain)
+- `IGLV.fasta`, `IGLJ.fasta` (Lambda chain)
+
+Optional TR (T-cell receptor) segments:
+- `TRAV.fasta`, `TRAJ.fasta`, `TRBV.fasta`, `TRBD.fasta`, `TRBJ.fasta`, etc.
+
+#### FASTA Format
+
+**Header Format**:
+```
+>accession|gene_name|species|functionality|region|positions|length|codon_start|...
+```
+
+**Example**:
+```
+>M99641|IGHV1-18*01|Homo sapiens|F|V-REGION|188..483|296 nt|1| | | | |296+24=320| | |
+caggttcagctggtgcagtctggagct...gaggtgaagaagcctggggcctcagtgaag...
+```
+
+**Key Header Fields**:
+- Position 1: Accession number (GenBank/EMBL)
+- Position 2: Gene name (e.g., `IGHV1-18*01`)
+- Position 3: Species (e.g., `Homo sapiens`)
+- Position 4: Functionality (`F` = functional, `ORF` = open reading frame, `P` = pseudogene)
+- Position 5: Region type (`V-REGION`, `D-REGION`, `J-REGION`)
+
+**Sequence Characteristics**:
+- **V-regions**: IMGT-gapped with dots (`.`) indicating gaps per IMGT unique numbering
+- **D/J-regions**: NOT gapped (IMGT numbering only applies to V regions positions 1-104)
+- **Case**: Lowercase nucleotides
+- **Gap character**: Period (`.`)
+
+#### Data Volume (Downloaded 2026-01-16)
+
+| Species | Total | IGHV | IGHD | IGHJ | IGKV | IGKJ | IGLV | IGLJ |
+|---------|-------|------|------|------|------|------|------|------|
+| Human | 794 | 460 | 47 | 15 | 132 | 10 | 119 | 11 |
+| Mouse | 953 | 678 | 61 | 9 | 168 | 10 | 19 | 8 |
+
+#### Implementation
+
+**Script**: `src/sadie/germlines/scripts/download_imgt.py`
+
+**Features**:
+- Direct HTTP download from V-QUEST reference directory
+- Outputs both gapped (`*_gapped.fasta`) and ungapped (`*.fasta`) files
+- Ungapped derived by stripping dots from gapped sequences
+- Species mapping between internal names and IMGT directory names
+- Optional TR (T-cell receptor) sequence download
+- Progress logging and error handling
+
+**Output Structure**:
+```
+sources/imgt/
+├── human/
+│   ├── IGHV.fasta          # Ungapped (dots removed)
+│   ├── IGHV_gapped.fasta   # IMGT-gapped (original)
+│   ├── IGHD.fasta          # No gaps (D segments)
+│   ├── IGHD_gapped.fasta   # Same as ungapped
+│   ├── IGHJ.fasta          # No gaps (J segments)
+│   └── ...
+└── mouse/
+    └── ...
+```
+
+**Usage**:
+```bash
+python -m sadie.germlines.scripts.download_imgt --species human mouse
+python -m sadie.germlines.scripts.download_imgt --list-species
+python -m sadie.germlines.scripts.download_imgt --species human --include-tr
+```
+
+#### Format Comparison: IMGT vs OGRDB
+
+| Aspect | IMGT | OGRDB |
+|--------|------|-------|
+| Header | Rich metadata (`accession\|gene\|species\|func\|...`) | Simple (`>gene_name`) |
+| Nucleotide case | Lowercase | Uppercase |
+| V-region gapping | Yes (dots `.`) | Yes (dots `.`) |
+| J/D gapping | No (not applicable) | Some gapped |
+| Allele naming | Standard `*01`, `*02` | Novel uses `*i01` notation |
+| Functionality info | In header (`F`, `ORF`, `P`) | Not in header |
 
 ### OGRDB
 
-- **API Base**: https://ogrdb.airr-community.org/api/
-- **API Documentation**: https://ogrdb.airr-community.org/api/docs
-- FASTA downloads available per species/locus via API endpoints
-- Current `OGRDBProvider` reads pre-downloaded files
+**Status**: RESOLVED (2026-01-16)
+
+**Data Source**: Zenodo Archive
+- **URL**: https://zenodo.org/records/18145568/files/ogrdb_archive.tgz?download=1
+- **Format**: MariaDB SQL dump (`ogrdb_dump.sql`)
+- **Key Table**: `gene_description` with columns:
+  - `sequence_name`: Gene allele name (e.g., IGHV1-69*01)
+  - `species`: Species name (e.g., Homo sapiens)
+  - `locus`: Chain locus (IGH, IGK, IGL)
+  - `sequence_type`: Segment type (V, D, J)
+  - `sequence`: Ungapped nucleotide sequence
+  - `coding_seq_imgt`: IMGT-gapped nucleotide sequence
+
+**Implementation**: `src/sadie/germlines/scripts/download_ogrdb.py`
+- Downloads archive from Zenodo (~50MB)
+- Parses SQL dump to extract sequences
+- Outputs both gapped (`*_gapped.fasta`) and ungapped FASTA files
+- Organizes by species/segment/chain
+
+**Data Volume**:
+| Species | Genes | Details |
+|---------|-------|---------|
+| Human | 47 | 20 IGHV, 7 IGHJ, 2 IGKV, 7 IGKJ, 1 IGLV, 10 IGLJ |
+| Mouse | 1,771 | 426 IGHV, 66 IGHD, 28 IGHJ, 1,230 IGKV, 11 IGKJ, 3 IGLV, 7 IGLJ |
+
+**Usage**:
+```bash
+python -m sadie.germlines.scripts.download_ogrdb --species human mouse
+```
 
 ### VDJbase (from Section 1)
 
 - **API Base**: https://vdjbase.org/admin/api/
 - **Sequences Endpoint**: `/repseq/sequences/{species}/{chain}`
 - Returns paginated JSON with sequence data
-- Manual FASTA download recommended (API pagination quirks)
+- Implemented with `VDJbaseProvider.download()` method
 
 ### Remaining Action Items
 
-- [ ] Implement automated IMGT download script
-- [ ] Implement automated OGRDB download script
-- [ ] Add retry/resume logic for large downloads
-- [ ] Test download scripts for reliability
+- [X] ~~Implement automated IMGT download script~~ **DONE** (2026-01-16)
+- [X] ~~Implement automated OGRDB download script~~ **DONE** (2026-01-16)
+- [ ] Add retry/resume logic for IMGT downloads (nice-to-have)
+- [X] ~~Test OGRDB download script for reliability~~ **DONE**
+- [X] ~~Test IMGT download script for human/mouse~~ **DONE** (2026-01-16)
+
+---
+
+## 6. In-Silico Gapping Validation
+
+**Status**: RESOLVED (2026-01-16)
+
+### Question
+
+How accurate is the BioPython alignment-based in-silico gapping compared to the original G3 gapped sequences?
+
+### Methodology
+
+Created a validation test (`src/sadie/germlines/tests/test_gapping_accuracy.py`) that:
+1. Loads ungapped sequences from custom FASTA files
+2. Loads original G3 gapped sequences (exported with `--include-gapped`)
+3. Generates in-silico gapped sequences using `GapperService` with human IMGT templates
+4. Compares gap positions and overall character accuracy
+
+### Findings
+
+**Overall Results** (5,241 sequences across 5 species):
+- Exact match rate: **1.3%** (68 sequences)
+- Gap position accuracy: **60.0%**
+- Character accuracy: **55.5%**
+
+**V Segment Results by Species**:
+| Species | Segment | Sequences | Exact Match | Gap Accuracy | Char Accuracy |
+|---------|---------|-----------|-------------|--------------|---------------|
+| Cat | IGHV | 119 | 0.8% | 86.0% | 63.4% |
+| Cat | IGKV | 27 | 55.6% | 85.7% | 75.9% |
+| Cat | IGLV | 68 | 36.8% | 86.3% | 69.8% |
+| Dog | IGHV | 70 | 10.0% | 91.9% | 72.3% |
+| Dog | IGLV | 117 | 10.3% | 52.1% | 54.3% |
+| Macaque | IGHV | 1,969 | 0.2% | 77.4% | 61.6% |
+| Macaque | IGKV | 1,018 | 0.0% | 58.5% | 53.5% |
+
+**D/J Segment Results**:
+- D segments: Not gapped (by design per IMGT)
+- J segments: 0% character accuracy - IMGT J files don't contain gaps
+
+### Key Observations
+
+1. **Cross-species limitation**: Using human templates for non-human species reduces accuracy (macaque IGHV: 77% vs cat IGKV: 86%)
+
+2. **V segment best performance**: Kappa V segments (IGKV) showed highest exact match rates, likely due to higher conservation
+
+3. **Gap position vs character accuracy**: Gap position accuracy (60%) exceeds character accuracy (55.5%) because gaps may be in similar but not identical positions
+
+4. **Bug fixed**: Original implementation multiplied nucleotide gap positions by 3, causing ~3x too many gaps. After fix, gap counts match expected ranges (24-27 gaps for V regions)
+
+### Implementation Impact
+
+- In-silico gapping provides reasonable approximation (60% gap accuracy) for V segments
+- For highest accuracy, prefer using pre-gapped sequences from G3 or IMGT when available
+- Custom sequences without pre-gapped versions will use in-silico gapping as fallback
+- Future improvement: Implement per-gene template matching instead of consensus-based gapping
 
 ---
 
@@ -304,11 +495,14 @@ Current stable URLs for bulk FASTA downloads from IMGT and OGRDB?
 | Biopython Alignment Strategy | RESOLVED | - |
 | G3 API Response Format | RESOLVED | - |
 | IgBLAST Auxiliary File Format | RESOLVED | - |
-| IMGT/OGRDB Download URLs | PARTIALLY RESOLVED | Medium |
+| OGRDB Download URLs | RESOLVED | - |
+| IMGT Download URLs | RESOLVED | - |
+| In-Silico Gapping Validation | RESOLVED | - |
 
 ## Next Steps
 
-1. ~~Complete remaining research items before implementation~~ **DONE** (mostly)
-2. Implement download scripts for IMGT and OGRDB
-3. Complete `AuxFileBuilder` stub with region parsing
-4. Proceed with implementation per tasks.md
+1. ~~Complete remaining research items before implementation~~ **DONE**
+2. ~~Implement OGRDB download script~~ **DONE** (Zenodo archive approach)
+3. ~~Implement IMGT download script~~ **DONE** (V-QUEST reference directory)
+4. Complete `AuxFileBuilder` stub with region parsing
+5. Proceed with implementation per tasks.md

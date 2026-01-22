@@ -10,10 +10,7 @@ IgBLAST auxiliary files contain:
 - Sequence orientation
 
 Format (tab-separated):
-<gene_name>\t<chain_type>\t<v_or_j>\t<regions...>
-
-TODO: Implement full IgBLAST auxiliary file generation
-Current Status: Stub implementation showing required structure
+<gene_name>\t<FWR1_start>\t<FWR1_end>\t<CDR1_start>\t<CDR1_end>...
 """
 
 import logging
@@ -26,7 +23,19 @@ logger = logging.getLogger(__name__)
 
 # Constants
 CHAINS = ["H", "K", "L"]
-SEGMENTS = ["V", "J"]  # D segments don't have CDR/FWR annotations
+SEGMENTS = ["V", "J"]
+
+IMGT_REGIONS_V = {
+    "FWR1": (1, 26),
+    "CDR1": (27, 38),
+    "FWR2": (39, 55),
+    "CDR2": (56, 65),
+    "FWR3": (66, 104),
+}
+
+IMGT_REGIONS_J = {
+    "FWR4": (1, 13),
+}
 
 
 class AuxFileBuilder:
@@ -150,11 +159,8 @@ class AuxFileBuilder:
         """
         Create auxiliary file entry for a single sequence.
 
-        TODO: Implement full CDR/FWR boundary detection from gapped sequence
-        Current: Placeholder implementation
-
-        IgBLAST aux format (simplified):
-        <gene_name>\t<chain>\t<segment>\t<CDR1_start>\t<CDR1_end>\t...
+        IgBLAST aux format:
+        <gene_name>\t<FWR1_start>\t<FWR1_end>\t<CDR1_start>\t...
 
         Parameters
         ----------
@@ -171,52 +177,97 @@ class AuxFileBuilder:
             Auxiliary file line
         """
         gene_name = record.id
+        gapped_seq = str(record.seq)
 
-        # TODO: Implement proper CDR/FWR boundary detection
-        # This requires:
-        # 1. Parse IMGT-gapped sequence
-        # 2. Identify CDR1, CDR2, CDR3 boundaries
-        # 3. Identify FWR1, FWR2, FWR3, FWR4 boundaries
-        # 4. Convert to IgBLAST format
+        regions = self._parse_imgt_regions(gapped_seq, segment)
+        if not regions:
+            logger.debug(f"Could not parse regions for {gene_name}")
+            return None
 
-        # Placeholder: log that this needs implementation
-        logger.debug(f"TODO: Generate aux entry for {gene_name}")
+        if segment == "V":
+            fields = [gene_name]
+            for region in ["FWR1", "CDR1", "FWR2", "CDR2", "FWR3"]:
+                if region in regions:
+                    start, end = regions[region]
+                    fields.extend([str(start), str(end)])
+                else:
+                    fields.extend(["0", "0"])
+            return "\t".join(fields)
+        elif segment == "J":
+            if "FWR4" in regions:
+                start, end = regions["FWR4"]
+                return f"{gene_name}\t{start}\t{end}"
+            return None
 
-        # Return basic entry (not complete - needs CDR/FWR boundaries)
-        return f"{gene_name}\t{chain}\t{segment}\tTODO"
+        return None
 
-    def _parse_imgt_regions(self, gapped_sequence: str) -> Dict[str, tuple]:
+    def _parse_imgt_regions(
+        self,
+        gapped_sequence: str,
+        segment: str
+    ) -> Dict[str, tuple]:
         """
         Parse CDR/FWR regions from IMGT-gapped sequence.
 
-        TODO: Implement IMGT numbering to region boundary conversion
-
-        IMGT Positions (approximate):
-        - FWR1: 1-26
-        - CDR1: 27-38
-        - FWR2: 39-55
-        - CDR2: 56-65
-        - FWR3: 66-104
-        - CDR3: 105-117
-        - FWR4: 118-128
+        Converts IMGT positions to ungapped sequence positions
+        by counting non-gap characters.
 
         Parameters
         ----------
         gapped_sequence : str
             IMGT-gapped sequence (with dots)
+        segment : str
+            Segment type (V or J)
 
         Returns
         -------
         Dict[str, tuple]
             Region boundaries {region_name: (start, end)}
         """
-        # TODO: Implement this critical function
-        # This is where the magic happens - converting IMGT gaps
-        # to actual CDR/FWR boundaries that IgBLAST understands
+        if segment == "V":
+            imgt_regions = IMGT_REGIONS_V
+        elif segment == "J":
+            imgt_regions = IMGT_REGIONS_J
+        else:
+            return {}
 
-        logger.debug("TODO: Implement IMGT region parsing")
+        position_map = self._build_position_map(gapped_sequence)
+        seq_len = len(gapped_sequence.replace(".", "").replace("-", ""))
 
-        return {}
+        regions = {}
+        for region_name, (imgt_start, imgt_end) in imgt_regions.items():
+            ungapped_start = position_map.get(imgt_start)
+            ungapped_end = position_map.get(imgt_end)
+
+            if ungapped_start is not None and ungapped_end is not None:
+                if ungapped_start <= seq_len and ungapped_end <= seq_len:
+                    regions[region_name] = (ungapped_start, ungapped_end)
+
+        return regions
+
+    def _build_position_map(self, gapped_sequence: str) -> Dict[int, int]:
+        """
+        Map IMGT gapped positions to ungapped positions.
+
+        Parameters
+        ----------
+        gapped_sequence : str
+            IMGT-gapped sequence
+
+        Returns
+        -------
+        Dict[int, int]
+            Mapping from IMGT position (1-based) to ungapped position
+        """
+        position_map = {}
+        ungapped_pos = 0
+
+        for gapped_pos, char in enumerate(gapped_sequence, start=1):
+            if char not in (".", "-"):
+                ungapped_pos += 1
+                position_map[gapped_pos] = ungapped_pos
+
+        return position_map
 
     def validate_aux_file(self, aux_file: Path) -> bool:
         """

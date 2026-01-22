@@ -7,7 +7,7 @@ into the custom/ directory.
 
 Features:
 - Auto-detects ungapped vs gapped sequences
-- Auto-aligns ungapped sequences to IMGT reference
+- Auto-aligns ungapped sequences to IMGT reference using GapperService
 - Validates sequences
 - Works offline
 
@@ -34,9 +34,26 @@ from Bio import SeqIO
 
 from .base import GermlineProvider
 from ..models import GermlineGene, ProviderMetadata
+from ..builders.gapper import GapperService
 
 
 logger = logging.getLogger(__name__)
+
+VALID_NUCLEOTIDES = set("ACGTNacgtn.")
+IUPAC_AMBIGUOUS = set("RYSWKMBDHVryswkmbdhv-")
+
+
+def _validate_sequence(sequence: str, gene_name: str) -> tuple[bool, str]:
+    if not sequence:
+        return False, f"Empty sequence for {gene_name}"
+    clean_seq = sequence.replace(".", "").replace("-", "")
+    if not clean_seq:
+        return False, f"Sequence contains only gap characters for {gene_name}"
+    valid_chars = VALID_NUCLEOTIDES | IUPAC_AMBIGUOUS
+    invalid = set(sequence) - valid_chars
+    if invalid:
+        return False, f"Invalid characters in {gene_name}: {invalid}"
+    return True, ""
 
 
 class CustomProvider(GermlineProvider):
@@ -53,6 +70,69 @@ class CustomProvider(GermlineProvider):
     >>> genes = provider.fetch_genes("human", "V", "H")
     >>> print(f"Found {len(genes)} custom genes")
     """
+
+    def __init__(self, data_dir: Optional[Path] = None, template_dir: Optional[Path] = None):
+        """
+        Initialize CustomProvider with optional gapping template directory.
+
+        Parameters
+        ----------
+        data_dir : Path, optional
+            Directory containing custom FASTA files.
+            Defaults to sources/custom/
+        template_dir : Path, optional
+            Directory containing IMGT-gapped templates for auto-gapping.
+            Defaults to sources/imgt/ (sibling of custom/)
+        """
+        super().__init__(data_dir=data_dir)
+        
+        # Set up template directory for gapping
+        # Template dir should be sibling to custom (both under sources/)
+        if template_dir is None:
+            # self.data_dir is sources/custom, so parent is sources, then add imgt
+            template_dir = self.data_dir.parent / "imgt"
+        self.template_dir = template_dir
+        
+        # Lazy initialization of gapper (per-species)
+        self._gappers: dict = {}
+
+    def _get_gapper(self, species: str) -> tuple:
+        """
+        Get or create a GapperService for the given species.
+
+        Falls back to human IMGT templates if species-specific templates
+        aren't available, since IG gene structure is conserved across species.
+
+        Parameters
+        ----------
+        species : str
+            Species name
+
+        Returns
+        -------
+        tuple
+            (GapperService, template_species) - gapper and species to use for templates
+        """
+        cache_key = species
+        
+        if cache_key not in self._gappers:
+            species_template_dir = self.template_dir / species
+            if species_template_dir.exists():
+                # Use species-specific templates
+                self._gappers[cache_key] = (GapperService(template_dir=self.template_dir), species)
+                logger.info(f"Initialized gapper with {species} templates")
+            else:
+                # Fall back to human templates - IG gene structure is conserved
+                human_template_dir = self.template_dir / "human"
+                if human_template_dir.exists():
+                    self._gappers[cache_key] = (GapperService(template_dir=self.template_dir), "human")
+                    logger.info(f"Using human IMGT templates for {species} (no species-specific templates)")
+                else:
+                    # No templates available at all
+                    self._gappers[cache_key] = (GapperService(template_dir=None), species)
+                    logger.warning(f"No IMGT templates found, gapping disabled for {species}")
+        
+        return self._gappers[cache_key]
 
     def fetch_genes(
         self,
@@ -150,8 +230,8 @@ class CustomProvider(GermlineProvider):
         """
         Create GermlineGene from SeqRecord.
 
-        Handles both gapped and ungapped sequences.
-        TODO: Implement auto-gapping for ungapped sequences.
+        Handles both gapped and ungapped sequences. For ungapped sequences,
+        attempts to auto-gap using the GapperService with IMGT templates.
 
         Parameters
         ----------
@@ -170,10 +250,14 @@ class CustomProvider(GermlineProvider):
             Gene object if successful
         """
         sequence = str(record.seq).upper()
-        is_gapped = "." in sequence or "-" in sequence
-
-        # Clean gene name
         gene_name = self._clean_gene_name(record.id, segment, chain)
+
+        valid, error_msg = _validate_sequence(sequence, gene_name)
+        if not valid:
+            logger.warning(f"Skipping invalid sequence: {error_msg}")
+            return None
+
+        is_gapped = "." in sequence or "-" in sequence
 
         # Determine gapped/ungapped versions
         if is_gapped:
@@ -181,8 +265,19 @@ class CustomProvider(GermlineProvider):
             sequence_ungapped = sequence.replace(".", "").replace("-", "")
         else:
             sequence_ungapped = sequence
-            # TODO: Implement auto-gapping using aligner
-            sequence_gapped = None
+            # Auto-gap using GapperService
+            gapper, template_species = self._get_gapper(species)
+            sequence_gapped = gapper.gap_sequence(
+                sequence=sequence_ungapped,
+                segment=segment,
+                chain=chain,
+                gene_name=gene_name,
+                species=template_species  # Use template species for lookup
+            )
+            if sequence_gapped:
+                logger.debug(f"Auto-gapped {gene_name} using {template_species} templates")
+            else:
+                logger.debug(f"Could not auto-gap {gene_name}, storing ungapped only")
 
         try:
             gene = GermlineGene(

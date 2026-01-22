@@ -265,6 +265,11 @@ class GapperService:
         """
         Load IMGT-gapped templates from FASTA file.
 
+        Supports multiple naming conventions:
+        - {template_dir}/{species}/IG{chain}{segment}_gapped.fasta
+        - {template_dir}/{species}/IG{chain}{segment}.fasta
+        - {template_dir}/IG{chain}{segment}_gapped.fasta (if template_dir is species-specific)
+
         Parameters
         ----------
         species : str
@@ -281,26 +286,50 @@ class GapperService:
             logger.debug("No template directory configured")
             return
 
-        fasta_path = self.template_dir / species / f"IG{chain}{segment}.fasta"
-
-        if not fasta_path.exists():
-            logger.debug(f"Template file not found: {fasta_path}")
+        segment_name = f"IG{chain}{segment}"
+        
+        # Try multiple path patterns
+        candidate_paths = [
+            # Pattern 1: {template_dir}/{species}/{segment}_gapped.fasta
+            self.template_dir / species / f"{segment_name}_gapped.fasta",
+            # Pattern 2: {template_dir}/{species}/{segment}.fasta
+            self.template_dir / species / f"{segment_name}.fasta",
+            # Pattern 3: {template_dir}/{segment}_gapped.fasta (template_dir is species-specific)
+            self.template_dir / f"{segment_name}_gapped.fasta",
+            # Pattern 4: {template_dir}/{segment}.fasta
+            self.template_dir / f"{segment_name}.fasta",
+        ]
+        
+        fasta_path = None
+        for path in candidate_paths:
+            if path.exists():
+                fasta_path = path
+                break
+        
+        if fasta_path is None:
+            logger.debug(f"No template file found for {segment_name} in {self.template_dir}")
             return
 
         try:
             for record in SeqIO.parse(fasta_path, "fasta"):
                 sequence = str(record.seq).upper()
 
-                # Only cache gapped sequences
+                # Only cache gapped sequences (containing . or -)
                 if GAP_CHAR in sequence or "-" in sequence:
-                    gene_name = record.id.split("|")[0]
+                    # Extract gene name from IMGT header format: accession|gene_name|...
+                    header_parts = record.id.split("|")
+                    if len(header_parts) >= 2:
+                        gene_name = header_parts[1]  # Second field is gene name
+                    else:
+                        gene_name = header_parts[0]  # Fallback to first field
+                    
                     # Normalize to use "." as gap character
                     sequence = sequence.replace("-", GAP_CHAR)
                     self._template_cache[cache_key][gene_name] = sequence
 
             logger.info(
                 f"Loaded {len(self._template_cache[cache_key])} "
-                f"gapped templates for {cache_key}"
+                f"gapped templates for {cache_key} from {fasta_path}"
             )
 
         except Exception as e:
@@ -465,31 +494,42 @@ class GapperService:
         gap_positions: List[int]
     ) -> str:
         """
-        Apply gaps to nucleotide sequence at codon boundaries.
+        Apply gaps to nucleotide sequence.
+
+        The gap_positions are already in nucleotide coordinates from the template.
+        We need to map these template positions to query positions, accounting
+        for the fact that gap positions in the template include the gaps themselves.
 
         Parameters
         ----------
         sequence : str
             Ungapped nucleotide sequence
         gap_positions : List[int]
-            Positions where gaps should be inserted
+            Positions where gaps exist in the template (nucleotide coordinates)
 
         Returns
         -------
         str
             Gapped nucleotide sequence
         """
-        # Convert gap positions from single-char to codon positions
-        # IMGT gaps are at codon boundaries (every 3 nucleotides)
         result = list(sequence)
-
-        # Insert gaps at appropriate positions
-        # Gap positions are sorted, so insert from end to preserve indices
-        for pos in sorted(gap_positions, reverse=True):
-            # Convert AA position to nucleotide position (x3)
-            # Insert 3 gap characters for each AA gap
-            nuc_pos = min(pos * 3, len(result))
-            result.insert(nuc_pos, GAP_CHAR * 3)
+        
+        # The gap_positions are positions in the GAPPED template where '.' appears.
+        # To apply to the ungapped query, we need to:
+        # 1. Convert template gapped positions to ungapped positions
+        # 2. Insert gaps at those positions in the query
+        
+        # Sort and insert from end to preserve indices
+        for i, pos in enumerate(sorted(gap_positions, reverse=True)):
+            # The position in the ungapped sequence is:
+            # gapped_pos - (number of gaps before this position)
+            # Count gaps before this position
+            gaps_before = sum(1 for p in gap_positions if p < pos)
+            ungapped_pos = pos - gaps_before
+            
+            # Only insert if within bounds
+            if ungapped_pos <= len(result):
+                result.insert(ungapped_pos, GAP_CHAR)
 
         return "".join(result)
 

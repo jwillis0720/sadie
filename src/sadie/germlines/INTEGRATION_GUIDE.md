@@ -419,20 +419,41 @@ assert old_results == new_results, "Results differ!"
 
 ## 7. Migration Checklist
 
-- [ ] Populate germlines/sources/imgt/human/ with IMGT data
-- [ ] Test germlines module independently
-- [ ] Update IgBLAST integration (germline.py)
-- [ ] Test IgBLAST with new paths
-- [ ] Update Reference system (reference.py)
-- [ ] Test reference building
-- [ ] Update HMM system (hmmer.py)
-- [ ] Create HMM builder (hmm.py)
-- [ ] Test HMM generation
-- [ ] Run full Sadie test suite
-- [ ] Compare results with G3 version
-- [ ] Update documentation
-- [ ] Mark G3 as deprecated
-- [ ] Create migration guide for users
+- [x] Populate germlines/sources/imgt/human/ with IMGT data
+- [x] Test germlines module independently
+- [x] Update IgBLAST integration (germline.py)
+- [x] Test IgBLAST with new paths
+- [x] Update Reference system (reference.py)
+- [x] Test reference building
+- [x] Update HMM system (hmmer.py)
+- [x] Create HMM builder (renumbering_integration.py)
+- [x] Test HMM generation
+- [x] Run full Sadie test suite
+- [x] Compare results with G3 version
+- [x] Update documentation
+- [x] Mark G3 as deprecated
+- [x] Create migration guide for users
+
+## Integration Status (as of 2026-01-21)
+
+**All integration tasks complete.** The germlines module is fully integrated with:
+
+1. **IgBLAST Integration** - `GermlineData` class now checks `SADIE_USE_GERMLINES_MODULE` feature flag
+2. **Reference System** - `Reference` class supports `use_germlines=True` parameter
+3. **HMM/Renumbering** - `LocalHMMBuilder` in `renumbering_integration.py` generates HMMs from germlines
+
+### Test Suite
+
+Run the integration tests:
+```bash
+pytest tests/unit/germlines/ -v
+```
+
+All 25 tests should pass, including:
+- AIRR annotation with germlines backend
+- Renumbering with LocalHMMBuilder
+- Reference system with G3-compatible output
+- Offline operation (network disabled)
 
 ## 8. Rollback Plan
 

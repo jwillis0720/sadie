@@ -46,6 +46,52 @@ class BlastDBBuilder:
     ... )
     """
 
+    # Maximum sequence ID length for BLAST databases
+    MAX_SEQ_ID_LENGTH = 50
+
+    def _sanitize_seq_id(self, seq_id: str) -> str:
+        """
+        Sanitize sequence ID for BLAST database compatibility.
+
+        BLAST databases have a 50-character limit for local IDs when using
+        -parse_seqids. VDJbase sequences often have very long IDs with variant
+        annotations that exceed this limit.
+
+        Parameters
+        ----------
+        seq_id : str
+            Original sequence ID
+
+        Returns
+        -------
+        str
+            Sanitized sequence ID (max 50 chars)
+        """
+        # Remove source annotation if present (e.g., "source=vdjbase")
+        if " source=" in seq_id:
+            seq_id = seq_id.split(" source=")[0]
+
+        # If still too long, truncate to max length
+        if len(seq_id) > self.MAX_SEQ_ID_LENGTH:
+            # Try to keep the base gene name (before variant annotations)
+            # VDJbase format: IGHV1-18*04_g107c_a110t_...
+            parts = seq_id.split("_")
+            if len(parts) > 1:
+                # Keep gene name and as many variants as fit
+                base = parts[0]  # e.g., IGHV1-18*04
+                truncated = base
+                for part in parts[1:]:
+                    if len(truncated) + 1 + len(part) <= self.MAX_SEQ_ID_LENGTH:
+                        truncated = f"{truncated}_{part}"
+                    else:
+                        break
+                seq_id = truncated
+            else:
+                # Just truncate if no underscores
+                seq_id = seq_id[:self.MAX_SEQ_ID_LENGTH]
+
+        return seq_id
+
     def build_for_species(
         self,
         species: str,
@@ -102,6 +148,7 @@ class BlastDBBuilder:
         """
         # Collect sequences from all chains
         combined_sequences = []
+        seen_ids: dict[str, int] = {}  # Track duplicate IDs
 
         for chain in CHAINS:
             fasta_path = source_dir / f"IG{chain}{segment}.fasta"
@@ -112,6 +159,17 @@ class BlastDBBuilder:
 
             try:
                 records = list(SeqIO.parse(fasta_path, "fasta"))
+                # Sanitize sequence IDs for BLAST (max 50 chars)
+                for record in records:
+                    sanitized_id = self._sanitize_seq_id(record.id)
+                    # Handle duplicates by appending counter
+                    if sanitized_id in seen_ids:
+                        seen_ids[sanitized_id] += 1
+                        sanitized_id = f"{sanitized_id}_{seen_ids[sanitized_id]}"
+                    else:
+                        seen_ids[sanitized_id] = 0
+                    record.id = sanitized_id
+                    record.description = ""  # Clear description to avoid issues
                 combined_sequences.extend(records)
                 logger.info(
                     f"Added {len(records)} sequences from {fasta_path.name}"
@@ -154,6 +212,7 @@ class BlastDBBuilder:
                 "-in", str(fasta_path),
                 "-out", str(fasta_path.with_suffix("")),
                 "-parse_seqids",
+                "-hash_index",
             ]
 
             logger.debug(f"Running: {' '.join(cmd)}")

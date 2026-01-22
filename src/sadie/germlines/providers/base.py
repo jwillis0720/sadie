@@ -10,11 +10,23 @@ Design Principles:
 - Dependency inversion: depend on abstractions
 """
 
+import logging
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from pathlib import Path
 
 from ..models import GermlineGene, ProviderMetadata
+
+logger = logging.getLogger(__name__)
+
+
+ERROR_TEMPLATES = {
+    "parse_failed": "provider={provider} action=parse_failed path={path} error={error}",
+    "gene_creation_failed": "provider={provider} action=gene_creation_failed gene={gene} error={error}",
+    "http_error": "provider={provider} action=http_error url={url} status={status}",
+    "data_not_found": "provider={provider} action=data_not_found species={species}",
+    "validation_failed": "provider={provider} action=validation_failed gene={gene} reason={reason}",
+}
 
 
 class GermlineProvider(ABC):

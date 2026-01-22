@@ -1,0 +1,354 @@
+================================================================================
+GAPPING ACCURACY VALIDATION REPORT
+================================================================================
+
+
+## CAT
+----------------------------------------
+
+### IGHD
+  Sequences: 1
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGHD1-1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-11
+
+### IGHJ
+  Sequences: 35
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGHJ1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-52
+    - IGHJ2*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-53
+    - IGHJ4*03: gap_acc=100.0%, char_acc=0.0%, len_diff=-48
+    - IGHJ6*03: gap_acc=100.0%, char_acc=0.0%, len_diff=-62
+    - IGHJ2*01_S1562: gap_acc=100.0%, char_acc=0.0%, len_diff=-56
+
+### IGHV
+  Sequences: 119
+  Exact matches: 1 (0.8%)
+  Gap position accuracy: 86.0%
+  Character accuracy: 63.4%
+  
+  Worst mismatches (top 5):
+    - IGHV25-2*01_S4941: gap_acc=48.0%, char_acc=26.1%, len_diff=-22
+    - IGHV25-2*01_S1973: gap_acc=48.0%, char_acc=26.8%, len_diff=-22
+    - IGHV25-2*01_S9214: gap_acc=48.0%, char_acc=27.1%, len_diff=-22
+    - IGHV25-2*01_S1797: gap_acc=48.0%, char_acc=27.4%, len_diff=-22
+    - IGHV12-2*01: gap_acc=69.7%, char_acc=28.7%, len_diff=-4
+
+### IGKJ
+  Sequences: 39
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGKJ1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGKJ4*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGKJ5*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGKJ2*01_S0355: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGKJ2*01_S2545: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+
+### IGKV
+  Sequences: 27
+  Exact matches: 15 (55.6%)
+  Gap position accuracy: 85.7%
+  Character accuracy: 75.9%
+  
+  Worst mismatches (top 5):
+    - IGKV6-6*01_S2893: gap_acc=72.7%, char_acc=30.7%, len_diff=-18
+    - IGKV2-4*01_S0499: gap_acc=68.8%, char_acc=47.1%, len_diff=15
+    - IGKV2-9*01_S9967: gap_acc=68.8%, char_acc=47.1%, len_diff=15
+    - IGKV2-13*01: gap_acc=68.8%, char_acc=47.4%, len_diff=15
+    - IGKV2-13*01_S5838: gap_acc=68.8%, char_acc=47.4%, len_diff=15
+
+### IGLJ
+  Sequences: 32
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGLJ1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGLJ11*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGLJ12*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGLJ2*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGLJ4*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+
+### IGLV
+  Sequences: 68
+  Exact matches: 25 (36.8%)
+  Gap position accuracy: 86.3%
+  Character accuracy: 69.8%
+  
+  Worst mismatches (top 5):
+    - IGLV1-41*01: gap_acc=66.7%, char_acc=30.2%, len_diff=-15
+    - IGLV1-44*01: gap_acc=66.7%, char_acc=30.5%, len_diff=-15
+    - IGLV5-38*01: gap_acc=47.1%, char_acc=30.8%, len_diff=15
+    - IGLV5-79*01: gap_acc=53.3%, char_acc=45.0%, len_diff=21
+    - IGLV5-30*01: gap_acc=50.0%, char_acc=45.2%, len_diff=18
+
+## CRAB_EATING_MACAQUE
+----------------------------------------
+
+### IGHD
+  Sequences: 51
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGHD1-2*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-17
+    - IGHD1-3*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-17
+    - IGHD1-4*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-17
+    - IGHD1-5*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-17
+    - IGHD2-10*01_S295: gap_acc=100.0%, char_acc=0.0%, len_diff=-31
+
+### IGHJ
+  Sequences: 14
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGHJ1-1*01_S0456: gap_acc=100.0%, char_acc=0.0%, len_diff=-52
+    - IGHJ2*01_S5087: gap_acc=100.0%, char_acc=0.0%, len_diff=-53
+    - IGHJ5-4*03: gap_acc=100.0%, char_acc=0.0%, len_diff=-51
+    - IGHJ5-5*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-51
+    - IGHJ6-6*01_S0171: gap_acc=100.0%, char_acc=0.0%, len_diff=-54
+
+### IGHV
+  Sequences: 615
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 21.9%
+  Character accuracy: 35.6%
+  
+  Worst mismatches (top 5):
+    - IGHV4-NL_28*01_S8886: gap_acc=15.7%, char_acc=25.8%, len_diff=-7
+    - IGHV4-NL_6*01_S3486: gap_acc=15.7%, char_acc=25.8%, len_diff=-7
+    - IGHV4-NL_28*01_S7478: gap_acc=15.7%, char_acc=26.1%, len_diff=-7
+    - IGHV4-NL_28*01_S6567: gap_acc=15.7%, char_acc=26.1%, len_diff=-7
+    - IGHV4-NL_28*01_S2610: gap_acc=15.7%, char_acc=26.4%, len_diff=-7
+
+## DOG
+----------------------------------------
+
+### IGHD
+  Sequences: 6
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGHD1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-31
+    - IGHD2*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-19
+    - IGHD4*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-19
+    - IGHD6*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-11
+    - IGHD3*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-17
+
+### IGHJ
+  Sequences: 22
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGHJ4*02_S5886: gap_acc=100.0%, char_acc=0.0%, len_diff=-43
+    - IGHJ4*02_S6391: gap_acc=100.0%, char_acc=0.0%, len_diff=-46
+    - IGHJ4*02_S9178: gap_acc=100.0%, char_acc=0.0%, len_diff=-44
+    - IGHJ2*01_S2052: gap_acc=100.0%, char_acc=0.0%, len_diff=-51
+    - IGHJ3*01_S5649: gap_acc=100.0%, char_acc=0.0%, len_diff=-50
+
+### IGHV
+  Sequences: 70
+  Exact matches: 7 (10.0%)
+  Gap position accuracy: 91.9%
+  Character accuracy: 72.3%
+  
+  Worst mismatches (top 5):
+    - IGHV4-1*01_S5507: gap_acc=69.7%, char_acc=30.3%, len_diff=-4
+    - IGHV4-1*01: gap_acc=69.7%, char_acc=48.8%, len_diff=-4
+    - IGHV3-24*01: gap_acc=92.3%, char_acc=68.3%, len_diff=2
+    - IGHV3-82*01: gap_acc=92.3%, char_acc=68.6%, len_diff=2
+    - IGHV3-69*01: gap_acc=92.3%, char_acc=68.6%, len_diff=2
+
+### IGKJ
+  Sequences: 8
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGKJ3*01_S1843: gap_acc=100.0%, char_acc=0.0%, len_diff=-35
+    - IGKJ2*01_S4073: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGKJ1*01_S9835: gap_acc=100.0%, char_acc=0.0%, len_diff=-34
+    - IGKJ1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGKJ4*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+
+### IGKV
+  Sequences: 28
+  Exact matches: 5 (17.9%)
+  Gap position accuracy: 73.5%
+  Character accuracy: 56.7%
+  
+  Worst mismatches (top 5):
+    - IGKV2-10*01: gap_acc=68.8%, char_acc=46.6%, len_diff=15
+    - IGKV2-6*01: gap_acc=68.8%, char_acc=46.6%, len_diff=15
+    - IGKV2-16*01_S6088: gap_acc=68.8%, char_acc=46.9%, len_diff=15
+    - IGKV2-16*01_S4626: gap_acc=68.8%, char_acc=46.9%, len_diff=15
+    - IGKV2-16*01: gap_acc=68.8%, char_acc=46.9%, len_diff=15
+
+### IGLJ
+  Sequences: 21
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGLJ11*01_S3283: gap_acc=100.0%, char_acc=0.0%, len_diff=-35
+    - IGLJ11*01_S6577: gap_acc=100.0%, char_acc=0.0%, len_diff=-37
+    - IGLJ11*01_S8091: gap_acc=100.0%, char_acc=0.0%, len_diff=-35
+    - IGLJ11*01_S8146: gap_acc=100.0%, char_acc=0.0%, len_diff=-35
+    - IGLJ11*01_S9069: gap_acc=100.0%, char_acc=0.0%, len_diff=-35
+
+### IGLV
+  Sequences: 117
+  Exact matches: 12 (10.3%)
+  Gap position accuracy: 52.1%
+  Character accuracy: 54.3%
+  
+  Worst mismatches (top 5):
+    - IGLV1-82*01_S8402: gap_acc=93.8%, char_acc=35.7%, len_diff=-3
+    - IGLV1-82*01_S1364: gap_acc=82.4%, char_acc=36.7%, len_diff=-3
+    - IGLV1-82*01_S3891: gap_acc=82.4%, char_acc=37.0%, len_diff=-3
+    - IGLV1-82*01_S2066: gap_acc=82.4%, char_acc=37.0%, len_diff=-3
+    - IGLV1-82*01_S9053: gap_acc=82.4%, char_acc=38.0%, len_diff=-3
+
+## MACAQUE
+----------------------------------------
+
+### IGHD
+  Sequences: 192
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGHD1-1*01_S001: gap_acc=100.0%, char_acc=0.0%, len_diff=-17
+    - IGHD1-12*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-17
+    - IGHD1-19*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-17
+    - IGHD1-7*01_S001: gap_acc=100.0%, char_acc=0.0%, len_diff=-17
+    - IGHD2-13*01_S001: gap_acc=100.0%, char_acc=0.0%, len_diff=-29
+
+### IGHJ
+  Sequences: 37
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGHJ1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-52
+    - IGHJ4*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-48
+    - IGHJ5-1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-51
+    - IGHJ6*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-54
+    - IGHJ2-I1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-53
+
+### IGHV
+  Sequences: 1969
+  Exact matches: 3 (0.2%)
+  Gap position accuracy: 77.4%
+  Character accuracy: 61.6%
+  
+  Worst mismatches (top 5):
+    - IGHV1-LJI193*01: gap_acc=24.4%, char_acc=29.1%, len_diff=-4
+    - IGHV1-LJI193_S2680*01: gap_acc=24.4%, char_acc=29.4%, len_diff=-4
+    - IGHV3-100*01_S4375: gap_acc=0.0%, char_acc=29.8%, len_diff=-7
+    - IGHV3-100*01: gap_acc=0.0%, char_acc=29.8%, len_diff=-7
+    - IGHV3-LJI100-A*01: gap_acc=1.7%, char_acc=30.0%, len_diff=-7
+
+### IGKJ
+  Sequences: 15
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGKJ1-I1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGKJ2-I2*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-39
+    - IGKJ3-I3*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGKJ4-I4*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGKJ5-I5*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+
+### IGKV
+  Sequences: 1018
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 58.5%
+  Character accuracy: 53.5%
+  
+  Worst mismatches (top 5):
+    - IGKV2-S45*01: gap_acc=40.0%, char_acc=30.7%, len_diff=12
+    - IGKV4-I3*01: gap_acc=35.0%, char_acc=36.3%, len_diff=15
+    - IGKV4-ACX*01: gap_acc=35.0%, char_acc=36.5%, len_diff=15
+    - IGKV2-LJI81*01: gap_acc=35.0%, char_acc=36.8%, len_diff=15
+    - IGKV-HGUR: gap_acc=36.4%, char_acc=36.8%, len_diff=6
+
+### IGLJ
+  Sequences: 31
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGLJ1-S1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGLJ2-S2*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGLJ5-S5*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+    - IGLJ6*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-37
+    - IGLJ6_1*01: gap_acc=100.0%, char_acc=0.0%, len_diff=-38
+
+### IGLV
+  Sequences: 704
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 59.3%
+  Character accuracy: 57.8%
+  
+  Worst mismatches (top 5):
+    - IGLV6-S39*01: gap_acc=27.6%, char_acc=23.0%, len_diff=-21
+    - IGLV6-S40*01: gap_acc=27.6%, char_acc=24.2%, len_diff=-21
+    - IGLV2-11*03: gap_acc=30.3%, char_acc=24.3%, len_diff=14
+    - IGLV3-LJI35*01: gap_acc=34.6%, char_acc=37.4%, len_diff=-15
+    - IGLV3-AAV*01_S0001: gap_acc=34.6%, char_acc=37.6%, len_diff=-15
+
+## MOUSE
+----------------------------------------
+
+### IGHJ
+  Sequences: 1
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGHJ4*02_CLK19min_H: gap_acc=100.0%, char_acc=0.0%, len_diff=-43
+
+### IGKJ
+  Sequences: 1
+  Exact matches: 0 (0.0%)
+  Gap position accuracy: 100.0%
+  Character accuracy: 0.0%
+  
+  Worst mismatches (top 5):
+    - IGKJ3*01_CLK19min_K: gap_acc=100.0%, char_acc=0.0%, len_diff=-30
+
+================================================================================
+OVERALL SUMMARY
+================================================================================
+
+Total sequences validated: 5241
+Exact matches: 68 (1.3%)
+Gap position accuracy: 60.0%
+Character accuracy: 55.5%

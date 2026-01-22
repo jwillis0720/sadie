@@ -8,8 +8,8 @@ This module replaces G3 API dependency with local, multi-source germline databas
 
 The germlines module provides:
 
-✅ **Multiple Data Sources**: IMGT, OGRDB, and custom user sequences
-✅ **Priority-Based Merging**: Custom overrides IMGT overrides OGRDB
+✅ **Multiple Data Sources**: IMGT, OGRDB, VDJbase, and custom user sequences
+✅ **Priority-Based Merging**: Custom overrides OGRDB overrides VDJbase overrides IMGT
 ✅ **Automatic Processing**: Auto-gaps ungapped sequences
 ✅ **IgBLAST Integration**: Builds databases and auxiliary files
 ✅ **Offline Operation**: Works without internet after initial setup
@@ -46,7 +46,7 @@ Fetch & Parse     Merge & Gap       Build DBs
 
 ### Priority System
 
-Default priority order: **custom > imgt > ogrdb**
+Default priority order: **custom > ogrdb > vdjbase > imgt**
 
 Deduplication rules:
 1. Same gene name → first provider wins
@@ -80,7 +80,8 @@ germlines/
 │   ├── base.py             # Provider interface
 │   ├── custom.py           # Custom sequences
 │   ├── imgt.py             # IMGT provider
-│   └── ogrdb.py            # OGRDB provider
+│   ├── ogrdb.py            # OGRDB provider
+│   └── vdjbase.py          # VDJbase provider
 │
 ├── builders/                # Database builders
 │   ├── blast.py            # BLAST database builder

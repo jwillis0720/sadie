@@ -13,17 +13,53 @@ Design Principles:
 - Each stage is independent and testable
 """
 
+import hashlib
 import logging
+import time
 from pathlib import Path
 from typing import List
 from datetime import datetime
 from Bio import SeqIO
+from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from .models import GermlineGene
 
 
 logger = logging.getLogger(__name__)
+
+
+def _log_timing(operation: str, start_time: float, **kwargs):
+    duration_ms = (time.time() - start_time) * 1000
+    extra = " ".join(f"{k}={v}" for k, v in kwargs.items())
+    logger.info(f"operation={operation} duration_ms={duration_ms:.1f} {extra}")
+
+
+def _file_hash(path: Path) -> str:
+    h = hashlib.md5()
+    h.update(path.read_bytes())
+    return h.hexdigest()[:8]
+
+
+def _check_offline_ready(sources_dir: Path, species: str) -> tuple[bool, str]:
+    species_found = False
+    for provider in ["imgt", "ogrdb", "vdjbase", "custom"]:
+        provider_species_dir = sources_dir / provider / species
+        if provider_species_dir.exists():
+            fasta_files = list(provider_species_dir.glob("*.fasta"))
+            if fasta_files:
+                species_found = True
+                break
+
+    if not species_found:
+        return False, (
+            f"No germline data found for '{species}'. "
+            f"Run download scripts first:\n"
+            f"  python src/sadie/germlines/scripts/download_imgt.py --species {species}\n"
+            f"  python src/sadie/germlines/scripts/download_ogrdb.py --species {species}\n"
+            f"Or add custom sequences to: sources/custom/{species}/"
+        )
+    return True, ""
 
 
 # Constants (extracted magic numbers per Zen)
@@ -70,14 +106,17 @@ class GermlinePipeline:
         species : str
             Species name (e.g., "human", "mouse")
         """
-        logger.info(f"Checking {species} germlines...")
+        logger.info(f"Checking {species} germlines (offline mode)...")
 
-        # Stage 1: Check sources
+        ready, error_msg = _check_offline_ready(self.sources_dir, species)
+        if not ready:
+            logger.error(f"offline_check_failed species={species}")
+            raise RuntimeError(error_msg)
+
         if self._sources_changed(species):
             logger.info("Sources changed, rebuilding normalized data...")
             self._rebuild_normalized(species)
 
-        # Stage 2: Check normalized
         if self._normalized_changed(species):
             logger.info("Normalized data changed, rebuilding IgBLAST...")
             self._rebuild_igblast(species)
@@ -93,10 +132,11 @@ class GermlinePipeline:
         species : str
             Species name
         """
+        start = time.time()
         logger.info(f"Force rebuilding {species}...")
         self._rebuild_normalized(species)
         self._rebuild_igblast(species)
-        logger.info(f"{species} rebuild complete!")
+        _log_timing("force_rebuild", start, species=species, status="complete")
 
     def _sources_changed(self, species: str) -> bool:
         """
@@ -125,7 +165,7 @@ class GermlinePipeline:
         latest_normalized = self._get_latest_mtime(normalized_files)
 
         # Check all source directories
-        for source_name in ["imgt", "ogrdb", "custom"]:
+        for source_name in ["custom", "ogrdb", "vdjbase", "imgt"]:
             if self._source_newer_than(source_name, species, latest_normalized):
                 return True
 
@@ -162,7 +202,11 @@ class GermlinePipeline:
 
         for fasta_file in source_dir.glob("**/*.fasta"):
             if fasta_file.stat().st_mtime > threshold:
-                logger.info(f"Changed: {fasta_file}")
+                file_hash = _file_hash(fasta_file)
+                logger.info(
+                    f"change_detected path={fasta_file} hash={file_hash} "
+                    f"change_type=modified provider={source_name}"
+                )
                 return True
 
         return False
@@ -234,6 +278,7 @@ class GermlinePipeline:
         species : str
             Species name
         """
+        start = time.time()
         from .manager import GermlineManager
 
         manager = GermlineManager()  # Uses default priority
@@ -242,6 +287,7 @@ class GermlinePipeline:
         for chain in CHAINS:
             for segment in SEGMENTS:
                 self._normalize_segment(manager, species, chain, segment)
+        _log_timing("rebuild_normalized", start, species=species)
 
     def _normalize_segment(
         self,
@@ -300,7 +346,7 @@ class GermlinePipeline:
         """
         gapped_records = [
             SeqRecord(
-                seq=gene.sequence_gapped or gene.sequence,
+                seq=Seq(str(gene.sequence_gapped or gene.sequence)),
                 id=gene.name,
                 description=f"source={gene.source}"
             )
@@ -342,7 +388,7 @@ class GermlinePipeline:
         """
         ungapped_records = [
             SeqRecord(
-                seq=gene.sequence,
+                seq=Seq(str(gene.sequence)),
                 id=gene.name,
                 description=f"source={gene.source}"
             )
@@ -363,16 +409,17 @@ class GermlinePipeline:
         Steps:
         1. Build BLAST databases from ungapped
         2. Build aux file from gapped
+        3. Generate organism.yaml
 
         Parameters
         ----------
         species : str
             Species name
         """
+        start = time.time()
         from .builders.blast import BlastDBBuilder
         from .builders.aux import AuxFileBuilder
 
-        # Build BLAST databases
         blast_builder = BlastDBBuilder()
         blast_builder.build_for_species(
             species,
@@ -380,10 +427,48 @@ class GermlinePipeline:
             output_dir=self.igblast_dir / "database" / species
         )
 
-        # Build aux file
         aux_builder = AuxFileBuilder()
         aux_builder.build_for_species(
             species,
             source_dir=self.normalized_dir / species / "gapped",
             output_file=self.igblast_dir / "aux_db" / f"{species}_gl.aux"
         )
+
+        self._generate_organism_yaml(species)
+        _log_timing("rebuild_igblast", start, species=species)
+
+    def _generate_organism_yaml(self, species: str) -> None:
+        """
+        Generate organism.yaml for IgBLAST internal_data.
+
+        Parameters
+        ----------
+        species : str
+            Species name
+        """
+        import yaml
+
+        internal_data_dir = self.igblast_dir / "internal_data"
+        internal_data_dir.mkdir(parents=True, exist_ok=True)
+
+        yaml_path = internal_data_dir / "organism.yaml"
+
+        if yaml_path.exists():
+            with open(yaml_path) as f:
+                data = yaml.safe_load(f) or {}
+        else:
+            data = {}
+
+        if "organisms" not in data:
+            data["organisms"] = {}
+
+        data["organisms"][species] = {
+            "database_path": f"../database/{species}",
+            "aux_file": f"../aux_db/{species}_gl.aux",
+            "segments": ["V", "D", "J"],
+        }
+
+        with open(yaml_path, "w") as f:
+            yaml.dump(data, f, default_flow_style=False)
+
+        logger.info(f"Updated organism.yaml for {species}")

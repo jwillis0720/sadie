@@ -34,8 +34,8 @@ Complete the germlines module by implementing VDJbase provider, populating refer
 
 **Scale/Scope**:
 - ~450 IGHV genes from IMGT
-- ~50-100 additional genes from OGRDB
-- VDJbase population-specific alleles (variable)
+- OGRDB data: Human (~47 genes), Mouse (~1,771 genes including 1,230 IGKV)
+- VDJbase population-specific alleles (variable, API-based download)
 - 4 providers (custom, IMGT, OGRDB, VDJbase)
 - 3 integration points (IgBLAST, Reference, HMM)
 
@@ -50,7 +50,7 @@ Complete the germlines module by implementing VDJbase provider, populating refer
 
 ### Principle II: Priority-Based Merging (NON-NEGOTIABLE) ✓
 - **Requirement**: Explicit priority ordering with conflict resolution
-- **Implementation**: GermlineManager handles priority `custom > imgt > ogrdb > vdjbase`
+- **Implementation**: GermlineManager handles default priority `custom > ogrdb > vdjbase > imgt` (user-configurable)
 - **Status**: PASS - Deduplication logic already implemented in manager.py:145-285
 
 ### Principle III: Local-First Operation ✓
@@ -469,7 +469,7 @@ for provider in manager.providers:
 - Status: PASS
 
 ### Principle II: Priority-Based Merging ✓
-- Design: No changes to priority system; VDJbase added as 4th provider
+- Design: No changes to priority system; VDJbase added as 4th provider; default order `custom > ogrdb > vdjbase > imgt`
 - Status: PASS
 
 ### Principle III: Local-First Operation ✓

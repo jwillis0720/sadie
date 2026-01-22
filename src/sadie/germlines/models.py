@@ -11,7 +11,7 @@ Design Principles:
 - Source tracking for provenance
 """
 
-from typing import Optional, Dict, List, Tuple
+from typing import Optional, Dict, List, Tuple, Any
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 
@@ -211,7 +211,7 @@ class ProcessingMetadata(BaseModel):
     processed_at: datetime = Field(..., description="Processing timestamp")
     num_sequences: int = Field(..., description="Number of sequences")
     file_hash: str = Field(..., description="File hash for change detection")
-    sequences: List[Dict[str, any]] = Field(
+    sequences: List[Dict[str, Any]] = Field(
         default_factory=list,
         description="Sequence summaries"
     )

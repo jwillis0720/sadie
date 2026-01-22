@@ -10,15 +10,21 @@ OGRDB is a community-curated database providing:
 - AIRR Community governance and review
 
 Data Source: https://ogrdb.airr-community.org/
-API Documentation: https://ogrdb.airr-community.org/api/docs
+Zenodo Archive: https://zenodo.org/records/18145568
 
-TODO: Implement OGRDB API client and data parsing
-Current Status: Stub implementation - reads from pre-downloaded FASTA files
+The OGRDB Zenodo archive contains:
+- SQL dump with gene_description table containing:
+  - sequence: ungapped nucleotide sequence
+  - coding_seq_imgt: IMGT-gapped nucleotide sequence
+
+Download data using:
+    python -m sadie.germlines.scripts.download_ogrdb --species human
 """
 
 import logging
+import time
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 from datetime import datetime
 from Bio import SeqIO
 
@@ -39,8 +45,11 @@ class OGRDBProvider(GermlineProvider):
     Expected Directory Structure:
         sources/ogrdb/
         ├── human/
-        │   ├── IGHV.fasta    # May be ungapped
+        │   ├── IGHV.fasta          # Ungapped sequences
+        │   ├── IGHV_gapped.fasta   # IMGT-gapped sequences (optional)
+        │   ├── IGHD.fasta
         │   ├── IGHJ.fasta
+        │   ├── IGHJ_gapped.fasta
         │   ├── IGKV.fasta
         │   ├── IGKJ.fasta
         │   ├── IGLV.fasta
@@ -53,6 +62,9 @@ class OGRDBProvider(GermlineProvider):
     >>> provider = OGRDBProvider()
     >>> genes = provider.fetch_genes("human", "V", "H")
     >>> print(f"Found {len(genes)} OGRDB IGHV genes")
+    
+    >>> # Download data from Zenodo archive
+    >>> provider.download(["human", "mouse"])
     """
 
     def fetch_genes(
@@ -62,9 +74,7 @@ class OGRDBProvider(GermlineProvider):
         chain: str
     ) -> List[GermlineGene]:
         """
-        Fetch OGRDB genes from pre-downloaded FASTA files.
-
-        TODO: Implement automatic download from OGRDB API if files missing
+        Fetch OGRDB genes from downloaded FASTA files.
 
         Parameters
         ----------
@@ -81,35 +91,93 @@ class OGRDBProvider(GermlineProvider):
             OGRDB genes
         """
         fasta_path = self.get_fasta_path(species, segment, chain)
+        gapped_path = self._get_gapped_fasta_path(species, segment, chain)
 
         # Guard: file doesn't exist
         if not fasta_path.exists():
             logger.debug(f"No OGRDB file: {fasta_path}")
             logger.info(
-                "Run download script or add FASTA manually. "
-                "See sources/ogrdb/README.md"
+                "Run 'python -m sadie.germlines.scripts.download_ogrdb --species {species}' "
+                "or add FASTA manually. See sources/ogrdb/OGRDB_DATA.md"
             )
             return []
 
+        # Load gapped sequences if available
+        gapped_sequences: Dict[str, str] = {}
+        if gapped_path.exists():
+            gapped_sequences = self._load_gapped_sequences(gapped_path)
+            logger.debug(f"Loaded {len(gapped_sequences)} gapped sequences from {gapped_path}")
+
         logger.info(f"Loading OGRDB FASTA: {fasta_path}")
 
-        genes = self._parse_ogrdb_fasta(fasta_path, species, segment, chain)
+        genes = self._parse_ogrdb_fasta(fasta_path, species, segment, chain, gapped_sequences)
 
-        logger.info(f"Loaded {len(genes)} OGRDB genes")
+        logger.info(
+            f"operation=load_ogrdb provider=ogrdb "
+            f"species={species} segment={segment} chain={chain} "
+            f"gene_count={len(genes)} status=success"
+        )
 
         return genes
+
+    def _get_gapped_fasta_path(
+        self,
+        species: str,
+        segment: str,
+        chain: str
+    ) -> Path:
+        """
+        Get path to gapped FASTA file.
+
+        Parameters
+        ----------
+        species : str
+            Species name
+        segment : str
+            Segment type
+        chain : str
+            Chain type
+
+        Returns
+        -------
+        Path
+            Path to gapped FASTA file
+        """
+        return self.data_dir / species / f"IG{chain}{segment}_gapped.fasta"
+
+    def _load_gapped_sequences(self, fasta_path: Path) -> Dict[str, str]:
+        """
+        Load gapped sequences from FASTA file.
+
+        Parameters
+        ----------
+        fasta_path : Path
+            Path to gapped FASTA file
+
+        Returns
+        -------
+        Dict[str, str]
+            Mapping of gene name to gapped sequence
+        """
+        gapped = {}
+        try:
+            for record in SeqIO.parse(fasta_path, "fasta"):
+                gene_name = record.id.split("|")[0]
+                gapped[gene_name] = str(record.seq).upper()
+        except Exception as e:
+            logger.warning(f"Failed to load gapped sequences from {fasta_path}: {e}")
+        return gapped
 
     def _parse_ogrdb_fasta(
         self,
         fasta_path: Path,
         species: str,
         segment: str,
-        chain: str
+        chain: str,
+        gapped_sequences: Optional[Dict[str, str]] = None
     ) -> List[GermlineGene]:
         """
         Parse OGRDB FASTA file.
-
-        TODO: Parse OGRDB-specific metadata
 
         Parameters
         ----------
@@ -121,6 +189,8 @@ class OGRDBProvider(GermlineProvider):
             Segment type
         chain : str
             Chain type
+        gapped_sequences : Dict[str, str], optional
+            Pre-loaded gapped sequences mapping gene name to gapped sequence
 
         Returns
         -------
@@ -128,6 +198,7 @@ class OGRDBProvider(GermlineProvider):
             Parsed genes
         """
         genes = []
+        gapped_sequences = gapped_sequences or {}
 
         try:
             records = list(SeqIO.parse(fasta_path, "fasta"))
@@ -136,7 +207,9 @@ class OGRDBProvider(GermlineProvider):
             return []
 
         for record in records:
-            gene = self._create_ogrdb_gene(record, species, segment, chain)
+            gene = self._create_ogrdb_gene(
+                record, species, segment, chain, gapped_sequences
+            )
             if gene:
                 genes.append(gene)
 
@@ -147,13 +220,11 @@ class OGRDBProvider(GermlineProvider):
         record,
         species: str,
         segment: str,
-        chain: str
+        chain: str,
+        gapped_sequences: Optional[Dict[str, str]] = None
     ) -> Optional[GermlineGene]:
         """
         Create GermlineGene from OGRDB SeqRecord.
-
-        OGRDB sequences may be ungapped or gapped.
-        TODO: Parse OGRDB metadata from headers
 
         Parameters
         ----------
@@ -165,6 +236,8 @@ class OGRDBProvider(GermlineProvider):
             Segment type
         chain : str
             Chain type
+        gapped_sequences : Dict[str, str], optional
+            Pre-loaded gapped sequences
 
         Returns
         -------
@@ -172,6 +245,7 @@ class OGRDBProvider(GermlineProvider):
             Gene object if successful
         """
         gene_name = record.id.split("|")[0]
+        gapped_sequences = gapped_sequences or {}
 
         sequence = str(record.seq).upper()
         is_gapped = "." in sequence or "-" in sequence
@@ -181,7 +255,8 @@ class OGRDBProvider(GermlineProvider):
             sequence_ungapped = sequence.replace(".", "").replace("-", "")
         else:
             sequence_ungapped = sequence
-            sequence_gapped = None  # TODO: Gap using aligner
+            # Look up gapped sequence from pre-loaded file
+            sequence_gapped = gapped_sequences.get(gene_name)
 
         try:
             gene = GermlineGene(
@@ -278,22 +353,30 @@ class OGRDBProvider(GermlineProvider):
 
     def download(self, species: List[str]) -> None:
         """
-        Download OGRDB data for species.
+        Download OGRDB data from Zenodo archive.
 
-        TODO: Implement OGRDB API download automation
-        See scripts/download_ogrdb.py for manual download instructions
+        Downloads the OGRDB archive from Zenodo and extracts
+        gapped and ungapped FASTA sequences for the specified species.
 
         Parameters
         ----------
         species : List[str]
-            Species to download
+            Species to download (e.g., ["human", "mouse"])
 
-        Raises
-        ------
-        NotImplementedError
-            Automatic download not yet implemented
+        Examples
+        --------
+        >>> provider = OGRDBProvider()
+        >>> provider.download(["human"])
         """
-        raise NotImplementedError(
-            "OGRDB automatic download not yet implemented. "
-            "See scripts/download_ogrdb.py for manual download instructions."
+        from ..scripts.download_ogrdb import OGRDBDownloader
+        
+        start_time = time.time()
+        
+        downloader = OGRDBDownloader(output_dir=self.data_dir)
+        downloader.download(species)
+        
+        duration_ms = int((time.time() - start_time) * 1000)
+        logger.info(
+            f"operation=download provider=ogrdb "
+            f"species={','.join(species)} duration_ms={duration_ms} status=success"
         )

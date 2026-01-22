@@ -48,7 +48,7 @@ class GermlineManager:
     >>> genes = manager.get_genes("human", "V", "H")
     """
 
-    DEFAULT_PROVIDERS = ["custom", "imgt", "ogrdb", "vdjbase"]
+    DEFAULT_PROVIDERS = ["custom", "ogrdb", "vdjbase", "imgt"]
 
     def __init__(
         self,
@@ -152,10 +152,14 @@ class GermlineManager:
         species: str,
         segment: str,
         chain: str,
-        functional_only: bool = True
+        functional_only: bool = True,
+        strict: bool = False
     ) -> List[GermlineGene]:
         """
         Get genes from all providers with priority-based deduplication.
+
+        Single provider configuration applies to all V/D/J segments (FR-014).
+        Per-segment provider mixing is not supported.
 
         Deduplication rules:
         1. Same gene name → first provider wins
@@ -172,11 +176,18 @@ class GermlineManager:
             Chain type: "H", "K", or "L"
         functional_only : bool
             Only return functional genes (default: True)
+        strict : bool
+            If True, raise ValueError when no genes found (default: False)
 
         Returns
         -------
         List[GermlineGene]
             Deduplicated genes in priority order
+
+        Raises
+        ------
+        ValueError
+            If strict=True and no providers have data for the species/segment/chain
 
         Examples
         --------
@@ -202,7 +213,18 @@ class GermlineManager:
                     all_genes[gene.name] = gene
                     seq_to_gene[gene.sequence] = gene.name
 
-        return list(all_genes.values())
+        result = list(all_genes.values())
+
+        if strict and len(result) == 0:
+            available_species = self.get_available_species()
+            raise ValueError(
+                f"No germline data found for species='{species}', "
+                f"segment='{segment}', chain='{chain}'. "
+                f"Available species: {available_species}. "
+                f"Run update_databases('{species}') to populate data."
+            )
+
+        return result
 
     def _fetch_from_provider(
         self,

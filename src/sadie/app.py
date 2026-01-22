@@ -499,7 +499,6 @@ def make_all(
         click.echo("\n" + "=" * 60)
         click.echo("STEP 3: Regenerating CATNAP references")
         click.echo("=" * 60)
-        from pathlib import Path
 
         script_path = Path(__file__).parent.parent.parent / "scripts" / "regenerate_catnap_references.py"
         if script_path.exists():
@@ -608,6 +607,98 @@ def make_all(
         click.echo("\n" + "=" * 60)
         click.echo("⚠️  Some files were not generated correctly", err=True)
         click.echo("=" * 60)
+
+
+@sadie.group()
+def germlines() -> None:
+    """Germline database management commands."""
+    pass
+
+
+@germlines.command("populate")
+@click.option(
+    "--provider",
+    "-p",
+    type=click.Choice(["imgt", "ogrdb", "vdjbase", "all"]),
+    default="all",
+    show_default=True,
+    help="Provider to download data from",
+)
+@click.option(
+    "--species",
+    "-s",
+    multiple=True,
+    help="Specific species to download (can be repeated)",
+)
+@click.option(
+    "--force",
+    "-f",
+    is_flag=True,
+    help="Force re-download even if up-to-date",
+)
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Show what would be downloaded without downloading",
+)
+def germlines_populate(
+    provider: str,
+    species: tuple,
+    force: bool,
+    dry_run: bool,
+) -> None:
+    """Download germline data from providers.
+
+    Downloads germline sequences from IMGT, OGRDB, and/or VDJbase providers
+    and builds the necessary databases for AIRR annotation and renumbering.
+
+    \b
+    Examples:
+        sadie germlines populate                    # Download all providers
+        sadie germlines populate -p imgt            # Download IMGT only
+        sadie germlines populate -p imgt -s human   # Download human from IMGT
+        sadie germlines populate --dry-run          # Show what would be downloaded
+        sadie germlines populate --force            # Force re-download
+    """
+    from sadie.germlines.cli import populate_germlines
+
+    populate_germlines(provider, list(species) if species else None, force, dry_run)
+
+
+@germlines.command("status")
+def germlines_status() -> None:
+    """Show status of germline databases."""
+    from sadie.germlines.cli import get_local_version, get_provider, is_up_to_date
+
+    from rich.console import Console
+    from rich.table import Table
+
+    console = Console()
+
+    table = Table(title="Germline Database Status")
+    table.add_column("Provider", style="cyan")
+    table.add_column("Version")
+    table.add_column("Downloaded At")
+    table.add_column("Species")
+    table.add_column("Status")
+
+    for prov_name in ["imgt", "ogrdb", "vdjbase"]:
+        version_info = get_local_version(prov_name)
+
+        if version_info:
+            version = version_info.get("version", "unknown")
+            downloaded_at = version_info.get("downloaded_at", "unknown")[:10]
+            species_count = version_info.get("species_count", 0)
+            status = "[green]Up-to-date[/green]" if is_up_to_date(prov_name) else "[yellow]Update available[/yellow]"
+        else:
+            version = "-"
+            downloaded_at = "-"
+            species_count = 0
+            status = "[red]Not downloaded[/red]"
+
+        table.add_row(prov_name, version, downloaded_at, str(species_count), status)
+
+    console.print(table)
 
 
 if __name__ == "__main__":

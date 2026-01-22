@@ -1,13 +1,31 @@
 from __future__ import annotations
 
+import logging
 import warnings
 from pathlib import Path
 from typing import Optional, Set
 
 from sadie.airr.igblast.igblast import ensure_prefix_to
-
-# package/module level
 from sadie.reference import YamlRef
+
+logger = logging.getLogger(__name__)
+
+
+def _use_germlines_module() -> bool:
+    import os
+    env_value = os.environ.get("SADIE_USE_GERMLINES_MODULE", "true").lower()
+    use_germlines = env_value in ("true", "1", "yes")
+    if not use_germlines:
+        logger.warning(
+            "G3 API is deprecated. Set SADIE_USE_GERMLINES_MODULE=true. "
+            "G3 will be removed after 2026-06-01."
+        )
+    return use_germlines
+
+
+def _get_germlines_igblast_dir() -> Path:
+    from sadie.germlines import get_germlines_base_dir
+    return get_germlines_base_dir() / "igblast"
 
 
 class GermlineData:
@@ -42,17 +60,59 @@ class GermlineData:
             the receptor type, by default "Ig"
         """
         self.name = name
+
+        # Determine base directory based on feature flag
         if database_dir:
             self.base_dir = Path(database_dir).absolute()
+        elif _use_germlines_module():
+            # Use germlines module paths (new default)
+            germlines_igblast = _get_germlines_igblast_dir()
+            internal_data_species = germlines_igblast / "Ig" / "internal_data" / name
+
+            # Check if this species has databases in germlines module
+            if internal_data_species.exists():
+                self.base_dir = germlines_igblast
+                # Germlines module uses IgBLAST-compatible directory structure:
+                # igblast/Ig/internal_data/{species}/ contains both .ndm.imgt and BLAST databases
+                self.blast_dir = internal_data_species / f"{name}_"
+                self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
+                self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
+                self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
+                self.c_gene_dir = Path(self.blast_dir.__str__() + "C")
+                self.aux_path = germlines_igblast / "aux_db" / f"{name}_gl.aux"
+                # IGDATA points to the directory containing internal_data/
+                self.igdata = germlines_igblast / "Ig"
+            else:
+                # NFR-002: No silent fallback to G3 when germlines is selected
+                raise ValueError(
+                    f"Species '{name}' not found in germlines module at "
+                    f"{internal_data_species}. "
+                    f"Build germlines databases with: update_databases('{name}'). "
+                    f"To use legacy G3 paths, set SADIE_USE_GERMLINES_MODULE=false."
+                )
         else:
-            self.base_dir = Path(__file__).absolute().parent / "../data/germlines/"
+            # Legacy G3 paths (deprecated, for backwards compatibility)
+            self._use_legacy_paths(name, receptor, scheme)
+
+    def _use_legacy_paths(self, name: str, receptor: str, scheme: str) -> None:
+        """Set paths to legacy G3 directory structure.
+
+        Parameters
+        ----------
+        name : str
+            Species name
+        receptor : str
+            Receptor type (Ig or TCR)
+        scheme : str
+            Numbering scheme
+        """
+        self.base_dir = Path(__file__).absolute().parent / "../data/germlines/"
         self.blast_dir = Path(str(self.base_dir) + f"/{receptor}/blastdb/{name}/{name}_")
         self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
         self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
         self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
         self.c_gene_dir = Path(self.blast_dir.__str__() + "C")
         self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
-
         # the literal 'internal_data/{name}` must be discovered by IgBLAST
         self.igdata = self.base_dir / f"{receptor}/"
 
@@ -193,12 +253,25 @@ class GermlineData:
 
     @staticmethod
     def get_available_datasets() -> Set[str]:
-        """A static non-instantiated method to get a list of avaialble species with the builtin data
+        """A static non-instantiated method to get a list of available species with the builtin data
 
         Returns
         -------
-        list
-            a list of tuples of the form (name, database)
+        Set[str]
+            Set of available species names
         """
+        datasets: Set[str] = set()
+        
+        # Add germlines module species if feature flag is enabled
+        if _use_germlines_module():
+            germlines_internal_data = _get_germlines_igblast_dir() / "Ig" / "internal_data"
+            if germlines_internal_data.exists():
+                for species_dir in germlines_internal_data.iterdir():
+                    if species_dir.is_dir() and not species_dir.name.startswith('.'):
+                        datasets.add(species_dir.name)
+        
+        # Also add legacy G3 species for backwards compatibility
         y = YamlRef()
-        return y.get_names()
+        datasets.update(y.get_names())
+        
+        return datasets

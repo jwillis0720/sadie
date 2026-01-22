@@ -43,16 +43,31 @@ class Reference:
     # G3 API Endpoint
     _endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
 
-    def __init__(self, endpoint: str = _endpoint):
+    def __init__(self, endpoint: str = _endpoint, use_germlines: bool = False):
         """Initialize the reference object
 
         Parameters
         ----------
         endpoint : str, optional
            The endpoint API address to get the data. Defaults to the G3 API.
+           Ignored if use_germlines is True.
+        use_germlines : bool, optional
+           If True, use local germlines module instead of G3 API. Defaults to False.
         """
         self.data: List[Dict[Column, str] | Dict[str, str]] = []
-        self.endpoint = endpoint
+        self.use_germlines = use_germlines
+
+        if not use_germlines:
+            self.endpoint = endpoint
+        else:
+            # Initialize germlines components
+            from sadie.germlines import get_manager
+            from sadie.germlines.g3_adapter import GermlineToG3Adapter
+
+            self.germline_manager = get_manager()
+            self.g3_adapter = GermlineToG3Adapter()
+            # Set endpoint to avoid property setter validation
+            self._endpoint = endpoint
 
     @property
     def endpoint(self) -> str:
@@ -149,7 +164,7 @@ class Reference:
         return response.status_code, response.json()
 
     def _get_gene(self, gene: GeneEntry) -> Dict[str, str]:
-        """Get a single gene from the G3 Restful API using a GeneEntry Model
+        """Get a single gene from the G3 Restful API or germlines module using a GeneEntry Model
 
         Parameters
         ----------
@@ -170,6 +185,22 @@ class Reference:
         if not isinstance(gene, GeneEntry):
             raise ValueError(f"{gene} is not GeneEntry")
 
+        # Use germlines module if enabled
+        if self.use_germlines:
+            from sadie.germlines import get_gene_by_name
+
+            germline_gene = get_gene_by_name(gene.gene, gene.species)
+            if not germline_gene:
+                raise G3Error(f"Gene {gene.gene} not found in germlines database for species {gene.species}")
+
+            # Transform to G3 format
+            g3_dict = self.g3_adapter.to_g3_format(germline_gene)
+            # Add species field for compatibility
+            g3_dict["species"] = gene.species
+            logger.debug(f"Retrieved {gene.gene} from germlines module")
+            return g3_dict
+
+        # Use G3 API (legacy path)
         # change weird characters to url characters
         gene_url = url_quote(gene.gene)
 
@@ -197,7 +228,7 @@ class Reference:
         Returns
         -------
         List[dict]
-            A list of Json-> Dict responses from G3
+            A list of Json-> Dict responses from G3 or germlines module
 
 
         Raises
@@ -208,6 +239,28 @@ class Reference:
         if not isinstance(genes, GeneEntries):
             raise ValueError(f"{genes} is not GeneEntries")
 
+        # Use germlines module if enabled
+        if self.use_germlines:
+            from sadie.germlines import get_gene_by_name
+
+            # Get all genes for the species from germlines
+            # Note: germlines get_genes requires segment and chain, so we'll query
+            # by individual gene names instead
+            results = []
+            for gene_name in genes.genes:
+                # Note: get_gene_by_name signature is (name, species)
+                germline_gene = get_gene_by_name(gene_name, genes.species)
+                if germline_gene:
+                    g3_dict = self.g3_adapter.to_g3_format(germline_gene)
+                    g3_dict["species"] = genes.species
+                    results.append(g3_dict)
+                else:
+                    logger.warning(f"Gene {gene_name} not found in germlines database for {genes.species}")
+
+            logger.debug(f"Retrieved {len(results)} genes from germlines module")
+            return results
+
+        # Use G3 API (legacy path)
         # url query
         query = f"{self.endpoint}?source={genes.source}&common={genes.species}&limit=-1"
 
