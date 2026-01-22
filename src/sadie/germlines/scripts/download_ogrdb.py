@@ -583,9 +583,9 @@ class OGRDBDownloader:
         if not chain:
             return
         
-        # Only process V, D, J segments
+        # Process V, D, J, and C segments
         segment = seq_type.upper()
-        if segment not in ("V", "D", "J"):
+        if segment not in ("V", "D", "J", "C"):
             return
         
         # Initialize nested structure
