@@ -1,7 +1,7 @@
 # Roadmap: Germline Database Integration
 
 **Milestone:** v1.1 Audit
-**Phases:** 13-14 (continuing from v1.0)
+**Phases:** 13-18 (continuing from v1.0)
 
 ## Phase 13: Backend Parity Audit
 
@@ -156,5 +156,37 @@
 - `audit/igblast-quirk.md` — Documented quirk and resolution
 
 ---
+
+## Phase 18: Document D-region IMGT Version Variance
+
+**Goal:** Document remaining D-region boundary differences as acceptable IMGT version variance
+
+**Depends on:** Phase 17
+
+**Status:** ✓ Complete
+
+**Discovery:** Research revealed the 1.71% structural difference (108 values) is caused by IMGT database version differences, not a bug.
+
+**Key Findings:**
+- Germlines uses current IMGT GENE-DB: 40 D alleles
+- G3 uses legacy snapshot: 34 D alleles
+- Germlines includes 5 OR15 orphon genes not in G3
+- Germlines includes 3 newer *03 alleles from BK063800
+- Germlines correctly deduplicates 2 identical sequences
+
+**Requirements:**
+- DREG-01: Investigate D gene allele selection differences ✓
+- DREG-02: Compare D gene database content between germlines and G3 ✓
+- DREG-03: Analyze np1/np2 calculation logic ✓
+- DREG-04: Document as acceptable variance ✓
+
+**Decision:** Accept 98.29% structural parity as final. The germlines module produces MORE accurate annotations due to current IMGT data.
+
+**Deliverables:**
+- `audit/parity-notes.md` — Parity explanation documentation
+- `.planning/phases/phase-18/RESEARCH.md` — Detailed research
+- `.planning/phases/phase-18/SUMMARY.md` — Phase summary
+
+---
 *Created: 2026-01-22*
-*Updated: 2026-01-22 — Phase 17 complete*
+*Completed: 2026-01-23*
