@@ -343,6 +343,78 @@ def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None
     click.echo("Done!")
 
 
+@reference.command("build")
+@click.option(
+    "-v",
+    "--verbose",
+    count=True,
+    default=4,
+    help="Verbosity level, ex. -vvvvv for debug level logging",
+)
+@click.option(
+    "--output",
+    "-o",
+    required=True,
+    help="Output path for IgBLAST database structure",
+    type=click.Path(resolve_path=True, dir_okay=True, writable=True),
+)
+@click.option(
+    "--use-germlines",
+    is_flag=True,
+    default=False,
+    help="Use local germlines module instead of G3 API",
+)
+@click.argument(
+    "yaml_path",
+    required=True,
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True),
+)
+def build_reference(verbose: int, output: str, use_germlines: bool, yaml_path: str) -> None:
+    """Build IgBLAST database from reference.yml configuration.
+
+    Creates complete database structure including blast databases, internal
+    annotation files, and auxiliary files needed for AIRR annotation.
+
+    \b
+    Examples:
+        sadie reference build reference.yml --output ./db
+        sadie reference build my_refs.yml -o /data/germlines --use-germlines
+    """
+    import sys
+    from pathlib import Path
+
+    # Set logging level
+    numeric_level = getVerbosityLevel(verbose)
+    logging.basicConfig(level=numeric_level)
+
+    output_path = Path(output)
+
+    try:
+        # Progress: Loading YAML
+        click.echo("Loading YAML...")
+        reference_object = References.from_yaml(Path(yaml_path), use_germlines=use_germlines)
+
+        # Progress: Fetching genes
+        click.echo("Fetching genes...")
+        # get_dataframe() triggers the actual gene fetching from G3/germlines
+        _ = reference_object.get_dataframe()
+
+        # Ensure output directory exists
+        output_path.mkdir(parents=True, exist_ok=True)
+
+        # Progress: Building databases...
+        click.echo("Building databases...")
+        germline_path = reference_object.make_airr_database(output_path)
+
+        # Progress: Complete
+        click.echo("Complete")
+        click.echo(f"Database written to: {germline_path}")
+
+    except Exception as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        sys.exit(1)
+
+
 @sadie.command()
 @click.option(
     "-o",
