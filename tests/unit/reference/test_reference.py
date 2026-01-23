@@ -81,6 +81,44 @@ def test_source_validation_all_providers() -> None:
     assert "not a valid source" in str(exc_info.value)
 
 
+def test_reference_use_germlines() -> None:
+    """Test Reference class with use_germlines=True (v1.2 integration)"""
+    # Create reference with germlines enabled
+    ref = Reference(use_germlines=True)
+    assert ref.use_germlines is True
+
+    # Add a gene using germlines module
+    ref.add_gene({"species": "human", "gene": "IGHV1-69*01", "source": "imgt"})
+    assert len(ref.data) == 1
+
+    # Verify _id field is present (INT-03)
+    df = ref.get_dataframe()
+    assert "_id" in df.columns
+    assert len(df["_id"].iloc[0]) == 24  # SHA-256 hash truncated to 24 chars
+
+    # Verify same gene produces same _id (deterministic)
+    ref2 = Reference(use_germlines=True)
+    ref2.add_gene({"species": "human", "gene": "IGHV1-69*01", "source": "imgt"})
+    df2 = ref2.get_dataframe()
+    assert df["_id"].iloc[0] == df2["_id"].iloc[0]
+
+
+def test_references_from_yaml_use_germlines(fixture_setup: "SadieFixture") -> None:
+    """Test References.from_yaml with use_germlines parameter (v1.2 INT-01)"""
+    shortened_yaml = fixture_setup.get_shortened_yaml()
+
+    # Load with use_germlines=True
+    refs = References.from_yaml(shortened_yaml, use_germlines=True)
+
+    # Verify references were created
+    assert len(refs.references) > 0
+
+    # Verify _id fields present in dataframe
+    df = refs.get_dataframe()
+    assert "_id" in df.columns
+    assert df["_id"].notna().all()  # All rows have _id
+
+
 def test_util_methods(tmp_path_factory: pytest.TempPathFactory) -> None:
     seq = "AAAAA"
     file = tmp_path_factory.mktemp("test_private_methods").joinpath("test.fasta")
