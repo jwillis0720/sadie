@@ -9,14 +9,14 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 15 Complete
+Phase: 16 Complete
 Plan: Completed
-Status: J gene matching fixed; CDR3 annotation working
-Last activity: 2026-01-22 — Phase 15 completed
+Status: NDM.IMGT FWR3 end position fixed; parity at 86.71%
+Last activity: 2026-01-22 — Phase 16 completed
 
-Progress: ████████████░░░░░░░░ 65% (6/9 requirements)
+Progress: ████████████████░░░░ 75% (7/12 requirements)
 
-**Next Phase:** Phase 16 - Backend parity investigation (optional)
+**Next Phase:** Phase 17 - Optional allele synchronization (if strict parity needed)
 
 ## Milestone v1.1 Progress
 
@@ -38,6 +38,13 @@ Progress: ████████████░░░░░░░░ 65% (6/9 
 - Fix: Modified `aux.py` to generate correct 5-column format
 - Results: j_call 100%, cdr3 98.7%, junction 98.7%, fwr4 98.7%, complete_vdj 97.4%
 - Backend parity improved: 72.19% → 77.60%
+
+### Phase 16: Fix NDM.IMGT FWR3 End Position ✓
+- Root cause: Column 11 used seq_len instead of FR3 end position
+- Fix: Modified `build_internal_data.py` to use `regions['FR3'][1]`
+- Fix: Regenerated `human.ndm.imgt` with correct values
+- Results: FWR3/CDR3 boundaries now match G3
+- Backend parity improved: 77.60% → 86.71%
 
 ## Key Achievements (Phase 15)
 

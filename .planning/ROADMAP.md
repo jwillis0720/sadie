@@ -1,11 +1,13 @@
 # Roadmap: Germline Database Integration
 
 **Milestone:** v1.1 Audit
-**Phases:** 13 (continuing from v1.0)
+**Phases:** 13-14 (continuing from v1.0)
 
 ## Phase 13: Backend Parity Audit
 
 **Goal:** Validate germlines backend produces identical AIRR results to G3 backend
+
+**Status:** ✓ Complete
 
 **Requirements:**
 - AUDIT-01: Run AIRR annotation with germlines backend
@@ -13,16 +15,107 @@
 - AUDIT-03: Compare results for column-level identity
 - AUDIT-04: Document discrepancies with root cause analysis
 
-**Success Criteria:**
-1. Audit notebook executes without errors
-2. Both backends process all 95 test sequences
-3. Column comparison completes and reports parity percentage
-4. Any differences are documented with explanation
+**Findings:**
+- 72.19% parity achieved
+- Critical issue: Missing C gene constant region data in germlines module
+- 15 columns missing (all C gene related)
+- CDR3/junction annotation fails for 95% of sequences
 
 **Deliverables:**
 - `audit/audit.ipynb` — Comparison notebook
+- `audit/audit.md` — Detailed audit report
 - `audit/20260112_HCV_DB_example.csv` — Test data
-- Documented results in notebook output
+
+---
+
+## Phase 14: C Region Data Integration
+
+**Goal:** Add C gene constant region data to germlines module sources and IgBLAST databases
+
+**Depends on:** Phase 13
+
+**Requirements:**
+- CREG-01: Update germlines sources to pull C region data from IMGT/OGRDB/VDJbase
+- CREG-02: Generate IgBLAST C gene databases in germlines module
+- CREG-03: Verify C gene columns present in AIRR output
+- CREG-04: Re-run audit to validate parity improvement
+
+**Success Criteria:**
+1. No "C gene directory not found" warnings
+2. All 129 columns present in germlines output (matching G3)
+3. CDR3/junction fields populated for productive sequences
+4. `complete_vdj` flag matches G3 backend
+5. Parity approaches 100%
+
+**Files to modify:**
+- `src/sadie/germlines/` — Source fetching to include C genes
+- `src/sadie/germlines/igblast/` — Database generation
+- `src/sadie/airr/igblast/germline.py` — Path resolution for C genes
+
+**Status:** ✓ Complete
+
+---
+
+## Phase 15: J Gene Matching & CDR3 Annotation Fix
+
+**Goal:** Fix J gene matching in IgBLAST to enable CDR3/junction annotation
+
+**Depends on:** Phase 14
+
+**Discovery:** Phase 14 revealed that CDR3 annotation failure is a pre-existing issue unrelated to C genes:
+- J genes not being matched (`j_call = NaN` for 99% of sequences)
+- CDR3, junction, fwr4 all return NaN
+- C gene integration successful but masked this underlying issue
+
+**Requirements:**
+- JFIX-01: Investigate IgBLAST J gene database configuration
+- JFIX-02: Verify aux file format and content
+- JFIX-03: Check internal_data directory structure
+- JFIX-04: Debug IgBLAST execution and parameters
+- JFIX-05: Re-run audit to validate CDR3 annotation
+
+**Success Criteria:**
+1. J genes matched for productive sequences (`j_call` populated)
+2. CDR3/junction fields populated
+3. `complete_vdj` = True for valid sequences
+4. Parity with G3 backend approaches 100%
+
+**Files to investigate:**
+- `src/sadie/airr/igblast/igblast.py` — IgBLAST execution
+- `src/sadie/germlines/igblast/aux_db/` — Auxiliary files
+- `src/sadie/germlines/igblast/Ig/internal_data/` — Internal data structure
+- `src/sadie/germlines/igblast/database/` — BLAST databases
+
+**Status:** ✓ Complete
+
+---
+
+## Phase 16: Fix ndm.imgt FWR3 End Position
+
+**Goal:** Fix the ndm.imgt file generation to use correct FWR3 end position (IMGT position 312) instead of full V gene sequence length
+
+**Depends on:** Phase 15
+
+**Discovery:** Phase 15 research revealed that backend parity is limited to 77.6% because:
+- Column 11 in ndm.imgt uses full V gene length (e.g., 296nt) instead of FWR3 end (288nt)
+- This causes FWR3 to be ~8 nucleotides too long
+- CDR3 is ~8 nucleotides too short
+- All junction/region boundary calculations are offset
+
+**Requirements:**
+- NDM-01: Fix `build_internal_data.py` to calculate ungapped position of IMGT position 312
+- NDM-02: Regenerate ndm.imgt files for human
+- NDM-03: Re-run audit to validate parity improvement
+
+**Success Criteria:**
+1. ndm.imgt column 11 matches G3 values (e.g., 288 for IGHV1-69*01)
+2. FWR3/CDR3 boundaries match G3
+3. Backend parity improves from 77.6% toward 95%+
+
+**Files to modify:**
+- `src/sadie/germlines/scripts/build_internal_data.py` — Fix column 11 calculation
+- `src/sadie/germlines/igblast/Ig/internal_data/human/human.ndm.imgt` — Regenerate
 
 ---
 *Created: 2026-01-22*
+*Updated: 2026-01-22 — Added Phase 16 for ndm.imgt fix*
