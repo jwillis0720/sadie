@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 19 — Source Validation
-Plan: —
-Status: Not started
-Last activity: 2026-01-23 — Milestone v1.2 roadmap created
+Plan: PLAN.md
+Status: Complete
+Last activity: 2026-01-23 — Phase 19 implemented
 
-Progress: ░░░░░░░░░░░░░░░░░░░░ 0%
+Progress: ████░░░░░░░░░░░░░░░░ 20%
 
 **Milestone v1.2: Reference Module Unification** — In progress (phases 19-23)
 
@@ -22,9 +22,9 @@ Progress: ░░░░░░░░░░░░░░░░░░░░ 0%
 
 **Goal:** Enable reference.yml to select alleles from all germline sources (imgt, ogrdb, vdjbase, custom), using germlines module as data provider instead of G3 API.
 
-### Phase 19: Source Validation ⏳
-- Expand VALID_SOURCES in models.py
-- Validate source exists in germlines
+### Phase 19: Source Validation ✓
+- ✓ Expand VALID_SOURCES in models.py (imgt, ogrdb, vdjbase, custom)
+- SRC-02 deferred to Phase 20 (validate at add_genes time)
 
 ### Phase 20: Integration Foundation
 - Add `use_germlines=True` to `References.from_yaml()`

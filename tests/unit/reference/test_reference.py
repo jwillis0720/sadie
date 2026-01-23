@@ -60,6 +60,27 @@ def test_check_models(fixture_setup: SadieFixture) -> None:
         GeneEntry(**entry)
 
 
+def test_source_validation_all_providers() -> None:
+    """Test that all four germline sources are valid (v1.2 expansion)"""
+    # All four sources should be valid
+    for source in ["imgt", "ogrdb", "vdjbase", "custom"]:
+        entry = GeneEntry(species="human", gene="IGHV1-69*01", source=source)
+        assert entry.source == source
+
+        entries = GeneEntries(species="human", genes=["IGHV1-69*01"], source=source)
+        assert entries.source == source
+
+    # Invalid source should raise ValidationError
+    with pytest.raises(ValidationError) as exc_info:
+        GeneEntry(species="human", gene="IGHV1-69*01", source="invalid_source")
+    assert "not a valid source" in str(exc_info.value)
+    assert "choices" in str(exc_info.value)  # verify typo fix
+
+    with pytest.raises(ValidationError) as exc_info:
+        GeneEntries(species="human", genes=["IGHV1-69*01"], source="g3")
+    assert "not a valid source" in str(exc_info.value)
+
+
 def test_util_methods(tmp_path_factory: pytest.TempPathFactory) -> None:
     seq = "AAAAA"
     file = tmp_path_factory.mktemp("test_private_methods").joinpath("test.fasta")
