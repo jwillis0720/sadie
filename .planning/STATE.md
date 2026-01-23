@@ -9,14 +9,14 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 16 Complete
+Phase: 17 Complete
 Plan: Completed
-Status: NDM.IMGT FWR3 end position fixed; parity at 86.71%
-Last activity: 2026-01-22 — Phase 16 completed
+Status: complete_vdj IgBLAST quirk fixed; structural parity at 98.29%
+Last activity: 2026-01-22 — Phase 17 complete_vdj fix completed
 
-Progress: ████████████████░░░░ 75% (7/12 requirements)
+Progress: ████████████████░░░░ 85% (9/12 requirements)
 
-**Next Phase:** Phase 17 - Optional allele synchronization (if strict parity needed)
+**Next Phase:** TBD - Further audit improvements or v1.1 release prep
 
 ## Milestone v1.1 Progress
 
@@ -46,6 +46,13 @@ Progress: ████████████████░░░░ 75% (7/12
 - Results: FWR3/CDR3 boundaries now match G3
 - Backend parity improved: 77.60% → 86.71%
 
+### Phase 17: Fix complete_vdj IgBLAST Quirk ✓
+- Root cause: IgBLAST complete_vdj varies based on allele selection
+- Fix: Added `_recalculate_complete_vdj()` method using AIRR standard definition
+- Fix: Added `J_GENE_LENGTHS` dictionary for J gene expected lengths
+- Results: complete_vdj differences reduced from 22 to 4
+- Remaining 4 differences: germlines=True (correct), G3=False (incorrect)
+
 ## Key Achievements (Phase 15)
 
 | Metric | Before | After | Target |
@@ -70,6 +77,11 @@ Progress: ████████████████░░░░ 75% (7/12
 - `audit/audit.md` — Detailed report
 - `audit/audit.py` — Quick audit script
 - `audit/20260112_HCV_DB_example.csv` — Test data
+- `audit/igblast-quirk.md` — IgBLAST complete_vdj quirk documentation
+
+## Roadmap Evolution
+
+- Phase 17 completed: Fix complete_vdj IgBLAST Quirk (22→4 differences, now AIRR-compliant)
 
 ---
 *Last updated: 2026-01-22*
