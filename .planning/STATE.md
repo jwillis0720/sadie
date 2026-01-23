@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 21 — Build CLI
+Phase: 22 — Runtime Usage
 Plan: PLAN.md
 Status: Complete
-Last activity: 2026-01-23 — Phase 21 implemented
+Last activity: 2026-01-23 — Phase 22 implemented
 
-Progress: ████████████░░░░░░░░ 60%
+Progress: ████████████████░░░░ 80%
 
 **Milestone v1.2: Reference Module Unification** — In progress (phases 19-23)
 
@@ -37,10 +37,10 @@ Progress: ████████████░░░░░░░░ 60%
 - ✓ Progress output during build
 - Note: --use-germlines has gap (missing IMGT region fields)
 
-### Phase 22: Runtime Usage
-- Add `Airr(database=<path>)` parameter
-- Skip germlines/G3 lookup with prebuilt
-- Validate database structure on load
+### Phase 22: Runtime Usage ✓
+- ✓ Add `Airr(database=<path>)` parameter
+- ✓ Skip germlines/G3 lookup with prebuilt
+- ✓ Validate database structure on load
 
 ### Phase 23: Documentation
 - Create reference-sample.yml

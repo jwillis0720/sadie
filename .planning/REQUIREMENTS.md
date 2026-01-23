@@ -26,9 +26,9 @@ Requirements for Reference Module Unification milestone.
 
 ### Runtime Usage
 
-- [ ] **RUN-01**: Add `Airr(database=<path>)` parameter to use prebuilt database
-- [ ] **RUN-02**: Skip germlines/G3 lookup when using prebuilt database
-- [ ] **RUN-03**: Validate database structure on load
+- [x] **RUN-01**: Add `Airr(database=<path>)` parameter to use prebuilt database
+- [x] **RUN-02**: Skip germlines/G3 lookup when using prebuilt database
+- [x] **RUN-03**: Validate database structure on load
 
 ### Documentation
 

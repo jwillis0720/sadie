@@ -280,21 +280,23 @@
 
 **Depends on:** Phase 21
 
+**Status:** ✓ Complete
+
 **Requirements:**
 - RUN-01: Add `Airr(database=<path>)` parameter to use prebuilt database
 - RUN-02: Skip germlines/G3 lookup when using prebuilt database
 - RUN-03: Validate database structure on load
 
 **Success Criteria:**
-1. `Airr(database="./db")` uses prebuilt database instead of default
-2. No network calls or germlines lookups when database path provided
-3. Clear error if database path missing required structure (blastdb, internal_data, aux_db)
-4. Annotation results identical whether using prebuilt or runtime-built database
-5. Performance improvement: <100ms startup with prebuilt vs >1s with runtime lookup
+1. ✓ `Airr(database="./db")` uses prebuilt database instead of default
+2. ✓ No network calls or germlines lookups when database path provided
+3. ✓ Clear error if database path missing required structure (blastdb, internal_data, aux_db)
+4. ✓ Annotation results identical whether using prebuilt or runtime-built database
+5. ⚠ Performance not measured
 
-**Files to modify:**
-- `src/sadie/airr/airr.py` — Add `database` parameter to `Airr.__init__()`, validate structure
-- `src/sadie/airr/igblast/germline.py` — Support custom database path in `GermlineData`
+**Files modified:**
+- `src/sadie/airr/airr.py` — Add `database` parameter, pass to recursive calls
+- `src/sadie/airr/igblast/germline.py` — Add `validate_prebuilt_database()`, `prebuilt` param
 
 ---
 
