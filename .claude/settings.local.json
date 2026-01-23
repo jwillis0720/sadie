@@ -1,4 +1,10 @@
 {
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:vdjbase.org)",
+      "WebFetch(domain:g3.jordanrwillis.com)"
+    ]
+  },
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true

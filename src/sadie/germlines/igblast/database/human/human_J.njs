@@ -6,7 +6,7 @@
   "description": "/Users/tmsincomb/sadie/src/sadie/germlines/igblast/database/human/human_J.fasta",
   "number-of-letters": 1530,
   "number-of-sequences": 34,
-  "last-updated": "2026-01-22T14:47:00",
+  "last-updated": "2026-01-23T07:01:00",
   "number-of-volumes": 1,
   "bytes-total": 201012,
   "bytes-to-cache": 972,
