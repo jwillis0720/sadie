@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 19 — Source Validation
+Phase: 20 — Integration Foundation
 Plan: PLAN.md
 Status: Complete
-Last activity: 2026-01-23 — Phase 19 implemented
+Last activity: 2026-01-23 — Phase 20 implemented
 
-Progress: ████░░░░░░░░░░░░░░░░ 20%
+Progress: ████████░░░░░░░░░░░░ 40%
 
 **Milestone v1.2: Reference Module Unification** — In progress (phases 19-23)
 
@@ -26,10 +26,10 @@ Progress: ████░░░░░░░░░░░░░░░░ 20%
 - ✓ Expand VALID_SOURCES in models.py (imgt, ogrdb, vdjbase, custom)
 - SRC-02 deferred to Phase 20 (validate at add_genes time)
 
-### Phase 20: Integration Foundation
-- Add `use_germlines=True` to `References.from_yaml()`
-- Route explicit source to GermlineManager
-- Generate synthetic `_id` in adapter
+### Phase 20: Integration Foundation ✓
+- ✓ Add `use_germlines=True` to `References.from_yaml()`
+- ✓ Route explicit source to GermlineManager (providers=[source])
+- ✓ Generate synthetic `_id` in adapter (SHA-256 hash)
 
 ### Phase 21: Build CLI
 - Add `sadie reference build` command

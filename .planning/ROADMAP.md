@@ -227,22 +227,23 @@
 
 **Depends on:** Phase 19
 
+**Status:** ✓ Complete
+
 **Requirements:**
 - INT-01: Add `use_germlines=True` parameter to `References.from_yaml()`
 - INT-02: Route source selection through GermlineManager (explicit source, no priority)
 - INT-03: Generate synthetic `_id` field in adapter
 
 **Success Criteria:**
-1. `References.from_yaml(use_germlines=True)` loads genes from germlines module
-2. Source field from YAML explicitly passed to GermlineManager (not using priority fallback)
-3. All returned gene dicts contain `_id` field (hash of `source:species:gene`)
-4. Downstream code using `_id` for deduplication/indexing works correctly
-5. G3 API path still works with `use_germlines=False` for backwards compatibility
+1. ✓ `References.from_yaml(use_germlines=True)` loads genes from germlines module
+2. ✓ Source field from YAML explicitly passed to GermlineManager (not using priority fallback)
+3. ✓ All returned gene dicts contain `_id` field (hash of `source:species:gene`)
+4. ✓ Downstream code using `_id` for deduplication/indexing works correctly
+5. ✓ G3 API path still works with `use_germlines=False` for backwards compatibility
 
-**Files to modify:**
-- `src/sadie/reference/reference.py` — Add `use_germlines` param to `from_yaml()`, pass to `Reference()` init
-- `src/sadie/germlines/g3_adapter.py` — Add `_id` field generation using deterministic hash
-- `src/sadie/reference/reference.py` — Pass explicit `providers=[source]` to germlines lookups
+**Files modified:**
+- `src/sadie/reference/reference.py` — Add `use_germlines` param, explicit source routing
+- `src/sadie/germlines/g3_adapter.py` — Add `_id` field generation using SHA-256 hash
 
 ---
 

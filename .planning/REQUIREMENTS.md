@@ -9,14 +9,14 @@ Requirements for Reference Module Unification milestone.
 
 ### Source Validation
 
-- [ ] **SRC-01**: Expand VALID_SOURCES to include `ogrdb`, `vdjbase`
+- [x] **SRC-01**: Expand VALID_SOURCES to include `ogrdb`, `vdjbase`
 - [ ] **SRC-02**: Validate source exists in germlines before processing
 
 ### Integration
 
-- [ ] **INT-01**: Add `use_germlines=True` parameter to `References.from_yaml()`
-- [ ] **INT-02**: Route source selection through GermlineManager (explicit source, no priority)
-- [ ] **INT-03**: Generate synthetic `_id` field in adapter
+- [x] **INT-01**: Add `use_germlines=True` parameter to `References.from_yaml()`
+- [x] **INT-02**: Route source selection through GermlineManager (explicit source, no priority)
+- [x] **INT-03**: Generate synthetic `_id` field in adapter
 
 ### Build CLI
 
