@@ -780,6 +780,9 @@ class Airr:
         light_chain_table = light_chain_table.groupby(["sequence_id", "sequence"]).head(1)
         _heavy_airr = AirrTable(heavy_chain_table.reset_index(drop=True))
         _light_airr = AirrTable(light_chain_table.reset_index(drop=True))
+        # Fix IgBLAST complete_vdj quirk for both chains before merge
+        _heavy_airr = self._recalculate_complete_vdj(_heavy_airr)
+        _light_airr = self._recalculate_complete_vdj(_light_airr)
         linked_table = _heavy_airr.merge(_light_airr, suffixes=("_heavy", "_light"), on="sequence_id")
         return LinkedAirrTable(linked_table)
 
