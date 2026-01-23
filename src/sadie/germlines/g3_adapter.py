@@ -13,6 +13,7 @@ Design:
 - Handles region extraction and formatting
 """
 
+import hashlib
 import logging
 from typing import Any, Dict, List
 
@@ -39,6 +40,29 @@ class GermlineToG3Adapter:
     >>> g3_dict["imgt"]["imgt_functional"]
     'F'
     """
+
+    def _generate_id(self, source: str, species: str, gene_name: str) -> str:
+        """
+        Generate deterministic _id for gene deduplication.
+
+        Uses SHA-256 hash of source:species:gene to match G3 API behavior.
+
+        Parameters
+        ----------
+        source : str
+            Provider source (e.g., "imgt", "ogrdb")
+        species : str
+            Species name (e.g., "human")
+        gene_name : str
+            Gene name (e.g., "IGHV1-69*01")
+
+        Returns
+        -------
+        str
+            Hex digest of hash (first 24 chars for readability)
+        """
+        key = f"{source}:{species}:{gene_name}"
+        return hashlib.sha256(key.encode()).hexdigest()[:24]
 
     def to_g3_format(self, gene: GermlineGene) -> Dict[str, Any]:
         """
@@ -73,6 +97,7 @@ class GermlineToG3Adapter:
 
         # Build base structure
         g3_dict = {
+            "_id": self._generate_id(gene.source, gene.species, gene.name),
             "source": gene.source,
             "common": gene.species,
             "latin": self._get_latin_name(gene.species),
