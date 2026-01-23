@@ -10,7 +10,7 @@ During the AIRR backend parity audit comparing the germlines module vs G3 backen
 
 ## Root Cause
 
-| Database | Allele Selected | complete_vdj | 
+| Database | Allele Selected | complete_vdj |
 |----------|-----------------|--------------|
 | Germlines (IMGT) | IGHV4-31*13 | **False** |
 | G3 (older IMGT) | IGHV4-31*03 | True |

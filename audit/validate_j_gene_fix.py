@@ -7,8 +7,9 @@ Tests that J gene matching and CDR3 annotation work after aux file fix.
 """
 
 import os
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 # Force germlines backend
 os.environ["SADIE_USE_GERMLINES_MODULE"] = "true"
@@ -34,17 +35,17 @@ def main():
 
     # Run annotation with germlines backend
     airr = Airr("human")
-    
+
     # Read the sequence
     with open(test_fasta) as f:
         lines = f.readlines()
         seq_id = lines[0].strip().lstrip(">")
         seq = "".join(l.strip() for l in lines[1:])
-    
+
     # Create a single-row dataframe
     df = pd.DataFrame([{"sequence_id": seq_id, "sequence": seq}])
     result_df = airr.run_dataframe(df, seq_id_field="sequence_id", seq_field="sequence")
-    
+
     # Get the first (only) result
     result = result_df.iloc[0].to_dict()
 
@@ -79,7 +80,7 @@ def main():
         success = False
     else:
         print("✓ PASS: cdr3 is populated")
-    
+
     if pd.isna(result.get('fwr4')) or result.get('fwr4') is None:
         print("❌ FAIL: fwr4 is NaN/None")
         success = False

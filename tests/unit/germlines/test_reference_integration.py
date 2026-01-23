@@ -31,11 +31,7 @@ class TestReferenceIntegration:
         assert hasattr(ref, "g3_adapter"), "Should have G3 adapter"
 
         # Add a gene using germlines backend
-        gene_dict = {
-            "species": "human",
-            "gene": "IGHV1-69*01",
-            "source": "imgt"
-        }
+        gene_dict = {"species": "human", "gene": "IGHV1-69*01", "source": "imgt"}
         ref.add_gene(gene_dict)
 
         # Verify gene was added
@@ -85,11 +81,7 @@ class TestReferenceIntegration:
         # Test with germlines backend
         ref_germlines = Reference(use_germlines=True)
 
-        gene_dict = {
-            "species": "human",
-            "gene": "IGHV1-69*01",
-            "source": "imgt"
-        }
+        gene_dict = {"species": "human", "gene": "IGHV1-69*01", "source": "imgt"}
         ref_germlines.add_gene(gene_dict)
 
         df_germlines = ref_germlines.get_dataframe()
@@ -106,9 +98,7 @@ class TestReferenceIntegration:
         ]
 
         for field in required_fields:
-            assert field in df_germlines.columns, (
-                f"Germlines output missing required G3 field: {field}"
-            )
+            assert field in df_germlines.columns, f"Germlines output missing required G3 field: {field}"
 
         # Verify nested IMGT structure exists
         imgt_fields = [
@@ -118,9 +108,7 @@ class TestReferenceIntegration:
         ]
 
         for field in imgt_fields:
-            assert field in df_germlines.columns, (
-                f"Germlines output missing IMGT field: {field}"
-            )
+            assert field in df_germlines.columns, f"Germlines output missing IMGT field: {field}"
 
         # Verify data types
         assert isinstance(df_germlines["gene"].iloc[0], str), "Gene should be string"
@@ -151,11 +139,7 @@ class TestReferenceIntegration:
         from sadie.reference.reference import G3Error
 
         with pytest.raises(G3Error):
-            ref.add_gene({
-                "species": "human",
-                "gene": "IGHV999-999*99",  # Non-existent gene
-                "source": "imgt"
-            })
+            ref.add_gene({"species": "human", "gene": "IGHV999-999*99", "source": "imgt"})  # Non-existent gene
 
 
 class TestGermlineToG3Adapter:

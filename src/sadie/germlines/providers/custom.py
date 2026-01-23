@@ -27,15 +27,15 @@ FASTA Format (flexible):
 """
 
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
-from datetime import datetime
+
 from Bio import SeqIO
 
-from .base import GermlineProvider
-from ..models import GermlineGene, ProviderMetadata
 from ..builders.gapper import GapperService
-
+from ..models import GermlineGene, ProviderMetadata
+from .base import GermlineProvider
 
 logger = logging.getLogger(__name__)
 
@@ -85,14 +85,14 @@ class CustomProvider(GermlineProvider):
             Defaults to sources/imgt/ (sibling of custom/)
         """
         super().__init__(data_dir=data_dir)
-        
+
         # Set up template directory for gapping
         # Template dir should be sibling to custom (both under sources/)
         if template_dir is None:
             # self.data_dir is sources/custom, so parent is sources, then add imgt
             template_dir = self.data_dir.parent / "imgt"
         self.template_dir = template_dir
-        
+
         # Lazy initialization of gapper (per-species)
         self._gappers: dict = {}
 
@@ -114,7 +114,7 @@ class CustomProvider(GermlineProvider):
             (GapperService, template_species) - gapper and species to use for templates
         """
         cache_key = species
-        
+
         if cache_key not in self._gappers:
             species_template_dir = self.template_dir / species
             if species_template_dir.exists():
@@ -131,15 +131,10 @@ class CustomProvider(GermlineProvider):
                     # No templates available at all
                     self._gappers[cache_key] = (GapperService(template_dir=None), species)
                     logger.warning(f"No IMGT templates found, gapping disabled for {species}")
-        
+
         return self._gappers[cache_key]
 
-    def fetch_genes(
-        self,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> List[GermlineGene]:
+    def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch custom genes from user-supplied FASTA files.
 
@@ -174,13 +169,7 @@ class CustomProvider(GermlineProvider):
 
         return genes
 
-    def _parse_fasta_file(
-        self,
-        fasta_path: Path,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> List[GermlineGene]:
+    def _parse_fasta_file(self, fasta_path: Path, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Parse FASTA file and create GermlineGene objects.
 
@@ -209,24 +198,13 @@ class CustomProvider(GermlineProvider):
             return []
 
         for record in records:
-            gene = self._create_gene_from_record(
-                record,
-                species,
-                segment,
-                chain
-            )
+            gene = self._create_gene_from_record(record, species, segment, chain)
             if gene:
                 genes.append(gene)
 
         return genes
 
-    def _create_gene_from_record(
-        self,
-        record,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> Optional[GermlineGene]:
+    def _create_gene_from_record(self, record, species: str, segment: str, chain: str) -> Optional[GermlineGene]:
         """
         Create GermlineGene from SeqRecord.
 
@@ -272,7 +250,7 @@ class CustomProvider(GermlineProvider):
                 segment=segment,
                 chain=chain,
                 gene_name=gene_name,
-                species=template_species  # Use template species for lookup
+                species=template_species,  # Use template species for lookup
             )
             if sequence_gapped:
                 logger.debug(f"Auto-gapped {gene_name} using {template_species} templates")
@@ -297,12 +275,7 @@ class CustomProvider(GermlineProvider):
             logger.error(f"Failed to create gene {gene_name}: {e}")
             return None
 
-    def _clean_gene_name(
-        self,
-        record_id: str,
-        segment: str,
-        chain: str
-    ) -> str:
+    def _clean_gene_name(self, record_id: str, segment: str, chain: str) -> str:
         """
         Clean and standardize gene names from FASTA headers.
 
@@ -342,11 +315,7 @@ class CustomProvider(GermlineProvider):
 
         return name
 
-    def fetch_gene_by_name(
-        self,
-        name: str,
-        species: str
-    ) -> Optional[GermlineGene]:
+    def fetch_gene_by_name(self, name: str, species: str) -> Optional[GermlineGene]:
         """
         Fetch specific custom gene by name.
 

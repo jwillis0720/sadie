@@ -12,10 +12,10 @@ All providers implement a common interface defined in base.py
 """
 
 from .base import GermlineProvider
+from .custom import CustomProvider
 from .imgt import IMGTProvider
 from .ogrdb import OGRDBProvider
 from .vdjbase import VDJbaseProvider
-from .custom import CustomProvider
 
 __all__ = [
     "GermlineProvider",

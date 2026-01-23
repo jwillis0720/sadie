@@ -5,8 +5,8 @@ This module provides feature flag controls for the gradual migration from G3 API
 to the local germlines module, following Constitution Principle V (Integration Compatibility).
 """
 
-import os
 import logging
+import os
 from functools import lru_cache
 
 logger = logging.getLogger(__name__)
@@ -43,13 +43,9 @@ def use_germlines_module() -> bool:
     use_germlines = env_value in ("true", "1", "yes", "on")
     if not use_germlines:
         logger.warning(
-            "G3 API is deprecated. Set SADIE_USE_GERMLINES_MODULE=true. "
-            "G3 will be removed after 2026-06-01."
+            "G3 API is deprecated. Set SADIE_USE_GERMLINES_MODULE=true. " "G3 will be removed after 2026-06-01."
         )
-    logger.debug(
-        f"Feature flag SADIE_USE_GERMLINES_MODULE={env_value} -> "
-        f"use_germlines={use_germlines}"
-    )
+    logger.debug(f"Feature flag SADIE_USE_GERMLINES_MODULE={env_value} -> " f"use_germlines={use_germlines}")
     return use_germlines
 
 

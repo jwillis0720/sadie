@@ -145,7 +145,7 @@ if differences:
     print(f"\nFound differences in {len(differences)} columns:")
     for col, count in sorted(differences.items(), key=lambda x: -x[1]):
         print(f"  {col}: {count} differences")
-    
+
     # Show sample differences
     print("\n=== Sample Differences ===")
     for col in list(differences.keys())[:5]:
@@ -172,11 +172,11 @@ c_region_diffs = {k: v for k, v in differences.items() if k in C_REGION_COLS}
 statistical_diffs = {k: v for k, v in differences.items() if k in STATISTICAL_COLS}
 allele_diffs = {k: v for k, v in differences.items() if k in ALLELE_DEPENDENT_COLS and k not in STATISTICAL_COLS}
 # Structural = everything not in C region, statistical, or allele-dependent
-structural_diffs = {k: v for k, v in differences.items() 
+structural_diffs = {k: v for k, v in differences.items()
                    if k not in C_REGION_COLS and k not in STATISTICAL_COLS and k not in ALLELE_DEPENDENT_COLS}
 
 # Calculate structural parity (excluding statistical, allele-dependent, and C region columns)
-structural_cols = [c for c in common_cols 
+structural_cols = [c for c in common_cols
                   if c not in STATISTICAL_COLS and c not in C_REGION_COLS and c not in ALLELE_DEPENDENT_COLS]
 structural_values = len(structural_cols) * len(result_germlines_aligned)
 structural_diff_count = sum(structural_diffs.values()) if structural_diffs else 0

@@ -18,14 +18,14 @@ Current Status: Stub implementation - reads from pre-downloaded FASTA files
 """
 
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
-from datetime import datetime
+
 from Bio import SeqIO
 
-from .base import GermlineProvider
 from ..models import GermlineGene, ProviderMetadata
-
+from .base import GermlineProvider
 
 logger = logging.getLogger(__name__)
 
@@ -62,12 +62,7 @@ class IMGTProvider(GermlineProvider):
     >>> print(f"Found {len(genes)} IMGT IGHV genes")
     """
 
-    def fetch_genes(
-        self,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> List[GermlineGene]:
+    def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch IMGT genes from pre-downloaded FASTA files.
 
@@ -93,10 +88,7 @@ class IMGTProvider(GermlineProvider):
         # Guard: file doesn't exist
         if not fasta_path.exists():
             logger.debug(f"No IMGT file: {fasta_path}")
-            logger.info(
-                "Run download script or add FASTA manually. "
-                "See sources/imgt/README.md"
-            )
+            logger.info("Run download script or add FASTA manually. " "See sources/imgt/README.md")
             return []
 
         # Load gapped sequences if available
@@ -119,7 +111,7 @@ class IMGTProvider(GermlineProvider):
         species: str,
         segment: str,
         chain: str,
-        gapped_sequences: Optional[Dict[str, str]] = None
+        gapped_sequences: Optional[Dict[str, str]] = None,
     ) -> List[GermlineGene]:
         """
         Parse IMGT FASTA file.
@@ -164,12 +156,7 @@ class IMGTProvider(GermlineProvider):
         return genes
 
     def _create_imgt_gene(
-        self,
-        record,
-        species: str,
-        segment: str,
-        chain: str,
-        gapped_sequences: Optional[Dict[str, str]] = None
+        self, record, species: str, segment: str, chain: str, gapped_sequences: Optional[Dict[str, str]] = None
     ) -> Optional[GermlineGene]:
         """
         Create GermlineGene from IMGT SeqRecord.
@@ -243,12 +230,7 @@ class IMGTProvider(GermlineProvider):
             logger.error(f"Failed to create IMGT gene {gene_name}: {e}")
             return None
 
-    def _get_gapped_fasta_path(
-        self,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> Path:
+    def _get_gapped_fasta_path(self, species: str, segment: str, chain: str) -> Path:
         """
         Get path to gapped FASTA file.
 
@@ -293,11 +275,7 @@ class IMGTProvider(GermlineProvider):
             logger.warning(f"Failed to load gapped sequences from {fasta_path}: {e}")
         return gapped
 
-    def fetch_gene_by_name(
-        self,
-        name: str,
-        species: str
-    ) -> Optional[GermlineGene]:
+    def fetch_gene_by_name(self, name: str, species: str) -> Optional[GermlineGene]:
         """
         Fetch specific IMGT gene by name.
 
@@ -382,7 +360,7 @@ class IMGTProvider(GermlineProvider):
         force : bool
             Force re-download even if files exist
         """
-        from ..scripts.download_imgt import IMGTDownloader, SPECIES_MAP
+        from ..scripts.download_imgt import SPECIES_MAP, IMGTDownloader
 
         downloader = IMGTDownloader(output_dir=self.data_dir)
 

@@ -12,12 +12,11 @@ Design Principles (Zen of Python):
 """
 
 import logging
-from typing import List, Optional, Dict
 from pathlib import Path
+from typing import Dict, List, Optional
 
 from .models import GermlineGene
 from .providers.base import GermlineProvider
-
 
 logger = logging.getLogger(__name__)
 
@@ -50,11 +49,7 @@ class GermlineManager:
 
     DEFAULT_PROVIDERS = ["custom", "ogrdb", "vdjbase", "imgt"]
 
-    def __init__(
-        self,
-        providers: Optional[List[str]] = None,
-        data_dir: Optional[Path] = None
-    ):
+    def __init__(self, providers: Optional[List[str]] = None, data_dir: Optional[Path] = None):
         """
         Initialize manager with ordered list of providers.
 
@@ -78,11 +73,7 @@ class GermlineManager:
         self.data_dir = data_dir
         self.providers = self._initialize_providers(providers, data_dir)
 
-    def _initialize_providers(
-        self,
-        provider_names: List[str],
-        data_dir: Path
-    ) -> List[GermlineProvider]:
+    def _initialize_providers(self, provider_names: List[str], data_dir: Path) -> List[GermlineProvider]:
         """
         Initialize provider instances.
 
@@ -109,11 +100,7 @@ class GermlineManager:
 
         return providers
 
-    def _create_provider(
-        self,
-        name: str,
-        data_dir: Path
-    ) -> Optional[GermlineProvider]:
+    def _create_provider(self, name: str, data_dir: Path) -> Optional[GermlineProvider]:
         """
         Create provider instance by name.
 
@@ -131,29 +118,28 @@ class GermlineManager:
         """
         if name == "custom":
             from .providers.custom import CustomProvider
+
             return CustomProvider(data_dir / "custom")
 
         if name == "imgt":
             from .providers.imgt import IMGTProvider
+
             return IMGTProvider(data_dir / "imgt")
 
         if name == "ogrdb":
             from .providers.ogrdb import OGRDBProvider
+
             return OGRDBProvider(data_dir / "ogrdb")
 
         if name == "vdjbase":
             from .providers.vdjbase import VDJbaseProvider
+
             return VDJbaseProvider(data_dir / "vdjbase")
 
         return None
 
     def get_genes(
-        self,
-        species: str,
-        segment: str,
-        chain: str,
-        functional_only: bool = True,
-        strict: bool = False
+        self, species: str, segment: str, chain: str, functional_only: bool = True, strict: bool = False
     ) -> List[GermlineGene]:
         """
         Get genes from all providers with priority-based deduplication.
@@ -200,13 +186,7 @@ class GermlineManager:
 
         # Iterate providers in priority order
         for provider in self.providers:
-            genes = self._fetch_from_provider(
-                provider,
-                species,
-                segment,
-                chain,
-                functional_only
-            )
+            genes = self._fetch_from_provider(provider, species, segment, chain, functional_only)
 
             for gene in genes:
                 if self._should_include_gene(gene, all_genes, seq_to_gene):
@@ -227,12 +207,7 @@ class GermlineManager:
         return result
 
     def _fetch_from_provider(
-        self,
-        provider: GermlineProvider,
-        species: str,
-        segment: str,
-        chain: str,
-        functional_only: bool
+        self, provider: GermlineProvider, species: str, segment: str, chain: str, functional_only: bool
     ) -> List[GermlineGene]:
         """
         Fetch genes from single provider with error handling.
@@ -261,10 +236,7 @@ class GermlineManager:
             if functional_only:
                 genes = [g for g in genes if g.is_functional]
 
-            logger.debug(
-                f"Provider {provider.name}: {len(genes)} genes for "
-                f"{species} {chain}{segment}"
-            )
+            logger.debug(f"Provider {provider.name}: {len(genes)} genes for " f"{species} {chain}{segment}")
 
             return genes
 
@@ -273,10 +245,7 @@ class GermlineManager:
             return []
 
     def _should_include_gene(
-        self,
-        gene: GermlineGene,
-        all_genes: Dict[str, GermlineGene],
-        seq_to_gene: Dict[str, str]
+        self, gene: GermlineGene, all_genes: Dict[str, GermlineGene], seq_to_gene: Dict[str, str]
     ) -> bool:
         """
         Determine if gene should be included based on deduplication rules.
@@ -303,19 +272,13 @@ class GermlineManager:
         # Rule 2: Sequence exact match - first provider wins
         if gene.sequence in seq_to_gene:
             existing_name = seq_to_gene[gene.sequence]
-            logger.debug(
-                f"Skipping {gene.name}: sequence matches {existing_name}"
-            )
+            logger.debug(f"Skipping {gene.name}: sequence matches {existing_name}")
             return False
 
         # Rule 3: Novel gene - include it
         return True
 
-    def get_gene_by_name(
-        self,
-        name: str,
-        species: str
-    ) -> Optional[GermlineGene]:
+    def get_gene_by_name(self, name: str, species: str) -> Optional[GermlineGene]:
         """
         Get specific gene by name (first provider wins).
 
@@ -358,8 +321,6 @@ class GermlineManager:
                 metadata = provider.get_metadata()
                 species_set.update(metadata.species_available)
             except Exception as e:
-                logger.debug(
-                    f"Could not get species from {provider.name}: {e}"
-                )
+                logger.debug(f"Could not get species from {provider.name}: {e}")
 
         return sorted(species_set)

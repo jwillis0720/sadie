@@ -668,10 +668,10 @@ def germlines_populate(
 @germlines.command("status")
 def germlines_status() -> None:
     """Show status of germline databases."""
-    from sadie.germlines.cli import get_local_version, get_provider, is_up_to_date
-
     from rich.console import Console
     from rich.table import Table
+
+    from sadie.germlines.cli import get_local_version, get_provider, is_up_to_date
 
     console = Console()
 

@@ -1,7 +1,7 @@
 # Phase 15: Parity Gap Analysis — Research
 
-**Created:** 2026-01-22  
-**Updated:** 2026-01-22  
+**Created:** 2026-01-22
+**Updated:** 2026-01-22
 **Status:** Research Complete (Extended Analysis)
 
 ---
@@ -158,8 +158,8 @@ entry = (
 
 ### Priority 1: Fix ndm.imgt FWR3 End Position (CRITICAL)
 
-**Impact:** 100% of sequences affected  
-**Effort:** Low (single file change)  
+**Impact:** 100% of sequences affected
+**Effort:** Low (single file change)
 **Fix:** Modify `build_internal_data.py` to calculate ungapped position of IMGT position 312
 
 **Expected Improvement:** ~15-20% parity increase
@@ -169,8 +169,8 @@ entry = (
 
 ### Priority 2: Align J Gene Allele Set (HIGH)
 
-**Impact:** 92% of sequences affected  
-**Effort:** Medium (database synchronization)  
+**Impact:** 92% of sequences affected
+**Effort:** Medium (database synchronization)
 **Options:**
 1. Use G3's J gene alleles for germlines
 2. Accept allele-level differences (gene-level matches)
@@ -179,16 +179,16 @@ entry = (
 
 ### Priority 3: V Gene Allele Consistency (MEDIUM)
 
-**Impact:** 51% of sequences affected  
-**Effort:** Medium-High  
+**Impact:** 51% of sequences affected
+**Effort:** Medium-High
 **Note:** Most differences are due to germlines having MORE alleles, which is intentional for the richer database.
 
 **Recommendation:** Accept these differences as expected behavior.
 
 ### Priority 4: Score/Support Normalization (LOW)
 
-**Impact:** 100% of sequences affected  
-**Effort:** High (would require database size normalization)  
+**Impact:** 100% of sequences affected
+**Effort:** High (would require database size normalization)
 **Recommendation:** Do not fix - expected statistical variation.
 
 ---

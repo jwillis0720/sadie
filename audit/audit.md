@@ -1,7 +1,7 @@
 # AIRR Backend Parity Audit Report
 
-**Date**: 2026-01-22  
-**Dataset**: `20260112_HCV_DB_example.csv` (96 sequences)  
+**Date**: 2026-01-22
+**Dataset**: `20260112_HCV_DB_example.csv` (96 sequences)
 **Comparison**: Germlines module vs G3 backend
 
 ## Executive Summary
@@ -86,7 +86,7 @@ Sequence: 212-1-1
   G3:        GCGGGAGTAAGGGAGGGTATGGCAGCAATTAGTGGGAAGAATGCTTTTGATATC
 
 Sequence: hcab1
-  Germlines: NaN  
+  Germlines: NaN
   G3:        GCGAGTGTTACGACGAGACAATGGTTCGGGAGGGGTGATGCTTTTGATCTC
 ```
 

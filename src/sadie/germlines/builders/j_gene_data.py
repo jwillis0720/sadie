@@ -62,17 +62,42 @@ CHAIN_TYPE_MAP = {
 # Sourced from SADIE germline database FASTA files
 J_GENE_LENGTHS = {
     # Heavy chain
-    "IGHJ1*01": 52, "IGHJ2*01": 53, "IGHJ3*01": 50, "IGHJ3*02": 50,
-    "IGHJ4*01": 48, "IGHJ4*02": 48, "IGHJ4*03": 48,
-    "IGHJ5*01": 51, "IGHJ5*02": 51, "IGHJ5*03": 51, "IGHJ5*04": 51,
-    "IGHJ6*01": 63, "IGHJ6*02": 63, "IGHJ6*03": 63, "IGHJ6*04": 63,
+    "IGHJ1*01": 52,
+    "IGHJ2*01": 53,
+    "IGHJ3*01": 50,
+    "IGHJ3*02": 50,
+    "IGHJ4*01": 48,
+    "IGHJ4*02": 48,
+    "IGHJ4*03": 48,
+    "IGHJ5*01": 51,
+    "IGHJ5*02": 51,
+    "IGHJ5*03": 51,
+    "IGHJ5*04": 51,
+    "IGHJ6*01": 63,
+    "IGHJ6*02": 63,
+    "IGHJ6*03": 63,
+    "IGHJ6*04": 63,
     # Kappa chain
-    "IGKJ1*01": 38, "IGKJ2*01": 39, "IGKJ2*02": 38, "IGKJ2*03": 39, "IGKJ2*04": 39,
-    "IGKJ3*01": 38, "IGKJ4*01": 38, "IGKJ4*02": 38, "IGKJ4*03": 38, "IGKJ5*01": 38,
+    "IGKJ1*01": 38,
+    "IGKJ2*01": 39,
+    "IGKJ2*02": 38,
+    "IGKJ2*03": 39,
+    "IGKJ2*04": 39,
+    "IGKJ3*01": 38,
+    "IGKJ4*01": 38,
+    "IGKJ4*02": 38,
+    "IGKJ4*03": 38,
+    "IGKJ5*01": 38,
     # Lambda chain
-    "IGLJ1*01": 38, "IGLJ2*01": 38, "IGLJ3*02": 38,
-    "IGLJ4*01": 38, "IGLJ5*01": 38, "IGLJ5*02": 38, "IGLJ6*01": 38,
-    "IGLJ7*01": 38, "IGLJ7*02": 38,
+    "IGLJ1*01": 38,
+    "IGLJ2*01": 38,
+    "IGLJ3*02": 38,
+    "IGLJ4*01": 38,
+    "IGLJ5*01": 38,
+    "IGLJ5*02": 38,
+    "IGLJ6*01": 38,
+    "IGLJ7*01": 38,
+    "IGLJ7*02": 38,
 }
 
 
@@ -124,8 +149,8 @@ def get_j_gene_data(allele_name: str, chain: str) -> tuple:
     # These defaults are based on most common values
     defaults = {
         "H": (1, "JH", 15, 1),  # Most IGHJ are RF1, CDR3 ~15
-        "K": (1, "JK", 6, 1),   # Most IGKJ are RF1, CDR3 6
-        "L": (1, "JL", 6, 1),   # Most IGLJ are RF1, CDR3 6
+        "K": (1, "JK", 6, 1),  # Most IGKJ are RF1, CDR3 6
+        "L": (1, "JL", 6, 1),  # Most IGLJ are RF1, CDR3 6
     }
 
     return defaults.get(chain, (1, chain_type, 10, 1))

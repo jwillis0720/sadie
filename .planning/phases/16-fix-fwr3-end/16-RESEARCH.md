@@ -69,27 +69,27 @@ def calculate_ungapped_positions(gapped_seq: str) -> Dict[str, tuple]:
     """Convert IMGT gapped positions to ungapped positions."""
     ungapped_pos = 0
     pos_map = {}
-    
+
     for gapped_pos, char in enumerate(gapped_seq, 1):
         if char not in ".-":
             ungapped_pos += 1
             pos_map[gapped_pos] = ungapped_pos
-    
+
     # Find ungapped position for IMGT region boundaries
     regions = {}
     for region_name, (gapped_start, gapped_end) in IMGT_V_REGIONS.items():
         start_pos = None
         end_pos = None
-        
+
         for g_pos in range(gapped_start, min(gapped_end + 1, len(gapped_seq) + 1)):
             if g_pos in pos_map:
                 if start_pos is None:
                     start_pos = pos_map[g_pos]
                 end_pos = pos_map[g_pos]
-        
+
         if start_pos and end_pos:
             regions[region_name] = (start_pos, end_pos)
-    
+
     return regions, ungapped_pos  # ungapped_pos is seq_len
 ```
 
@@ -178,14 +178,14 @@ def validate_ndm_values(generated_path, reference_path, gene="IGHV1-69*01"):
     """Validate that generated ndm matches reference for key gene."""
     gen_df = pd.read_csv(generated_path, sep='\t', header=None)
     ref_df = pd.read_csv(reference_path, sep='\t', header=None)
-    
+
     gen_row = gen_df[gen_df[0] == gene].iloc[0]
     ref_row = ref_df[ref_df[0] == gene].iloc[0]
-    
+
     # Column 11 (index 10) is FWR3 end
     gen_fwr3_end = gen_row[10]
     ref_fwr3_end = ref_row[10]
-    
+
     print(f"Generated FWR3 end: {gen_fwr3_end}")
     print(f"Reference FWR3 end: {ref_fwr3_end}")
     assert gen_fwr3_end == ref_fwr3_end, f"Mismatch: {gen_fwr3_end} != {ref_fwr3_end}"

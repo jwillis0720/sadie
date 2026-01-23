@@ -154,14 +154,14 @@ def _parse_imgt_fasta(
 ) -> List[GermlineGene]:
     genes = []
     gapped_sequences = gapped_sequences or {}
-    
+
     # ... existing parsing code ...
-    
+
     for record in records:
         gene = self._create_imgt_gene(record, species, segment, chain, gapped_sequences)
         if gene:
             genes.append(gene)
-    
+
     return genes
 ```
 
@@ -177,11 +177,11 @@ def _create_imgt_gene(
 ) -> Optional[GermlineGene]:
     # ... existing header parsing ...
     gapped_sequences = gapped_sequences or {}
-    
+
     # Get sequence
     sequence_raw = str(record.seq).upper()
     is_gapped = "." in sequence_raw
-    
+
     if is_gapped:
         # Main file has gapped sequences (e.g., human)
         sequence_gapped = sequence_raw
@@ -190,7 +190,7 @@ def _create_imgt_gene(
         # Main file is ungapped, look up from gapped file
         sequence_ungapped = sequence_raw
         sequence_gapped = gapped_sequences.get(gene_name)
-    
+
     # ... rest of gene creation ...
 ```
 
@@ -215,18 +215,18 @@ def test_rabbit_hmm_generation():
     """Test that rabbit HMM generation works after gapped fix."""
     from sadie.germlines import GermlineManager
     from sadie.germlines.renumbering_integration import LocalHMMBuilder
-    
+
     manager = GermlineManager(providers=["imgt"])
     builder = LocalHMMBuilder(manager)
-    
+
     # This should now work (was failing before)
     hmm_path = builder.get_hmm("rabbit", "H")
     assert hmm_path.exists(), "Rabbit H chain HMM should be generated"
-    
+
     # Also test K and L chains
     hmm_path_k = builder.get_hmm("rabbit", "K")
     assert hmm_path_k.exists(), "Rabbit K chain HMM should be generated"
-    
+
     hmm_path_l = builder.get_hmm("rabbit", "L")
     assert hmm_path_l.exists(), "Rabbit L chain HMM should be generated"
 ```
@@ -249,14 +249,14 @@ def test_chicken_hmm_generation():
     """Test that chicken HMM generation works after gapped fix."""
     from sadie.germlines import GermlineManager
     from sadie.germlines.renumbering_integration import LocalHMMBuilder
-    
+
     manager = GermlineManager(providers=["imgt"])
     builder = LocalHMMBuilder(manager)
-    
+
     # Chicken only has H and L chains (no kappa)
     hmm_path = builder.get_hmm("chicken", "H")
     assert hmm_path.exists(), "Chicken H chain HMM should be generated"
-    
+
     hmm_path_l = builder.get_hmm("chicken", "L")
     assert hmm_path_l.exists(), "Chicken L chain HMM should be generated"
 ```
@@ -278,13 +278,13 @@ def test_chicken_hmm_generation():
 def test_all_species_have_gapped_sequences():
     """Verify all 29 species have gapped sequences loaded from IMGT."""
     from sadie.germlines import GermlineManager
-    
+
     manager = GermlineManager(providers=["imgt"])
-    
+
     # All 29 species that have BLAST databases
     species_list = [
         "human", "mouse", "mouse_c57bl6j", "rat",
-        "rhesus_macaque", "cynomolgus", "gorilla", "orangutan_sumatran", 
+        "rhesus_macaque", "cynomolgus", "gorilla", "orangutan_sumatran",
         "orangutan_bornean", "lemur",
         "dog", "cat", "ferret", "mink",
         "rabbit", "pig", "cow", "sheep", "goat", "horse", "alpaca", "camel",
@@ -292,13 +292,13 @@ def test_all_species_have_gapped_sequences():
         "zebrafish", "atlantic_salmon", "rainbow_trout", "atlantic_cod", "channel_catfish",
         "platypus"
     ]
-    
+
     species_with_gapped = []
     for species in species_list:
         genes = manager.get_genes(species, segment="V", chain="H")
         if genes and any(g.sequence_gapped for g in genes):
             species_with_gapped.append(species)
-    
+
     # Most species should have gapped sequences for V genes
     assert len(species_with_gapped) >= 25, f"Expected at least 25 species with gapped V genes, got {len(species_with_gapped)}"
 ```

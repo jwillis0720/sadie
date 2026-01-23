@@ -17,7 +17,7 @@ artifacts_verified:
     - path: audit/igblast-quirk.md
       item: Resolution section
       status: present
-  
+
   level_2_substantive:
     - item: J_GENE_LENGTHS
       verification: Contains 28 alleles covering IGHJ (13), IGKJ (10), IGLJ (9)
@@ -25,7 +25,7 @@ artifacts_verified:
     - item: _recalculate_complete_vdj
       verification: Real implementation checking v_germline_start==1 and j_germline_end==expected_length
       status: substantive
-  
+
   level_3_wired:
     - item: run_fasta integration
       verification: Called at line 646 after correct_indel()
@@ -40,13 +40,13 @@ success_criteria:
     actual: 4 differences remain
     reinterpretation: These 4 differences are now in OPPOSITE direction (germlines=True, G3=False); SADIE is MORE correct than G3
     adjusted_status: passed_with_explanation
-  
+
   - criterion: Pure structural parity reaches 99%+
     original_status: not_met
     actual: 98.29%
     reinterpretation: complete_vdj was always classified as allele-dependent, not structural; structural parity unchanged by this phase
     adjusted_status: not_applicable
-  
+
   - criterion: No false negatives marking productive sequences as incomplete
     status: passed
     evidence: All 22 original false negatives now correctly show complete_vdj=True
@@ -97,7 +97,7 @@ complete_vdj differences: 4
 
 Sample differences (showing direction):
   Sequence 13: Germlines=True, G3=False
-  Sequence 28: Germlines=True, G3=False  
+  Sequence 28: Germlines=True, G3=False
   Sequence 35: Germlines=True, G3=False
 ```
 

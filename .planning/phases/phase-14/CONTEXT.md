@@ -1,6 +1,6 @@
 # Phase 14: C Region Data Integration — Context
 
-**Created:** 2026-01-22  
+**Created:** 2026-01-22
 **Status:** Decisions locked
 
 ---
@@ -67,7 +67,7 @@
 
 **Why extend existing provider (not create new):**
 - Keeps all IMGT data under one provider
-- Pipeline already calls `IMGTProvider.download()` 
+- Pipeline already calls `IMGTProvider.download()`
 - Simpler architecture - one provider per data source
 
 **GENE-DB URL to add:**

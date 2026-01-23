@@ -59,7 +59,7 @@ These tasks create the tools needed for automated species processing.
 ```python
 # Aux file format (tab-separated):
 # GENE_ID  1  CDR3_START_POS  (additional CDR/FR positions)
-# 
+#
 # The script must:
 # 1. Read J gene sequences from normalized data
 # 2. Identify CDR3 start position from IMGT numbering (position 105)
@@ -97,7 +97,7 @@ These tasks create the tools needed for automated species processing.
 Download IMGT data for all species. Each group can run in parallel.
 
 #### T075: [P] Download IMGT data for primate species (8 new)
-**Command**: 
+**Command**:
 ```bash
 python -m sadie.germlines.scripts.download_imgt \
   --species rhesus_macaque cynomolgus gorilla chimpanzee \
@@ -178,8 +178,8 @@ from sadie.germlines.builders.blast import BlastDBBuilder
 from pathlib import Path
 
 builder = BlastDBBuilder()
-species_list = ["human", "rhesus_macaque", "cynomolgus", "gorilla", 
-                "chimpanzee", "orangutan_sumatran", "orangutan_bornean", 
+species_list = ["human", "rhesus_macaque", "cynomolgus", "gorilla",
+                "chimpanzee", "orangutan_sumatran", "orangutan_bornean",
                 "lemur", "owl_monkey"]
 
 for species in species_list:
@@ -336,7 +336,7 @@ def test_renumbering_rabbit():
 - `test_aux_files_exist`: Verify auxiliary files for all species
 - `test_organism_yaml_complete`: Verify config completeness
 - `test_airr_annotation_mouse`: Mouse annotation test
-- `test_airr_annotation_rhesus`: Rhesus annotation test  
+- `test_airr_annotation_rhesus`: Rhesus annotation test
 - `test_airr_annotation_chicken`: Non-mammalian test
 - `test_renumbering_mouse`: Mouse renumbering test
 - `test_renumbering_rabbit`: Rabbit renumbering test

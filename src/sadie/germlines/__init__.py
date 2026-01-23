@@ -54,8 +54,9 @@ def _log_event(level: int, event: str, **kwargs) -> None:
     fields = " ".join(f"{k}={v}" for k, v in kwargs.items())
     logger.log(level, f"event={event} {fields}")
 
-from .models import GermlineGene, ProviderMetadata
+
 from .manager import GermlineManager
+from .models import GermlineGene, ProviderMetadata
 from .pipeline import GermlinePipeline
 from .providers.vdjbase import VDJbaseProvider
 
@@ -77,17 +78,14 @@ def get_pipeline() -> GermlinePipeline:
     global _default_pipeline
     if _default_pipeline is None:
         from pathlib import Path
+
         base_dir = Path(__file__).parent
         _default_pipeline = GermlinePipeline(base_dir)
     return _default_pipeline
 
 
 def get_germline_genes(
-    species: str,
-    segment: str,
-    chain: str,
-    providers: Optional[List[str]] = None,
-    functional_only: bool = True
+    species: str, segment: str, chain: str, providers: Optional[List[str]] = None, functional_only: bool = True
 ) -> List[GermlineGene]:
     """
     Get germline genes from all available databases.
@@ -126,11 +124,7 @@ def get_germline_genes(
     return manager.get_genes(species, segment, chain, functional_only)
 
 
-def get_gene_by_name(
-    name: str,
-    species: str,
-    providers: Optional[List[str]] = None
-) -> Optional[GermlineGene]:
+def get_gene_by_name(name: str, species: str, providers: Optional[List[str]] = None) -> Optional[GermlineGene]:
     """
     Get specific gene by name (first provider that has it wins).
 
@@ -159,6 +153,7 @@ def get_gene_by_name(
 def get_germlines_base_dir() -> "Path":
     """Get the base directory for the germlines module."""
     from pathlib import Path
+
     return Path(__file__).parent
 
 
@@ -192,7 +187,6 @@ __all__ = [
     "GermlineGene",
     "ProviderMetadata",
     "VDJbaseProvider",
-
     # Public API functions
     "get_germline_genes",
     "get_gene_by_name",

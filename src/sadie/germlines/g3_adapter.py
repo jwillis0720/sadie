@@ -14,7 +14,8 @@ Design:
 """
 
 import logging
-from typing import Dict, List, Any
+from typing import Any, Dict, List
+
 from sadie.germlines.models import GermlineGene
 
 logger = logging.getLogger(__name__)

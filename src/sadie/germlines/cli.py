@@ -17,11 +17,11 @@ from typing import List, Optional, Set
 
 from rich.console import Console
 from rich.progress import (
+    BarColumn,
     Progress,
     SpinnerColumn,
-    TextColumn,
-    BarColumn,
     TaskProgressColumn,
+    TextColumn,
     TimeElapsedColumn,
 )
 from rich.table import Table
@@ -186,9 +186,7 @@ def populate_provider(
     target_species = species if species else all_species
 
     if dry_run:
-        console.print(
-            f"[cyan]{provider_name}[/cyan]: Would download {len(target_species)} species"
-        )
+        console.print(f"[cyan]{provider_name}[/cyan]: Would download {len(target_species)} species")
         for sp in target_species:
             console.print(f"  - {sp}")
         return {"status": "dry_run", "species_count": len(target_species)}
@@ -201,15 +199,11 @@ def populate_provider(
         clear_checkpoint(provider_name)
         return {"status": "complete", "species_count": len(target_species)}
 
-    task = progress.add_task(
-        f"[cyan]{provider_name}[/cyan]", total=len(target_species)
-    )
+    task = progress.add_task(f"[cyan]{provider_name}[/cyan]", total=len(target_species))
 
     if completed:
         progress.update(task, completed=len(completed))
-        console.print(
-            f"[yellow]Resuming from checkpoint: {len(completed)}/{len(target_species)} complete[/yellow]"
-        )
+        console.print(f"[yellow]Resuming from checkpoint: {len(completed)}/{len(target_species)} complete[/yellow]")
 
     results = {"status": "success", "downloaded": [], "failed": [], "skipped": list(completed)}
 
@@ -246,9 +240,7 @@ def populate_provider(
     return results
 
 
-def run_post_download_build(
-    provider_name: str, species_list: List[str], progress: Progress
-):
+def run_post_download_build(provider_name: str, species_list: List[str], progress: Progress):
     """
     Run post-download build pipeline.
 
@@ -337,9 +329,7 @@ def validate_provider_data(provider_name: str) -> bool:
                     continue
                 for gene in genes:
                     if not gene.name or not gene.sequence:
-                        console.print(
-                            f"[red]Invalid gene in {species}/{segment}/{chain}[/red]"
-                        )
+                        console.print(f"[red]Invalid gene in {species}/{segment}/{chain}[/red]")
                         valid = False
                         break
 
@@ -393,9 +383,7 @@ def populate_germlines(
         local_version = get_local_version(prov)
         status = "Up-to-date" if is_up_to_date(prov) else "Needs update"
         species_count = local_version.get("species_count", 0) if local_version else 0
-        table.add_row(
-            prov, status, str(species_count) if species_count else "Not downloaded"
-        )
+        table.add_row(prov, status, str(species_count) if species_count else "Not downloaded")
 
     console.print(table)
     console.print()
@@ -422,9 +410,7 @@ def populate_germlines(
                     run_post_download_build(prov_name, downloaded, progress)
 
                 if not validate_provider_data(prov_name):
-                    console.print(
-                        f"[yellow]Warning: {prov_name} validation had issues[/yellow]"
-                    )
+                    console.print(f"[yellow]Warning: {prov_name} validation had issues[/yellow]")
 
     console.print("\n[bold]Summary[/bold]")
     console.print("=" * 50)
@@ -440,13 +426,7 @@ def populate_germlines(
         downloaded = len(results.get("downloaded", []))
         failed = len(results.get("failed", []))
 
-        status_style = (
-            "green"
-            if status == "success"
-            else "yellow"
-            if status in ["skipped", "dry_run"]
-            else "red"
-        )
+        status_style = "green" if status == "success" else "yellow" if status in ["skipped", "dry_run"] else "red"
         summary_table.add_row(
             prov_name,
             f"[{status_style}]{status}[/{status_style}]",
@@ -458,7 +438,5 @@ def populate_germlines(
 
     total_failed = sum(len(r.get("failed", [])) for r in all_results.values())
     if total_failed > 0:
-        console.print(
-            f"\n[red]Warning: {total_failed} species failed to download[/red]"
-        )
+        console.print(f"\n[red]Warning: {total_failed} species failed to download[/red]")
         console.print("Re-run the command to resume from checkpoint")

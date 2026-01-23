@@ -99,7 +99,7 @@ def aux_path(self) -> Path:
 def germline_db_v(self) -> Path:
     """V gene BLAST database prefix."""
 
-@property  
+@property
 def germline_db_j(self) -> Path:
     """J gene BLAST database prefix."""
 ```
@@ -143,7 +143,7 @@ else:
 @property
 def aux_path(self) -> Path:
     """Path to J gene auxiliary data for CDR3 reconstruction."""
-    
+
 @property
 def j_gene_dir(self) -> Path:
     """J gene BLAST database prefix path."""
@@ -175,7 +175,7 @@ def _check_j_gene_liability(self, X: pd.Series) -> bool:
 # V segment
 "v_sequence_start", "v_sequence_end"
 
-# D segment  
+# D segment
 "d_sequence_start", "d_sequence_end"
 
 # J segment
@@ -306,7 +306,7 @@ SADIE_USE_GERMLINES_MODULE=false  # Use legacy G3 paths
 Airr(
     reference_name="human",
     v_gene_penalty=-1,          # V alignment penalty
-    d_gene_penalty=-1,          # D alignment penalty  
+    d_gene_penalty=-1,          # D alignment penalty
     j_gene_penalty=-2,          # J alignment penalty
     min_d_match=5,              # Min D nucleotide matches
     extend_align5end=True,      # Extend V alignment 5'

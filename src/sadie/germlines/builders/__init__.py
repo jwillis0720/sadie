@@ -10,8 +10,8 @@ Utilities for building IgBLAST-compatible databases and auxiliary files.
 - HMMBuilder: Generates Stockholm alignment files for HMMER
 """
 
-from .blast import BlastDBBuilder
 from .aux import AuxFileBuilder
+from .blast import BlastDBBuilder
 from .gapper import GapperService, gap_sequences_batch
 from .hmm import HMMBuilder, get_gapped_sequences
 

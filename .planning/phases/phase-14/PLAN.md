@@ -170,7 +170,7 @@ for segment in ["V", "D", "J", "C"]:
 
 **Must-haves:**
 - `fetch_genes("human", "C", "H")` returns IGHC genes
-- `fetch_genes("human", "C", "K")` returns IGKC genes  
+- `fetch_genes("human", "C", "K")` returns IGKC genes
 - `fetch_genes("human", "C", "L")` returns IGLC genes
 
 **Verification:**
@@ -342,7 +342,7 @@ Plan 14.1 (Wave 1)              Plan 14.2 (Wave 2)              Plan 14.3 (Wave 
 ## Acceptance Criteria
 
 1. ✓ No "C gene directory not found" warnings
-2. ✓ All 129 columns present in germlines output (matching G3)  
+2. ✓ All 129 columns present in germlines output (matching G3)
 3. ✓ CDR3/junction fields populated for productive sequences
 4. ✓ `complete_vdj` flag matches G3 backend
 5. ✓ Parity approaches 100%

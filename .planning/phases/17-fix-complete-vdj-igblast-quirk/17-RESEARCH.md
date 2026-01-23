@@ -32,14 +32,14 @@ Rationale:
 def recalculate_complete_vdj(airrtable: pd.DataFrame, j_gene_lengths: dict) -> pd.DataFrame:
     """
     Recalculate complete_vdj based on AIRR standard definition.
-    
+
     AIRR Definition:
     "True if the sequence alignment spans the entire V(D)J region.
     Meaning, sequence_alignment includes both the first V gene codon
     that encodes the mature polypeptide chain (i.e., after the leader
     sequence) and the last complete codon of the J gene (i.e., before
     the J-C splice site)."
-    
+
     Calculation:
     - v_germline_start == 1 (alignment starts at V gene beginning)
     - j_germline_end == expected_j_length (alignment extends to J gene end)
@@ -49,20 +49,20 @@ def recalculate_complete_vdj(airrtable: pd.DataFrame, j_gene_lengths: dict) -> p
             return None
         if pd.isna(row['j_call']) or not row['j_call']:
             return None
-            
+
         # Get J gene base allele
         j_allele = str(row['j_call']).split(',')[0].strip()
         expected_j_len = j_gene_lengths.get(j_allele)
-        
+
         if expected_j_len is None:
             return None
-            
+
         # AIRR standard: spans entire V(D)J region
         v_complete = row['v_germline_start'] == 1
         j_complete = row['j_germline_end'] == expected_j_len
-        
+
         return v_complete and j_complete
-    
+
     airrtable['complete_vdj'] = airrtable.apply(calculate_complete, axis=1)
     return airrtable
 ```
@@ -173,7 +173,7 @@ class Airr:
     def _recalculate_complete_vdj(self, result: AirrTable) -> AirrTable:
         """Post-process IgBLAST results to fix complete_vdj."""
         from sadie.germlines.builders.j_gene_data import J_GENE_LENGTHS
-        
+
         def calc(row):
             if pd.isna(row.get('v_germline_start')) or pd.isna(row.get('j_germline_end')):
                 return None
@@ -182,7 +182,7 @@ class Airr:
             if expected is None:
                 return None
             return row['v_germline_start'] == 1 and row['j_germline_end'] == expected
-        
+
         result['complete_vdj'] = result.apply(calc, axis=1)
         return result
 ```
@@ -195,7 +195,7 @@ def test_complete_vdj_recalculation():
     # Run germlines backend
     airr = Airr("human")
     result = airr.run_dataframe(test_sequences)
-    
+
     # Check previously problematic sequences
     for seq_id in KNOWN_DISCREPANCY_IDS:
         row = result[result['sequence_id'] == seq_id].iloc[0]

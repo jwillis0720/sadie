@@ -104,10 +104,10 @@ def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest
     tmpdir = tmp_path_factory.mktemp("test_airr_init")
     # this will make our tmpdir discoverable by the AIRR
     monkeypatch.setenv("TMPDIR", str(tmpdir / Path("monkeyairr")))
-    
+
     # When germlines module is enabled, only test species with databases
     use_germlines = os.environ.get("SADIE_USE_GERMLINES_MODULE", "true").lower() in ("true", "1", "yes")
-    
+
     for species in ["human", "mouse", "rat", "dog"]:
         if use_germlines and species != "human":
             # Other species don't have germlines databases built yet
@@ -175,10 +175,10 @@ def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest
 def test_custom_mice_init():
     """Test we can initialize custom Mice"""
     import os
-    
+
     # When germlines module is enabled, custom mice databases don't exist
     use_germlines = os.environ.get("SADIE_USE_GERMLINES_MODULE", "true").lower() in ("true", "1", "yes")
-    
+
     if use_germlines:
         # Custom mice databases not available in germlines module
         with pytest.raises(ValueError) as exc_info:
@@ -192,7 +192,7 @@ def test_custom_mice_init():
 def test_airr_single_sequence(fixture_setup: SadieFixture) -> None:
     """Test we can run a single sequence."""
     import os
-    
+
     pg9_heavy_seq = fixture_setup.get_pg9_heavy_sequence().seq.__str__()
     pg9_light_seq = fixture_setup.get_pg9_light_sequence().seq.__str__()
     air_api = Airr("human", adaptable=False)
@@ -212,10 +212,10 @@ def test_airr_single_sequence(fixture_setup: SadieFixture) -> None:
 
     # Sequence ID should always be correct
     assert seq_id == "PG9"
-    
+
     # Check which backend is in use
     use_germlines = os.environ.get("SADIE_USE_GERMLINES_MODULE", "true").lower() in ("true", "1", "yes")
-    
+
     if not use_germlines:
         # G3 backend expected values (original test assertions)
         assert fw1_ == "QRLVESGGGVVQPGSSLRLSCAAS"
@@ -265,12 +265,12 @@ def test_run_multiple(fixture_setup: SadieFixture) -> None:
 def test_airr_from_dataframe(fixture_setup: SadieFixture) -> None:
     """Test we can pass a dataframe to runtime"""
     import os
-    
+
     dog_df = pd.read_csv(fixture_setup.get_dog_airrtable(), sep="\t")
-    
+
     # When germlines module is enabled, dog databases don't exist
     use_germlines = os.environ.get("SADIE_USE_GERMLINES_MODULE", "true").lower() in ("true", "1", "yes")
-    
+
     if use_germlines:
         # Dog species not available in germlines module
         with pytest.raises(ValueError) as exc_info:
@@ -278,7 +278,7 @@ def test_airr_from_dataframe(fixture_setup: SadieFixture) -> None:
         assert "dog" in str(exc_info.value)
         assert "not found" in str(exc_info.value).lower()
         return  # Skip rest of test
-    
+
     airr_api = Airr("dog")
     unjoined_df = airr_api.run_dataframe(dog_df, "sequence_id", "sequence")
     assert isinstance(unjoined_df, AirrTable)

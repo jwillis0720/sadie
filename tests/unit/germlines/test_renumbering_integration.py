@@ -18,9 +18,7 @@ class TestRenumberingIntegration:
 
     # Test antibody sequence (IGHV1-69*01 framework)
     TEST_AB_SEQ = (
-        "QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYG"
-        "ISWVRQAPGQGLEWMGWISAYNGNTNYAQKLQG"
-        "RVTMTTDTSTSTAYMELRSLRSDDTAVYYCARA"
+        "QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYG" "ISWVRQAPGQGLEWMGWISAYNGNTNYAQKLQG" "RVTMTTDTSTSTAYMELRSLRSDDTAVYYCARA"
     )
 
     @pytest.fixture(autouse=True)
@@ -108,9 +106,7 @@ class TestRenumberingIntegration:
         assert len(hmmer.hmms) > 0, "Should load HMMs offline"
 
         # Verify LocalHMMBuilder is being used
-        assert hasattr(hmmer, "_local_hmm_builder"), (
-            "HMMER should use LocalHMMBuilder when feature flag enabled"
-        )
+        assert hasattr(hmmer, "_local_hmm_builder"), "HMMER should use LocalHMMBuilder when feature flag enabled"
 
         # Test alignment (should work offline)
         sequences = [self.TEST_AB_SEQ]
@@ -300,9 +296,9 @@ class TestGappedAAFallbackTranslation:
             assert isinstance(seq, str), "Sequence should be string"
             # Sequence should only contain valid AA characters and gaps
             valid_chars = set("ACDEFGHIKLMNPQRSTVWY.-")
-            assert all(c.upper() in valid_chars for c in seq), (
-                f"Sequence should contain only valid AA chars: {seq[:50]}"
-            )
+            assert all(
+                c.upper() in valid_chars for c in seq
+            ), f"Sequence should contain only valid AA chars: {seq[:50]}"
 
     def test_mouse_hmm_with_fallback(self, monkeypatch):
         """Test HMM building for mouse (verifies multi-species fallback)."""

@@ -11,9 +11,10 @@ Design Principles:
 - Source tracking for provenance
 """
 
-from typing import Optional, Dict, List, Tuple, Any
-from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
+
+from pydantic import BaseModel, Field, field_validator
 
 
 class GermlineGene(BaseModel):
@@ -80,14 +81,8 @@ class GermlineGene(BaseModel):
     functionality: str = Field("F", description="F, ORF, or P")
 
     # IMGT regions (if available)
-    regions: Optional[Dict[str, str]] = Field(
-        None,
-        description="Sequence regions (CDR1, CDR2, CDR3, FWR1-4)"
-    )
-    region_positions: Optional[Dict[str, Tuple[int, int]]] = Field(
-        None,
-        description="Start/end positions for regions"
-    )
+    regions: Optional[Dict[str, str]] = Field(None, description="Sequence regions (CDR1, CDR2, CDR3, FWR1-4)")
+    region_positions: Optional[Dict[str, Tuple[int, int]]] = Field(None, description="Start/end positions for regions")
 
     # Source tracking
     source: str = Field(..., description="Data source: imgt, ogrdb, custom")
@@ -175,10 +170,7 @@ class ProviderMetadata(BaseModel):
     name: str = Field(..., description="Provider name")
     version: str = Field(..., description="Version or date")
     last_updated: datetime = Field(..., description="Last update time")
-    species_available: List[str] = Field(
-        default_factory=list,
-        description="Available species"
-    )
+    species_available: List[str] = Field(default_factory=list, description="Available species")
     url: Optional[str] = Field(None, description="Source URL")
 
     def __str__(self) -> str:
@@ -211,10 +203,7 @@ class ProcessingMetadata(BaseModel):
     processed_at: datetime = Field(..., description="Processing timestamp")
     num_sequences: int = Field(..., description="Number of sequences")
     file_hash: str = Field(..., description="File hash for change detection")
-    sequences: List[Dict[str, Any]] = Field(
-        default_factory=list,
-        description="Sequence summaries"
-    )
+    sequences: List[Dict[str, Any]] = Field(default_factory=list, description="Sequence summaries")
 
     def __str__(self) -> str:
         """String representation."""

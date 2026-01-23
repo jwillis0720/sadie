@@ -359,4 +359,3 @@ This integration leverages existing data models from the germlines module withou
 3. **Strategy**: Feature flag for runtime backend selection
 
 All data validation is inherited from the germlines module. Integration adds path validation, format conversion, and error handling layers.
-

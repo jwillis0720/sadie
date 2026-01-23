@@ -66,19 +66,19 @@ def populate(provider: str, species: tuple, force: bool, dry_run: bool):
 def download(self, species: List[str]) -> None:
     """
     Download IMGT data for species.
-    
+
     Parameters
     ----------
     species : List[str]
         Species to download. If empty, downloads all SPECIES_MAP species.
     """
     from sadie.germlines.scripts.download_imgt import IMGTDownloader
-    
+
     downloader = IMGTDownloader(output_dir=self.data_dir)
-    
+
     if not species:
         species = list(SPECIES_MAP.keys())
-    
+
     for sp in species:
         logger.info(f"Downloading IMGT data for {sp}...")
         downloader.download_species(sp)
@@ -194,23 +194,23 @@ def populate_germlines(
 ):
     """Main entry point for germlines populate command."""
     providers_to_run = []
-    
+
     if provider == "all":
         providers_to_run = ["imgt", "ogrdb", "vdjbase"]
     else:
         providers_to_run = [provider]
-    
+
     for prov_name in providers_to_run:
         prov = get_provider(prov_name)
-        
+
         if not force and prov.is_up_to_date():
             click.echo(f"{prov_name}: Already up-to-date, skipping")
             continue
-        
+
         if dry_run:
             click.echo(f"{prov_name}: Would download {len(species or prov.get_all_species())} species")
             continue
-        
+
         prov.download(species or [], force=force)
 ```
 
@@ -237,14 +237,14 @@ class GermlineProvider(ABC):
         if checkpoint_file.exists():
             return set(json.loads(checkpoint_file.read_text()).get("completed", []))
         return set()
-    
+
     def _save_checkpoint(self, completed: Set[str]):
         checkpoint_file = self.data_dir / ".checkpoint.json"
         checkpoint_file.write_text(json.dumps({
             "completed": list(completed),
             "updated_at": datetime.now().isoformat()
         }, indent=2))
-    
+
     def _clear_checkpoint(self):
         checkpoint_file = self.data_dir / ".checkpoint.json"
         if checkpoint_file.exists():
@@ -277,7 +277,7 @@ def populate_germlines(...):
         TaskProgressColumn(),
     ) as progress:
         species_task = progress.add_task(f"[cyan]{provider}...", total=len(species_list))
-        
+
         for sp in species_list:
             progress.update(species_task, description=f"[cyan]Downloading {sp}...")
             prov.download_species(sp)
@@ -306,18 +306,18 @@ def _run_post_download_build(species_list: List[str]):
     from sadie.germlines.scripts.build_aux_files import build_aux_file
     from sadie.germlines.scripts.build_internal_data import build_internal_data
     from sadie.germlines.scripts.update_organism_yaml import update_organism_yaml
-    
+
     console.print("[bold]Building BLAST databases...[/bold]")
     # makeblastdb is called during download
-    
+
     console.print("[bold]Generating auxiliary files...[/bold]")
     for species in species_list:
         build_aux_file(species)
-    
+
     console.print("[bold]Building internal_data...[/bold]")
     for species in species_list:
         build_internal_data(species)
-    
+
     console.print("[bold]Updating organism.yaml...[/bold]")
     update_organism_yaml()
 ```
@@ -373,7 +373,7 @@ def test_populate_dry_run(cli_runner, monkeypatch):
 def validate_provider_data(provider_name: str) -> bool:
     """Validate downloaded provider data."""
     provider = get_provider(provider_name)
-    
+
     for species in provider.get_available_species():
         for segment in ["V", "D", "J"]:
             for chain in ["H", "K", "L"]:
@@ -382,7 +382,7 @@ def validate_provider_data(provider_name: str) -> bool:
                 for gene in genes:
                     assert gene.name
                     assert gene.sequence
-    
+
     return True
 ```
 

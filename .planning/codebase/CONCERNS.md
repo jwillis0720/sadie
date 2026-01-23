@@ -222,7 +222,7 @@ sources/imgt/rabbit/
 Update `src/sadie/germlines/providers/imgt.py` to match OGRDB pattern:
 
 1. Add `_get_gapped_fasta_path()` method
-2. Add `_load_gapped_sequences()` method  
+2. Add `_load_gapped_sequences()` method
 3. In `fetch_genes()`, load gapped sequences and merge with main data
 4. Update `_create_imgt_gene()` to accept gapped sequence parameter
 

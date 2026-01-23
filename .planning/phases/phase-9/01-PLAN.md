@@ -35,7 +35,7 @@ Phase 9 tasks from ROADMAP.md:
 
 ### Group B: Single-Provider Enforcement (T053, T054)
 
-**Files**: 
+**Files**:
 - `src/sadie/germlines/manager.py`
 - `tests/unit/germlines/test_compliance.py`
 

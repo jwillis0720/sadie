@@ -1,6 +1,6 @@
 # Phase 15: J Gene Matching & CDR3 Annotation Fix — Plan
 
-**Created:** 2026-01-22  
+**Created:** 2026-01-22
 **Status:** Ready for execution
 
 ---
@@ -93,14 +93,14 @@ CHAIN_TYPE_MAP = {
 def get_j_gene_data(allele_name: str, chain: str) -> tuple:
     """
     Get J gene reference data for an allele.
-    
+
     Parameters
     ----------
     allele_name : str
         Full allele name (e.g., "IGHJ1*01")
     chain : str
         Chain type (H, K, or L)
-    
+
     Returns
     -------
     tuple
@@ -108,12 +108,12 @@ def get_j_gene_data(allele_name: str, chain: str) -> tuple:
         Returns default values if allele not found.
     """
     chain_type = CHAIN_TYPE_MAP.get(chain, f"J{chain}")
-    
+
     # Check known reference data
     if allele_name in HUMAN_J_GENE_DATA:
         rf, cdr3_end, is_func = HUMAN_J_GENE_DATA[allele_name]
         return (rf, chain_type, cdr3_end, is_func)
-    
+
     # Default fallback values based on chain type
     # These defaults are based on most common values
     defaults = {
@@ -121,7 +121,7 @@ def get_j_gene_data(allele_name: str, chain: str) -> tuple:
         "K": (1, "JK", 6, 1),   # Most IGKJ are RF1, CDR3 6
         "L": (1, "JL", 6, 1),   # Most IGLJ are RF1, CDR3 6
     }
-    
+
     return defaults.get(chain, (1, chain_type, 10, 1))
 ```
 
@@ -154,7 +154,7 @@ def build_for_species(
 ) -> None:
     """
     Build auxiliary file for species.
-    
+
     IgBLAST auxiliary files only contain J gene data.
     """
     output_file.parent.mkdir(parents=True, exist_ok=True)
@@ -216,7 +216,7 @@ def _create_aux_entry(
         return None
 
     gene_name = record.id
-    
+
     # Get reference data for this J gene
     reading_frame, chain_type, cdr3_end, is_functional = get_j_gene_data(
         gene_name, chain
@@ -228,7 +228,7 @@ def _create_aux_entry(
 4. **Remove unused methods** (optional cleanup):
    - `_parse_imgt_regions()` - No longer needed for J genes
    - `_build_position_map()` - No longer needed for J genes
-   
+
    (Keep these if V gene aux generation might be needed in future, but mark as unused)
 
 5. **Update module constants** (at top of file):
@@ -237,7 +237,7 @@ def _create_aux_entry(
 SEGMENTS = ["J"]
 ```
 
-**Verification:** 
+**Verification:**
 - File compiles without errors
 - Import of j_gene_data module works
 
@@ -330,7 +330,7 @@ from sadie.airr import Airr
 def main():
     # Test sequence (known productive heavy chain)
     test_fasta = Path("audit/test_sequences.fasta")
-    
+
     # Create test FASTA if not exists
     if not test_fasta.exists():
         test_fasta.write_text(
@@ -342,16 +342,16 @@ def main():
             "CTGCAAATGAACAGCCTGAGAGCTGAGGACACGGCTGTGTATTACTGTGCGAGAGATCGA"
             "CGGTTTGCTTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAG\n"
         )
-    
+
     # Run annotation with germlines backend
     airr = Airr(
         "test_seq1",
         species="human",
         backend="germlines"  # Use germlines module
     )
-    
+
     result = airr.run_single(str(test_fasta.read_text().split('\n')[1]))
-    
+
     # Check critical fields
     print("=== J Gene Fix Validation ===")
     print(f"v_call: {result.get('v_call', 'N/A')}")
@@ -363,7 +363,7 @@ def main():
     print(f"cdr3_aa: {result.get('cdr3_aa', 'N/A')}")
     print(f"fwr4: {result.get('fwr4', 'N/A')}")  # Should NOT be NaN
     print(f"complete_vdj: {result.get('complete_vdj', 'N/A')}")  # Should be True
-    
+
     # Validation checks
     success = True
     if pd.isna(result.get('j_call')) or result.get('j_call') is None:
@@ -371,19 +371,19 @@ def main():
         success = False
     else:
         print("\n✓ PASS: j_call is populated")
-    
+
     if pd.isna(result.get('junction')) or result.get('junction') is None:
         print("❌ FAIL: junction is NaN/None")
         success = False
     else:
         print("✓ PASS: junction is populated")
-    
+
     if pd.isna(result.get('cdr3')) or result.get('cdr3') is None:
         print("❌ FAIL: cdr3 is NaN/None")
         success = False
     else:
         print("✓ PASS: cdr3 is populated")
-    
+
     print(f"\n=== Overall: {'SUCCESS' if success else 'FAILURE'} ===")
     return success
 

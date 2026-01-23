@@ -1,6 +1,6 @@
 # Phase 15: J Gene Matching & CDR3 Annotation Fix — Context
 
-**Created:** 2026-01-22  
+**Created:** 2026-01-22
 **Status:** Decisions locked
 
 ---

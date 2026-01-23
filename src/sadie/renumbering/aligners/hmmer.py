@@ -18,6 +18,7 @@ def _use_local_hmm_builder() -> bool:
     """Check if germlines module should be used for HMM building."""
     try:
         from sadie.germlines.renumbering_integration import use_local_hmm_builder
+
         return use_local_hmm_builder()
     except ImportError:
         return False
@@ -89,19 +90,19 @@ class HMMER:
                 if use_local:
                     try:
                         if self._local_hmm_builder is None:
-                            from sadie.germlines.renumbering_integration import LocalHMMBuilder
+                            from sadie.germlines.renumbering_integration import (
+                                LocalHMMBuilder,
+                            )
+
                             self._local_hmm_builder = LocalHMMBuilder()
 
-                        hmm = self._local_hmm_builder.get_hmm(
-                            species=single_species,
-                            chain=chain,
-                            source=source
-                        )
+                        hmm = self._local_hmm_builder.get_hmm(species=single_species, chain=chain, source=source)
                         hmms.append(hmm)
                         continue
                     except Exception as e:
                         # Fall through to G3/Numbering on error
                         import logging
+
                         logging.warning(
                             f"Local HMM builder failed for {single_species} {chain}: {e}. "
                             f"Falling back to G3/Numbering."

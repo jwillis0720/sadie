@@ -9,11 +9,12 @@ This replaces G3 API calls with local database queries.
 """
 
 import logging
-from pathlib import Path
-from typing import Optional, List, Tuple
 from functools import lru_cache
+from pathlib import Path
+from typing import List, Optional, Tuple
 
 import pyhmmer
+
 from sadie.typing import Chain, Source, Species
 
 logger = logging.getLogger(__name__)
@@ -43,16 +44,12 @@ class LocalHMMBuilder:
 
         # Cache directory for HMM files
         from sadie.germlines import get_germlines_base_dir
+
         self.hmm_dir = get_germlines_base_dir() / "hmms"
         self.hmm_dir.mkdir(parents=True, exist_ok=True)
 
     @lru_cache(maxsize=None)
-    def get_hmm(
-        self,
-        species: Species,
-        chain: Chain,
-        source: Source = "imgt"
-    ) -> pyhmmer.plan7.HMM:
+    def get_hmm(self, species: Species, chain: Chain, source: Source = "imgt") -> pyhmmer.plan7.HMM:
         """
         Get or build HMM model for species/chain combination.
 
@@ -81,12 +78,7 @@ class LocalHMMBuilder:
         logger.info(f"Building HMM for {species} {chain}")
         return self._build_hmm(species, chain, source)
 
-    def _build_hmm(
-        self,
-        species: str,
-        chain: str,
-        source: str
-    ) -> pyhmmer.plan7.HMM:
+    def _build_hmm(self, species: str, chain: str, source: str) -> pyhmmer.plan7.HMM:
         """
         Build HMM from germlines database.
 
@@ -116,12 +108,7 @@ class LocalHMMBuilder:
         # Build HMM using pyhmmer
         hmm_path = self.hmm_dir / f"{species}_{chain}.hmm"
 
-        with pyhmmer.easel.MSAFile(
-            sto_path,
-            digital=True,
-            alphabet=self.alphabet,
-            format="stockholm"
-        ) as msa_file:
+        with pyhmmer.easel.MSAFile(sto_path, digital=True, alphabet=self.alphabet, format="stockholm") as msa_file:
             msa = next(msa_file)
             hmm, _, _ = self.builder.build_msa(msa, self.background)
 
@@ -133,11 +120,7 @@ class LocalHMMBuilder:
         return hmm
 
     def _get_vj_alignment_pairs(
-        self,
-        species: str,
-        chain: str,
-        source: str,
-        strict: bool = True
+        self, species: str, chain: str, source: str, strict: bool = True
     ) -> List[Tuple[str, str]]:
         """
         Get V-J alignment pairs from germlines database.
@@ -274,12 +257,7 @@ class LocalHMMBuilder:
 
         return "".join(aa_gapped_chars) if aa_gapped_chars else None
 
-    def _write_stockholm(
-        self,
-        pairs: List[Tuple[str, str]],
-        species: str,
-        chain: str
-    ) -> Path:
+    def _write_stockholm(self, pairs: List[Tuple[str, str]], species: str, chain: str) -> Path:
         """
         Write Stockholm alignment file.
 
@@ -306,11 +284,7 @@ class LocalHMMBuilder:
         max_seq_len = max(len(seq) for _, seq in pairs)
         max_name_len = max(len(name) for name, _ in pairs)
 
-        lines = [
-            "# STOCKHOLM 1.0",
-            f"#=GF ID {species}_{chain}",
-            ""
-        ]
+        lines = ["# STOCKHOLM 1.0", f"#=GF ID {species}_{chain}", ""]
 
         for name, seq in pairs:
             # Pad sequences to same length with gaps (.)
@@ -340,4 +314,5 @@ def use_local_hmm_builder() -> bool:
         True to use local HMM builder, False to use G3
     """
     from sadie.germlines.utils import use_germlines_module
+
     return use_germlines_module()

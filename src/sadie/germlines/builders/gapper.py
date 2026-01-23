@@ -22,11 +22,11 @@ Gap Character: "." (period) per IMGT convention
 
 import logging
 from pathlib import Path
-from typing import Optional, Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from Bio import SeqIO
-from Bio.Seq import Seq
 from Bio.Align import PairwiseAligner
+from Bio.Seq import Seq
 
 logger = logging.getLogger(__name__)
 
@@ -36,22 +36,70 @@ GAP_CHAR = "."
 
 # Standard genetic code for translation
 CODON_TABLE = {
-    'TTT': 'F', 'TTC': 'F', 'TTA': 'L', 'TTG': 'L',
-    'TCT': 'S', 'TCC': 'S', 'TCA': 'S', 'TCG': 'S',
-    'TAT': 'Y', 'TAC': 'Y', 'TAA': '*', 'TAG': '*',
-    'TGT': 'C', 'TGC': 'C', 'TGA': '*', 'TGG': 'W',
-    'CTT': 'L', 'CTC': 'L', 'CTA': 'L', 'CTG': 'L',
-    'CCT': 'P', 'CCC': 'P', 'CCA': 'P', 'CCG': 'P',
-    'CAT': 'H', 'CAC': 'H', 'CAA': 'Q', 'CAG': 'Q',
-    'CGT': 'R', 'CGC': 'R', 'CGA': 'R', 'CGG': 'R',
-    'ATT': 'I', 'ATC': 'I', 'ATA': 'I', 'ATG': 'M',
-    'ACT': 'T', 'ACC': 'T', 'ACA': 'T', 'ACG': 'T',
-    'AAT': 'N', 'AAC': 'N', 'AAA': 'K', 'AAG': 'K',
-    'AGT': 'S', 'AGC': 'S', 'AGA': 'R', 'AGG': 'R',
-    'GTT': 'V', 'GTC': 'V', 'GTA': 'V', 'GTG': 'V',
-    'GCT': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A',
-    'GAT': 'D', 'GAC': 'D', 'GAA': 'E', 'GAG': 'E',
-    'GGT': 'G', 'GGC': 'G', 'GGA': 'G', 'GGG': 'G',
+    "TTT": "F",
+    "TTC": "F",
+    "TTA": "L",
+    "TTG": "L",
+    "TCT": "S",
+    "TCC": "S",
+    "TCA": "S",
+    "TCG": "S",
+    "TAT": "Y",
+    "TAC": "Y",
+    "TAA": "*",
+    "TAG": "*",
+    "TGT": "C",
+    "TGC": "C",
+    "TGA": "*",
+    "TGG": "W",
+    "CTT": "L",
+    "CTC": "L",
+    "CTA": "L",
+    "CTG": "L",
+    "CCT": "P",
+    "CCC": "P",
+    "CCA": "P",
+    "CCG": "P",
+    "CAT": "H",
+    "CAC": "H",
+    "CAA": "Q",
+    "CAG": "Q",
+    "CGT": "R",
+    "CGC": "R",
+    "CGA": "R",
+    "CGG": "R",
+    "ATT": "I",
+    "ATC": "I",
+    "ATA": "I",
+    "ATG": "M",
+    "ACT": "T",
+    "ACC": "T",
+    "ACA": "T",
+    "ACG": "T",
+    "AAT": "N",
+    "AAC": "N",
+    "AAA": "K",
+    "AAG": "K",
+    "AGT": "S",
+    "AGC": "S",
+    "AGA": "R",
+    "AGG": "R",
+    "GTT": "V",
+    "GTC": "V",
+    "GTA": "V",
+    "GTG": "V",
+    "GCT": "A",
+    "GCC": "A",
+    "GCA": "A",
+    "GCG": "A",
+    "GAT": "D",
+    "GAC": "D",
+    "GAA": "E",
+    "GAG": "E",
+    "GGT": "G",
+    "GGC": "G",
+    "GGA": "G",
+    "GGG": "G",
 }
 
 
@@ -100,7 +148,7 @@ class GapperService:
         aligner = PairwiseAligner()
 
         # Global alignment for full sequence alignment
-        aligner.mode = 'global'
+        aligner.mode = "global"
 
         # Scoring parameters optimized for antibody sequences
         aligner.match_score = 2.0
@@ -115,12 +163,7 @@ class GapperService:
         return aligner
 
     def gap_sequence(
-        self,
-        sequence: str,
-        segment: str,
-        chain: str,
-        gene_name: Optional[str] = None,
-        species: str = "human"
+        self, sequence: str, segment: str, chain: str, gene_name: Optional[str] = None, species: str = "human"
     ) -> Optional[str]:
         """
         Gap an ungapped nucleotide sequence to IMGT numbering.
@@ -156,18 +199,10 @@ class GapperService:
 
         try:
             # Get template (per-gene or consensus)
-            template = self._get_template(
-                segment=segment,
-                chain=chain,
-                gene_name=gene_name,
-                species=species
-            )
+            template = self._get_template(segment=segment, chain=chain, gene_name=gene_name, species=species)
 
             if template is None:
-                logger.warning(
-                    f"No template found for {gene_name or f'{chain}{segment}'} - "
-                    f"returning ungapped"
-                )
+                logger.warning(f"No template found for {gene_name or f'{chain}{segment}'} - " f"returning ungapped")
                 return None
 
             # Translate to amino acid for alignment
@@ -175,17 +210,12 @@ class GapperService:
             template_aa = self._translate(template.replace(GAP_CHAR, ""))
 
             if query_aa is None or template_aa is None:
-                logger.warning(
-                    f"Translation failed for {gene_name} - returning ungapped"
-                )
+                logger.warning(f"Translation failed for {gene_name} - returning ungapped")
                 return None
 
             # Perform alignment
             gapped_sequence = self._align_and_gap(
-                sequence=sequence,
-                template=template,
-                query_aa=query_aa,
-                template_aa=template_aa
+                sequence=sequence, template=template, query_aa=query_aa, template_aa=template_aa
             )
 
             if gapped_sequence:
@@ -194,17 +224,11 @@ class GapperService:
             return gapped_sequence
 
         except Exception as e:
-            logger.warning(
-                f"Failed to gap sequence {gene_name}: {e}"
-            )
+            logger.warning(f"Failed to gap sequence {gene_name}: {e}")
             return None
 
     def _get_template(
-        self,
-        segment: str,
-        chain: str,
-        gene_name: Optional[str] = None,
-        species: str = "human"
+        self, segment: str, chain: str, gene_name: Optional[str] = None, species: str = "human"
     ) -> Optional[str]:
         """
         Get IMGT-gapped template for alignment.
@@ -250,18 +274,11 @@ class GapperService:
         consensus = self._consensus_cache.get(consensus_key)
 
         if consensus:
-            logger.debug(
-                f"Using consensus template for {gene_name or cache_key}"
-            )
+            logger.debug(f"Using consensus template for {gene_name or cache_key}")
 
         return consensus
 
-    def _load_templates(
-        self,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> None:
+    def _load_templates(self, species: str, segment: str, chain: str) -> None:
         """
         Load IMGT-gapped templates from FASTA file.
 
@@ -287,7 +304,7 @@ class GapperService:
             return
 
         segment_name = f"IG{chain}{segment}"
-        
+
         # Try multiple path patterns
         candidate_paths = [
             # Pattern 1: {template_dir}/{species}/{segment}_gapped.fasta
@@ -299,13 +316,13 @@ class GapperService:
             # Pattern 4: {template_dir}/{segment}.fasta
             self.template_dir / f"{segment_name}.fasta",
         ]
-        
+
         fasta_path = None
         for path in candidate_paths:
             if path.exists():
                 fasta_path = path
                 break
-        
+
         if fasta_path is None:
             logger.debug(f"No template file found for {segment_name} in {self.template_dir}")
             return
@@ -322,26 +339,19 @@ class GapperService:
                         gene_name = header_parts[1]  # Second field is gene name
                     else:
                         gene_name = header_parts[0]  # Fallback to first field
-                    
+
                     # Normalize to use "." as gap character
                     sequence = sequence.replace("-", GAP_CHAR)
                     self._template_cache[cache_key][gene_name] = sequence
 
             logger.info(
-                f"Loaded {len(self._template_cache[cache_key])} "
-                f"gapped templates for {cache_key} from {fasta_path}"
+                f"Loaded {len(self._template_cache[cache_key])} " f"gapped templates for {cache_key} from {fasta_path}"
             )
 
         except Exception as e:
             logger.error(f"Failed to load templates from {fasta_path}: {e}")
 
-    def _build_consensus(
-        self,
-        species: str,
-        segment: str,
-        chain: str,
-        templates: Dict[str, str]
-    ) -> None:
+    def _build_consensus(self, species: str, segment: str, chain: str, templates: Dict[str, str]) -> None:
         """
         Build consensus template from available gapped sequences.
 
@@ -381,10 +391,7 @@ class GapperService:
 
         self._consensus_cache[consensus_key] = "".join(consensus)
 
-        logger.debug(
-            f"Built consensus template for {consensus_key} "
-            f"from {len(templates)} sequences"
-        )
+        logger.debug(f"Built consensus template for {consensus_key} " f"from {len(templates)} sequences")
 
     def _translate(self, nucleotide_seq: str) -> Optional[str]:
         """
@@ -406,26 +413,20 @@ class GapperService:
         clean_seq = nucleotide_seq.replace(GAP_CHAR, "").replace("-", "")
 
         # Truncate to codon boundary
-        truncated = clean_seq[:len(clean_seq) - (len(clean_seq) % 3)]
+        truncated = clean_seq[: len(clean_seq) - (len(clean_seq) % 3)]
 
         if len(truncated) < 3:
             return None
 
         amino_acids = []
         for i in range(0, len(truncated), 3):
-            codon = truncated[i:i+3].upper()
-            aa = CODON_TABLE.get(codon, 'X')  # X for unknown
+            codon = truncated[i : i + 3].upper()
+            aa = CODON_TABLE.get(codon, "X")  # X for unknown
             amino_acids.append(aa)
 
         return "".join(amino_acids)
 
-    def _align_and_gap(
-        self,
-        sequence: str,
-        template: str,
-        query_aa: str,
-        template_aa: str
-    ) -> Optional[str]:
+    def _align_and_gap(self, sequence: str, template: str, query_aa: str, template_aa: str) -> Optional[str]:
         """
         Align amino acid sequences and map gaps to nucleotide.
 
@@ -488,11 +489,7 @@ class GapperService:
                 positions.append(i)
         return positions
 
-    def _apply_gaps(
-        self,
-        sequence: str,
-        gap_positions: List[int]
-    ) -> str:
+    def _apply_gaps(self, sequence: str, gap_positions: List[int]) -> str:
         """
         Apply gaps to nucleotide sequence.
 
@@ -513,12 +510,12 @@ class GapperService:
             Gapped nucleotide sequence
         """
         result = list(sequence)
-        
+
         # The gap_positions are positions in the GAPPED template where '.' appears.
         # To apply to the ungapped query, we need to:
         # 1. Convert template gapped positions to ungapped positions
         # 2. Insert gaps at those positions in the query
-        
+
         # Sort and insert from end to preserve indices
         for i, pos in enumerate(sorted(gap_positions, reverse=True)):
             # The position in the ungapped sequence is:
@@ -526,7 +523,7 @@ class GapperService:
             # Count gaps before this position
             gaps_before = sum(1 for p in gap_positions if p < pos)
             ungapped_pos = pos - gaps_before
-            
+
             # Only insert if within bounds
             if ungapped_pos <= len(result):
                 result.insert(ungapped_pos, GAP_CHAR)
@@ -535,9 +532,7 @@ class GapperService:
 
 
 def gap_sequences_batch(
-    sequences: List[Tuple[str, str, str, str]],
-    template_dir: Path,
-    species: str = "human"
+    sequences: List[Tuple[str, str, str, str]], template_dir: Path, species: str = "human"
 ) -> Dict[str, Optional[str]]:
     """
     Gap multiple sequences in batch.
@@ -561,11 +556,7 @@ def gap_sequences_batch(
 
     for gene_name, sequence, segment, chain in sequences:
         results[gene_name] = gapper.gap_sequence(
-            sequence=sequence,
-            segment=segment,
-            chain=chain,
-            gene_name=gene_name,
-            species=species
+            sequence=sequence, segment=segment, chain=chain, gene_name=gene_name, species=species
         )
 
     return results

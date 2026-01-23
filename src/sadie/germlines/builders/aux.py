@@ -16,6 +16,7 @@ IGKJ1*01	1	JK	6	1
 import logging
 from pathlib import Path
 from typing import List, Optional
+
 from Bio import SeqIO
 
 from sadie.germlines.builders.j_gene_data import get_j_gene_data
@@ -45,12 +46,7 @@ class AuxFileBuilder:
     ... )
     """
 
-    def build_for_species(
-        self,
-        species: str,
-        source_dir: Path,
-        output_file: Path
-    ) -> None:
+    def build_for_species(self, species: str, source_dir: Path, output_file: Path) -> None:
         """
         Build auxiliary file for species.
 
@@ -73,30 +69,17 @@ class AuxFileBuilder:
 
         # Process J segments only (IgBLAST aux files only need J genes)
         for chain in CHAINS:
-            lines = self._process_segment(
-                species,
-                chain,
-                "J",  # Only J segments
-                source_dir
-            )
+            lines = self._process_segment(species, chain, "J", source_dir)  # Only J segments
             aux_lines.extend(lines)
 
         # Write auxiliary file
         if aux_lines:
             output_file.write_text("\n".join(aux_lines) + "\n")
-            logger.info(
-                f"Wrote {len(aux_lines)} entries to {output_file}"
-            )
+            logger.info(f"Wrote {len(aux_lines)} entries to {output_file}")
         else:
             logger.warning(f"No auxiliary entries generated for {species}")
 
-    def _process_segment(
-        self,
-        species: str,
-        chain: str,
-        segment: str,
-        source_dir: Path
-    ) -> List[str]:
+    def _process_segment(self, species: str, chain: str, segment: str, source_dir: Path) -> List[str]:
         """
         Process single segment to generate aux entries.
 
@@ -136,18 +119,11 @@ class AuxFileBuilder:
             if aux_line:
                 aux_lines.append(aux_line)
 
-        logger.info(
-            f"Generated {len(aux_lines)} aux entries from {fasta_path.name}"
-        )
+        logger.info(f"Generated {len(aux_lines)} aux entries from {fasta_path.name}")
 
         return aux_lines
 
-    def _create_aux_entry(
-        self,
-        record,
-        chain: str,
-        segment: str
-    ) -> Optional[str]:
+    def _create_aux_entry(self, record, chain: str, segment: str) -> Optional[str]:
         """
         Create auxiliary file entry for a J gene sequence.
 
@@ -175,9 +151,7 @@ class AuxFileBuilder:
         gene_name = record.id
 
         # Get reference data for this J gene
-        reading_frame, chain_type, cdr3_end, is_functional = get_j_gene_data(
-            gene_name, chain
-        )
+        reading_frame, chain_type, cdr3_end, is_functional = get_j_gene_data(gene_name, chain)
 
         return f"{gene_name}\t{reading_frame}\t{chain_type}\t{cdr3_end}\t{is_functional}"
 

@@ -1,7 +1,7 @@
 # Changelog: v1.1 Audit Milestone
 
-**Release Date:** 2026-01-23  
-**Duration:** 2 days (2026-01-22 to 2026-01-23)  
+**Release Date:** 2026-01-23
+**Duration:** 2 days (2026-01-22 to 2026-01-23)
 **Result:** 98.29% structural parity between germlines and G3 backends
 
 ---
@@ -149,7 +149,7 @@ Modified the internal data builder to calculate the correct FWR3 end position:
 def calculate_fr3_end(sequence: str, regions: dict) -> int:
     """
     Calculate ungapped position of IMGT position 312 (FWR3 end).
-    
+
     The FR3 region spans IMGT positions 66-104 (amino acids) or 196-312 (nucleotides).
     We need the ungapped nucleotide position corresponding to IMGT 312.
     """
@@ -179,7 +179,7 @@ Sequence: 212-1-1
   v_germline_end: 298 (both)
   j_germline_start: 6 (both)
   j_germline_end: 62 (both)
-  
+
   complete_vdj (germlines): False  ← WRONG
   complete_vdj (G3): True
 ```
@@ -205,10 +205,10 @@ Implemented post-processing recalculation based on the AIRR standard definition:
 def _recalculate_complete_vdj(self, result: AirrTable) -> AirrTable:
     """
     Recalculate complete_vdj using AIRR standard definition.
-    
-    AIRR Definition: True if the sequence alignment spans the entire 
+
+    AIRR Definition: True if the sequence alignment spans the entire
     V(D)J region from the start of the V gene to the end of the J gene.
-    
+
     Implementation:
     - v_germline_start == 1 (alignment starts at V gene beginning)
     - j_germline_end == expected_j_length (alignment extends to J gene end)
@@ -224,7 +224,7 @@ def _recalculate_complete_vdj(self, result: AirrTable) -> AirrTable:
             return row['complete_vdj']  # Keep original if unknown
         j_complete = row['j_germline_end'] == expected_len
         return v_complete and j_complete
-    
+
     result['complete_vdj'] = result.apply(check_complete, axis=1)
     return result
 ```

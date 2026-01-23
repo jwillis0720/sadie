@@ -19,7 +19,7 @@ G3 backend wraps NCBI IgBLAST (`igblastn`) for antibody sequence annotation. The
 class IgBLASTN:
     """
     Python wrapper for igblastn command-line tool.
-    
+
     Key integration:
     - Sets IGDATA environment variable for internal_data discovery
     - Constructs command with -germline_db_V, -germline_db_D, -germline_db_J, -c_region_db
@@ -190,7 +190,7 @@ IGHV1-18*01	1	75	76	99	100	150	151	174	175	288	VH	0
 ```python
 class Reference:
     _endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
-    
+
     def _g3_get(self, query: str) -> Tuple[int, List[Dict[str,str]]]:
         """Query G3 REST API for gene data"""
         response = requests.get(query)
@@ -300,7 +300,7 @@ When exact allele match not found in auxiliary files:
 def _apply_allele_coercion(self, result: AirrTable) -> AirrTable:
     """
     Accept highest-scored available allele when exact match not found.
-    
+
     1. Read NDM file for available alleles
     2. For each call, check if top allele is available
     3. If not, substitute with best available from same gene family

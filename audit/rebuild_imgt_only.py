@@ -2,11 +2,13 @@
 """Rebuild germline databases using only IMGT sources for parity testing."""
 
 import sys
+
 sys.path.insert(0, "src")
 
 from pathlib import Path
-from sadie.germlines.pipeline import GermlinePipeline
+
 from sadie.germlines.manager import GermlineManager
+from sadie.germlines.pipeline import GermlinePipeline
 
 # Monkey-patch GermlineManager to use only IMGT
 original_init = GermlineManager.__init__

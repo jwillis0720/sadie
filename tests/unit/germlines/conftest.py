@@ -70,9 +70,6 @@ def mock_unpopulated_germlines(monkeypatch, tmp_path):
     def mock_base_dir():
         return tmp_path / "germlines"
 
-    monkeypatch.setattr(
-        "sadie.germlines.get_germlines_base_dir",
-        mock_base_dir
-    )
+    monkeypatch.setattr("sadie.germlines.get_germlines_base_dir", mock_base_dir)
 
     yield tmp_path / "germlines"

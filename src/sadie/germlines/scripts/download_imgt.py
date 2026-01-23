@@ -41,8 +41,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-from urllib.request import urlopen, Request
-from urllib.error import URLError, HTTPError
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +60,7 @@ def _load_checkpoint(checkpoint_path: Path) -> dict:
 
 def _save_checkpoint(checkpoint_path: Path, data: dict):
     checkpoint_path.write_text(json.dumps(data, indent=2))
+
 
 # IMGT V-QUEST reference directory base URL
 IMGT_BASE_URL = "https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_directory"
@@ -136,16 +137,11 @@ TR_SEGMENTS = ["TRAV", "TRAJ", "TRBV", "TRBD", "TRBJ", "TRDV", "TRDD", "TRDJ", "
 
 class IMGTDownloader:
     """Download and process IMGT reference sequences."""
-    
-    def __init__(
-        self,
-        output_dir: Optional[Path] = None,
-        include_tr: bool = False,
-        timeout: int = 30
-    ):
+
+    def __init__(self, output_dir: Optional[Path] = None, include_tr: bool = False, timeout: int = 30):
         """
         Initialize IMGT downloader.
-        
+
         Parameters
         ----------
         output_dir : Path, optional
@@ -158,15 +154,15 @@ class IMGTDownloader:
         """
         if output_dir is None:
             output_dir = Path(__file__).parent.parent / "sources" / "imgt"
-        
+
         self.output_dir = Path(output_dir)
         self.include_tr = include_tr
         self.timeout = timeout
-    
+
     def list_available_species(self) -> List[str]:
         """
         List all available species from IMGT.
-        
+
         Returns
         -------
         List[str]
@@ -174,36 +170,31 @@ class IMGTDownloader:
         """
         url = f"{IMGT_BASE_URL}/"
         logger.info(f"Fetching species list from {url}")
-        
+
         try:
             req = Request(url, headers={"User-Agent": "SADIE-Germlines/1.0"})
             with urlopen(req, timeout=self.timeout) as response:
                 html = response.read().decode("utf-8")
         except (URLError, HTTPError) as e:
             raise RuntimeError(f"Failed to fetch species list: {e}")
-        
+
         # Parse directory listing for species folders
         # Looking for: href="Species_name/"
         species_pattern = re.compile(r'href="([A-Z][a-z_]+(?:_[a-z]+)*)/?"')
         species = []
-        
+
         for match in species_pattern.finditer(html):
             name = match.group(1)
             # Filter out non-species directories
             if name not in ("icons", "images", "css"):
                 species.append(name)
-        
+
         return sorted(species)
-    
-    def download(
-        self,
-        species: List[str],
-        segments: Optional[List[str]] = None,
-        force: bool = False
-    ) -> Dict[str, int]:
+
+    def download(self, species: List[str], segments: Optional[List[str]] = None, force: bool = False) -> Dict[str, int]:
         """
         Download IMGT data for specified species.
-        
+
         Parameters
         ----------
         species : List[str]
@@ -213,7 +204,7 @@ class IMGTDownloader:
             Defaults to all IG segments (and TR if include_tr=True)
         force : bool
             Force re-download even if files exist
-            
+
         Returns
         -------
         Dict[str, int]
@@ -221,20 +212,20 @@ class IMGTDownloader:
         """
         start_time = time.time()
         results = {}
-        
+
         # Determine segments to download
         if segments is None:
             segments = IG_SEGMENTS.copy()
             if self.include_tr:
                 segments.extend(TR_SEGMENTS)
-        
+
         for sp in species:
             # Map internal name to IMGT name if needed
             imgt_name = SPECIES_MAP.get(sp.lower(), sp)
             internal_name = SPECIES_MAP_REVERSE.get(imgt_name, sp.lower().replace(" ", "_"))
-            
+
             logger.info(f"Downloading IMGT data for {internal_name} ({imgt_name})...")
-            
+
             try:
                 count = self._download_species(imgt_name, internal_name, segments, force)
                 results[internal_name] = count
@@ -242,7 +233,7 @@ class IMGTDownloader:
             except Exception as e:
                 logger.error(f"Failed to download {internal_name}: {e}")
                 results[internal_name] = 0
-        
+
         duration_ms = int((time.time() - start_time) * 1000)
         total_seqs = sum(results.values())
         logger.info(
@@ -250,16 +241,10 @@ class IMGTDownloader:
             f"species={','.join(species)} sequences={total_seqs} "
             f"duration_ms={duration_ms} status=success"
         )
-        
+
         return results
-    
-    def _download_species(
-        self,
-        imgt_name: str,
-        internal_name: str,
-        segments: List[str],
-        force: bool
-    ) -> int:
+
+    def _download_species(self, imgt_name: str, internal_name: str, segments: List[str], force: bool) -> int:
         """
         Download all segments for a species.
 
@@ -326,12 +311,15 @@ class IMGTDownloader:
                     pct = int(100 * completed_count / total_segments)
                     logger.info(f"Downloaded {completed_count}/{total_segments} files ({pct}%)")
 
-                _save_checkpoint(checkpoint_path, {
-                    "completed_segments": list(completed_segments),
-                    "total_segments": total_segments,
-                    "timestamp": datetime.now().isoformat(),
-                    "last_segment": segment
-                })
+                _save_checkpoint(
+                    checkpoint_path,
+                    {
+                        "completed_segments": list(completed_segments),
+                        "total_segments": total_segments,
+                        "timestamp": datetime.now().isoformat(),
+                        "last_segment": segment,
+                    },
+                )
 
             except HTTPError as e:
                 if e.code == 404:
@@ -351,11 +339,7 @@ class IMGTDownloader:
 
         return total_count
 
-    def _download_c_genes_from_genedb(
-        self,
-        internal_name: str,
-        force: bool = False
-    ) -> int:
+    def _download_c_genes_from_genedb(self, internal_name: str, force: bool = False) -> int:
         """
         Download C genes from IMGT GENE-DB.
 
@@ -377,10 +361,7 @@ class IMGTDownloader:
         species_dir = self.output_dir / internal_name
 
         # Check if C gene files already exist
-        c_files_exist = all(
-            (species_dir / f"IG{chain}C.fasta").exists()
-            for chain in ["H", "K", "L"]
-        )
+        c_files_exist = all((species_dir / f"IG{chain}C.fasta").exists() for chain in ["H", "K", "L"])
         if c_files_exist and not force:
             # Count existing sequences
             count = sum(
@@ -463,11 +444,7 @@ class IMGTDownloader:
             logger.error(f"Failed to download GENE-DB: {e}")
             return None
 
-    def _parse_genedb_c_genes(
-        self,
-        content: str,
-        target_species: str
-    ) -> Dict[str, List[Tuple[str, str]]]:
+    def _parse_genedb_c_genes(self, content: str, target_species: str) -> Dict[str, List[Tuple[str, str]]]:
         """
         Parse GENE-DB FASTA to extract C genes for a species.
 
@@ -494,8 +471,8 @@ class IMGTDownloader:
         # IGLC: IGLC1-7
         c_gene_patterns = {
             "H": re.compile(r"^IGH[ADEGM]", re.IGNORECASE),  # IGHA, IGHD, IGHE, IGHG, IGHM
-            "K": re.compile(r"^IGKC", re.IGNORECASE),         # IGKC
-            "L": re.compile(r"^IGLC", re.IGNORECASE),         # IGLC1-7
+            "K": re.compile(r"^IGKC", re.IGNORECASE),  # IGKC
+            "L": re.compile(r"^IGLC", re.IGNORECASE),  # IGLC1-7
         }
 
         current_header = None
@@ -531,10 +508,7 @@ class IMGTDownloader:
         return c_genes
 
     def _parse_genedb_header(
-        self,
-        header: str,
-        target_species: str,
-        c_gene_patterns: Dict[str, re.Pattern]
+        self, header: str, target_species: str, c_gene_patterns: Dict[str, re.Pattern]
     ) -> Optional[Tuple[str, str]]:
         """
         Parse GENE-DB header to extract C gene info.
@@ -577,16 +551,11 @@ class IMGTDownloader:
                 return (chain, gene_name)
 
         return None
-    
-    def _download_segment(
-        self,
-        url: str,
-        gapped_path: Path,
-        ungapped_path: Path
-    ) -> int:
+
+    def _download_segment(self, url: str, gapped_path: Path, ungapped_path: Path) -> int:
         """
         Download a single segment file.
-        
+
         Parameters
         ----------
         url : str
@@ -595,7 +564,7 @@ class IMGTDownloader:
             Output path for gapped FASTA
         ungapped_path : Path
             Output path for ungapped FASTA
-            
+
         Returns
         -------
         int
@@ -605,23 +574,23 @@ class IMGTDownloader:
         req = Request(url, headers={"User-Agent": "SADIE-Germlines/1.0"})
         with urlopen(req, timeout=self.timeout) as response:
             content = response.read().decode("utf-8")
-        
+
         if not content.strip():
             return 0
-        
+
         # Parse and process sequences
         sequences = self._parse_imgt_fasta(content)
-        
+
         if not sequences:
             return 0
-        
+
         # Write gapped FASTA (original IMGT format)
         with open(gapped_path, "w") as f:
             for header, seq in sequences:
                 f.write(f">{header}\n")
                 # Write sequence in original multiline format
                 f.write(f"{seq}\n")
-        
+
         # Write ungapped FASTA (dots removed)
         with open(ungapped_path, "w") as f:
             for header, seq in sequences:
@@ -629,22 +598,22 @@ class IMGTDownloader:
                 ungapped = seq.replace(".", "").replace("\n", "")
                 f.write(f">{header}\n")
                 f.write(f"{ungapped}\n")
-        
+
         return len(sequences)
-    
+
     def _parse_imgt_fasta(self, content: str) -> List[Tuple[str, str]]:
         """
         Parse IMGT FASTA content.
-        
+
         IMGT FASTA format:
         >accession|gene_name|species|functionality|region|positions|length|...
         cag.gtgcagctggtgcag...tctggggctgag...gtgaag...
-        
+
         Parameters
         ----------
         content : str
             Raw FASTA content
-            
+
         Returns
         -------
         List[Tuple[str, str]]
@@ -653,39 +622,39 @@ class IMGTDownloader:
         sequences = []
         current_header = None
         current_seq = []
-        
+
         for line in content.split("\n"):
             line = line.strip()
             if not line:
                 continue
-            
+
             if line.startswith(">"):
                 # Save previous sequence
                 if current_header and current_seq:
                     sequences.append((current_header, "".join(current_seq)))
-                
+
                 # Start new sequence
                 current_header = line[1:]  # Remove ">"
                 current_seq = []
             else:
                 # Sequence line - keep as-is (includes dots for gaps)
                 current_seq.append(line)
-        
+
         # Save last sequence
         if current_header and current_seq:
             sequences.append((current_header, "".join(current_seq)))
-        
+
         return sequences
-    
+
     def _count_sequences(self, fasta_path: Path) -> int:
         """
         Count sequences in a FASTA file.
-        
+
         Parameters
         ----------
         fasta_path : Path
             Path to FASTA file
-            
+
         Returns
         -------
         int
@@ -701,63 +670,26 @@ class IMGTDownloader:
 
 def main():
     """Main entry point."""
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
-    
-    parser = argparse.ArgumentParser(
-        description="Download IMGT germline data from V-QUEST reference directory"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+
+    parser = argparse.ArgumentParser(description="Download IMGT germline data from V-QUEST reference directory")
     parser.add_argument(
-        "--species",
-        nargs="+",
-        default=["human"],
-        help="Species to download (e.g., human mouse rabbit)"
+        "--species", nargs="+", default=["human"], help="Species to download (e.g., human mouse rabbit)"
     )
-    parser.add_argument(
-        "--segments",
-        nargs="+",
-        default=None,
-        help="Specific segments to download (e.g., IGHV IGHJ)"
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=Path,
-        default=None,
-        help="Output directory for FASTA files"
-    )
-    parser.add_argument(
-        "--include-tr",
-        action="store_true",
-        help="Include T-cell receptor (TR) sequences"
-    )
-    parser.add_argument(
-        "--list-species",
-        action="store_true",
-        help="List all available species and exit"
-    )
-    parser.add_argument(
-        "--force",
-        action="store_true",
-        help="Force re-download even if files exist"
-    )
-    parser.add_argument(
-        "-v", "--verbose",
-        action="store_true",
-        help="Enable verbose logging"
-    )
-    
+    parser.add_argument("--segments", nargs="+", default=None, help="Specific segments to download (e.g., IGHV IGHJ)")
+    parser.add_argument("--output-dir", type=Path, default=None, help="Output directory for FASTA files")
+    parser.add_argument("--include-tr", action="store_true", help="Include T-cell receptor (TR) sequences")
+    parser.add_argument("--list-species", action="store_true", help="List all available species and exit")
+    parser.add_argument("--force", action="store_true", help="Force re-download even if files exist")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging")
+
     args = parser.parse_args()
-    
+
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
-    
-    downloader = IMGTDownloader(
-        output_dir=args.output_dir,
-        include_tr=args.include_tr
-    )
-    
+
+    downloader = IMGTDownloader(output_dir=args.output_dir, include_tr=args.include_tr)
+
     try:
         if args.list_species:
             print("Available IMGT species:")
@@ -766,18 +698,14 @@ def main():
                 internal = SPECIES_MAP_REVERSE.get(species, species.lower())
                 print(f"  {internal:20} ({species})")
             return
-        
-        results = downloader.download(
-            args.species,
-            segments=args.segments,
-            force=args.force
-        )
-        
+
+        results = downloader.download(args.species, segments=args.segments, force=args.force)
+
         print(f"\nIMGT data downloaded successfully to {downloader.output_dir}")
         print("\nSummary:")
         for species, count in results.items():
             print(f"  {species}: {count} sequences")
-        
+
     except Exception as e:
         logger.error(f"Download failed: {e}")
         sys.exit(1)

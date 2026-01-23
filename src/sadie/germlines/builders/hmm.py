@@ -12,7 +12,8 @@ Per FR-013a-c:
 
 import logging
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
+
 from Bio import SeqIO
 
 logger = logging.getLogger(__name__)
@@ -35,12 +36,7 @@ class HMMBuilder:
     MIN_SEQUENCES = 3
     MAX_SEQUENCES = 100
 
-    def build_for_species(
-        self,
-        species: str,
-        source_dir: Path,
-        output_dir: Path
-    ) -> None:
+    def build_for_species(self, species: str, source_dir: Path, output_dir: Path) -> None:
         """
         Build Stockholm alignments for all segments.
 
@@ -57,17 +53,10 @@ class HMMBuilder:
 
         for chain in ["H", "K", "L"]:
             for segment in ["V", "J"]:
-                self._build_segment_alignment(
-                    species, chain, segment, source_dir, output_dir
-                )
+                self._build_segment_alignment(species, chain, segment, source_dir, output_dir)
 
     def _build_segment_alignment(
-        self,
-        species: str,
-        chain: str,
-        segment: str,
-        source_dir: Path,
-        output_dir: Path
+        self, species: str, chain: str, segment: str, source_dir: Path, output_dir: Path
     ) -> None:
         """
         Build Stockholm alignment for single segment.
@@ -94,14 +83,11 @@ class HMMBuilder:
         sequences = self._load_sequences(fasta_path)
 
         if len(sequences) < self.MIN_SEQUENCES:
-            logger.warning(
-                f"Insufficient sequences for {chain}{segment}: "
-                f"{len(sequences)} < {self.MIN_SEQUENCES}"
-            )
+            logger.warning(f"Insufficient sequences for {chain}{segment}: " f"{len(sequences)} < {self.MIN_SEQUENCES}")
             return
 
         if len(sequences) > self.MAX_SEQUENCES:
-            sequences = sequences[:self.MAX_SEQUENCES]
+            sequences = sequences[: self.MAX_SEQUENCES]
             logger.info(f"Truncated to {self.MAX_SEQUENCES} sequences for {chain}{segment}")
 
         output_file = output_dir / f"{species}_{chain}{segment}.sto"
@@ -134,12 +120,7 @@ class HMMBuilder:
 
         return sequences
 
-    def _write_stockholm(
-        self,
-        sequences: List[Tuple[str, str]],
-        output_file: Path,
-        alignment_id: str
-    ) -> None:
+    def _write_stockholm(self, sequences: List[Tuple[str, str]], output_file: Path, alignment_id: str) -> None:
         """
         Write sequences in Stockholm format.
 
@@ -165,11 +146,7 @@ class HMMBuilder:
         output_file.write_text("\n".join(lines) + "\n")
 
 
-def get_gapped_sequences(
-    manager,
-    species: str,
-    segment: str
-) -> List[Tuple[str, str]]:
+def get_gapped_sequences(manager, species: str, segment: str) -> List[Tuple[str, str]]:
     """
     Get gapped sequences from GermlineManager.
 
