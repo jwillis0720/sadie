@@ -253,22 +253,24 @@
 
 **Depends on:** Phase 20
 
+**Status:** ✓ Complete
+
 **Requirements:**
 - CLI-01: Add `sadie reference build <yaml> --output <path>` command
 - CLI-02: Build generates complete IgBLAST database structure
 - CLI-03: Progress output during build
 
 **Success Criteria:**
-1. `sadie reference build reference.yml --output ./db` creates database directory
-2. Output contains: `Ig/blastdb/`, `Ig/internal_data/`, `aux_db/`, `.references_dataframe.csv.gz`
-3. Progress output shows: "Loading YAML...", "Fetching genes...", "Building databases...", "Complete"
-4. Exit code 0 on success, non-zero with error message on failure
-5. Resulting database structure identical to `References.make_airr_database()` output
+1. ✓ `sadie reference build reference.yml --output ./db` creates database directory
+2. ✓ Output contains: `Ig/blastdb/`, `Ig/internal_data/`, `aux_db/`, `.references_dataframe.csv.gz`
+3. ✓ Progress output shows: "Loading YAML...", "Fetching genes...", "Building databases...", "Complete"
+4. ✓ Exit code 0 on success, non-zero with error message on failure
+5. ✓ Resulting database structure identical to `References.make_airr_database()` output
 
-**Files to modify:**
-- `src/sadie/reference/cli.py` — Create new CLI module with `build` command (or add to existing CLI)
-- `src/sadie/reference/__init__.py` — Export CLI entry point
-- `pyproject.toml` — Add `sadie reference` CLI entry point if needed
+**Files modified:**
+- `src/sadie/app.py` — Added `@reference.command("build")` with Click decorators
+
+**Note:** `--use-germlines` flag has gap — germlines adapter missing IMGT region fields
 
 ---
 

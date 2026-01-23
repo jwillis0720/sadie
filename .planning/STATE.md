@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 20 — Integration Foundation
+Phase: 21 — Build CLI
 Plan: PLAN.md
 Status: Complete
-Last activity: 2026-01-23 — Phase 20 implemented
+Last activity: 2026-01-23 — Phase 21 implemented
 
-Progress: ████████░░░░░░░░░░░░ 40%
+Progress: ████████████░░░░░░░░ 60%
 
 **Milestone v1.2: Reference Module Unification** — In progress (phases 19-23)
 
@@ -31,10 +31,11 @@ Progress: ████████░░░░░░░░░░░░ 40%
 - ✓ Route explicit source to GermlineManager (providers=[source])
 - ✓ Generate synthetic `_id` in adapter (SHA-256 hash)
 
-### Phase 21: Build CLI
-- Add `sadie reference build` command
-- Generate complete IgBLAST database structure
-- Progress output during build
+### Phase 21: Build CLI ✓
+- ✓ Add `sadie reference build` command
+- ✓ Generate complete IgBLAST database structure
+- ✓ Progress output during build
+- Note: --use-germlines has gap (missing IMGT region fields)
 
 ### Phase 22: Runtime Usage
 - Add `Airr(database=<path>)` parameter

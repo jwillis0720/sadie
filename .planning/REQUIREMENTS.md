@@ -20,9 +20,9 @@ Requirements for Reference Module Unification milestone.
 
 ### Build CLI
 
-- [ ] **CLI-01**: Add `sadie reference build <yaml> --output <path>` command
-- [ ] **CLI-02**: Build generates complete IgBLAST database structure
-- [ ] **CLI-03**: Progress output during build
+- [x] **CLI-01**: Add `sadie reference build <yaml> --output <path>` command
+- [x] **CLI-02**: Build generates complete IgBLAST database structure
+- [x] **CLI-03**: Progress output during build
 
 ### Runtime Usage
 
