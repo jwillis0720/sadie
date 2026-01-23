@@ -190,3 +190,131 @@
 ---
 *Created: 2026-01-22*
 *Completed: 2026-01-23*
+
+---
+
+## Milestone: v1.2 Reference Module Unification
+
+**Phases:** 19-23 (continuing from v1.1)
+**Goal:** Enable reference.yml to select alleles from all germline sources (imgt, ogrdb, vdjbase, custom), using germlines module as data provider instead of G3 API. Full workflow: build CLI + runtime usage of prebuilt databases.
+
+---
+
+## Phase 19: Source Validation
+
+**Goal:** Expand source validation to accept all germline database providers
+
+**Depends on:** Phase 18 (v1.1 complete)
+
+**Requirements:**
+- SRC-01: Expand VALID_SOURCES to include `ogrdb`, `vdjbase`
+- SRC-02: Validate source exists in germlines before processing
+
+**Success Criteria:**
+1. `models.py` accepts `source: ogrdb` and `source: vdjbase` without validation errors
+2. Error message when source not available in germlines for requested species
+3. Existing `imgt` and `custom` sources continue to work unchanged
+4. Unit tests cover all four source types
+
+**Files to modify:**
+- `src/sadie/reference/models.py` — Expand VALID_SOURCES list in `check_source` validators
+
+---
+
+## Phase 20: Integration Foundation
+
+**Goal:** Route reference.yml processing through germlines module with explicit source selection
+
+**Depends on:** Phase 19
+
+**Requirements:**
+- INT-01: Add `use_germlines=True` parameter to `References.from_yaml()`
+- INT-02: Route source selection through GermlineManager (explicit source, no priority)
+- INT-03: Generate synthetic `_id` field in adapter
+
+**Success Criteria:**
+1. `References.from_yaml(use_germlines=True)` loads genes from germlines module
+2. Source field from YAML explicitly passed to GermlineManager (not using priority fallback)
+3. All returned gene dicts contain `_id` field (hash of `source:species:gene`)
+4. Downstream code using `_id` for deduplication/indexing works correctly
+5. G3 API path still works with `use_germlines=False` for backwards compatibility
+
+**Files to modify:**
+- `src/sadie/reference/reference.py` — Add `use_germlines` param to `from_yaml()`, pass to `Reference()` init
+- `src/sadie/germlines/g3_adapter.py` — Add `_id` field generation using deterministic hash
+- `src/sadie/reference/reference.py` — Pass explicit `providers=[source]` to germlines lookups
+
+---
+
+## Phase 21: Build CLI
+
+**Goal:** Add CLI command to build IgBLAST database from reference.yml
+
+**Depends on:** Phase 20
+
+**Requirements:**
+- CLI-01: Add `sadie reference build <yaml> --output <path>` command
+- CLI-02: Build generates complete IgBLAST database structure
+- CLI-03: Progress output during build
+
+**Success Criteria:**
+1. `sadie reference build reference.yml --output ./db` creates database directory
+2. Output contains: `Ig/blastdb/`, `Ig/internal_data/`, `aux_db/`, `.references_dataframe.csv.gz`
+3. Progress output shows: "Loading YAML...", "Fetching genes...", "Building databases...", "Complete"
+4. Exit code 0 on success, non-zero with error message on failure
+5. Resulting database structure identical to `References.make_airr_database()` output
+
+**Files to modify:**
+- `src/sadie/reference/cli.py` — Create new CLI module with `build` command (or add to existing CLI)
+- `src/sadie/reference/__init__.py` — Export CLI entry point
+- `pyproject.toml` — Add `sadie reference` CLI entry point if needed
+
+---
+
+## Phase 22: Runtime Usage
+
+**Goal:** Enable Airr to use prebuilt databases directly, bypassing runtime gene lookup
+
+**Depends on:** Phase 21
+
+**Requirements:**
+- RUN-01: Add `Airr(database=<path>)` parameter to use prebuilt database
+- RUN-02: Skip germlines/G3 lookup when using prebuilt database
+- RUN-03: Validate database structure on load
+
+**Success Criteria:**
+1. `Airr(database="./db")` uses prebuilt database instead of default
+2. No network calls or germlines lookups when database path provided
+3. Clear error if database path missing required structure (blastdb, internal_data, aux_db)
+4. Annotation results identical whether using prebuilt or runtime-built database
+5. Performance improvement: <100ms startup with prebuilt vs >1s with runtime lookup
+
+**Files to modify:**
+- `src/sadie/airr/airr.py` — Add `database` parameter to `Airr.__init__()`, validate structure
+- `src/sadie/airr/igblast/germline.py` — Support custom database path in `GermlineData`
+
+---
+
+## Phase 23: Documentation
+
+**Goal:** Document multi-source reference.yml usage and build workflow
+
+**Depends on:** Phase 22
+
+**Requirements:**
+- DOC-01: Create reference-sample.yml (mouse=imgt, human=ogrdb, macaque=vdjbase)
+- DOC-02: Document build → use workflow
+
+**Success Criteria:**
+1. `examples/reference-sample.yml` demonstrates multi-source configuration
+2. Sample includes: mouse V/D/J from IMGT, human V/D/J from OGRDB, macaque subset from VDJbase
+3. README section or docs page explains: write YAML → build database → use in Airr
+4. Code examples show complete workflow from YAML to annotation
+
+**Files to create:**
+- `examples/reference-sample.yml` — Multi-source reference configuration
+- `docs/reference-workflow.md` — Build and usage documentation (or update existing docs)
+
+---
+
+*Milestone v1.2 created: 2026-01-23*

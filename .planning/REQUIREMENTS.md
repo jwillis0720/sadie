@@ -3,7 +3,41 @@
 **Defined:** 2026-01-22
 **Core Value:** Enable researchers to select germline database for AIRR annotation and renumbering
 
-## v1.1 Requirements
+## v1.2 Requirements
+
+Requirements for Reference Module Unification milestone.
+
+### Source Validation
+
+- [ ] **SRC-01**: Expand VALID_SOURCES to include `ogrdb`, `vdjbase`
+- [ ] **SRC-02**: Validate source exists in germlines before processing
+
+### Integration
+
+- [ ] **INT-01**: Add `use_germlines=True` parameter to `References.from_yaml()`
+- [ ] **INT-02**: Route source selection through GermlineManager (explicit source, no priority)
+- [ ] **INT-03**: Generate synthetic `_id` field in adapter
+
+### Build CLI
+
+- [ ] **CLI-01**: Add `sadie reference build <yaml> --output <path>` command
+- [ ] **CLI-02**: Build generates complete IgBLAST database structure
+- [ ] **CLI-03**: Progress output during build
+
+### Runtime Usage
+
+- [ ] **RUN-01**: Add `Airr(database=<path>)` parameter to use prebuilt database
+- [ ] **RUN-02**: Skip germlines/G3 lookup when using prebuilt database
+- [ ] **RUN-03**: Validate database structure on load
+
+### Documentation
+
+- [ ] **DOC-01**: Create reference-sample.yml (mouse=imgt, human=ogrdb, macaque=vdjbase)
+- [ ] **DOC-02**: Document build → use workflow
+
+---
+
+## v1.1 Requirements (Complete)
 
 Requirements for audit validation milestone.
 
@@ -48,8 +82,39 @@ Requirements for audit validation milestone.
 | Renumbering parity audit | Focus on AIRR first, renumbering already tested in v1.0 |
 | Performance benchmarking | Parity focus, not speed |
 | Multi-species audit | Human only for initial validation |
+| Multi-provider blending per analysis | Out of scope for v1.2 |
+| Automatic G3 fallback | Explicit source only |
+| Real-time provider sync | Offline databases |
+| Per-gene source overrides | Reference-level source only |
+| TR (T-cell receptor) support | IG focus for v1.2 |
 
 ## Traceability
+
+### v1.2 Requirements Mapping
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| SRC-01 | Phase 19 | Pending |
+| SRC-02 | Phase 19 | Pending |
+| INT-01 | Phase 20 | Pending |
+| INT-02 | Phase 20 | Pending |
+| INT-03 | Phase 20 | Pending |
+| CLI-01 | Phase 21 | Pending |
+| CLI-02 | Phase 21 | Pending |
+| CLI-03 | Phase 21 | Pending |
+| RUN-01 | Phase 22 | Pending |
+| RUN-02 | Phase 22 | Pending |
+| RUN-03 | Phase 22 | Pending |
+| DOC-01 | Phase 23 | Pending |
+| DOC-02 | Phase 23 | Pending |
+
+**v1.2 Coverage:**
+- Total requirements: 12
+- Mapped to phases: 12
+- Complete: 0
+- Unmapped: 0 ✓
+
+### v1.1 Requirements Mapping
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
@@ -73,12 +138,12 @@ Requirements for audit validation milestone.
 | VDJ-03 | Phase 17 | Complete |
 | VDJ-04 | Phase 17 | Complete |
 
-**Coverage:**
-- v1.1 requirements: 19 total
+**v1.1 Coverage:**
+- Total requirements: 19
 - Mapped to phases: 19
 - Complete: 19 ✓
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 — v1.1 milestone complete*
+*Last updated: 2026-01-23 — v1.2 requirements mapped*

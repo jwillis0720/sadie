@@ -84,14 +84,16 @@ Enable researchers to select which germline database their AIRR annotation and a
 - Single provider selection per run (no per-segment mixing)
 - Default priority: custom > ogrdb > vdjbase > imgt
 
-## Current Milestone: v1.1 Audit
+## Current Milestone: v1.2 Reference Module Unification
 
-**Goal:** Validate that germlines backend produces identical AIRR results to G3 backend using real HCV antibody sequences.
+**Goal:** Enable reference.yml to select alleles from all germlines sources (imgt, ogrdb, vdjbase, custom), using germlines module as data provider instead of G3 API.
 
 **Target features:**
-- Backend comparison notebook (audit/audit.ipynb)
-- Side-by-side AIRR output comparison
-- Parity validation with documented results
+- Expand source validation to accept imgt, ogrdb, vdjbase, custom
+- Create germlines-to-reference adapter (replace G3 API calls)
+- Add `use_g3=False` parameter (soft deprecation, G3 still available)
+- Create reference-sample.yml demonstrating multi-source selection
+- Enable chimeric references combining species from different sources
 
 ---
-*Last updated: 2026-01-22 after v1.1 milestone start*
+*Last updated: 2026-01-23 after v1.2 milestone start*
