@@ -60,6 +60,10 @@ src/site/
 !COERCE_FEATURE.md
 !specs/
 !specs/**/*.md
+!.planning/
+!.planning/**/*.md
+!audit/
+!audit/**/*.md
 
 # testing files
 scrap.ipynb
