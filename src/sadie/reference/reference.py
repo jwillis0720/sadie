@@ -60,13 +60,8 @@ class Reference:
         if not use_germlines:
             self.endpoint = endpoint
         else:
-            # Initialize germlines components
-            from sadie.germlines import get_manager
-            from sadie.germlines.g3_adapter import GermlineToG3Adapter
-
-            self.germline_manager = get_manager()
-            self.g3_adapter = GermlineToG3Adapter()
-            # Set endpoint to avoid property setter validation
+            # Skip G3 API validation when using germlines
+            # Components imported locally in _get_gene/_get_genes
             self._endpoint = endpoint
 
     @property
@@ -187,17 +182,20 @@ class Reference:
 
         # Use germlines module if enabled
         if self.use_germlines:
-            from sadie.germlines import get_gene_by_name
+            from sadie.germlines import GermlineManager
+            from sadie.germlines.g3_adapter import GermlineToG3Adapter
 
-            germline_gene = get_gene_by_name(gene.gene, gene.species)
+            # Create manager with explicit source (no priority fallback)
+            manager = GermlineManager(providers=[gene.source])
+            germline_gene = manager.get_gene_by_name(gene.gene, gene.species)
+
             if not germline_gene:
-                raise G3Error(f"Gene {gene.gene} not found in germlines database for species {gene.species}")
+                raise G3Error(f"Gene {gene.gene} not found in {gene.source} database for species {gene.species}")
 
             # Transform to G3 format
-            g3_dict = self.g3_adapter.to_g3_format(germline_gene)
-            # Add species field for compatibility
-            g3_dict["species"] = gene.species
-            logger.debug(f"Retrieved {gene.gene} from germlines module")
+            adapter = GermlineToG3Adapter()
+            g3_dict = adapter.to_g3_format(germline_gene)
+            logger.debug(f"Retrieved {gene.gene} from germlines module ({gene.source})")
             return g3_dict
 
         # Use G3 API (legacy path)
@@ -241,23 +239,23 @@ class Reference:
 
         # Use germlines module if enabled
         if self.use_germlines:
-            from sadie.germlines import get_gene_by_name
+            from sadie.germlines import GermlineManager
+            from sadie.germlines.g3_adapter import GermlineToG3Adapter
 
-            # Get all genes for the species from germlines
-            # Note: germlines get_genes requires segment and chain, so we'll query
-            # by individual gene names instead
+            # Create manager with explicit source (no priority fallback)
+            manager = GermlineManager(providers=[genes.source])
+            adapter = GermlineToG3Adapter()
+
             results = []
             for gene_name in genes.genes:
-                # Note: get_gene_by_name signature is (name, species)
-                germline_gene = get_gene_by_name(gene_name, genes.species)
+                germline_gene = manager.get_gene_by_name(gene_name, genes.species)
                 if germline_gene:
-                    g3_dict = self.g3_adapter.to_g3_format(germline_gene)
-                    g3_dict["species"] = genes.species
+                    g3_dict = adapter.to_g3_format(germline_gene)
                     results.append(g3_dict)
                 else:
-                    logger.warning(f"Gene {gene_name} not found in germlines database for {genes.species}")
+                    logger.warning(f"Gene {gene_name} not found in {genes.source} database for {genes.species}")
 
-            logger.debug(f"Retrieved {len(results)} genes from germlines module")
+            logger.debug(f"Retrieved {len(results)} genes from germlines module ({genes.source})")
             return results
 
         # Use G3 API (legacy path)
@@ -429,12 +427,15 @@ class References:
         return concat_df
 
     @staticmethod
-    def from_yaml(yaml_path: Optional[Path] = None) -> "References":
+    def from_yaml(yaml_path: Optional[Path] = None, use_germlines: bool = False) -> "References":
         """Parse a yaml file into a references file object
 
         Parameters
         ----------
-        yaml_path : Path to yaml file
+        yaml_path : Path
+            Path to yaml file
+        use_germlines : bool, optional
+            If True, use local germlines module instead of G3 API. Defaults to False.
 
         Returns
         -------
@@ -450,7 +451,7 @@ class References:
 
         # iterate through names
         for name in yaml_ref:
-            reference_object = Reference()
+            reference_object = Reference(use_germlines=use_germlines)
 
             # iterate where they came from
             for source in yaml_ref.get(name):
