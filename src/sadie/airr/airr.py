@@ -97,6 +97,7 @@ class Airr:
         gap_open: int = 5,
         gap_extend: int = 2,
         coerce: bool = False,
+        database: Optional[Path | str] = None,
     ):
         """Airr constructor
 
@@ -151,10 +152,17 @@ class Airr:
             Gap extension penalty, by default 2
         coerce : bool
             Accept the highest scored allele that exists in the auxiliary files when exact match not found, by default False
+        database : Optional[Path | str]
+            Path to prebuilt database from `sadie reference build`.
+            When provided, uses database directly without germlines/G3 lookup.
+            Expected structure: Ig/blastdb/, Ig/internal_data/, aux_db/.
+            By default None (uses germlines module or G3).
         """
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
+        # Store database path for recursive Airr calls (penalty adaptation)
+        self._database_path = database
         self.references = references
         self.debug = debug
 
@@ -243,7 +251,18 @@ class Airr:
         # Pass theese as private since germline class will handle setter logic
         self._name = reference_name
         self.scheme = scheme  # Store scheme as instance attribute
-        if isinstance(references, References):
+
+        # Handle prebuilt database path - skip germlines/G3 lookup
+        if database:
+            database_path = Path(database)
+            if not database_path.exists():
+                raise FileNotFoundError(f"Database path not found: {database_path}")
+
+            # Use prebuilt database - validate structure and use directly
+            self.germline_data = GermlineData(
+                reference_name, receptor, database_path, scheme, prebuilt=True
+            )
+        elif isinstance(references, References):
             _custom_avail = list(references.get_dataframe()["name"].unique())
             if self.name not in _custom_avail:
                 raise BadDataSet(self.name, _custom_avail)
@@ -583,6 +602,7 @@ class Airr:
                                 gap_open=self.gap_open,
                                 gap_extend=self.gap_extend,
                                 coerce=self.coerce,
+                                database=self._database_path,
                             )
                             adapt_results = pd.DataFrame(adaptable_api.run_dataframe(_start_df, "index", "sequence"))
                             adapt_results = pd.DataFrame(
@@ -625,6 +645,7 @@ class Airr:
                             gap_open=self.gap_open,
                             gap_extend=self.gap_extend,
                             coerce=self.coerce,
+                            database=self._database_path,
                         )
                         adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
                         adapt_results = (

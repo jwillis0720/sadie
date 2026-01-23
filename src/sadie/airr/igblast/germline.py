@@ -3,12 +3,87 @@ from __future__ import annotations
 import logging
 import warnings
 from pathlib import Path
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 from sadie.airr.igblast.igblast import ensure_prefix_to
 from sadie.reference import YamlRef
 
 logger = logging.getLogger(__name__)
+
+
+def validate_prebuilt_database(database_path: Path, name: str) -> Dict[str, Path]:
+    """Validate prebuilt database structure and return paths.
+
+    Expected structure from `sadie reference build`:
+        database_path/
+        ├── Ig/
+        │   ├── blastdb/{name}/{name}_V, {name}_D, {name}_J files
+        │   └── internal_data/{name}/{name}.ndm.imgt
+        ├── aux_db/imgt/{name}_gl.aux
+        └── .references_dataframe.csv.gz (optional)
+
+    Parameters
+    ----------
+    database_path : Path
+        Root path to prebuilt database
+    name : str
+        Reference name (species)
+
+    Returns
+    -------
+    Dict[str, Path]
+        Validated paths: base_dir, blast_dir, v_gene_dir, d_gene_dir,
+        j_gene_dir, c_gene_dir, aux_path, igdata
+
+    Raises
+    ------
+    FileNotFoundError
+        If required structure is missing
+    """
+    db = Path(database_path)
+    errors = []
+
+    # Required directories
+    ig_dir = db / "Ig"
+    internal_data = ig_dir / "internal_data" / name
+    blastdb = ig_dir / "blastdb" / name
+    aux_db = db / "aux_db"
+
+    if not ig_dir.exists():
+        errors.append(f"Missing Ig/ directory at {ig_dir}")
+    if not internal_data.exists():
+        errors.append(f"Missing internal_data/{name}/ at {internal_data}")
+    if not blastdb.exists():
+        errors.append(f"Missing blastdb/{name}/ at {blastdb}")
+    if not aux_db.exists():
+        errors.append(f"Missing aux_db/ directory at {aux_db}")
+
+    # Check for aux file (may be in aux_db/ or aux_db/imgt/)
+    aux_path = aux_db / "imgt" / f"{name}_gl.aux"
+    if not aux_path.exists():
+        # Try without imgt subdirectory
+        aux_path = aux_db / f"{name}_gl.aux"
+        if not aux_path.exists():
+            errors.append(f"Missing auxiliary file {name}_gl.aux in {aux_db}")
+
+    if errors:
+        raise FileNotFoundError(
+            f"Invalid prebuilt database at {database_path}:\n" + "\n".join(f"  - {e}" for e in errors)
+        )
+
+    # Build paths
+    blast_prefix = blastdb / f"{name}_"
+
+    return {
+        "base_dir": db,
+        "blast_dir": blast_prefix,
+        "v_gene_dir": Path(str(blast_prefix) + "V"),
+        "d_gene_dir": Path(str(blast_prefix) + "D"),
+        "j_gene_dir": Path(str(blast_prefix) + "J"),
+        "c_gene_dir": Path(str(blast_prefix) + "C"),
+        "aux_path": aux_path,
+        "igdata": ig_dir,
+    }
 
 
 def _use_germlines_module() -> bool:
@@ -50,17 +125,39 @@ class GermlineData:
         receptor: str = "Ig",
         database_dir: Optional[str | Path] = None,
         scheme: str = "imgt",
+        prebuilt: bool = False,
     ):
         """
 
         Parameters
         ----------
-        species : str
+        name : str
             The species of interest, e.g. human
         receptor : str, optional
             the receptor type, by default "Ig"
+        database_dir : Optional[str | Path]
+            Custom database directory path
+        scheme : str, optional
+            Numbering scheme, by default "imgt"
+        prebuilt : bool, optional
+            If True, database_dir is a prebuilt database from `sadie reference build`.
+            Validates structure and uses paths directly without germlines/G3 lookup.
+            By default False.
         """
         self.name = name
+
+        # Handle prebuilt database path - skip all other lookups
+        if prebuilt and database_dir:
+            paths = validate_prebuilt_database(Path(database_dir), name)
+            self._base_dir = paths["base_dir"]
+            self._blast_dir = paths["blast_dir"]
+            self._v_gene_dir = paths["v_gene_dir"]
+            self._d_gene_dir = paths["d_gene_dir"]
+            self._j_gene_dir = paths["j_gene_dir"]
+            self._c_gene_dir = paths["c_gene_dir"]
+            self._aux_path = paths["aux_path"]
+            self._igdata = paths["igdata"]
+            return  # Skip all other initialization
 
         # Determine base directory based on feature flag
         if database_dir:
