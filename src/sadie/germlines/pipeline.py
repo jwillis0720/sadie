@@ -330,7 +330,7 @@ class GermlinePipeline:
                 seq=Seq(str(gene.sequence_gapped or gene.sequence)), id=gene.name, description=f"source={gene.source}"
             )
             for gene in genes
-            if gene.sequence_gapped or segment in ["D", "C"]  # D and C segments may be ungapped
+            if gene.sequence_gapped or segment in ["D", "J", "C"]  # D, J, and C segments may be ungapped
         ]
 
         # Guard: no gapped sequences

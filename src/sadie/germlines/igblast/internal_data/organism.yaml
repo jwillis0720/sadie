@@ -93,6 +93,14 @@ organisms:
     - V
     - D
     - J
+  macaque:
+    aux_file: ../aux_db/macaque_gl.aux
+    database_path: ../database/macaque
+    segments:
+    - V
+    - D
+    - J
+    - C
   mink:
     database_path: ../database/mink
     segments:
