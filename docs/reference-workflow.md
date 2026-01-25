@@ -6,10 +6,15 @@ Learn how to create custom germline reference databases for AIRR annotation usin
 
 SADIE supports creating custom reference databases that combine germline sequences from multiple sources:
 
-- **IMGT** - International ImMunoGeneTics information system
-- **OGRDB** - Open Germline Receptor Database  
-- **VDJbase** - Curated germline database
-- **Custom** - Your own sequences
+| Source | Description | Website | Best For |
+|--------|-------------|---------|----------|
+| **imgt** | International ImMunoGeneTics | [imgt.org](https://www.imgt.org) | Comprehensive baseline |
+| **ogrdb** | Open Germline Receptor Database | [ogrdb.airr-community.org](https://ogrdb.airr-community.org/) | Novel/validated alleles |
+| **vdjbase** | VDJbase curated germlines | [vdjbase.org](https://www.vdjbase.org/) | Population-specific alleles |
+| **custom** | Your own sequences | - | Novel discoveries |
+
+!!! tip "New in v1.2"
+    SADIE now supports **OGRDB** and **VDJbase** as first-class data sources alongside IMGT. You can mix sources within a single reference database.
 
 This enables:
 
@@ -199,6 +204,91 @@ comprehensive-human:
       - IGHV1-69*13  # Novel allele from OGRDB
       - IGHV4-34*09  # Curated variant
 ```
+
+## Using OGRDB Alleles
+
+[OGRDB](https://ogrdb.airr-community.org/) provides curated germline alleles that have been validated through the AIRR Community review process. Use OGRDB when you need:
+
+- Novel alleles not yet in IMGT
+- Alleles with experimental validation
+- Population-specific variants
+
+```yaml
+# Example: Human OGRDB-only reference
+human-ogrdb-curated:
+  ogrdb:
+    human:
+      # OGRDB-validated V genes
+      - IGHV1-69*01
+      - IGHV1-69*13    # Novel allele
+      - IGHV3-30*18    # Validated variant
+      - IGHV4-34*09
+      # D genes
+      - IGHD3-10*01
+      - IGHD3-22*01
+      # J genes  
+      - IGHJ4*02
+      - IGHJ6*02
+```
+
+!!! note "OGRDB Gene Names"
+    OGRDB uses the same naming convention as IMGT. Browse available alleles at [ogrdb.airr-community.org](https://ogrdb.airr-community.org/).
+
+## Using VDJbase Alleles
+
+[VDJbase](https://www.vdjbase.org/) provides population-level germline inference data. Use VDJbase when you need:
+
+- Population-specific allele frequencies
+- Haplotype-aware references
+- Alleles inferred from repertoire data
+
+```yaml
+# Example: Human VDJbase reference
+human-vdjbase:
+  vdjbase:
+    human:
+      # VDJbase-inferred alleles
+      - IGHV1-2*02
+      - IGHV1-69*01
+      - IGHV3-23*01
+      - IGHD2-15*01
+      - IGHJ4*02
+```
+
+## Combining All Sources
+
+For maximum coverage, combine IMGT baseline with curated alleles:
+
+```yaml
+# Complete multi-source reference
+human-complete:
+  # IMGT baseline - comprehensive coverage
+  imgt:
+    human:
+      - IGHV1-2*02
+      - IGHV1-18*01
+      - IGHV3-23*01
+      - IGHD3-10*01
+      - IGHD3-22*01
+      - IGHJ4*02
+      - IGHJ6*02
+      - IGKV1-39*01
+      - IGKJ1*01
+  
+  # OGRDB - add validated novel alleles
+  ogrdb:
+    human:
+      - IGHV1-69*13    # Novel validated allele
+      - IGHV4-34*09    # Population variant
+  
+  # VDJbase - add population-inferred alleles
+  vdjbase:
+    human:
+      - IGHV3-30*18    # Inferred from repertoires
+```
+
+!!! warning "Source Priority"
+    When the same allele appears in multiple sources, SADIE uses explicit source selection - each gene is fetched from its specified source. There is no automatic fallback between sources.
 
 ## Multi-Species Configuration
 

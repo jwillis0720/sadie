@@ -5,9 +5,23 @@ The SADIE reference module abstracts the underlying reference data used by the [
 !!! Abstract "Builtin reference"
 SADIE ships with a reference database that contains the most common species along with functional genes. The average user will not need to use this module as the database is comprehensive. You can see each entry by looking either directly at the paths used `src/sadie/airr/data/` for AIRR and `src/sadie/anarci/data` for the renumbering module. Another convenient way to look at the reference database is to view the [reference.yml](https://github.com/jwillis0720/sadie/blob/master/src/sadie/reference/data/reference.yml). More on how that file is structured will be [provided](#the-reference-yaml).
 
-## Germline Gene Gateway
+## Germline Data Sources
 
-New germline gene segments are being discovered at a rapid pace. To meet the needs of this changing landscape, SADIE gets all of the germline gene info from a programmatic API called the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This API is hosted as a free service. It consists of germline genes from [IMGT](https://www.imgt.org) as well as custom genes that have been annotated and cataloged by programs such as [IGDiscover](http://docs.igdiscover.se/en/stable/). To explore the API, visit the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This RESTful API conforms to the [OpenAPI 3.0](https://swagger.io/specification/) specification.
+SADIE supports multiple germline data sources for maximum flexibility:
+
+| Source | Description | Use Case |
+|--------|-------------|----------|
+| **imgt** | [IMGT](https://www.imgt.org) reference database | Default, most comprehensive |
+| **ogrdb** | [OGRDB](https://ogrdb.airr-community.org/) curated alleles | Novel/validated alleles |
+| **vdjbase** | [VDJbase](https://www.vdjbase.org/) germlines | Population-specific alleles |
+| **custom** | Your own sequences | Novel discoveries, proprietary |
+
+!!! tip "New in v1.2"
+    SADIE now supports **OGRDB** and **VDJbase** as first-class data sources. You can mix sources in a single reference database to combine curated alleles from different providers.
+
+### Germline Gene Gateway (Legacy)
+
+For backwards compatibility, SADIE also supports the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/) API which provides IMGT and custom genes. This RESTful API conforms to the [OpenAPI 3.0](https://swagger.io/specification/) specification.
 
 ### Examples of how to use the G3 API
 
@@ -86,7 +100,7 @@ name:
 | Field      | Description                                                                        | Example                 |
 | ---------- | ---------------------------------------------------------------------------------- | ----------------------- |
 | `name`     | :material-check: The name that this reference will be called in SADIE              | `human`, `mouse`, `clk` |
-| `database` | :material-check: The database that the gene comes from                             | `IMGT` or `custom`      |
+| `source`   | :material-check: The data source for the genes                                     | `imgt`, `ogrdb`, `vdjbase`, `custom` |
 | `species`  | :material-check: The name of the species that will be used in the annotation table | `human`, `mouse`        |
 | `gene`     | :material-check: The full gene name                                                | `IGHV3-23*01`           |
 
@@ -121,6 +135,40 @@ name:
     ```
 
     The HuGL18 model will have the full mouse background and three gene segments knocked-in from a human.
+
+### Multi-Source Example (v1.2+)
+
+You can now combine genes from multiple sources in a single reference:
+
+```yaml
+human-comprehensive:
+  # Baseline from IMGT
+  imgt:
+    human:
+      - IGHV1-2*02
+      - IGHV3-23*01
+      - IGHD3-10*01
+      - IGHJ4*02
+  
+  # Add curated alleles from OGRDB
+  ogrdb:
+    human:
+      - IGHV1-69*13    # Novel allele validated by OGRDB
+      - IGHV4-34*09    # Population-specific variant
+  
+  # Include VDJbase alleles
+  vdjbase:
+    human:
+      - IGHV3-30*18    # Curated from VDJbase
+```
+
+This allows you to:
+
+- Start with a comprehensive IMGT baseline
+- Add novel alleles from OGRDB that have been experimentally validated
+- Include population-specific alleles from VDJbase
+
+For more details on multi-source configurations, see [Custom Reference Databases](reference-workflow.md).
 
 Again, a full list of databases, species and genes can be found by exploring the [G3 API](https://g3.jordanrwillis.com/docs#/G3/find_genes_api_v1_genes_get), click the `Try it out` button.
 
