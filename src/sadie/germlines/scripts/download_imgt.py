@@ -76,6 +76,7 @@ SPECIES_GENEDB_MAP = {
     "rat": "Rattus norvegicus",
     "rabbit": "Oryctolagus cuniculus",
     "rhesus_macaque": "Macaca mulatta",
+    "macaque": "Macaca mulatta",  # Alias for canonical name
     "cynomolgus": "Macaca fascicularis",
     "dog": "Canis lupus familiaris",
     "cat": "Felis catus",
@@ -97,6 +98,7 @@ SPECIES_MAP = {
     "rat": "Rattus_norvegicus",
     "rabbit": "Oryctolagus_cuniculus",
     "rhesus_macaque": "Macaca_mulatta",
+    "macaque": "Macaca_mulatta",  # Alias for canonical name
     "cynomolgus": "Macaca_fascicularis",
     "dog": "Canis_lupus_familiaris",
     "cat": "Felis_catus",

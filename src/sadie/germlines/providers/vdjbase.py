@@ -32,6 +32,7 @@ from urllib.request import Request, urlopen
 
 from Bio import SeqIO
 
+from ..builders.gapper import GapperService
 from ..models import GermlineGene, ProviderMetadata
 from .base import GermlineProvider
 
@@ -45,7 +46,7 @@ VDJBASE_ADMIN_API_BASE = "https://vdjbase.org/admin/api"
 # Species name mapping (VDJbase API names to internal names)
 SPECIES_MAP = {
     "Human": "human",
-    "Rhesus Macaque": "rhesus_macaque",
+    "Rhesus Macaque": "macaque",  # Changed from rhesus_macaque
     "Mouse": "mouse",
 }
 
@@ -91,7 +92,7 @@ class VDJbaseProvider(GermlineProvider):
     >>> provider.download(["human", "rhesus_macaque"])
     """
 
-    def __init__(self, data_dir: Optional[Path] = None):
+    def __init__(self, data_dir: Optional[Path] = None, template_dir: Optional[Path] = None):
         """
         Initialize VDJbase provider.
 
@@ -100,6 +101,9 @@ class VDJbaseProvider(GermlineProvider):
         data_dir : Path, optional
             Base directory for VDJbase data.
             Defaults to sources/vdjbase/
+        template_dir : Path, optional
+            Directory containing IMGT-gapped templates for auto-gapping.
+            Defaults to sources/imgt/ (sibling of vdjbase/)
         """
         if data_dir is None:
             data_dir = Path(__file__).parent.parent / "sources" / "vdjbase"
@@ -107,6 +111,40 @@ class VDJbaseProvider(GermlineProvider):
         super().__init__(data_dir)
         self.name = "vdjbase"
         self._api_cache: Dict[str, Any] = {}
+        if template_dir is None:
+            template_dir = self.data_dir.parent / "imgt"
+        self.template_dir = template_dir
+        self._gappers: Dict[str, tuple[GapperService, str]] = {}
+
+    def _get_gapper(self, species: str) -> tuple[GapperService, str]:
+        """
+        Get or create a GapperService for the given species.
+
+        Falls back to human IMGT templates if species-specific templates
+        aren't available, since IG gene structure is conserved across species.
+        """
+        cache_key = species
+
+        if cache_key not in self._gappers:
+            if self.template_dir is None:
+                self._gappers[cache_key] = (GapperService(template_dir=None), species)
+                logger.warning(f"No IMGT templates found, gapping disabled for {species}")
+                return self._gappers[cache_key]
+
+            species_template_dir = self.template_dir / species
+            if species_template_dir.exists():
+                self._gappers[cache_key] = (GapperService(template_dir=self.template_dir), species)
+                logger.info(f"Initialized gapper with {species} templates")
+            else:
+                human_template_dir = self.template_dir / "human"
+                if human_template_dir.exists():
+                    self._gappers[cache_key] = (GapperService(template_dir=self.template_dir), "human")
+                    logger.info(f"Using human IMGT templates for {species} (no species-specific templates)")
+                else:
+                    self._gappers[cache_key] = (GapperService(template_dir=None), species)
+                    logger.warning(f"No IMGT templates found, gapping disabled for {species}")
+
+        return self._gappers[cache_key]
 
     def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
@@ -218,12 +256,28 @@ class VDJbaseProvider(GermlineProvider):
         # VDJbase sequences are typically ungapped
         is_gapped = "." in sequence or "-" in sequence
 
+        segment_upper = segment.upper()
+
         if is_gapped:
             sequence_gapped = sequence
             sequence_ungapped = sequence.replace(".", "").replace("-", "")
         else:
             sequence_ungapped = sequence
-            sequence_gapped = None  # Will be gapped by gapper module
+            sequence_gapped = None  # Will be gapped by gapper module if possible
+
+            if segment_upper in ["V", "J"]:
+                gapper, template_species = self._get_gapper(species)
+                sequence_gapped = gapper.gap_sequence(
+                    sequence=sequence_ungapped,
+                    segment=segment_upper,
+                    chain=chain,
+                    gene_name=gene_name,
+                    species=template_species,
+                )
+                if sequence_gapped:
+                    logger.debug(f"Auto-gapped {gene_name} using {template_species} templates")
+                else:
+                    logger.debug(f"Could not auto-gap {gene_name}, storing ungapped only")
 
         # Extract novel/confidence flags if present in description
         is_novel = "novel" in record.description.lower()
