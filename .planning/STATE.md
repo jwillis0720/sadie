@@ -5,26 +5,50 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Enable researchers to select germline database for AIRR annotation and renumbering
-**Current focus:** v1.2 Reference Module Unification
+**Current focus:** v1.3 Test Infrastructure & Species Expansion
 
 ## Current Position
 
-Phase: 23 — Documentation
-Plan: PLAN.md
+Phase: 25 — Macaque Germlines Integration
+Plan: .planning/phases/25-macaque-germlines-integration/PLAN.md
 Status: Complete
-Last activity: 2026-01-23 — Phase 23 implemented (MILESTONE COMPLETE)
+Last activity: 2026-01-25 — Completed Phase 25 (macaque germlines)
 
-Progress: ████████████████████ 100%
+Progress: █████░░░░░░░░░░░░░░░ 25% (1/4 phases complete)
 
-**Milestone v1.2: Reference Module Unification** — In progress (phases 19-23)
+**Milestone v1.3: Test Infrastructure & Species Expansion** — In Progress (phases 25-28)
 
-## Milestone v1.2 Overview
+**Next Phase:** Phase 26 — Add AIRR Package Dependency
+
+## Milestone v1.3 Overview
+
+**Goal:** Fix skipped tests by adding macaque germlines, airr package dependency, removing deprecated G3 tests, and fix germline priority order
+
+### Phase 25: Macaque Germlines Integration ✓
+- ✓ Build macaque IgBLAST databases
+- ✓ Generate internal_data and aux files
+- ✓ Enable 6 previously skipped tests (4 pass, 2 fail due to pre-existing bug)
+
+### Phase 26: Add AIRR Package Dependency
+- [ ] Add airr to pyproject.toml
+- [ ] Remove importorskip from test
+
+### Phase 27: Remove Deprecated G3 Tests
+- [ ] Review and migrate/remove 2 G3 legacy tests
+
+### Phase 28: Fix Germline Priority Order
+- [ ] Update default priority to ['vdjbase', 'ogrdb', 'imgt', 'custom']
+- [ ] Document priority rationale
+
+---
+
+## Milestone v1.2 Overview (Complete)
 
 **Goal:** Enable reference.yml to select alleles from all germline sources (imgt, ogrdb, vdjbase, custom), using germlines module as data provider instead of G3 API.
 
 ### Phase 19: Source Validation ✓
 - ✓ Expand VALID_SOURCES in models.py (imgt, ogrdb, vdjbase, custom)
-- SRC-02 deferred to Phase 20 (validate at add_genes time)
+- SRC-02 moved to Phase 24 (validate source/species in germlines path)
 
 ### Phase 20: Integration Foundation ✓
 - ✓ Add `use_germlines=True` to `References.from_yaml()`
@@ -35,7 +59,6 @@ Progress: ████████████████████ 100%
 - ✓ Add `sadie reference build` command
 - ✓ Generate complete IgBLAST database structure
 - ✓ Progress output during build
-- Note: --use-germlines has gap (missing IMGT region fields)
 
 ### Phase 22: Runtime Usage ✓
 - ✓ Add `Airr(database=<path>)` parameter
@@ -45,6 +68,11 @@ Progress: ████████████████████ 100%
 ### Phase 23: Documentation ✓
 - ✓ Create reference-sample.yml (multi-source examples)
 - ✓ Document build → use workflow
+
+### Phase 24: Gap Closure ✓
+- ✓ Implement SRC-02 source/species validation for germlines
+- ✓ Add IMGT region positions so `--use-germlines` build succeeds
+- ✓ Create SUMMARY/VERIFICATION artifacts for phases 19-23
 
 ## Milestone v1.1 Summary (Complete)
 
@@ -73,5 +101,11 @@ Progress: ████████████████████ 100%
 - `audit/parity-notes.md` — Parity explanation
 - `audit/igblast-quirk.md` — IgBLAST quirk documentation
 
+## Session Continuity
+
+Last session: 2026-01-25T19:34:16Z
+Stopped at: Completed phase-24/PLAN.md
+Resume file: None
+
 ---
-*Last updated: 2026-01-23*
+*Last updated: 2026-01-25*
