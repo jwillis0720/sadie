@@ -1,317 +1,261 @@
-# G3 Backend Code Structure
+# SADIE Directory and File Structure
 
-## Directory Layout
+## Project Root
+
+```
+/Users/tmsincomb/sadie/
+├── src/sadie/           # Main source code
+├── tests/               # Test suite
+├── docs/                # Documentation (MkDocs)
+├── examples/            # Usage examples
+├── notebooks/           # Jupyter notebooks
+├── scripts/             # Utility scripts
+├── specs/               # Specification documents
+├── reference.yml        # Default reference configuration
+├── pyproject.toml       # Poetry project config
+├── pytest.ini           # pytest configuration
+├── mkdocs.yml           # MkDocs configuration
+└── .planning/           # Planning documentation (generated)
+```
+
+## Source Code Structure
+
+### Main Package (`src/sadie/`)
 
 ```
 src/sadie/
-├── airr/                           # Main AIRR annotation module
-│   ├── airr.py                     # Airr class - orchestrator
-│   ├── airrtable/                  # Output table handling
-│   │   ├── airrtable.py            # AirrTable, AirrSeries, LinkedAirrTable
-│   │   ├── constants.py            # AIRR column type definitions
-│   │   └── genbank.py              # GenBank format export
-│   ├── igblast/                    # IgBLAST integration
-│   │   ├── igblast.py              # IgBLASTN wrapper class
-│   │   └── germline.py             # GermlineData path resolution
-│   ├── models/                     # Pydantic models
-│   │   └── series.py               # AirrSeriesModel validation
-│   ├── methods.py                  # Utility methods
-│   ├── exceptions.py               # Custom exceptions
-│   ├── data/germlines/             # Legacy G3 germline data
-│   │   ├── aux_db/imgt/            # Auxiliary files (J gene data)
-│   │   └── Ig/                     # BLAST databases
-│   └── bin/                        # IgBLAST executables
+├── __init__.py          # Package exports: airr, numbering, receptor, reference, renumbering
+├── app.py               # Streamlit web application
 │
-├── germlines/                      # New germline management module
-│   ├── __init__.py                 # Public API
-│   ├── manager.py                  # GermlineManager class
-│   ├── pipeline.py                 # Build pipeline orchestrator
-│   ├── models.py                   # GermlineGene, ProviderMetadata
-│   ├── builders/                   # Database builders
-│   │   ├── aux.py                  # AuxFileBuilder class
-│   │   ├── j_gene_data.py          # J gene reference data
-│   │   ├── blast.py                # BLAST database builder
-│   │   └── gapper.py               # Sequence gapping
-│   ├── providers/                  # Data sources
-│   │   ├── imgt.py                 # IMGT provider
-│   │   ├── ogrdb.py                # OGRDB provider
-│   │   ├── vdjbase.py              # VDJbase provider
-│   │   └── custom.py               # Custom reference provider
-│   ├── igblast/                    # Output databases
-│   │   ├── Ig/internal_data/       # NDM files + BLAST DBs
-│   │   └── aux_db/                 # Auxiliary files
-│   └── scripts/                    # CLI utilities
-│       ├── build_aux_files.py
-│       └── build_internal_data.py
+├── airr/                # AIRR-standard annotation (PRIMARY ENTRY POINT)
+│   ├── __init__.py
+│   ├── airr.py          # Airr class - main annotation API
+│   ├── methods.py       # Annotation helper methods
+│   ├── exceptions.py    # Custom exceptions (BadDataSet, BadIgBLASTExe, etc.)
+│   ├── airrtable/       # AirrTable and LinkedAirrTable classes
+│   ├── igblast/         # IgBLAST wrapper
+│   │   ├── __init__.py
+│   │   ├── igblast.py   # IgBLASTN class - blast execution
+│   │   └── germline.py  # GermlineData - database path management
+│   ├── models/          # Data models
+│   ├── bin/             # Platform-specific igblastn binaries
+│   └── data/            # Default germline data (legacy)
 │
-└── receptor/                       # Receptor chain models
-    └── rearrangment.py             # ReceptorChain, AlignmentPositions, etc.
+├── reference/           # YAML → IgBLAST database builder
+│   ├── __init__.py      # Exports: Reference, References, YamlRef
+│   ├── reference.py     # Reference and References classes
+│   ├── models.py        # Pydantic models (GeneEntry, GeneEntries)
+│   ├── yaml.py          # YamlRef - YAML configuration parser
+│   ├── genbank.py       # GenBank utilities
+│   ├── settings.py      # Reference settings
+│   ├── util.py          # Utilities (make_blast_db, write_fasta)
+│   ├── bin/             # makeblastdb binaries
+│   └── data/            # Default reference.yml
+│
+├── germlines/           # Multi-source germline database (v1.2)
+│   ├── __init__.py      # Public API: get_germline_genes, GermlineManager, etc.
+│   ├── manager.py       # GermlineManager - priority-based lookup
+│   ├── models.py        # GermlineGene, ProviderMetadata
+│   ├── pipeline.py      # GermlinePipeline - normalize → build workflow
+│   ├── g3_adapter.py    # GermlineToG3Adapter - format conversion
+│   ├── cli.py           # CLI commands
+│   ├── renumbering_integration.py  # LocalHMMBuilder for renumbering
+│   ├── providers/       # Database providers
+│   │   ├── __init__.py
+│   │   ├── base.py      # GermlineProvider abstract class
+│   │   ├── imgt.py      # IMGTProvider
+│   │   ├── ogrdb.py     # OGRDBProvider
+│   │   ├── vdjbase.py   # VDJbaseProvider
+│   │   └── custom.py    # CustomProvider
+│   ├── builders/        # IgBLAST database builders
+│   ├── sources/         # Raw data by provider
+│   │   ├── imgt/
+│   │   ├── ogrdb/
+│   │   ├── vdjbase/
+│   │   └── custom/
+│   ├── normalized/      # Merged/processed sequences
+│   ├── igblast/         # IgBLAST-ready databases
+│   │   ├── Ig/
+│   │   │   └── internal_data/{species}/
+│   │   └── aux_db/
+│   ├── hmms/            # Generated HMM files
+│   ├── stockholms/      # Stockholm alignment files
+│   ├── scripts/         # Data processing scripts
+│   └── utils/           # Germlines utilities
+│
+├── renumbering/         # Antibody numbering module
+│   ├── __init__.py
+│   ├── renumbering.py   # Main renumbering logic
+│   ├── result.py        # Renumbering results
+│   ├── constants.py     # Numbering scheme constants
+│   ├── exception.py     # Custom exceptions
+│   ├── numbering_translator.py  # Scheme translation
+│   ├── aligners/        # Alignment implementations
+│   │   └── hmmer.py     # HMMER-based alignment
+│   ├── clients/         # External service clients
+│   └── data/            # Reference data
+│
+├── numbering/           # Legacy numbering (being deprecated)
+│
+├── receptor/            # Receptor utilities
+│
+├── cluster/             # Sequence clustering
+│
+├── typing/              # Type definitions
+│   └── __init__.py      # Species, Chain, Source types
+│
+└── utility/             # Shared utilities
 ```
 
-## Key Classes and Their Responsibilities
+## Tests Structure
 
-### AIRR Module (`src/sadie/airr/`)
+```
+tests/
+├── __init__.py
+├── conftest.py          # pytest fixtures
+├── data/                # Test data files
+├── integration/         # Integration tests
+└── unit/                # Unit tests
+    ├── airr/            # AIRR module tests
+    │   ├── test_airr.py
+    │   └── test_methods.py
+    ├── germlines/       # Germlines module tests
+    │   ├── test_reference_integration.py
+    │   └── ... (20+ test files)
+    ├── reference/       # Reference module tests
+    ├── renumbering/     # Renumbering tests
+    ├── aligners/        # Aligner tests
+    ├── cluster/         # Cluster tests
+    ├── receptor/        # Receptor tests
+    ├── typing/          # Typing tests
+    └── utility/         # Utility tests
+```
 
-#### `Airr` (airr.py:67)
-Main entry point for AIRR annotation.
+## Key Entry Points
 
-**Responsibilities**:
-- Configure IgBLAST parameters (penalties, alignment options)
-- Initialize GermlineData with correct paths
-- Execute annotation via `run_fasta()`, `run_single()`, `run_records()`
-- Handle adaptive penalty adjustment for failed annotations
-- Apply allele coercion when exact matches unavailable
-
-**Key Methods**:
+### For Annotation
 ```python
-def run_fasta(file: Path, scfv: bool = False) -> AirrTable
-def run_single(seq_id: str, seq: str) -> AirrTable
-def run_records(seqrecords: List[SeqRecord]) -> AirrTable
-def _apply_allele_coercion(result: AirrTable) -> AirrTable
+# Primary: Airr class
+from sadie.airr import Airr
+airr = Airr("human")
+result = airr.run_fasta("sequences.fasta")
+
+# With prebuilt database
+airr = Airr("custom", database="/path/to/database")
 ```
 
-**Segment Discovery Interface**:
+### For Reference Building
 ```python
-self.igblast.germline_db_v = self.germline_data.v_gene_dir
-self.igblast.germline_db_d = self.germline_data.d_gene_dir
-self.igblast.germline_db_j = self.germline_data.j_gene_dir
-self.igblast.germline_db_c = self.germline_data.c_gene_dir
-self.igblast.aux_path = self.germline_data.aux_path  # Critical for CDR3
+# Build custom reference database
+from sadie.reference import References
+refs = References.from_yaml("reference.yml", use_germlines=True)
+refs.make_airr_database("/output/path")
 ```
 
----
-
-#### `IgBLASTN` (igblast/igblast.py:188)
-Low-level IgBLAST subprocess wrapper.
-
-**Responsibilities**:
-- Construct IgBLAST command-line arguments
-- Execute igblastn and capture AIRR output
-- Validate all required arguments before execution
-
-**Key Properties**:
+### For Germlines Access
 ```python
-@property
-def aux_path(self) -> Path:
-    """Auxiliary data for J gene CDR3 boundaries."""
+# Direct gene access
+from sadie.germlines import get_germline_genes, GermlineManager
 
-@property
-def germline_db_v(self) -> Path:
-    """V gene BLAST database prefix."""
+# Simple API
+genes = get_germline_genes("human", "V", "H")
 
-@property
-def germline_db_j(self) -> Path:
-    """J gene BLAST database prefix."""
+# Advanced with custom providers
+manager = GermlineManager(providers=["custom", "imgt"])
+genes = manager.get_genes("human", "V", "H")
 ```
 
-**Command Construction** (line 886):
-```python
-@property
-def cmd(self) -> List[str]:
-    _cmd = [str(self.executable)]
-    for blast_arg in self.arguments:
-        kv = blast_arg.get_formatted_blast_arg()
-        if kv:
-            _cmd += kv
-    return _cmd
+## Configuration Files
+
+### reference.yml Format
+```yaml
+# Reference name (becomes database name)
+human:
+  # Source database
+  imgt:
+    # Species
+    human:
+      - IGHV1-69*01
+      - IGHD3-3*01
+      - IGHJ6*01
+      # ... V, D, J genes required
+
+# Chimeric example (multiple species)
+chimeric_ref:
+  imgt:
+    human:
+      - IGHV1-69*01
+    mouse:
+      - IGHV1-18*01
 ```
 
----
-
-#### `GermlineData` (igblast/germline.py:28)
-Resolves paths to germline databases and auxiliary files.
-
-**Responsibilities**:
-- Locate V/D/J/C BLAST database prefixes
-- Find auxiliary file for species/scheme
-- Set IGDATA environment for IgBLAST
-- Support both legacy G3 and new germlines module paths
-
-**Path Resolution Logic**:
-```python
-# Feature flag check
-if _use_germlines_module():
-    # New germlines module paths
-    self.aux_path = germlines_igblast / "aux_db" / f"{name}_gl.aux"
-else:
-    # Legacy G3 paths
-    self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
+### IgBLAST Database Structure (Generated)
+```
+{output_path}/
+├── Ig/
+│   ├── blastdb/
+│   │   └── {name}/
+│   │       ├── {name}_V.nhr
+│   │       ├── {name}_V.nin
+│   │       ├── {name}_V.nsq
+│   │       ├── {name}_D.*
+│   │       └── {name}_J.*
+│   └── internal_data/
+│       └── {name}/
+│           ├── {name}.ndm.imgt    # FWR/CDR boundaries
+│           └── {name}_V.*         # V gene database
+├── aux_db/
+│   └── imgt/
+│       └── {name}_gl.aux          # J gene reading frames
+└── .references_dataframe.csv.gz   # Full reference data
 ```
 
-**Critical Properties**:
-```python
-@property
-def aux_path(self) -> Path:
-    """Path to J gene auxiliary data for CDR3 reconstruction."""
+## Where to Put New Code
 
-@property
-def j_gene_dir(self) -> Path:
-    """J gene BLAST database prefix path."""
+### New Provider
+```
+src/sadie/germlines/providers/{provider_name}.py
+- Extend GermlineProvider base class
+- Implement: fetch_genes, fetch_gene_by_name, get_metadata, is_available, download
+- Register in manager._create_provider()
 ```
 
----
-
-#### `AirrTable` (airrtable/airrtable.py:192)
-DataFrame subclass with AIRR-specific functionality.
-
-**Responsibilities**:
-- Validate AIRR column compliance
-- Compute liability flags (J gene annotation issues)
-- Calculate mutation frequencies
-- Build VDJ recombination strings
-- Export to AIRR TSV, FASTA, GenBank formats
-
-**Liability Detection** (line 650):
-```python
-def _check_j_gene_liability(self, X: pd.Series) -> bool:
-    """
-    Check CDR3/FWR4 annotation completeness.
-    Returns True if J gene annotation likely failed.
-    """
+### New Data Source
+```
+src/sadie/germlines/sources/{source_name}/
+- Raw data files organized by species
+- Must follow FASTA naming: IG{chain}{segment}.fasta
 ```
 
-**Segment Position Fields**:
-```python
-# V segment
-"v_sequence_start", "v_sequence_end"
-
-# D segment
-"d_sequence_start", "d_sequence_end"
-
-# J segment
-"j_sequence_start", "j_sequence_end"
-
-# C region
-"c_sequence_start", "c_sequence_end"
-
-# CDR3 boundaries
-"cdr3_start", "cdr3_end"
+### New AIRR Feature
+```
+src/sadie/airr/airr.py           # Main Airr class
+src/sadie/airr/airrtable/        # AirrTable extensions
+src/sadie/airr/methods.py        # Helper methods
 ```
 
----
-
-### Germlines Module (`src/sadie/germlines/`)
-
-#### `AuxFileBuilder` (builders/aux.py:24)
-Builds IgBLAST auxiliary files from gapped sequences.
-
-**Aux File Format** (5-column TSV):
+### New Reference Configuration
 ```
-IGHJ1*01	0	JH	17	1
-<gene>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<is_functional>
+src/sadie/reference/data/        # Default configs
+reference.yml (project root)     # Project-specific config
 ```
 
-**Key Methods**:
-```python
-def build_for_species(species: str, source_dir: Path, output_file: Path) -> None
-def _create_aux_entry(record, chain: str, segment: str) -> Optional[str]
-def validate_aux_file(aux_file: Path) -> bool
+### New Tests
+```
+tests/unit/{module}/test_{feature}.py    # Unit tests
+tests/integration/                        # Integration tests
+tests/data/                              # Test fixtures
 ```
 
----
+## Critical Files for Reference Module (v1.2)
 
-#### `get_j_gene_data` (builders/j_gene_data.py:58)
-Lookup J gene reference data for aux file generation.
-
-**Returns**: `(reading_frame, chain_type, cdr3_end, is_functional)`
-
-**Reference Data Dictionary**:
-```python
-HUMAN_J_GENE_DATA = {
-    "IGHJ1*01": (0, 17, 1),   # RF=0, CDR3 ends 17nt into J
-    "IGHJ4*02": (2, 13, 1),   # RF=2, CDR3 ends 13nt into J
-    "IGKJ1*01": (1, 6, 1),    # RF=1, CDR3 ends 6nt into J
-}
-```
-
----
-
-## Critical Files for Segment Discovery
-
-### Auxiliary Files (J Gene CDR3 Boundaries)
-
-| Location | Purpose |
-|----------|---------|
-| `src/sadie/airr/data/germlines/aux_db/imgt/{species}_gl.aux` | Legacy G3 aux files |
-| `src/sadie/germlines/igblast/aux_db/{species}_gl.aux` | New germlines aux files |
-
-### Internal Data (NDM Files)
-
-| Location | Purpose |
-|----------|---------|
-| `igblast/Ig/internal_data/{species}/{species}.ndm.imgt` | V gene FR/CDR boundaries |
-
-### BLAST Databases
-
-| Database | Location Pattern | Purpose |
-|----------|------------------|---------|
-| V genes | `{species}_V.n*` | V gene alignment |
-| D genes | `{species}_D.n*` | D gene alignment |
-| J genes | `{species}_J.n*` | J gene alignment |
-| C region | `{species}_C.n*` | Constant region alignment |
-
----
-
-## Where to Add New Code
-
-### Adding a New Species
-
-1. **Aux file**: Add entries to `src/sadie/germlines/builders/j_gene_data.py`
-2. **Build databases**: Run `sadie.germlines.update_databases(species)`
-3. **Verify**: Check `GermlineData.get_available_datasets()`
-
-### Fixing J Gene CDR3 Issues
-
-1. **Identify**: Check aux file format at `src/sadie/germlines/igblast/aux_db/{species}_gl.aux`
-2. **Fix**: Update `HUMAN_J_GENE_DATA` in `builders/j_gene_data.py`
-3. **Rebuild**: `AuxFileBuilder().build_for_species(species, source_dir, output_file)`
-
-### Adding C Region Support
-
-1. **Database**: Ensure C gene BLAST database exists at `{species}_C.*`
-2. **GermlineData**: Verify `c_gene_dir` property resolves correctly
-3. **IgBLAST**: Check `germline_db_c` argument is being passed
-
-### Debugging Segment Position Issues
-
-1. **Enable debug mode**: `Airr(species, debug=True)`
-2. **Check command**: IgBLAST command is logged with all paths
-3. **Verify aux file**: Ensure J gene allele exists with correct `cdr3_end` value
-4. **Check liability**: `airr_table["liable"]` column indicates annotation failures
-
----
-
-## Testing Entry Points
-
-| Test File | Purpose |
-|-----------|---------|
-| `tests/data/fixtures/reference/igblast_aux/` | Aux file test fixtures |
-| `src/sadie/germlines/tests/test_g3_regression.py` | G3 compatibility tests |
-| `src/sadie/germlines/tests/test_integration.py` | Full pipeline tests |
-
----
-
-## Configuration
-
-### Environment Variables
-
-```bash
-SADIE_USE_GERMLINES_MODULE=true   # Use new germlines module (default)
-SADIE_USE_GERMLINES_MODULE=false  # Use legacy G3 paths
-```
-
-### Airr Class Parameters Affecting Segment Discovery
-
-```python
-Airr(
-    reference_name="human",
-    v_gene_penalty=-1,          # V alignment penalty
-    d_gene_penalty=-1,          # D alignment penalty
-    j_gene_penalty=-2,          # J alignment penalty
-    min_d_match=5,              # Min D nucleotide matches
-    extend_align5end=True,      # Extend V alignment 5'
-    extend_align3end=True,      # Extend J alignment 3'
-    scheme="imgt",              # Numbering scheme for boundaries
-    coerce=False,               # Accept alternate alleles
-)
-```
+| File | Purpose |
+|------|---------|
+| `reference/reference.py` | Reference and References classes - YAML → database |
+| `reference/models.py` | Pydantic validation (GeneEntry, GeneEntries) |
+| `germlines/manager.py` | GermlineManager - multi-source priority lookup |
+| `germlines/g3_adapter.py` | GermlineGene → G3 format adapter |
+| `germlines/providers/base.py` | GermlineProvider abstract interface |
+| `airr/igblast/germline.py` | GermlineData - database path resolution |
+| `airr/airr.py` | Airr class - uses database or germlines |
+| `reference.yml` | Default reference configuration |

@@ -1,253 +1,220 @@
-# G3 Backend Architecture for AIRR Segment Discovery
+# SADIE Architecture
 
 ## Overview
 
-The SADIE G3 backend provides immunoglobulin repertoire annotation by wrapping IgBLAST and processing its output into AIRR-compliant format. This document focuses on how V, D, J, and C region segment positions are discovered and CDR3/junction boundaries are determined.
+SADIE (Sequence Analysis and Design for Immunology Engineering) is an immunoglobulin sequence annotation and analysis toolkit built on IgBLAST. The architecture centers on the **Reference Module (v1.2)** which unifies germline data management from multiple sources.
 
-## Core Architecture Flow
+## Core Module Organization
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        AIRR Annotation Pipeline                              │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  Input Sequence                                                              │
-│       │                                                                      │
-│       ▼                                                                      │
-│  ┌─────────────────────────────────────────────────────────────────────────┐ │
-│  │  Airr Class (src/sadie/airr/airr.py)                                    │ │
-│  │  - Orchestrates annotation pipeline                                      │ │
-│  │  - Configures IgBLAST parameters                                         │ │
-│  │  - Handles adaptive penalty adjustment                                   │ │
-│  └─────────────────────────────────────────────────────────────────────────┘ │
-│       │                                                                      │
-│       ▼                                                                      │
-│  ┌─────────────────────────────────────────────────────────────────────────┐ │
-│  │  GermlineData Class (src/sadie/airr/igblast/germline.py)                │ │
-│  │  - Resolves paths for V/D/J/C BLAST databases                           │ │
-│  │  - Locates auxiliary file for J gene CDR3 boundaries                    │ │
-│  │  - Sets IGDATA environment path for internal_data                       │ │
-│  └─────────────────────────────────────────────────────────────────────────┘ │
-│       │                                                                      │
-│       ▼                                                                      │
-│  ┌─────────────────────────────────────────────────────────────────────────┐ │
-│  │  IgBLASTN Class (src/sadie/airr/igblast/igblast.py)                     │ │
-│  │  - Constructs IgBLAST command-line arguments                             │ │
-│  │  - Executes igblastn subprocess                                          │ │
-│  │  - Returns AIRR format (outfmt=19) DataFrame                             │ │
-│  └─────────────────────────────────────────────────────────────────────────┘ │
-│       │                                                                      │
-│       ▼                                                                      │
-│  ┌─────────────────────────────────────────────────────────────────────────┐ │
-│  │  AirrTable Class (src/sadie/airr/airrtable/airrtable.py)                │ │
-│  │  - Validates AIRR compliance                                             │ │
-│  │  - Calculates liability flags (J gene issues)                            │ │
-│  │  - Computes mutation frequencies                                         │ │
-│  │  - Assembles VDJ recombination strings                                   │ │
-│  └─────────────────────────────────────────────────────────────────────────┘ │
-│       │                                                                      │
-│       ▼                                                                      │
-│  Output: AirrTable with segment positions, CDR/FWR boundaries, sequences    │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+src/sadie/
+├── airr/          # AIRR-standard annotation (main entry point)
+├── germlines/     # Multi-source germline database management (v1.2)
+├── reference/     # YAML configuration → IgBLAST database builder
+├── renumbering/   # Antibody numbering (IMGT, Kabat, etc.)
+├── numbering/     # Legacy numbering (being deprecated)
+├── receptor/      # Receptor utilities
+├── cluster/       # Sequence clustering
+├── typing/        # Type definitions (Species, Chain, Source)
+└── utility/       # Shared utilities
 ```
 
-## Segment Position Discovery
+## Reference Module Architecture (v1.2)
 
-### 1. V Gene Position Discovery
+### Data Flow Pipeline
 
-**Mechanism**: BLAST alignment against V gene database
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                     YAML Configuration (reference.yml)               │
+│   name:                                                              │
+│     source: [imgt, ogrdb, vdjbase, custom]                          │
+│       species:                                                       │
+│         - IGHV1-69*01                                                │
+│         - IGHD3-3*01                                                 │
+└──────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                     References.from_yaml()                           │
+│   src/sadie/reference/reference.py                                   │
+│   - Parses YAML via YamlRef                                         │
+│   - Creates Reference objects per name                               │
+│   - Fetches genes via GermlineManager (or legacy G3 API)            │
+└──────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                     GermlineManager                                  │
+│   src/sadie/germlines/manager.py                                    │
+│   - Priority-based database lookup (custom > imgt > ogrdb > vdjbase)│
+│   - Deduplication: first provider wins on name/sequence conflicts   │
+│   - Returns GermlineGene objects                                     │
+└──────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                     GermlineToG3Adapter                              │
+│   src/sadie/germlines/g3_adapter.py                                 │
+│   - Transforms GermlineGene → G3 API format                         │
+│   - Enables backward compatibility with existing Reference code      │
+│   - Generates deterministic _id via SHA-256                         │
+└──────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                     References.make_airr_database()                  │
+│   - _make_internal_annotation_file() → internal_data/{name}/*.ndm   │
+│   - _make_igblast_ref_database() → blastdb/{name}/{name}_V,D,J      │
+│   - _make_auxillary_file() → aux_db/{scheme}/{name}_gl.aux          │
+└──────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                     IgBLAST Database Structure                       │
+│   output_path/                                                       │
+│   ├── Ig/                                                           │
+│   │   ├── blastdb/{name}/{name}_V, {name}_D, {name}_J              │
+│   │   └── internal_data/{name}/{name}.ndm.imgt                     │
+│   ├── aux_db/imgt/{name}_gl.aux                                    │
+│   └── .references_dataframe.csv.gz                                  │
+└──────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                     Airr(database=<path>) or Airr(reference_name)    │
+│   src/sadie/airr/airr.py                                            │
+│   - Uses GermlineData to locate databases                           │
+│   - Executes IgBLASTN with configured paths                         │
+│   - Returns AirrTable with AIRR-standard annotations                │
+└──────────────────────────────────────────────────────────────────────┘
+```
 
-**Key Fields Produced**:
-- `v_sequence_start`: Start position in query sequence (1-based)
-- `v_sequence_end`: End position in query sequence (1-based)
-- `v_germline_start`, `v_germline_end`: Positions in germline reference
-- `v_cigar`: CIGAR string describing alignment
+### Provider System
 
-**Database Path Resolution** (GermlineData):
+The germlines module implements a pluggable provider architecture:
+
+```
+GermlineProvider (abstract base)
+├── IMGTProvider      # IMGT reference database
+├── OGRDBProvider     # OGRDB novel alleles
+├── VDJbaseProvider   # VDJbase population-specific
+└── CustomProvider    # User-defined sequences
+```
+
+**Provider Priority** (default): `["custom", "ogrdb", "vdjbase", "imgt"]`
+
+**Deduplication Rules**:
+1. Same gene name → first provider wins
+2. Same exact sequence → first provider wins  
+3. Novel gene → include from any provider
+
+### Integration Points
+
+#### AIRR ↔ Germlines
 ```python
-self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
-# e.g., /path/igblast/Ig/internal_data/human/human_V
+# airr/igblast/germline.py
+class GermlineData:
+    def __init__(self, name, receptor, database_dir=None, scheme="imgt", prebuilt=False):
+        # Option 1: Use prebuilt database (database= parameter)
+        if prebuilt:
+            paths = validate_prebuilt_database(database_dir, name)
+            
+        # Option 2: Use germlines module (SADIE_USE_GERMLINES_MODULE=true)
+        elif _use_germlines_module():
+            germlines_igblast = _get_germlines_igblast_dir()
+            
+        # Option 3: Legacy G3 API paths (deprecated)
+        else:
+            self._use_legacy_paths(name, receptor, scheme)
 ```
 
-### 2. D Gene Position Discovery (Heavy Chain Only)
-
-**Mechanism**: BLAST alignment with minimum match constraint
-
-**Key Fields Produced**:
-- `d_sequence_start`, `d_sequence_end`: Query positions
-- `d_germline_start`, `d_germline_end`: Germline positions
-- `d_cigar`: CIGAR string
-- `d_call`: Best D gene match
-
-**Configuration**:
+#### Reference ↔ Germlines (via Adapter)
 ```python
-self.min_d_match = 5  # Minimum consecutive nucleotide matches for D
+# reference/reference.py
+class Reference:
+    def _get_gene(self, gene: GeneEntry):
+        if self.use_germlines:
+            manager = GermlineManager(providers=[gene.source])
+            germline_gene = manager.get_gene_by_name(gene.gene, gene.species)
+            
+            # Transform to G3 format for backward compatibility
+            adapter = GermlineToG3Adapter()
+            return adapter.to_g3_format(germline_gene)
 ```
 
-### 3. J Gene Position Discovery
-
-**Mechanism**: BLAST alignment + auxiliary file lookup for CDR3 boundary
-
-**Key Fields Produced**:
-- `j_sequence_start`, `j_sequence_end`: Query positions
-- `j_germline_start`, `j_germline_end`: Germline positions
-- `j_cigar`: CIGAR string
-
-**Critical Dependency**: Auxiliary file required for FWR4/CDR3 boundary calculation
-
-### 4. C Region Position Discovery
-
-**Mechanism**: BLAST alignment against C gene database (optional)
-
-**Key Fields Produced**:
-- `c_sequence_start`, `c_sequence_end`: Query positions
-- `c_call`: Constant region gene match
-
-**Database Configuration**:
+#### Renumbering ↔ Germlines (HMM Building)
 ```python
-self.germline_db_c = self.germline_data.c_gene_dir
-# Optional - warns if not found
+# germlines/renumbering_integration.py
+class LocalHMMBuilder:
+    def get_hmm(self, species, chain, source="imgt"):
+        # Build HMM from local germlines instead of G3 API
+        vj_pairs = self._get_vj_alignment_pairs(species, chain, source)
+        # Use pyhmmer for HMM construction
 ```
 
-## Auxiliary File Architecture
+## Key Design Patterns
 
-### Purpose
-IgBLAST aux files provide metadata for J genes to determine CDR3 endpoint boundaries. Without correct aux data, CDR3 and FWR4 annotations fail.
+### 1. Adapter Pattern (G3 Compatibility)
+`GermlineToG3Adapter` transforms GermlineGene objects into the legacy G3 API response format, enabling incremental migration without breaking existing code.
 
-### Format (5-column TSV)
-```
-<gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<is_functional>
-```
+### 2. Strategy Pattern (Providers)
+Each `GermlineProvider` subclass implements the same interface but retrieves data from different sources (IMGT, OGRDB, VDJbase, custom files).
 
-### Example Entries
-```
-IGHJ1*01	0	JH	17	1
-IGHJ2*01	1	JH	18	1
-IGKJ1*01	1	JK	6	1
-```
+### 3. Priority Chain
+`GermlineManager` iterates providers in priority order, implementing a chain-of-responsibility for gene lookup with deduplication.
 
-### Column Definitions
-
-| Column | Description | Values |
-|--------|-------------|--------|
-| gene_name | Full allele name | IGHJ1*01, IGKJ2*03, etc. |
-| reading_frame | Frame offset (0-2) | 0, 1, or 2 |
-| chain_type | Chain identifier | JH, JK, JL |
-| cdr3_end | Nucleotides from J start to CDR3 end | Integer (e.g., 17, 6) |
-| is_functional | Functional gene flag | 1 (functional) or 0 (pseudogene) |
-
-### Path Resolution
+### 4. Feature Flag Pattern
 ```python
-# Legacy G3 path:
-self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
-
-# New germlines module path:
-self.aux_path = germlines_igblast / "aux_db" / f"{name}_gl.aux"
+SADIE_USE_GERMLINES_MODULE=true   # Use local germlines (default)
+SADIE_USE_GERMLINES_MODULE=false  # Use deprecated G3 API
 ```
 
-### CDR3 Boundary Calculation
-
-IgBLAST uses aux file to calculate:
-1. **CDR3 Start**: From V gene conserved cysteine (defined in internal_data/*.ndm files)
-2. **CDR3 End**: J gene start position + `cdr3_end` value from aux file
-
-**Why Aux File Matters**: The `cdr3_end` column tells IgBLAST how many nucleotides into the J gene the CDR3 extends. Without this, the CDR3/FWR4 boundary cannot be determined.
-
-## Internal Data Architecture (NDM Files)
-
-### Purpose
-NDM (Numbering Data Map) files define framework and CDR boundaries for V genes based on IMGT or Kabat numbering schemes.
-
-### Location
-```
-igdata/internal_data/{species}/{species}.ndm.{scheme}
-```
-
-### Contains
-- V gene allele names
-- Framework/CDR boundary positions
-- Conserved residue positions (e.g., Cys at position 23 for CDR3 start anchor)
-
-## Liability Detection
-
-The AirrTable performs J gene liability detection to identify annotation failures:
-
+### 5. Prebuilt Database Support (v1.2)
 ```python
-def _check_j_gene_liability(self, X: pd.Series) -> bool:
-    """
-    Liability conditions:
-    1. Have CDR1/CDR2 but missing CDR3 → Likely aux file issue
-    2. Have FWR3 + CDR3 but missing FWR4 → J gene not properly resolved
-    3. Only FWR3 + CDR3 + FWR4 → Short read, acceptable
-    """
+# Build once
+references = References.from_yaml("reference.yml", use_germlines=True)
+references.make_airr_database("/path/to/database")
+
+# Use anywhere
+airr = Airr("human", database="/path/to/database")
 ```
 
-**Liability Flag Usage**: When `liable=True`, SADIE can trigger adaptive penalty adjustment to retry annotation with different V/D/J penalties.
-
-## Feature Flag: Germlines Module
-
-```python
-def _use_germlines_module() -> bool:
-    env_value = os.environ.get("SADIE_USE_GERMLINES_MODULE", "true").lower()
-    # "true" = Use new germlines module (default)
-    # "false" = Use legacy G3 paths
-```
-
-This controls whether segment databases come from:
-- **New path**: `src/sadie/germlines/igblast/`
-- **Legacy path**: `src/sadie/airr/data/germlines/`
-
-## IgBLAST Command Construction
-
-Key arguments affecting segment discovery:
-
-```python
-cmd = [
-    str(self.executable),
-    "-germline_db_V", path_to_v_db,
-    "-germline_db_D", path_to_d_db,
-    "-germline_db_J", path_to_j_db,
-    "-c_region_db", path_to_c_db,      # Optional
-    "-auxiliary_data", path_to_aux,     # Critical for CDR3
-    "-organism", species,
-    "-domain_system", "imgt",           # or "kabat"
-    "-outfmt", "19",                    # AIRR format
-    "-V_penalty", v_penalty,
-    "-D_penalty", d_penalty,
-    "-J_penalty", j_penalty,
-    "-min_D_match", min_d_match,
-    "-extend_align5end",
-    "-extend_align3end",
-    "-query", input_fasta
-]
-```
-
-## Data Flow Summary
+## Module Dependencies
 
 ```
-1. Input FASTA → Airr.run_fasta()
-2. GermlineData resolves all paths (V/D/J/C databases + aux file)
-3. IgBLASTN constructs command with all paths
-4. IgBLAST executes:
-   - BLAST V/D/J/C alignments → segment positions
-   - Reads aux file → CDR3 end position for J genes
-   - Reads internal_data NDM → FWR/CDR boundaries for V genes
-5. Returns AIRR format TSV (outfmt=19)
-6. AirrTable validates and enriches:
-   - Verifies CDR3/FWR4 presence (liability check)
-   - Computes VDJ recombination string
-   - Calculates mutation frequencies
-7. Returns AirrTable with full segment annotations
+airr
+├── reference.References (for custom databases)
+├── germlines.GermlineManager (gene lookup)
+└── igblast (blast database execution)
+
+reference
+├── germlines.GermlineManager (gene fetching)
+├── germlines.g3_adapter.GermlineToG3Adapter (format conversion)
+└── yaml (configuration parsing)
+
+germlines
+├── providers/ (IMGT, OGRDB, VDJbase, custom)
+├── pipeline (normalize → build workflow)
+└── renumbering_integration (HMM building)
+
+renumbering
+└── germlines.renumbering_integration.LocalHMMBuilder
 ```
 
-## Critical Files for Segment Discovery
+## Validation Models
 
-| Component | File | Purpose |
-|-----------|------|---------|
-| Aux file | `{species}_gl.aux` | J gene CDR3 end positions |
-| NDM file | `{species}.ndm.imgt` | V gene FR/CDR boundaries |
-| V database | `{species}_V.*` | V gene BLAST index |
-| D database | `{species}_D.*` | D gene BLAST index |
-| J database | `{species}_J.*` | J gene BLAST index |
-| C database | `{species}_C.*` | C region BLAST index |
+**Pydantic Models** in `reference/models.py`:
+- `GeneEntry`: Single gene with species/gene/source validation
+- `GeneEntries`: Multiple genes with consistent validation
+- `VALID_SOURCES`: `["imgt", "ogrdb", "vdjbase", "custom"]`
+
+**Germline Models** in `germlines/models.py`:
+- `GermlineGene`: Core gene representation with regions and positions
+- `ProviderMetadata`: Provider version and species availability
+
+## Error Handling Strategy
+
+1. **Strict Mode**: Raise errors when required data is missing (FR-014)
+2. **Graceful Degradation**: Warn and continue when optional data is missing
+3. **Fail-Fast**: Validate database structure upfront (`validate_prebuilt_database`)
+4. **Deprecation Warnings**: G3 API usage triggers warnings with migration guidance

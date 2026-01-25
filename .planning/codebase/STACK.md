@@ -1,193 +1,160 @@
-# G3 Backend Technology Stack
+# SADIE Technology Stack
 
-> Analysis focused on J gene and constant region segment position discovery in the G3 (non-germlines module) backend for AIRR annotation.
+## Python Version
+- **Required**: Python >= 3.10
+- **Supported**: 3.10, 3.11, 3.12, 3.13
+- **Implementations**: CPython, PyPy
 
-## Core Technologies
+## Package Management
+- **Build System**: Poetry with poetry-dynamic-versioning
+- **Version Source**: Git tags (pattern: `^(?:test-)?v(?P<base>\d+\.\d+\.\d+)`)
+- **Lock File**: `poetry.lock`
+- **Package Name**: `sadie-antibody`
 
-### Python Version
-- **Minimum**: Python 3.10
-- **Supported**: Python 3.10, 3.11, 3.12, 3.13
-- **Defined in**: `pyproject.toml`
+## Core Dependencies
 
-### Primary Dependencies
-
+### Bioinformatics
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `biopython` | >=1.80 | Sequence parsing (SeqIO), SeqRecord handling |
-| `pandas` | >=1.5 | Data manipulation, AIRR table handling |
-| `pydantic` | >=2.0.0,<3.0.0 | Data validation, models |
-| `semantic-version` | ^2.10.0 | IgBLAST version parsing |
-| `requests` | ^2.32.0 | G3 API HTTP calls |
-| `PyYAML` | ^6.0 | Reference YAML file parsing |
+| `biopython` | >=1.80 | Sequence I/O, SeqRecord handling, FASTA parsing |
+| `pyhmmer` | ^0.11.1 | HMMER3 for antibody numbering/renumbering |
 
-### IgBLAST Integration
+### Data Processing
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `pandas` | >=1.5 | AIRR table manipulation, dataframes |
+| `numpy` | * | Numerical operations |
+| `pyarrow` | * | Feather file format support |
+| `scipy` | ^1.11.0 | Scientific computing |
+| `scikit-learn` | ^1.5.0 | ML utilities |
 
-- **External binary**: `igblastn` (required at runtime)
-- **Version detection**: Automatic via semantic versioning
-- **Platform binaries**: Pre-compiled for macOS/Linux in `src/sadie/airr/bin/`
-- **Python wrapper**: `src/sadie/airr/igblast/igblast.py` → `IgBLASTN` class
+### Validation & Models
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `pydantic` | >=2.0.0,<3.0.0 | Data validation, Reference models |
+| `PyYAML` | ^6.0 | Reference YAML parsing |
 
-## Feature Flag System
+### CLI & Output
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `click` | >=8.0,<8.2 | CLI commands (`sadie airr`, `sadie reference build`) |
+| `rich` | ^14.1.0 | Terminal output formatting |
 
-### Environment Variable
-```bash
-SADIE_USE_GERMLINES_MODULE=true|false
-```
+### Network & Files
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `requests` | ^2.32.0 | G3 API calls (legacy), HTTP requests |
+| `yarl` | ^1.9.0 | URL handling |
+| `filetype` | ^1.2.0 | File type detection |
+| `openpyxl` | ^3.1.0 | Excel file support |
 
-- **Default**: `true` (uses new germlines module)
-- **When `false`**: Uses legacy G3 paths (deprecated, removal date: 2026-06-01)
-- **Implementation**: `src/sadie/airr/igblast/germline.py` → `_use_germlines_module()`
+### Utilities
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `python-Levenshtein` | ^0.27.0 | String similarity |
+| `semantic-version` | ^2.10.0 | Version handling |
+| `ipython` | ^8.18.0 | Interactive development |
 
-## Data File Types
+## Development Dependencies
 
-### 1. Auxiliary Files (`.aux`)
+### Testing
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `pytest` | >=8.0.0 | Test framework |
+| `pytest-cov` | ^6.2.1 | Coverage reporting |
+| `coverage` | ^7.0 | Code coverage |
+| `airr` | ^1.5.0 | AIRR schema validation in tests |
 
-**Location (G3 legacy)**: `src/sadie/airr/data/germlines/aux_db/imgt/{species}_gl.aux`
+### Type Checking
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `mypy` | ^1.8.0 | Static type checking |
+| `pyright` | ^1.1.350 | Type checking |
+| `types-PyYAML` | ^6.0.12 | Type stubs |
+| `pandas-stubs` | ^2.1.0 | Type stubs |
+| `types-requests` | ^2.31.0 | Type stubs |
 
-**Format for J genes** (5 columns, tab-separated):
-```
-<gene_name>	<reading_frame>	<chain_type>	<cdr3_end>	<is_functional>
-```
+### Linting & Formatting
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `black` | ^24.0.0 | Code formatting (line-length: 120) |
+| `flake8` | ^7.0.0 | Linting |
+| `pre-commit` | ^3.6.0 | Git hooks |
 
-**Example**:
-```
-IGHJ1*01	0	JH	17	1
-IGHJ2*01	1	JH	18	1
-IGKJ1*01	1	JK	6	1
-```
+### Documentation
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `mkdocs` | ^1.5.0 | Documentation site |
+| `mkdocs-material` | ^9.5.0 | Material theme |
+| `mkdocs-git-revision-date-plugin` | ^0.3.2 | Git dates in docs |
 
-**Purpose**: CDR3 boundary calculation - tells IgBLAST where CDR3 ends relative to J gene alignment start.
+## Database Technologies
 
-### 2. NDM Files (`.ndm.imgt`)
+### IgBLAST
+- **Binary**: Platform-specific `igblastn` (macOS/Linux)
+- **Location**: `src/sadie/airr/bin/{platform}/igblastn`
+- **Database Structure**:
+  ```
+  germlines/
+  ├── Ig/
+  │   ├── blastdb/{species}/{species}_V, _D, _J
+  │   └── internal_data/{species}/{species}.ndm.imgt
+  ├── aux_db/imgt/{species}_gl.aux
+  └── .references_dataframe.csv.gz
+  ```
 
-**Location (G3 legacy)**: `src/sadie/airr/data/germlines/Ig/internal_data/{species}/{species}.ndm.imgt`
+### BLAST Databases
+- **Format**: BLAST database files (.nhr, .nin, .nsq, etc.)
+- **Generation**: `makeblastdb` from NCBI BLAST+
+- **Used By**: IgBLAST for germline alignment
 
-**Format for V genes** (12 columns, tab-separated):
-```
-<gene>	<FWR1_start>	<CDR1_start>	<CDR1_end>	<FWR2_start>	<FWR2_end>	<CDR2_start>	<CDR2_end>	<FWR3_start>	<FWR3_end>	<chain>	<flags>
-```
+### Germline Databases (v1.2 Feature)
+- **Location**: `src/sadie/germlines/`
+- **Structure**:
+  ```
+  germlines/
+  ├── sources/{provider}/{species}/*.fasta
+  ├── normalized/{species}/
+  └── igblast/
+      ├── Ig/internal_data/{species}/
+      └── aux_db/{species}_gl.aux
+  ```
 
-**Example**:
-```
-IGHV1-18*01	1	75	76	99	100	150	151	174	175	288	VH	0
-```
+## Reference Module Dependencies (v1.2)
 
-**Purpose**: V gene region boundaries (FWR1, CDR1, FWR2, CDR2, FWR3 positions).
+### Core Classes
+- `Reference` → Pydantic validation, G3/Germlines adapter
+- `References` → Multi-reference management
+- `GermlineManager` → Multi-provider priority lookup
+- `GermlineToG3Adapter` → Format transformation
 
-### 3. BLAST Databases
-
-**Location (G3 legacy)**: `src/sadie/airr/data/germlines/Ig/blastdb/{species}/`
-
-**File patterns**:
-- `{species}_V.*` - V gene database files
-- `{species}_D.*` - D gene database files
-- `{species}_J.*` - J gene database files
-- `{species}_C.*` - C gene database files
-
-**Extensions**: `.ndb`, `.nhi`, `.nhr`, `.nin`, `.nog`, `.nos`, `.not`, `.nsq`, `.ntf`, `.nto`, `.fasta`
-
-### 4. Reference YAML
-
-**Location**: `src/sadie/reference/data/reference.yml`
-
-**Purpose**: Maps species names to gene lists for G3 API queries.
-
-**Structure**:
-```yaml
-{species_name}:
-  {source}:
-    {species}:
-      - IGHV1-2*02
-      - IGKV1-33*01
-      ...
-```
-
-## Key Classes and Files
-
-### GermlineData Class
-**File**: `src/sadie/airr/igblast/germline.py`
-
-**Responsibility**: Manages paths to all germline data files for a species.
-
-**Key properties**:
-- `base_dir` - Base germline data directory
-- `v_gene_dir` - V gene BLAST database prefix
-- `d_gene_dir` - D gene BLAST database prefix
-- `j_gene_dir` - J gene BLAST database prefix
-- `c_gene_dir` - C gene BLAST database prefix
-- `aux_path` - Auxiliary file path for CDR3 boundaries
-- `igdata` - IGDATA environment variable path
-
-### IgBLASTN Class
-**File**: `src/sadie/airr/igblast/igblast.py`
-
-**Responsibility**: Python wrapper for IgBLAST command-line execution.
-
-**Key parameters for segment discovery**:
-- `germline_db_V` - V gene database path
-- `germline_db_D` - D gene database path
-- `germline_db_J` - J gene database path
-- `c_region_db` - C region database path
-- `auxiliary_data` - Aux file for J gene CDR3 boundaries
-
-### Airr Class
-**File**: `src/sadie/airr/airr.py`
-
-**Responsibility**: High-level API for AIRR annotation.
-
-**Key initialization**:
-1. Sets up GermlineData for species
-2. Configures IgBLASTN with database paths
-3. Manages penalty parameters for alignment
-4. Handles adaptive penalty correction for failed annotations
-
-## G3 vs Germlines Module Path Resolution
-
-### G3 Legacy Paths
+### Validation Sources
 ```python
-base_dir = Path(__file__).parent / "../data/germlines/"
-blast_dir = f"{base_dir}/{receptor}/blastdb/{name}/{name}_"
-aux_path = base_dir / f"aux_db/{scheme}/{name}_gl.aux"
-igdata = base_dir / f"{receptor}/"
+VALID_SOURCES = ["imgt", "ogrdb", "vdjbase", "custom"]
 ```
 
-### Germlines Module Paths
-```python
-germlines_igblast = get_germlines_base_dir() / "igblast"
-blast_dir = germlines_igblast / "Ig" / "internal_data" / name / f"{name}_"
-aux_path = germlines_igblast / "aux_db" / f"{name}_gl.aux"
-igdata = germlines_igblast / "Ig"
+### Environment Variables
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `SADIE_USE_GERMLINES_MODULE` | `true` | Use germlines vs G3 API |
+| `IGDATA` | auto-detected | IgBLAST data directory |
+| `TMPDIR` | system temp | Temporary file storage |
+
+## Build & CI Configuration
+
+### Build System
+```toml
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
 ```
 
-## Species Support (G3 Legacy)
+### Code Style
+- **Line Length**: 120 characters
+- **Target Python**: 3.9, 3.10, 3.11, 3.12
+- **Import Style**: isort with black profile
 
-Built-in species in `src/sadie/airr/data/germlines/`:
-- `human`
-- `mouse`
-- `rabbit`
-- `rat`
-- `dog`
-- `macaque`
-- `clk` (Custom library)
-- `se09` (Custom library)
-
-## Build/Test Tools
-
-| Tool | Purpose |
-|------|---------|
-| `poetry` | Dependency management |
-| `pytest` | Test framework |
-| `mypy` | Static type checking |
-| `pyright` | Additional type checking |
-| `black` | Code formatting |
-| `flake8` | Linting |
-| `pre-commit` | Git hooks |
-
-## Data Type Constants
-
-**File**: `src/sadie/airr/airrtable/constants.py`
-
-Defines pandas dtypes for:
-- `IGBLAST_AIRR` - Core IgBLAST output columns (V, D, J gene data)
-- `CONSTANTS_AIRR` - C region columns
-- `OTHER_COLS` - Additional SADIE-specific columns
+### Coverage Configuration
+- **Source**: `sadie` package
+- **Excluded**: tests, pyhmmer, scipy, numpy, pandas, sklearn, Bio
+- **Reports**: HTML and XML
