@@ -306,20 +306,24 @@
 
 **Depends on:** Phase 22
 
+**Status:** ✓ Complete
+
 **Requirements:**
 - DOC-01: Create reference-sample.yml (mouse=imgt, human=ogrdb, macaque=vdjbase)
 - DOC-02: Document build → use workflow
 
 **Success Criteria:**
-1. `examples/reference-sample.yml` demonstrates multi-source configuration
-2. Sample includes: mouse V/D/J from IMGT, human V/D/J from OGRDB, macaque subset from VDJbase
-3. README section or docs page explains: write YAML → build database → use in Airr
-4. Code examples show complete workflow from YAML to annotation
+1. ✓ `examples/reference-sample.yml` demonstrates multi-source configuration
+2. ✓ Sample includes: mouse V/D/J from IMGT, human V/D/J from OGRDB, macaque subset from VDJbase
+3. ✓ docs/reference-workflow.md explains: write YAML → build database → use in Airr
+4. ✓ Code examples show complete workflow from YAML to annotation
 
-**Files to create:**
+**Files created:**
 - `examples/reference-sample.yml` — Multi-source reference configuration
-- `docs/reference-workflow.md` — Build and usage documentation (or update existing docs)
+- `docs/reference-workflow.md` — Build and usage documentation
+- `mkdocs.yml` — Added navigation entry
 
 ---
 
 *Milestone v1.2 created: 2026-01-23*
+*Milestone v1.2 completed: 2026-01-23*

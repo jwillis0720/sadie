@@ -32,8 +32,8 @@ Requirements for Reference Module Unification milestone.
 
 ### Documentation
 
-- [ ] **DOC-01**: Create reference-sample.yml (mouse=imgt, human=ogrdb, macaque=vdjbase)
-- [ ] **DOC-02**: Document build → use workflow
+- [x] **DOC-01**: Create reference-sample.yml (mouse=imgt, human=ogrdb, macaque=vdjbase)
+- [x] **DOC-02**: Document build → use workflow
 
 ---
 
