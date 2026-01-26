@@ -175,7 +175,7 @@ All infrastructure is already in place and tested.
    ```python
    # New behavior (default)
    refs = References.from_yaml()  # Uses germlines
-   
+
    # Legacy behavior (explicit)
    refs = References.from_yaml(use_germlines=False)  # Uses G3 API
    ```
@@ -191,7 +191,7 @@ All infrastructure is already in place and tested.
 ### Implementation Order
 ```
 1. models.py:VALID_SOURCES expansion     → 5 min
-2. reference.py:from_yaml() parameter    → 10 min  
+2. reference.py:from_yaml() parameter    → 10 min
 3. Test with existing reference.yml      → 5 min
 4. Add ogrdb/vdjbase entries to YAML     → 15 min
 5. Integration tests                     → 30 min

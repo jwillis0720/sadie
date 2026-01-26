@@ -153,21 +153,21 @@ MIN_V_GENE_LENGTH = 280
 def deduplicate_reference(reference: Dict[str, Any], verbose: bool = False) -> Dict[str, Any]:
     """
     Remove duplicate genes within a reference, keeping only the highest-priority source.
-    
+
     Deduplication is done PER SPECIES - the same gene name in different species
     (e.g., IGHJ3*02 in human vs mouse) are NOT duplicates since they have different sequences.
-    
+
     Args:
         reference: Dict of {source: {species: [genes]}}
         verbose: Print deduplication info
-        
+
     Returns:
         Deduplicated reference with same structure
     """
     # First, collect all genes by species across all sources
     # Structure: {species: {gene_name: source}}
     gene_to_source: Dict[str, Dict[str, str]] = defaultdict(dict)
-    
+
     # Process sources in priority order
     for source in PROVIDER_PRIORITY:
         if source not in reference:
@@ -179,11 +179,11 @@ def deduplicate_reference(reference: Dict[str, Any], verbose: bool = False) -> D
                 # Only set if not already seen (higher priority source wins)
                 if gene not in gene_to_source[species]:
                     gene_to_source[species][gene] = source
-    
+
     # Now rebuild the reference with only the winning genes per source
     result: Dict[str, Dict[str, List[str]]] = defaultdict(lambda: defaultdict(list))
     duplicates_removed: Dict[str, int] = defaultdict(int)
-    
+
     for source in PROVIDER_PRIORITY:
         if source not in reference:
             continue
@@ -195,13 +195,13 @@ def deduplicate_reference(reference: Dict[str, Any], verbose: bool = False) -> D
                     result[source][species].append(gene)
                 else:
                     duplicates_removed[f"{source}/{species}"] += 1
-    
+
     # Report duplicates removed
     if verbose:
         for key, count in duplicates_removed.items():
             if count > 0:
                 console.print(f"[dim]  Removed {count} duplicates from {key}[/dim]")
-    
+
     # Convert to regular dicts and sort gene lists
     return {
         source: {species: sorted(genes) for species, genes in species_data.items() if genes}
@@ -334,7 +334,7 @@ def get_available_species(providers: List[str], verbose: bool = False) -> Dict[s
     from sadie.germlines import get_germlines_base_dir
 
     normalized_dir = get_germlines_base_dir() / "normalized"
-    
+
     if not normalized_dir.exists():
         if verbose:
             console.print("[yellow]Normalized directory not found[/yellow]")
@@ -342,7 +342,7 @@ def get_available_species(providers: List[str], verbose: bool = False) -> Dict[s
 
     # Get all species
     all_species = [d.name for d in normalized_dir.iterdir() if d.is_dir() and not d.name.startswith('.')]
-    
+
     # For simplicity, report all species as available from all providers
     # The actual provider filtering happens when we query genes
     species_by_provider: Dict[str, List[str]] = {}
@@ -359,7 +359,7 @@ def get_all_species() -> List[str]:
     from sadie.germlines import get_germlines_base_dir
 
     normalized_dir = get_germlines_base_dir() / "normalized"
-    
+
     if not normalized_dir.exists():
         return []
 
@@ -369,20 +369,20 @@ def get_all_species() -> List[str]:
 def is_valid_gene(gene: "GermlineGene", segment: str) -> bool:
     """
     Check if a gene is valid for inclusion in reference.yml.
-    
+
     V genes require gapped sequences for IgBLAST internal_data.
     D and J genes don't require gapping.
     """
     # Gene name length check
     if len(gene.name) > MAX_GENE_NAME_LENGTH:
         return False
-    
+
     # V genes need gapped sequences (attribute is sequence_gapped)
     if segment == "V":
         gapped = gene.sequence_gapped
         if not gapped or len(gapped.replace(".", "")) < 50:
             return False
-    
+
     return True
 
 
@@ -402,7 +402,7 @@ def get_all_genes_for_species(
         "vdjbase": ["IGHV1-2*03", ...],
         ...
     }
-    
+
     Filtering applied:
     - Gene names longer than MAX_GENE_NAME_LENGTH are excluded (IgBLAST limit)
     - V genes without gapped sequences are excluded (required for internal_data)

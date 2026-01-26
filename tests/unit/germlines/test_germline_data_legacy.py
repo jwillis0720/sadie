@@ -1,6 +1,7 @@
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 
 class TestGermlineDataLegacyAPI:
@@ -32,15 +33,18 @@ class TestGermlineDataLegacyAPI:
         assert isinstance(datasets, set)
 
     def test_feature_flag_deprecation_warning(self):
-        from sadie.airr.igblast.germline import _use_germlines_module
         import os
+
+        from sadie.airr.igblast.germline import _use_germlines_module
 
         original = os.environ.get("SADIE_USE_GERMLINES_MODULE")
         try:
             os.environ["SADIE_USE_GERMLINES_MODULE"] = "false"
 
             import importlib
+
             import sadie.airr.igblast.germline as germ_module
+
             importlib.reload(germ_module)
 
             result = germ_module._use_germlines_module()
@@ -52,8 +56,9 @@ class TestGermlineDataLegacyAPI:
                 del os.environ["SADIE_USE_GERMLINES_MODULE"]
 
     def test_feature_flag_default_true(self):
-        from sadie.airr.igblast.germline import _use_germlines_module
         import os
+
+        from sadie.airr.igblast.germline import _use_germlines_module
 
         original = os.environ.get("SADIE_USE_GERMLINES_MODULE")
         try:
@@ -61,7 +66,9 @@ class TestGermlineDataLegacyAPI:
                 del os.environ["SADIE_USE_GERMLINES_MODULE"]
 
             import importlib
+
             import sadie.airr.igblast.germline as germ_module
+
             importlib.reload(germ_module)
 
             result = germ_module._use_germlines_module()

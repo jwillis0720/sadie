@@ -51,7 +51,7 @@ Add validation function before `GermlineData` class:
 ```python
 def validate_prebuilt_database(database_path: Path, name: str) -> dict:
     """Validate prebuilt database structure and return paths.
-    
+
     Expected structure:
         database_path/
         ├── Ig/
@@ -59,20 +59,20 @@ def validate_prebuilt_database(database_path: Path, name: str) -> dict:
         │   └── internal_data/{name}/{name}.ndm.imgt
         ├── aux_db/{name}_gl.aux
         └── .references_dataframe.csv.gz (optional)
-    
+
     Parameters
     ----------
     database_path : Path
         Root path to prebuilt database
     name : str
         Reference name (species)
-        
+
     Returns
     -------
     dict
-        Validated paths: blast_dir, v_gene_dir, d_gene_dir, j_gene_dir, 
+        Validated paths: blast_dir, v_gene_dir, d_gene_dir, j_gene_dir,
         c_gene_dir, aux_path, igdata
-        
+
     Raises
     ------
     FileNotFoundError
@@ -80,13 +80,13 @@ def validate_prebuilt_database(database_path: Path, name: str) -> dict:
     """
     db = Path(database_path)
     errors = []
-    
+
     # Required directories
     ig_dir = db / "Ig"
     internal_data = ig_dir / "internal_data" / name
     blastdb = ig_dir / "blastdb" / name
     aux_db = db / "aux_db"
-    
+
     if not ig_dir.exists():
         errors.append(f"Missing Ig/ directory at {ig_dir}")
     if not internal_data.exists():
@@ -95,20 +95,20 @@ def validate_prebuilt_database(database_path: Path, name: str) -> dict:
         errors.append(f"Missing blastdb/{name}/ at {blastdb}")
     if not aux_db.exists():
         errors.append(f"Missing aux_db/ directory at {aux_db}")
-    
+
     aux_path = aux_db / f"{name}_gl.aux"
     if not aux_path.exists():
         errors.append(f"Missing auxiliary file {name}_gl.aux at {aux_path}")
-    
+
     if errors:
         raise FileNotFoundError(
-            f"Invalid prebuilt database at {database_path}:\n" + 
+            f"Invalid prebuilt database at {database_path}:\n" +
             "\n".join(f"  - {e}" for e in errors)
         )
-    
+
     # Build paths
     blast_prefix = blastdb / f"{name}_"
-    
+
     return {
         "base_dir": db,
         "blast_dir": blast_prefix,
@@ -175,7 +175,7 @@ def __init__(
         self._aux_path = paths["aux_path"]
         self._igdata = paths["igdata"]
         return  # Skip all other initialization
-    
+
     # Existing logic follows...
 ```
 
@@ -210,7 +210,7 @@ def __init__(
     database: Optional[Path | str] = None,  # NEW PARAMETER
 ):
     """Airr constructor
-    
+
     Parameters
     ----------
     reference_name : str | Reference
@@ -237,12 +237,12 @@ if database:
     database_path = Path(database)
     if not database_path.exists():
         raise FileNotFoundError(f"Database path not found: {database_path}")
-    
+
     # Use prebuilt database - skip all germlines/G3 lookup
     self.germline_data = GermlineData(
-        reference_name, 
-        receptor, 
-        database_path, 
+        reference_name,
+        receptor,
+        database_path,
         scheme,
         prebuilt=True
     )
@@ -295,12 +295,12 @@ from sadie.airr.igblast.germline import GermlineData, validate_prebuilt_database
 
 class TestValidatePrebuiltDatabase:
     """Test database structure validation."""
-    
+
     def test_missing_ig_dir_raises(self, tmp_path):
         """Missing Ig/ directory raises FileNotFoundError."""
         with pytest.raises(FileNotFoundError, match="Missing Ig/"):
             validate_prebuilt_database(tmp_path, "human")
-    
+
     def test_missing_blastdb_raises(self, tmp_path):
         """Missing blastdb raises FileNotFoundError."""
         (tmp_path / "Ig" / "internal_data" / "human").mkdir(parents=True)
@@ -308,7 +308,7 @@ class TestValidatePrebuiltDatabase:
         (tmp_path / "aux_db" / "human_gl.aux").touch()
         with pytest.raises(FileNotFoundError, match="Missing blastdb"):
             validate_prebuilt_database(tmp_path, "human")
-    
+
     def test_missing_aux_raises(self, tmp_path):
         """Missing aux_db raises FileNotFoundError."""
         (tmp_path / "Ig" / "internal_data" / "human").mkdir(parents=True)
@@ -319,7 +319,7 @@ class TestValidatePrebuiltDatabase:
 
 class TestGermlineDataPrebuilt:
     """Test GermlineData with prebuilt=True."""
-    
+
     def test_prebuilt_skips_germlines_lookup(self, valid_prebuilt_db):
         """Prebuilt database skips germlines module lookup."""
         gd = GermlineData("human", database_dir=valid_prebuilt_db, prebuilt=True)
@@ -329,12 +329,12 @@ class TestGermlineDataPrebuilt:
 
 class TestAirrDatabaseParameter:
     """Test Airr(database=...) parameter."""
-    
+
     def test_database_path_not_found_raises(self):
         """Non-existent database path raises FileNotFoundError."""
         with pytest.raises(FileNotFoundError):
             Airr("human", database="/nonexistent/path")
-    
+
     def test_database_parameter_uses_prebuilt(self, valid_prebuilt_db):
         """Airr with database= uses prebuilt paths."""
         # This test requires a fully valid prebuilt database
@@ -352,7 +352,7 @@ from sadie.airr import Airr
 
 class TestPrebuiltDatabaseIntegration:
     """Integration tests for prebuilt database usage."""
-    
+
     @pytest.fixture
     def prebuilt_human_db(self, tmp_path):
         """Build a real prebuilt database for testing."""
@@ -360,32 +360,32 @@ class TestPrebuiltDatabaseIntegration:
         refs = References.from_yaml()
         refs.make_airr_database(tmp_path)
         return tmp_path
-    
+
     def test_annotation_identical_prebuilt_vs_runtime(self, prebuilt_human_db):
         """Results identical with prebuilt vs runtime database."""
         seq = "CAGGTGCAGCTGGTGGAGTCTGGGGGAGGC..."  # Test sequence
-        
+
         # Runtime lookup
         airr_runtime = Airr("human")
         result_runtime = airr_runtime.run_single("test", seq)
-        
+
         # Prebuilt database
         airr_prebuilt = Airr("human", database=prebuilt_human_db)
         result_prebuilt = airr_prebuilt.run_single("test", seq)
-        
+
         # Compare key columns
         assert result_runtime["v_call"].iloc[0] == result_prebuilt["v_call"].iloc[0]
         assert result_runtime["j_call"].iloc[0] == result_prebuilt["j_call"].iloc[0]
-    
+
     def test_no_network_calls_with_prebuilt(self, prebuilt_human_db, mocker):
         """No network/file discovery with prebuilt database."""
         # Mock germlines lookup to ensure it's not called
         mock_germlines = mocker.patch(
             "sadie.airr.igblast.germline._use_germlines_module"
         )
-        
+
         Airr("human", database=prebuilt_human_db)
-        
+
         mock_germlines.assert_not_called()
 ```
 
@@ -399,7 +399,7 @@ def test_startup_performance_prebuilt(prebuilt_human_db):
     start = time.perf_counter()
     Airr("human", database=prebuilt_human_db)
     elapsed = time.perf_counter() - start
-    
+
     assert elapsed < 0.1, f"Startup took {elapsed:.3f}s, expected <0.1s"
 ```
 

@@ -301,6 +301,4 @@ def test_reference_build_with_germlines(fixture_setup: SadieFixture, tmp_path_fa
     outpath = tmp_path_factory.mktemp("germlines_build")
     output_db = refs.make_airr_database(outpath)
 
-    assert sorted([i.name for i in output_db.glob("*")]) == sorted(
-        [".references_dataframe.csv.gz", "aux_db", "Ig"]
-    )
+    assert sorted([i.name for i in output_db.glob("*")]) == sorted([".references_dataframe.csv.gz", "aux_db", "Ig"])

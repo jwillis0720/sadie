@@ -190,7 +190,9 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
         if germline_aa == sequence_aa:
             # Boundary check
             if sequence_index >= len(sequence_alignment_codons):
-                logger.debug(f"{row.name} - sequence_index {sequence_index} out of bounds (len={len(sequence_alignment_codons)})")
+                logger.debug(
+                    f"{row.name} - sequence_index {sequence_index} out of bounds (len={len(sequence_alignment_codons)})"
+                )
                 return np.nan
             codon = sequence_alignment_codons[sequence_index]
             germline_igl += codon
@@ -203,7 +205,9 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
                 # we are at the end so pad it with sequence
                 # Boundary check
                 if sequence_index >= len(sequence_alignment_codons):
-                    logger.debug(f"{row.name} - sequence_index {sequence_index} out of bounds for partial codon (len={len(sequence_alignment_codons)})")
+                    logger.debug(
+                        f"{row.name} - sequence_index {sequence_index} out of bounds for partial codon (len={len(sequence_alignment_codons)})"
+                    )
                     return np.nan
                 partial_codon = sequence_alignment_codons[sequence_index]
                 best_codon = find_best_codon(partial_codon, sequence_aa)
@@ -216,7 +220,9 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
         elif sequence_aa == "-":
             # Boundary check
             if germline_index >= len(germline_alignment_codons):
-                logger.debug(f"{row.name} - germline_index {germline_index} out of bounds for deletion (len={len(germline_alignment_codons)})")
+                logger.debug(
+                    f"{row.name} - germline_index {germline_index} out of bounds for deletion (len={len(germline_alignment_codons)})"
+                )
                 return np.nan
             germline_igl += germline_alignment_codons[germline_index]
             germline_index += 1
@@ -229,7 +235,9 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
                     germline_igl += sequence_alignment_codons[sequence_index]
                 else:
                     # Index out of bounds - likely alignment length mismatch, return NaN
-                    logger.debug(f"{row.name} - sequence_index {sequence_index} out of bounds for sequence_alignment_codons (len={len(sequence_alignment_codons)})")
+                    logger.debug(
+                        f"{row.name} - sequence_index {sequence_index} out of bounds for sequence_alignment_codons (len={len(sequence_alignment_codons)})"
+                    )
                     return np.nan
 
             # else take germline
@@ -240,7 +248,9 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
                     germline_igl += codon
                 else:
                     # Index out of bounds - likely alignment length mismatch, return NaN
-                    logger.debug(f"{row.name} - germline_index {germline_index} out of bounds for germline_alignment_codons (len={len(germline_alignment_codons)})")
+                    logger.debug(
+                        f"{row.name} - germline_index {germline_index} out of bounds for germline_alignment_codons (len={len(germline_alignment_codons)})"
+                    )
                     return np.nan
             sequence_index += 1
             germline_index += 1

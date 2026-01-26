@@ -105,7 +105,7 @@ GermlineProvider (abstract base)
 
 **Deduplication Rules**:
 1. Same gene name → first provider wins
-2. Same exact sequence → first provider wins  
+2. Same exact sequence → first provider wins
 3. Novel gene → include from any provider
 
 ### Integration Points
@@ -118,11 +118,11 @@ class GermlineData:
         # Option 1: Use prebuilt database (database= parameter)
         if prebuilt:
             paths = validate_prebuilt_database(database_dir, name)
-            
+
         # Option 2: Use germlines module (SADIE_USE_GERMLINES_MODULE=true)
         elif _use_germlines_module():
             germlines_igblast = _get_germlines_igblast_dir()
-            
+
         # Option 3: Legacy G3 API paths (deprecated)
         else:
             self._use_legacy_paths(name, receptor, scheme)
@@ -136,7 +136,7 @@ class Reference:
         if self.use_germlines:
             manager = GermlineManager(providers=[gene.source])
             germline_gene = manager.get_gene_by_name(gene.gene, gene.species)
-            
+
             # Transform to G3 format for backward compatibility
             adapter = GermlineToG3Adapter()
             return adapter.to_g3_format(germline_gene)

@@ -64,7 +64,7 @@ Controls which backend is used for germline data:
 When `SADIE_USE_GERMLINES_MODULE=false`, SADIE logs a deprecation warning:
 
 ```
-DeprecationWarning: G3 API is deprecated and will be removed after 2026-06-01. 
+DeprecationWarning: G3 API is deprecated and will be removed after 2026-06-01.
 Set SADIE_USE_GERMLINES_MODULE=true or unset to use the germlines module.
 ```
 

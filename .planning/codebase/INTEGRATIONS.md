@@ -119,7 +119,7 @@ When `use_germlines=True`:
 if self.use_germlines:
     from sadie.germlines import GermlineManager
     from sadie.germlines.g3_adapter import GermlineToG3Adapter
-    
+
     manager = GermlineManager(providers=[gene.source])
     germline_gene = manager.get_gene_by_name(gene.gene, gene.species)
     adapter = GermlineToG3Adapter()

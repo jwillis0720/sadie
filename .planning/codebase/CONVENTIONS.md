@@ -324,7 +324,7 @@ class Reference:
     def __init__(self, endpoint: str = _endpoint, use_germlines: bool = False):
         self.data: List[Dict[str, str]] = []
         self.use_germlines = use_germlines
-        
+
         if not use_germlines:
             self.endpoint = endpoint
 ```

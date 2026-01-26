@@ -27,7 +27,7 @@
 
 **Decision:** Rename `rhesus_macaque/` → `macaque/` in VDJbase provider mapping.
 
-**Rationale:** 
+**Rationale:**
 - `macaque` is the shorthand name used throughout the codebase
 - Tests check for `internal_data/macaque/` directory
 - Other databases use `macaque` consistently
@@ -56,7 +56,7 @@
 
 **Decision:** Regenerate fixtures from VDJbase-annotated data.
 
-**Rationale:** 
+**Rationale:**
 - Tests should verify annotation quality (specific gene calls), not just functionality
 - Fixtures were created for an older germline set; VDJbase may have different allele names
 - Existing regeneration scripts already handle this workflow

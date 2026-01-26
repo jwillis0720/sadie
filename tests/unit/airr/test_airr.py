@@ -3,10 +3,10 @@
 import shutil
 from pathlib import Path
 
+import airr
 import numpy as np
 import pandas as pd
 import pytest
-import airr
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -121,14 +121,14 @@ def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest
     # When germlines module is enabled, only species with germlines databases work
     # When disabled (SADIE_USE_GERMLINES_MODULE=false), all pre-built species work
     use_germlines = os.environ.get("SADIE_USE_GERMLINES_MODULE", "true").lower() in ("true", "1", "yes")
-    
+
     if use_germlines:
         # Only human and mouse have germlines databases built
         species_list = ["human", "mouse"]
     else:
         # Legacy path has all species
         species_list = ["human", "mouse", "rat", "dog"]
-    
+
     for species in species_list:
         air_api = Airr(species)
         air_api.get_available_datasets()
@@ -701,9 +701,7 @@ def test_source_columns_in_output(fixture_setup: SadieFixture) -> None:
     # V call should always have a source (not NaN for sequences with a v_call)
     has_v_call = result[result["v_call"].notna()]
     if not has_v_call.empty:
-        assert has_v_call["v_call_source"].notna().all(), (
-            "V call source should not be NaN when v_call is present"
-        )
+        assert has_v_call["v_call_source"].notna().all(), "V call source should not be NaN when v_call is present"
 
 
 def test_source_nan_for_nan_calls(fixture_setup: SadieFixture) -> None:
@@ -716,12 +714,10 @@ def test_source_nan_for_nan_calls(fixture_setup: SadieFixture) -> None:
     # Light chains have no D gene, so d_call should be NaN
     # Therefore d_call_source should also be NaN
     if result["d_call"].isna().all():
-        assert result["d_call_source"].isna().all(), (
-            "d_call_source should be NaN when d_call is NaN"
-        )
+        assert result["d_call_source"].isna().all(), "d_call_source should be NaN when d_call is NaN"
 
     # For any row where a call is NaN, the corresponding source should be NaN
-    for segment in ['v', 'd', 'j', 'c']:
+    for segment in ["v", "d", "j", "c"]:
         call_col = f"{segment}_call"
         source_col = f"{segment}_call_source"
 
@@ -731,9 +727,9 @@ def test_source_nan_for_nan_calls(fixture_setup: SadieFixture) -> None:
 
             # Where call is NaN, source should be NaN
             # Check that all NaN calls have NaN sources
-            assert (result.loc[nan_calls, source_col].isna()).all(), (
-                f"{source_col} should be NaN when {call_col} is NaN"
-            )
+            assert (
+                result.loc[nan_calls, source_col].isna()
+            ).all(), f"{source_col} should be NaN when {call_col} is NaN"
 
 
 def test_source_lookup_method() -> None:
@@ -792,6 +788,6 @@ def test_source_columns_in_linked_airr_table(fixture_setup: SadieFixture) -> Non
     # Heavy chain V should have a source (not NaN) for sequences with v_call
     has_v_call_heavy = result[result["v_call_heavy"].notna()]
     if not has_v_call_heavy.empty:
-        assert has_v_call_heavy["v_call_source_heavy"].notna().any(), (
-            "v_call_source_heavy should have at least one non-NaN value"
-        )
+        assert (
+            has_v_call_heavy["v_call_source_heavy"].notna().any()
+        ), "v_call_source_heavy should have at least one non-NaN value"

@@ -37,9 +37,9 @@ import hashlib
 def _generate_id(self, source: str, species: str, gene_name: str) -> str:
     """
     Generate deterministic _id for gene deduplication.
-    
+
     Uses SHA-256 hash of source:species:gene to match G3 API behavior.
-    
+
     Parameters
     ----------
     source : str
@@ -48,7 +48,7 @@ def _generate_id(self, source: str, species: str, gene_name: str) -> str:
         Species name (e.g., "human")
     gene_name : str
         Gene name (e.g., "IGHV1-69*01")
-    
+
     Returns
     -------
     str
@@ -133,7 +133,7 @@ if self.use_germlines:
     # Create manager with explicit source (no priority fallback)
     manager = GermlineManager(providers=[gene.source])
     germline_gene = manager.get_gene_by_name(gene.gene, gene.species)
-    
+
     if not germline_gene:
         raise G3Error(f"Gene {gene.gene} not found in {gene.source} database for species {gene.species}")
 
@@ -155,7 +155,7 @@ if self.use_germlines:
     # Create manager with explicit source (no priority fallback)
     manager = GermlineManager(providers=[genes.source])
     adapter = GermlineToG3Adapter()
-    
+
     results = []
     for gene_name in genes.genes:
         germline_gene = manager.get_gene_by_name(gene_name, genes.species)

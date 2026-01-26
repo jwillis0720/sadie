@@ -197,7 +197,7 @@ comprehensive-human:
       - IGHV1-18*01
       - IGHD3-10*01
       - IGHJ4*02
-  
+
   # Add curated alleles from OGRDB
   ogrdb:
     human:
@@ -226,7 +226,7 @@ human-ogrdb-curated:
       # D genes
       - IGHD3-10*01
       - IGHD3-22*01
-      # J genes  
+      # J genes
       - IGHJ4*02
       - IGHJ6*02
 ```
@@ -274,13 +274,13 @@ human-complete:
       - IGHJ6*02
       - IGKV1-39*01
       - IGKJ1*01
-  
+
   # OGRDB - add validated novel alleles
   ogrdb:
     human:
       - IGHV1-69*13    # Novel validated allele
       - IGHV4-34*09    # Population variant
-  
+
   # VDJbase - add population-inferred alleles
   vdjbase:
     human:

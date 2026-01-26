@@ -148,7 +148,7 @@ Learn how to create custom germline reference databases for AIRR annotation usin
 SADIE supports creating custom reference databases that combine germline sequences from multiple sources:
 
 - **IMGT** - International ImMunoGeneTics information system
-- **OGRDB** - Open Germline Receptor Database  
+- **OGRDB** - Open Germline Receptor Database
 - **VDJbase** - Curated germline database
 - **Custom** - Your own sequences
 
@@ -339,7 +339,7 @@ comprehensive-human:
       - IGHV1-18*01
       - IGHD3-10*01
       - IGHJ4*02
-  
+
   # Add curated alleles from OGRDB
   ogrdb:
     human:

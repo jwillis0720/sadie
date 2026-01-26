@@ -76,7 +76,7 @@ None. Plan executed as specified.
 
 ## Milestone v1.3 Progress
 - Phase 25: ✅ Macaque Germlines Integration
-- Phase 26: ✅ Add AIRR Package Dependency  
+- Phase 26: ✅ Add AIRR Package Dependency
 - Phase 27: ✅ Remove Deprecated G3 Tests
 - Phase 28: ✅ Fix Germline Priority Order
 

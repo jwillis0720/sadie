@@ -11,7 +11,7 @@ Moved the `airr` package from dev dependencies to main dependencies, enabling AI
 - Added `airr = "^1.5.0"` to `[tool.poetry.dependencies]` section (after `rich = "^14.1.0"`)
 - Removed `airr = "^1.5.0"` from `[tool.poetry.group.dev.dependencies]` section
 
-### Task 26-1-2: Update test to use regular import  
+### Task 26-1-2: Update test to use regular import
 **File:** `tests/unit/airr/test_airr.py`
 - Added `import airr` to imports section at top of file
 - Removed `airr = pytest.importorskip("airr", reason="airr package not installed")` from `test_write_and_check_airr`

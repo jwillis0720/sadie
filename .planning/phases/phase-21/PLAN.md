@@ -194,22 +194,22 @@ class TestReferenceBuildCLI:
         """Verify build creates expected directory structure."""
         with tempfile.TemporaryDirectory() as tmpdir:
             yaml_path = Path(__file__).parent.parent.parent.parent / "src/sadie/reference/data/reference.yml"
-            
+
             result = subprocess.run(
                 ["sadie", "reference", "build", str(yaml_path), "--output", tmpdir],
                 capture_output=True,
                 text=True,
             )
-            
+
             # Check exit code
             assert result.returncode == 0, f"Build failed: {result.stderr}"
-            
+
             # Check progress output
             assert "Loading YAML..." in result.stdout
             assert "Fetching genes..." in result.stdout
             assert "Building databases..." in result.stdout
             assert "Complete" in result.stdout
-            
+
             # Check directory structure
             output_path = Path(tmpdir)
             assert (output_path / "Ig" / "blastdb").is_dir()
@@ -225,7 +225,7 @@ class TestReferenceBuildCLI:
                 capture_output=True,
                 text=True,
             )
-            
+
             # Should fail with non-zero exit code
             assert result.returncode != 0
 
@@ -236,7 +236,7 @@ class TestReferenceBuildCLI:
             capture_output=True,
             text=True,
         )
-        
+
         assert result.returncode == 0
         assert "Build IgBLAST database" in result.stdout
         assert "--output" in result.stdout

@@ -402,13 +402,10 @@ class GermlineData:
         lookup: Dict[str, str] = {}
         manager = GermlineManager()
 
-        for segment in ['V', 'D', 'J', 'C']:
-            for chain in ['H', 'K', 'L']:
+        for segment in ["V", "D", "J", "C"]:
+            for chain in ["H", "K", "L"]:
                 try:
-                    genes = manager.get_genes(
-                        self.name, segment, chain,
-                        functional_only=False, strict=False
-                    )
+                    genes = manager.get_genes(self.name, segment, chain, functional_only=False, strict=False)
                     for gene in genes:
                         lookup[gene.name] = gene.source
                 except Exception:

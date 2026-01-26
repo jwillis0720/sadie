@@ -40,7 +40,7 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -67,28 +67,6 @@ IMGT_BASE_URL = "https://www.imgt.org/download/V-QUEST/IMGT_V-QUEST_reference_di
 
 # IMGT GENE-DB URL for C genes (not available in V-QUEST)
 IMGT_GENEDB_URL = "https://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP"
-
-# Species name mapping for GENE-DB (uses spaces instead of underscores)
-SPECIES_GENEDB_MAP = {
-    "human": "Homo sapiens",
-    "mouse": "Mus musculus",
-    "mouse_c57bl6j": "Mus musculus C57BL/6J",
-    "rat": "Rattus norvegicus",
-    "rabbit": "Oryctolagus cuniculus",
-    "rhesus_macaque": "Macaca mulatta",
-    "macaque": "Macaca mulatta",  # Alias for canonical name
-    "cynomolgus": "Macaca fascicularis",
-    "dog": "Canis lupus familiaris",
-    "cat": "Felis catus",
-    "pig": "Sus scrofa",
-    "cow": "Bos taurus",
-    "sheep": "Ovis aries",
-    "goat": "Capra hircus",
-    "horse": "Equus caballus",
-    "chicken": "Gallus gallus",
-    "alpaca": "Vicugna pacos",
-    "camel": "Camelus dromedarius",
-}
 
 # Species name mapping (internal names to IMGT directory names)
 SPECIES_MAP = {
@@ -276,6 +254,8 @@ class IMGTDownloader:
         total_count = 0
         total_segments = len(segments)
         completed_count = 0
+        # Collect all species/strain names found in V-QUEST FASTA headers
+        all_species_variants: Set[str] = set()
 
         for segment in segments:
             receptor_type = "IG" if segment.startswith("IG") else "TR"
@@ -287,6 +267,9 @@ class IMGTDownloader:
             if segment in completed_segments and not force:
                 if gapped_path.exists():
                     count = self._count_sequences(gapped_path)
+                    # Extract species names from existing file
+                    species_from_file = self._extract_species_from_fasta(gapped_path)
+                    all_species_variants.update(species_from_file)
                     logger.debug(f"Skipping {segment} (checkpoint, {count} sequences)")
                     total_count += count
                     completed_count += 1
@@ -294,6 +277,9 @@ class IMGTDownloader:
 
             if gapped_path.exists() and ungapped_path.exists() and not force:
                 count = self._count_sequences(gapped_path)
+                # Extract species names from existing file
+                species_from_file = self._extract_species_from_fasta(gapped_path)
+                all_species_variants.update(species_from_file)
                 logger.debug(f"Skipping {segment} (exists with {count} sequences)")
                 total_count += count
                 completed_segments.add(segment)
@@ -301,8 +287,9 @@ class IMGTDownloader:
                 continue
 
             try:
-                count = self._download_segment(url, gapped_path, ungapped_path)
+                count, species_names = self._download_segment(url, gapped_path, ungapped_path)
                 total_count += count
+                all_species_variants.update(species_names)
                 completed_segments.add(segment)
                 completed_count += 1
 
@@ -335,13 +322,40 @@ class IMGTDownloader:
         if checkpoint_path.exists():
             checkpoint_path.unlink()
 
+        if all_species_variants:
+            logger.info(f"Found {len(all_species_variants)} species/strain variants in V-QUEST data")
+
         # Download C genes from GENE-DB (not available in V-QUEST)
-        c_count = self._download_c_genes_from_genedb(internal_name, force)
+        # Use exact species names collected from V-QUEST headers
+        c_count = self._download_c_genes_from_genedb(internal_name, all_species_variants, force)
         total_count += c_count
 
         return total_count
 
-    def _download_c_genes_from_genedb(self, internal_name: str, force: bool = False) -> int:
+    def _extract_species_from_fasta(self, fasta_path: Path) -> Set[str]:
+        """
+        Extract unique species names from FASTA headers (field 3).
+
+        Parameters
+        ----------
+        fasta_path : Path
+            Path to FASTA file
+
+        Returns
+        -------
+        Set[str]
+            Set of species names found in headers
+        """
+        species_names: Set[str] = set()
+        with open(fasta_path, "r") as f:
+            for line in f:
+                if line.startswith(">"):
+                    parts = line[1:].split("|")
+                    if len(parts) >= 3:
+                        species_names.add(parts[2])
+        return species_names
+
+    def _download_c_genes_from_genedb(self, internal_name: str, species_variants: Set[str], force: bool = False) -> int:
         """
         Download C genes from IMGT GENE-DB.
 
@@ -352,6 +366,8 @@ class IMGTDownloader:
         ----------
         internal_name : str
             Internal species name (e.g., "human")
+        species_variants : Set[str]
+            Set of exact species/strain names to match (collected from V-QUEST headers)
         force : bool
             Force re-download
 
@@ -374,13 +390,11 @@ class IMGTDownloader:
             logger.debug(f"Skipping C genes (exists with {count} sequences)")
             return count
 
-        # Get GENE-DB species name
-        genedb_species = SPECIES_GENEDB_MAP.get(internal_name)
-        if not genedb_species:
-            logger.debug(f"No GENE-DB species mapping for {internal_name}")
+        if not species_variants:
+            logger.debug(f"No species variants found for {internal_name}, skipping C genes")
             return 0
 
-        logger.info(f"Downloading C genes from GENE-DB for {internal_name}...")
+        logger.info(f"Downloading C genes from GENE-DB for {internal_name} ({len(species_variants)} variants)...")
 
         # Download and cache GENE-DB file
         genedb_content = self._get_genedb_content(force)
@@ -388,11 +402,11 @@ class IMGTDownloader:
             logger.warning("Failed to get GENE-DB content")
             return 0
 
-        # Parse and filter C genes for this species
-        c_genes = self._parse_genedb_c_genes(genedb_content, genedb_species)
+        # Parse and filter C genes for this species using exact matching
+        c_genes = self._parse_genedb_c_genes(genedb_content, species_variants)
 
-        if not c_genes:
-            logger.info(f"No C genes found in GENE-DB for {genedb_species}")
+        if not c_genes or all(len(v) == 0 for v in c_genes.values()):
+            logger.info(f"No C genes found in GENE-DB for {internal_name}")
             return 0
 
         # Group by chain and write FASTA files
@@ -446,7 +460,7 @@ class IMGTDownloader:
             logger.error(f"Failed to download GENE-DB: {e}")
             return None
 
-    def _parse_genedb_c_genes(self, content: str, target_species: str) -> Dict[str, List[Tuple[str, str]]]:
+    def _parse_genedb_c_genes(self, content: str, species_variants: Set[str]) -> Dict[str, List[Tuple[str, str]]]:
         """
         Parse GENE-DB FASTA to extract C genes for a species.
 
@@ -457,8 +471,8 @@ class IMGTDownloader:
         ----------
         content : str
             GENE-DB FASTA content
-        target_species : str
-            Target species name (e.g., "Homo sapiens")
+        species_variants : Set[str]
+            Set of exact species/strain names to match (from V-QUEST headers)
 
         Returns
         -------
@@ -488,7 +502,7 @@ class IMGTDownloader:
             if line.startswith(">"):
                 # Save previous sequence
                 if current_header:
-                    gene_info = self._parse_genedb_header(current_header, target_species, c_gene_patterns)
+                    gene_info = self._parse_genedb_header(current_header, species_variants, c_gene_patterns)
                     if gene_info:
                         chain, gene_name = gene_info
                         sequence = "".join(current_seq)
@@ -501,7 +515,7 @@ class IMGTDownloader:
 
         # Save last sequence
         if current_header:
-            gene_info = self._parse_genedb_header(current_header, target_species, c_gene_patterns)
+            gene_info = self._parse_genedb_header(current_header, species_variants, c_gene_patterns)
             if gene_info:
                 chain, gene_name = gene_info
                 sequence = "".join(current_seq)
@@ -510,7 +524,7 @@ class IMGTDownloader:
         return c_genes
 
     def _parse_genedb_header(
-        self, header: str, target_species: str, c_gene_patterns: Dict[str, re.Pattern]
+        self, header: str, species_variants: Set[str], c_gene_patterns: Dict[str, re.Pattern]
     ) -> Optional[Tuple[str, str]]:
         """
         Parse GENE-DB header to extract C gene info.
@@ -519,8 +533,8 @@ class IMGTDownloader:
         ----------
         header : str
             FASTA header (without ">")
-        target_species : str
-            Target species
+        species_variants : Set[str]
+            Set of exact species/strain names to match
         c_gene_patterns : Dict
             Regex patterns for C gene identification
 
@@ -537,9 +551,11 @@ class IMGTDownloader:
         gene_name = parts[1]
         species = parts[2]
         functionality = parts[3] if len(parts) > 3 else "F"
+        # Strip parentheses and brackets from functionality (e.g., "(F)" -> "F", "[ORF]" -> "ORF")
+        functionality = functionality.strip("()[]")
 
-        # Filter by species (use startswith to handle strain suffixes like "Macaca mulatta_AG07107")
-        if not species.lower().startswith(target_species.lower()):
+        # Filter by species using exact matching against collected variants
+        if species not in species_variants:
             return None
 
         # Filter by functionality (F = functional, ORF = open reading frame)
@@ -554,7 +570,7 @@ class IMGTDownloader:
 
         return None
 
-    def _download_segment(self, url: str, gapped_path: Path, ungapped_path: Path) -> int:
+    def _download_segment(self, url: str, gapped_path: Path, ungapped_path: Path) -> Tuple[int, Set[str]]:
         """
         Download a single segment file.
 
@@ -569,8 +585,8 @@ class IMGTDownloader:
 
         Returns
         -------
-        int
-            Number of sequences downloaded
+        Tuple[int, Set[str]]
+            Number of sequences downloaded and set of species names found in headers
         """
         # Download file
         req = Request(url, headers={"User-Agent": "SADIE-Germlines/1.0"})
@@ -578,13 +594,20 @@ class IMGTDownloader:
             content = response.read().decode("utf-8")
 
         if not content.strip():
-            return 0
+            return 0, set()
 
         # Parse and process sequences
         sequences = self._parse_imgt_fasta(content)
 
         if not sequences:
-            return 0
+            return 0, set()
+
+        # Extract species names from headers (field 3, pipe-delimited)
+        species_names: Set[str] = set()
+        for header, _ in sequences:
+            parts = header.split("|")
+            if len(parts) >= 3:
+                species_names.add(parts[2])
 
         # Write gapped FASTA (original IMGT format)
         with open(gapped_path, "w") as f:
@@ -601,7 +624,7 @@ class IMGTDownloader:
                 f.write(f">{header}\n")
                 f.write(f"{ungapped}\n")
 
-        return len(sequences)
+        return len(sequences), species_names
 
     def _parse_imgt_fasta(self, content: str) -> List[Tuple[str, str]]:
         """

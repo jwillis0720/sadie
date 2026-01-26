@@ -137,12 +137,12 @@ from sadie.germlines import GermlineManager
 
 class GermlineData:
     # ... existing code ...
-    
+
     @lru_cache(maxsize=1)
     def get_source_lookup(self) -> Dict[str, str]:
         """
         Build gene name → source lookup table.
-        
+
         Returns
         -------
         Dict[str, str]
@@ -150,24 +150,24 @@ class GermlineData:
             (imgt, vdjbase, ogrdb, custom)
         """
         lookup: Dict[str, str] = {}
-        
+
         # Skip for prebuilt databases - they may have different genes
         if hasattr(self, '_prebuilt') and self._prebuilt:
             return self._load_prebuilt_sources()
-        
+
         manager = GermlineManager()
         for segment in ['V', 'D', 'J', 'C']:
             for chain in ['H', 'K', 'L']:
                 try:
                     genes = manager.get_genes(
-                        self.name, segment, chain, 
+                        self.name, segment, chain,
                         functional_only=False, strict=False
                     )
                     for gene in genes:
                         lookup[gene.name] = gene.source
                 except Exception:
                     pass  # Some segment/chain combos may not exist
-        
+
         return lookup
 ```
 
@@ -181,28 +181,28 @@ import numpy as np
 def _add_source_columns(self, df: pd.DataFrame) -> pd.DataFrame:
     """
     Add v_call_source, d_call_source, j_call_source, c_call_source columns.
-    
+
     Parameters
     ----------
     df : pd.DataFrame
         AIRR DataFrame with v_call, d_call, j_call, c_call columns
-        
+
     Returns
     -------
     pd.DataFrame
         DataFrame with source columns added
     """
     source_lookup = self.germline_data.get_source_lookup()
-    
+
     for segment in ['v', 'd', 'j', 'c']:
         call_col = f"{segment}_call"
         source_col = f"{segment}_call_source"
-        
+
         if call_col in df.columns:
             df[source_col] = df[call_col].apply(
                 lambda x: self._lookup_source(x, source_lookup)
             )
-    
+
     return df
 
 def _lookup_source(
@@ -210,14 +210,14 @@ def _lookup_source(
 ) -> Optional[str]:
     """
     Look up source for a gene call.
-    
+
     Parameters
     ----------
     call_value : str or None
         Gene call, possibly comma-separated
     lookup : Dict[str, str]
         Gene name to source mapping
-        
+
     Returns
     -------
     str or None
@@ -225,10 +225,10 @@ def _lookup_source(
     """
     if pd.isna(call_value) or not call_value:
         return np.nan
-    
+
     # Get first allele from comma-separated list
     first_allele = str(call_value).split(",")[0].strip()
-    
+
     return lookup.get(first_allele, "unknown")
 ```
 
@@ -255,13 +255,13 @@ def test_source_columns_in_output():
     airr = Airr("human")
     # Use a known sequence that will match germline genes
     result = airr.run_single("test", PG9_SEQUENCE)
-    
+
     # Check columns exist
     assert "v_call_source" in result.columns
     assert "d_call_source" in result.columns
     assert "j_call_source" in result.columns
     assert "c_call_source" in result.columns
-    
+
     # Check valid values
     valid_sources = {"imgt", "vdjbase", "ogrdb", "custom", "unknown"}
     for col in ["v_call_source", "d_call_source", "j_call_source"]:
@@ -273,7 +273,7 @@ def test_source_nan_for_nan_calls():
     """Source should be NaN when call is NaN."""
     airr = Airr("human")
     result = airr.run_single("test", LIGHT_CHAIN_SEQUENCE)  # No D gene
-    
+
     # D call should be NaN, so should D source
     if result["d_call"].isna().all():
         assert result["d_call_source"].isna().all()

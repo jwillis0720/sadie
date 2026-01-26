@@ -1,7 +1,8 @@
-import pytest
-from pathlib import Path
-import tempfile
 import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
 
 
 class TestPriorityOrdering:
@@ -92,8 +93,8 @@ CAGGTGCAGCTGGTGCAGTCTGGGGCTGGGG
         assert imgt_only_gene not in ogrdb_names
 
     def test_novel_genes_from_lower_priority_included(self, priority_env):
-        from sadie.germlines.providers.ogrdb import OGRDBProvider
         from sadie.germlines.providers.imgt import IMGTProvider
+        from sadie.germlines.providers.ogrdb import OGRDBProvider
 
         ogrdb = OGRDBProvider(data_dir=priority_env / "ogrdb")
         imgt = IMGTProvider(data_dir=priority_env / "imgt")

@@ -142,7 +142,7 @@ from sadie.airr import Airr, AirrSeries, AirrTable, GermlineData, LinkedAirrTabl
 ## Verification Checklist
 
 - [ ] `airr` appears in `[tool.poetry.dependencies]` section
-- [ ] `airr` removed from `[tool.poetry.group.dev.dependencies]` section  
+- [ ] `airr` removed from `[tool.poetry.group.dev.dependencies]` section
 - [ ] `poetry lock` runs without errors
 - [ ] `import airr` at top of test file (not inside function)
 - [ ] `pytest.importorskip("airr")` line removed from test

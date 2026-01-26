@@ -208,7 +208,7 @@ If fine-grained provider control is needed, consider:
 
 ```python
 def from_yaml(
-    yaml_path: Optional[Path] = None, 
+    yaml_path: Optional[Path] = None,
     use_germlines: bool = False,
     providers: Optional[List[str]] = None  # ["imgt", "ogrdb"]
 ) -> "References":

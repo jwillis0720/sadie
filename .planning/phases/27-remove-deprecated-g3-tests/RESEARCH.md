@@ -126,7 +126,7 @@ TestGermlineDataPaths        ← Deprecated, REMOVE
 @pytest.mark.skip(reason="G3 API deprecated, will be removed after 2026-06-01")
 class TestGermlineDataPaths:
     """Tests for legacy G3 API path attributes.
-    
+
     These tests are skipped because they test deprecated G3 API behavior.
     The G3 API will be removed after 2026-06-01.
     """
@@ -180,7 +180,7 @@ pytest tests/unit/germlines/ -v --tb=short
 
 **Purpose:** Verify `GermlineData` has `v_gene_dir`, `d_gene_dir`, `j_gene_dir` attributes when using **legacy G3 paths**.
 
-**Why it's deprecated:** 
+**Why it's deprecated:**
 - Tests use `patch("sadie.airr.igblast.germline._use_germlines_module", return_value=False)` to force G3 path
 - G3 API is being removed on 2026-06-01
 - After removal, `_use_germlines_module=False` code path won't exist

@@ -310,7 +310,7 @@ pytest tests/unit/airr/ tests/unit/germlines/ -v --tb=short
 ## Dependencies Between Plans
 
 ```
-Plan 1 (Provider Config) 
+Plan 1 (Provider Config)
     ↓
 Plan 2 (Download Data) ← Requires Plan 1 for correct directory naming
     ↓

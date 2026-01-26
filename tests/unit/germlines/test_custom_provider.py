@@ -1,7 +1,8 @@
-import pytest
-from pathlib import Path
-import tempfile
 import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
 
 from sadie.germlines.providers.custom import CustomProvider, _validate_sequence
 

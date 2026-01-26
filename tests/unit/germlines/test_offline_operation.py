@@ -1,8 +1,9 @@
-import pytest
-import socket
-from pathlib import Path
-import tempfile
 import shutil
+import socket
+import tempfile
+from pathlib import Path
+
+import pytest
 
 
 class TestOfflineOperation:
@@ -128,6 +129,7 @@ CAGGTGCAGCTGGTGCAGTCTGGGGCT
         os.utime(fasta_path, (old_time, old_time))
 
         from sadie.germlines.providers.imgt import IMGTProvider
+
         provider = IMGTProvider(data_dir=tmp_path / "sources" / "imgt")
         genes = provider.fetch_genes("human", "V", "H")
         assert len(genes) >= 1

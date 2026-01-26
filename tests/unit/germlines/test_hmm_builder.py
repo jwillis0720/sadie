@@ -1,5 +1,6 @@
-import pytest
 from pathlib import Path
+
+import pytest
 
 
 class TestHMMBuilder:
@@ -36,11 +37,7 @@ ACAACTGGTTCGACTCCTGGGGCCAAGGCACCCTGGTCACCGTCTCCTCAG
         builder = HMMBuilder()
         output_dir = hmm_env / "output"
 
-        builder.build_for_species(
-            "human",
-            source_dir=hmm_env / "gapped",
-            output_dir=output_dir
-        )
+        builder.build_for_species("human", source_dir=hmm_env / "gapped", output_dir=output_dir)
 
         sto_file = output_dir / "human_HV.sto"
         assert sto_file.exists()
@@ -51,11 +48,7 @@ ACAACTGGTTCGACTCCTGGGGCCAAGGCACCCTGGTCACCGTCTCCTCAG
         builder = HMMBuilder()
         output_dir = hmm_env / "output"
 
-        builder.build_for_species(
-            "human",
-            source_dir=hmm_env / "gapped",
-            output_dir=output_dir
-        )
+        builder.build_for_species("human", source_dir=hmm_env / "gapped", output_dir=output_dir)
 
         sto_file = output_dir / "human_HV.sto"
         content = sto_file.read_text()
@@ -80,11 +73,7 @@ CAGGTGCAG
         builder = HMMBuilder()
         output_dir = tmp_path / "output"
 
-        builder.build_for_species(
-            "human",
-            source_dir=gapped_dir,
-            output_dir=output_dir
-        )
+        builder.build_for_species("human", source_dir=gapped_dir, output_dir=output_dir)
 
         sto_file = output_dir / "human_HV.sto"
         assert not sto_file.exists()
@@ -105,11 +94,7 @@ CAGGTGCAG
         builder = HMMBuilder()
         output_dir = tmp_path / "output"
 
-        builder.build_for_species(
-            "human",
-            source_dir=gapped_dir,
-            output_dir=output_dir
-        )
+        builder.build_for_species("human", source_dir=gapped_dir, output_dir=output_dir)
 
         sto_file = output_dir / "human_HV.sto"
         content = sto_file.read_text()

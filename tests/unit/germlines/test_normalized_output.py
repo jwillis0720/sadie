@@ -1,7 +1,8 @@
-import pytest
-from pathlib import Path
-import tempfile
 import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
 
 
 class TestNormalizedOutput:
@@ -138,17 +139,16 @@ CAGGTGCAGCTGGTGCAGTCTGGGGCT
 
 class TestNoGapperDuplication:
     def test_custom_provider_uses_builders_gapper(self):
-        from sadie.germlines.providers.custom import CustomProvider
         from sadie.germlines.builders.gapper import GapperService
+        from sadie.germlines.providers.custom import CustomProvider
 
         provider = CustomProvider()
-        assert hasattr(provider, '_get_gapper')
+        assert hasattr(provider, "_get_gapper")
 
     def test_pipeline_uses_builders(self):
-        from sadie.germlines.pipeline import GermlinePipeline
-
-        from sadie.germlines.builders.blast import BlastDBBuilder
         from sadie.germlines.builders.aux import AuxFileBuilder
+        from sadie.germlines.builders.blast import BlastDBBuilder
+        from sadie.germlines.pipeline import GermlinePipeline
 
         assert BlastDBBuilder is not None
         assert AuxFileBuilder is not None

@@ -1,7 +1,8 @@
-import pytest
-from pathlib import Path
-import tempfile
 import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
 
 
 class TestCustomSequenceIntegration:
@@ -47,6 +48,7 @@ GGTACAACTGGAACGAC
         manager.sources_dir = integration_env["sources"]
 
         from sadie.germlines.providers.imgt import IMGTProvider
+
         imgt_provider = IMGTProvider(data_dir=integration_env["sources"] / "imgt")
 
         genes = imgt_provider.fetch_genes("human", "V", "H")
@@ -116,8 +118,9 @@ CAGGTGCAGCTGGTGCAGTCTGGGGCT
         assert pipeline._sources_changed("human") is True
 
     def test_sources_unchanged_after_build(self, pipeline_env):
-        from sadie.germlines.pipeline import GermlinePipeline
         import time
+
+        from sadie.germlines.pipeline import GermlinePipeline
 
         pipeline = GermlinePipeline(pipeline_env)
 
@@ -134,8 +137,9 @@ CAGGTGCAGCTGGTGCAGTCTGGGGCT
 
 class TestOfflineOperation:
     def test_no_network_calls_during_fetch(self, tmp_path):
-        from sadie.germlines.providers.imgt import IMGTProvider
         import socket
+
+        from sadie.germlines.providers.imgt import IMGTProvider
 
         sources = tmp_path / "sources" / "imgt" / "human"
         sources.mkdir(parents=True)

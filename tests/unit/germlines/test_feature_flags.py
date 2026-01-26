@@ -1,8 +1,13 @@
 """Tests for feature flag utilities."""
 
 import os
+
 import pytest
-from sadie.germlines.utils.feature_flags import use_germlines_module, clear_feature_flag_cache
+
+from sadie.germlines.utils.feature_flags import (
+    clear_feature_flag_cache,
+    use_germlines_module,
+)
 
 
 class TestUseGermlinesModule:
@@ -12,6 +17,7 @@ class TestUseGermlinesModule:
         clear_feature_flag_cache()
         yield
         clear_feature_flag_cache()
+
     """Test suite for use_germlines_module() feature flag function."""
 
     def test_default_behavior_returns_true(self, monkeypatch):

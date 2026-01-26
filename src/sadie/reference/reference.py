@@ -508,10 +508,7 @@ class References:
         missing_columns = [col for col in required_columns if col not in database.columns]
         if missing_columns:
             missing_genes = sorted(v_gene_df["gene"].dropna().unique().tolist())
-            raise ValueError(
-                "Missing IMGT V-region position columns "
-                f"{missing_columns} for genes: {missing_genes}"
-            )
+            raise ValueError("Missing IMGT V-region position columns " f"{missing_columns} for genes: {missing_genes}")
 
         missing_positions = v_gene_df[v_gene_df[required_columns].isna().any(axis=1)]
         if not missing_positions.empty:

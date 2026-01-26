@@ -72,3 +72,6 @@ test.ipynb
 # ignore testing backup files
 *.bak.*
 nb/
+
+# Testing files and databases
+my_database/

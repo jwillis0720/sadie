@@ -1,5 +1,6 @@
-import pytest
 from pathlib import Path
+
+import pytest
 
 
 class TestCodonAwareGapping:
@@ -57,12 +58,7 @@ CAGGTGCAG...CTGGTGCAG...TCTGGGGCT
         from sadie.germlines.builders.gapper import GapperService
 
         gapper = GapperService(template_dir=gapper_env)
-        result = gapper.gap_sequence(
-            sequence="GTATTACTATGGTTCGGGGAGTT",
-            segment="D",
-            chain="H",
-            gene_name="IGHD3-3*01"
-        )
+        result = gapper.gap_sequence(sequence="GTATTACTATGGTTCGGGGAGTT", segment="D", chain="H", gene_name="IGHD3-3*01")
 
         assert result is None
 
@@ -70,12 +66,7 @@ CAGGTGCAG...CTGGTGCAG...TCTGGGGCT
         from sadie.germlines.builders.gapper import GapperService
 
         gapper = GapperService(template_dir=gapper_env)
-        result = gapper.gap_sequence(
-            sequence="CAGGTGCAG",
-            segment="X",
-            chain="H",
-            gene_name="TEST"
-        )
+        result = gapper.gap_sequence(sequence="CAGGTGCAG", segment="X", chain="H", gene_name="TEST")
 
         assert result is None
 

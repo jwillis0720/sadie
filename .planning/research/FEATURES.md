@@ -27,8 +27,8 @@ Must-have features for this milestone to work. These are non-negotiable requirem
 
 **Description:** YamlRef currently only validates `imgt` and `custom` sources. Must accept `ogrdb` and `vdjbase`.
 
-**Complexity:** Low  
-**Existing Dependencies:** `src/sadie/reference/yaml.py` (YamlRef class)  
+**Complexity:** Low
+**Existing Dependencies:** `src/sadie/reference/yaml.py` (YamlRef class)
 **Implementation Notes:**
 - Update source validation logic to accept ["imgt", "ogrdb", "vdjbase", "custom"]
 - Maintain backward compatibility with existing reference.yml files
@@ -39,7 +39,7 @@ Must-have features for this milestone to work. These are non-negotiable requirem
 
 **Description:** When `use_germlines=True` (soon default), Reference must route gene lookups through the appropriate germlines provider based on the `source` field in reference.yml.
 
-**Complexity:** Medium  
+**Complexity:** Medium
 **Existing Dependencies:**
 - `src/sadie/reference/reference.py` (Reference class, `_get_gene()`, `_get_genes()`)
 - `src/sadie/germlines/manager.py` (GermlineManager)
@@ -56,7 +56,7 @@ Must-have features for this milestone to work. These are non-negotiable requirem
 
 **Description:** Add `use_g3` parameter to Reference class with `False` as default (soft deprecation of G3 API).
 
-**Complexity:** Low  
+**Complexity:** Low
 **Existing Dependencies:**
 - `src/sadie/reference/reference.py` (Reference.__init__)
 
@@ -72,7 +72,7 @@ Must-have features for this milestone to work. These are non-negotiable requirem
 
 **Description:** Create sample reference.yml demonstrating multi-source selection with mouse=imgt, human=ogrdb, macaque=vdjbase.
 
-**Complexity:** Low  
+**Complexity:** Low
 **Existing Dependencies:**
 - `src/sadie/reference/data/reference.yml` (existing format)
 - Germlines module with populated data for all 3 species
@@ -103,7 +103,7 @@ sample:
 
 **Description:** Validate that requested genes exist in the specified source for the specified species.
 
-**Complexity:** Medium  
+**Complexity:** Medium
 **Existing Dependencies:**
 - Germlines providers (IMGT, OGRDB, VDJbase, Custom)
 - `src/sadie/germlines/manager.py` (GermlineManager.get_gene_by_name)
@@ -123,13 +123,13 @@ sample:
 
 **Description:** Provide clear error messages when requested source lacks data for species or gene.
 
-**Complexity:** Low  
+**Complexity:** Low
 **Existing Dependencies:**
 - ERR-01 requirement from PROJECT.md (already implemented for providers)
 
 **Implementation Notes:**
 ```
-G3Error: "Gene IGHV1-69*01 not found in source 'ogrdb' for species 'mouse'. 
+G3Error: "Gene IGHV1-69*01 not found in source 'ogrdb' for species 'mouse'.
          OGRDB only supports: human. Available for mouse: imgt, custom."
 ```
 
@@ -143,7 +143,7 @@ Nice-to-have features that improve user experience or future extensibility.
 
 **Description:** Utility to list which sources have data for a given species.
 
-**Complexity:** Low  
+**Complexity:** Low
 **Existing Dependencies:**
 - `GermlineManager.get_available_species()` (per-manager, not per-provider)
 
@@ -158,7 +158,7 @@ Nice-to-have features that improve user experience or future extensibility.
 
 **Description:** Dry-run validation that checks all genes in reference.yml exist in their specified sources.
 
-**Complexity:** Medium  
+**Complexity:** Medium
 **Existing Dependencies:**
 - YamlRef class
 - Germlines providers
@@ -174,7 +174,7 @@ Nice-to-have features that improve user experience or future extensibility.
 
 **Description:** Include `source` column in Reference dataframe to track gene provenance.
 
-**Complexity:** Low  
+**Complexity:** Low
 **Existing Dependencies:**
 - `Reference.get_dataframe()` method
 - G3 adapter already preserves source field
@@ -189,7 +189,7 @@ Nice-to-have features that improve user experience or future extensibility.
 
 **Description:** Generate reference.yml templates based on available data.
 
-**Complexity:** Medium  
+**Complexity:** Medium
 **Existing Dependencies:**
 - Germlines manager
 - Provider metadata
@@ -205,7 +205,7 @@ Nice-to-have features that improve user experience or future extensibility.
 
 **Description:** Allow reference.yml to specify fallback order for genes within a species entry.
 
-**Complexity:** High (Constitution change)  
+**Complexity:** High (Constitution change)
 **Existing Dependencies:**
 - Constitution principle: single provider per run
 
@@ -357,7 +357,7 @@ Visual representation of what depends on what:
 | D-3 | Source Metadata | Low | Nice-to-have |
 | D-4 | Template Generator | Medium | Nice-to-have |
 
-**Estimated Core Effort:** 3-5 development units  
+**Estimated Core Effort:** 3-5 development units
 **With Differentiators:** +2-3 development units
 
 ---

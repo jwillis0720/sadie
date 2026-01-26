@@ -149,13 +149,13 @@ human-comprehensive:
       - IGHV3-23*01
       - IGHD3-10*01
       - IGHJ4*02
-  
+
   # Add curated alleles from OGRDB
   ogrdb:
     human:
       - IGHV1-69*13    # Novel allele validated by OGRDB
       - IGHV4-34*09    # Population-specific variant
-  
+
   # Include VDJbase alleles
   vdjbase:
     human:

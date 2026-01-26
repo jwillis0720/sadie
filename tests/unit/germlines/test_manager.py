@@ -5,8 +5,9 @@ Tests for GermlineManager
 Tests priority-based germline database management.
 """
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 # TODO: Implement tests after data is populated
 

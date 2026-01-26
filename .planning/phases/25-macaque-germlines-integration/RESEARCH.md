@@ -71,7 +71,7 @@ VDJbase repseq endpoint returns gene types: `['IGHD', 'IGHJ', 'IGHV']` only.
 # Macaca mulatta C genes available:
 IGHA*01 through IGHA*11 (IgA isotypes)
 IGHD*01 (IgD)
-IGHE*01 (IgE)  
+IGHE*01 (IgE)
 IGHG*01-04 (IgG isotypes)
 IGHM*01 (IgM)
 IGKC (Kappa constant)
@@ -127,7 +127,7 @@ SPECIES_MAP = {
 - **Solution:** Ensure IMGT C genes are downloaded before VDJbase build
 
 ### 2. Species Name Mismatch
-- VDJbase API uses "Rhesus Macaque" 
+- VDJbase API uses "Rhesus Macaque"
 - Codebase expects "macaque"
 - Tests check for `internal_data/macaque/` not `internal_data/rhesus_macaque/`
 - **Solution:** Map VDJbase name to `macaque` in SPECIES_MAP
@@ -174,7 +174,7 @@ python src/sadie/germlines/scripts/build_internal_data.py macaque
 from sadie.airr import Airr
 
 # This should work after build:
-airr = Airr("macaque")  
+airr = Airr("macaque")
 results = airr.run_fasta("test.fasta")
 ```
 

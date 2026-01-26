@@ -260,9 +260,7 @@ class Airr:
                 raise FileNotFoundError(f"Database path not found: {database_path}")
 
             # Use prebuilt database - validate structure and use directly
-            self.germline_data = GermlineData(
-                reference_name, receptor, database_path, scheme, prebuilt=True
-            )
+            self.germline_data = GermlineData(reference_name, receptor, database_path, scheme, prebuilt=True)
         elif isinstance(references, References):
             _custom_avail = list(references.get_dataframe()["name"].unique())
             if self.name not in _custom_avail:
@@ -501,7 +499,9 @@ class Airr:
             )
 
         # write to tempfile - use mode='w' and write to handle for proper flushing
-        with tempfile.NamedTemporaryFile(suffix=".fasta", dir=self.temp_directory, mode="w", delete=False) as temp_fasta:
+        with tempfile.NamedTemporaryFile(
+            suffix=".fasta", dir=self.temp_directory, mode="w", delete=False
+        ) as temp_fasta:
             SeqIO.write(seqrecords, temp_fasta, "fasta")
             temp_path = temp_fasta.name
         try:
@@ -715,14 +715,12 @@ class Airr:
         """
         source_lookup = self.germline_data.get_source_lookup()
 
-        for segment in ['v', 'd', 'j', 'c']:
+        for segment in ["v", "d", "j", "c"]:
             call_col = f"{segment}_call"
             source_col = f"{segment}_call_source"
 
             if call_col in df.columns:
-                df[source_col] = df[call_col].apply(
-                    lambda x: self._lookup_source(x, source_lookup)
-                )
+                df[source_col] = df[call_col].apply(lambda x: self._lookup_source(x, source_lookup))
 
         return df
 
@@ -797,7 +795,9 @@ class Airr:
         remaining_id = result_a["sequence_id"]
 
         # Make some seqeuncing records
-        seq_records: List[SeqRecord] = [SeqRecord(Seq(x), id=str(name), description="") for x, name in zip(remaining_seq, remaining_id)]
+        seq_records: List[SeqRecord] = [
+            SeqRecord(Seq(x), id=str(name), description="") for x, name in zip(remaining_seq, remaining_id)
+        ]
         with tempfile.NamedTemporaryFile() as tmpfile:
             SeqIO.write(seq_records, tmpfile.name, "fasta")
             # Now run airr again, but this time on the remaining sequencess

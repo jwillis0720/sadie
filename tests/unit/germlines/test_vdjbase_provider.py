@@ -1,7 +1,8 @@
-import pytest
-from pathlib import Path
-import tempfile
 import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
 
 
 class TestVDJbaseProvider:
@@ -142,8 +143,8 @@ CAGGTGCAGCTGGTGCAGTCTGGGGCTAAAA
         return sources
 
     def test_vdjbase_takes_priority_when_first(self, multi_provider_env):
-        from sadie.germlines.providers.vdjbase import VDJbaseProvider
         from sadie.germlines.providers.imgt import IMGTProvider
+        from sadie.germlines.providers.vdjbase import VDJbaseProvider
 
         vdjbase = VDJbaseProvider(data_dir=multi_provider_env / "vdjbase")
         imgt = IMGTProvider(data_dir=multi_provider_env / "imgt")
