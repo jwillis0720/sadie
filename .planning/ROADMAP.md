@@ -429,7 +429,7 @@
 
 **Depends on:** Phase 26
 
-**Status:** Not started
+**Status:** ✓ Complete
 
 **Context:** 2 tests skipped with "G3 API deprecated, will be removed after 2026-06-01":
 - `test_v_gene_dir_attribute_exists`
@@ -442,13 +442,13 @@
 - G3-04: Update deprecation timeline documentation
 
 **Success Criteria:**
-1. No tests reference deprecated G3 API
-2. All test functionality covered by germlines module tests
-3. Clear documentation of G3 deprecation timeline
+1. ✓ No tests reference deprecated G3 API
+2. ✓ All test functionality covered by germlines module tests
+3. ✓ Clear documentation of G3 deprecation timeline
 
-**Files to modify:**
-- `tests/unit/germlines/test_germline_data_legacy.py` — Remove or migrate tests
-- Documentation — Update deprecation notes
+**Files modified:**
+- `tests/unit/germlines/test_germline_data_legacy.py` — Removed `TestGermlineDataPaths` class
+- `docs/G3-Deprecation.md` — Created deprecation documentation (new file)
 
 ---
 
@@ -481,6 +481,48 @@
 **Files to modify:**
 - `src/sadie/germlines/manager.py` — Update DEFAULT_PROVIDERS order
 - `src/sadie/germlines/` — Update any hardcoded priority lists
+
+---
+
+## Phase 29: Add Germline Source Tracking to AIRR Output
+
+**Goal:** Add columns to AIRR output showing which germline database each gene call came from
+
+**Depends on:** Phase 28
+
+**Status:** Not started
+
+**Context:** Users cannot currently tell which germline source (imgt, vdjbase, ogrdb, custom) each matched gene came from in the AIRR output. The `source` field exists in `GermlineGene` objects at the GermlineManager level, but is not propagated to the final annotation results.
+
+**Use Case:**
+- Researchers need to cite the correct germline database for publications
+- Quality control: verify expected sources are being used
+- Debugging: understand why specific alleles were matched
+- Reproducibility: document exact data sources used
+
+**Requirements:**
+- SRC-01: Add `v_call_source`, `d_call_source`, `j_call_source`, `c_call_source` columns to AIRR output
+- SRC-02: Populate source columns during IgBLAST result parsing
+- SRC-03: Handle cases where source lookup fails (return "unknown")
+- SRC-04: Include sources in LinkedAirrTable with appropriate suffixes
+
+**Success Criteria:**
+1. AIRR output contains `v_call_source`, `d_call_source`, `j_call_source`, `c_call_source` columns
+2. Source values match germline provider names: "imgt", "vdjbase", "ogrdb", "custom"
+3. Source columns populated for all matched genes
+4. Unmatched genes (NaN calls) have NaN sources
+5. LinkedAirrTable has `_heavy`/`_light` suffixed source columns
+
+**Implementation Notes:**
+- Create gene name → source lookup table during GermlineData initialization
+- Cache lookup table for performance (avoid repeated source lookups)
+- Consider adding source info to aux file or separate metadata file
+
+**Files to modify:**
+- `src/sadie/airr/igblast/germline.py` — Build gene→source lookup table
+- `src/sadie/airr/igblast/igblast.py` — Add source columns during result parsing
+- `src/sadie/airr/airrtable/airrtable.py` — Handle source columns in table operations
+- `tests/unit/airr/test_airr.py` — Add tests for source columns
 
 ---
 

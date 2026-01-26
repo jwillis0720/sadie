@@ -165,10 +165,10 @@ Requirements for Test Infrastructure & Species Expansion milestone.
 
 ### Phase 27: Remove Deprecated G3 Tests
 
-- [ ] **G3-01**: Review what these tests are validating
-- [ ] **G3-02**: Determine if equivalent germlines module tests exist
-- [ ] **G3-03**: Either migrate tests to germlines or remove if redundant
-- [ ] **G3-04**: Update deprecation timeline documentation
+- [x] **G3-01**: Review what these tests are validating
+- [x] **G3-02**: Determine if equivalent germlines module tests exist
+- [x] **G3-03**: Either migrate tests to germlines or remove if redundant
+- [x] **G3-04**: Update deprecation timeline documentation
 
 ### Phase 28: Fix Germline Priority Order
 
@@ -188,10 +188,10 @@ Requirements for Test Infrastructure & Species Expansion milestone.
 | AIRR-01 | Phase 26 | Complete |
 | AIRR-02 | Phase 26 | Complete |
 | AIRR-03 | Phase 26 | Complete |
-| G3-01 | Phase 27 | Pending |
-| G3-02 | Phase 27 | Pending |
-| G3-03 | Phase 27 | Pending |
-| G3-04 | Phase 27 | Pending |
+| G3-01 | Phase 27 | Complete |
+| G3-02 | Phase 27 | Complete |
+| G3-03 | Phase 27 | Complete |
+| G3-04 | Phase 27 | Complete |
 | PRIO-01 | Phase 28 | Pending |
 | PRIO-02 | Phase 28 | Pending |
 | PRIO-03 | Phase 28 | Pending |
@@ -200,9 +200,9 @@ Requirements for Test Infrastructure & Species Expansion milestone.
 **v1.3 Coverage:**
 - Total requirements: 15
 - Mapped to phases: 15
-- Complete: 7 (Phases 25-26)
-- Pending: 8 (Phases 27-28)
+- Complete: 11 (Phases 25-27)
+- Pending: 4 (Phase 28)
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-25 — v1.3 Phase 26 requirements complete*
+*Last updated: 2026-01-25 — v1.3 Phase 27 requirements complete*
