@@ -9,16 +9,16 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 25 — Macaque Germlines Integration
-Plan: .planning/phases/25-macaque-germlines-integration/PLAN.md
+Phase: 26 — Add AIRR Package Dependency
+Plan: .planning/phases/26-airr-package-dependency/PLAN.md
 Status: Complete
-Last activity: 2026-01-25 — Completed Phase 25 (macaque germlines)
+Last activity: 2026-01-25 — Completed Phase 26 (airr dependency)
 
-Progress: █████░░░░░░░░░░░░░░░ 25% (1/4 phases complete)
+Progress: ██████████░░░░░░░░░░ 50% (2/4 phases complete)
 
 **Milestone v1.3: Test Infrastructure & Species Expansion** — In Progress (phases 25-28)
 
-**Next Phase:** Phase 26 — Add AIRR Package Dependency
+**Next Phase:** Phase 27 — Remove Deprecated G3 Tests
 
 ## Milestone v1.3 Overview
 
@@ -29,9 +29,9 @@ Progress: █████░░░░░░░░░░░░░░░ 25% (1/4 
 - ✓ Generate internal_data and aux files
 - ✓ Enable 6 previously skipped tests (4 pass, 2 fail due to pre-existing bug)
 
-### Phase 26: Add AIRR Package Dependency
-- [ ] Add airr to pyproject.toml
-- [ ] Remove importorskip from test
+### Phase 26: Add AIRR Package Dependency ✓
+- ✓ Add airr to pyproject.toml
+- ✓ Remove importorskip from test
 
 ### Phase 27: Remove Deprecated G3 Tests
 - [ ] Review and migrate/remove 2 G3 legacy tests
