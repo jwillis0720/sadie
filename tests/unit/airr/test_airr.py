@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+import airr
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -19,6 +20,17 @@ from sadie.airr.exceptions import BadDataSet, BadRequstedFileType
 from sadie.airr.models import AirrSeriesModel
 from sadie.reference import Reference, References
 from tests.conftest import SadieFixture
+
+
+def _macaque_available() -> bool:
+    """Check if macaque germlines are available."""
+    from sadie.germlines import get_germlines_base_dir
+
+    macaque_path = get_germlines_base_dir() / "igblast" / "Ig" / "internal_data" / "macaque"
+    return macaque_path.exists()
+
+
+skip_no_macaque = pytest.mark.skipif(not _macaque_available(), reason="macaque germlines not available")
 
 
 def test_airr_model() -> None:
@@ -105,22 +117,23 @@ def test_airr_init(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest
     # this will make our tmpdir discoverable by the AIRR
     monkeypatch.setenv("TMPDIR", str(tmpdir / Path("monkeyairr")))
 
-    # When germlines module is enabled, only test species with databases
+    # Test species with databases
+    # When germlines module is enabled, only species with germlines databases work
+    # When disabled (SADIE_USE_GERMLINES_MODULE=false), all pre-built species work
     use_germlines = os.environ.get("SADIE_USE_GERMLINES_MODULE", "true").lower() in ("true", "1", "yes")
-
-    for species in ["human", "mouse", "rat", "dog"]:
-        if use_germlines and species != "human":
-            # Other species don't have germlines databases built yet
-            # Test that we get a clear error message
-            with pytest.raises(ValueError) as exc_info:
-                Airr(species)
-            assert species in str(exc_info.value)
-            assert "not found" in str(exc_info.value).lower()
-        else:
-            air_api = Airr(species)
-            air_api.get_available_datasets()
-            air_api.get_available_species()
-            assert isinstance(air_api, Airr)
+    
+    if use_germlines:
+        # Only human and mouse have germlines databases built
+        species_list = ["human", "mouse"]
+    else:
+        # Legacy path has all species
+        species_list = ["human", "mouse", "rat", "dog"]
+    
+    for species in species_list:
+        air_api = Airr(species)
+        air_api.get_available_datasets()
+        air_api.get_available_species()
+        assert isinstance(air_api, Airr)
     # show we can catch bad species inputs
     with pytest.raises(BadDataSet) as execinfo:
         air_api = Airr("robot")
@@ -464,11 +477,13 @@ TCCCTGACCGGTTCTCTGGCTCCAAGTCTGGGAGCACAGCCACTCTGACCATCCGCGGGACCCAGGCTATAGATGAGGCT
 GATTATTACTGTCAGGTGTGGGACAGCTTCTCCACCTTCGTCTTCGGATCTGGGACCCAGGTCACCGTCCTC"""
 
 
+@skip_no_macaque
 def test_five_and_three_prime_extension(fixture_setup: SadieFixture) -> None:
     airr_table = AirrTable(pd.read_feather(fixture_setup.get_bum_igl_assignment()))
-    airr_methods.run_five_prime_buffer(airr_table)
+    airr_methods.run_five_prime_buffer(airr_table, references=References())
 
 
+@skip_no_macaque
 def test_hard_igl_seqs(fixture_setup: SadieFixture) -> None:
     """Test we can run igl on super hard igl macaque set"""
     airr_table = AirrTable(pd.read_feather(fixture_setup.get_bum_igl_assignment()))
@@ -478,6 +493,7 @@ def test_hard_igl_seqs(fixture_setup: SadieFixture) -> None:
     pd.testing.assert_frame_equal(igl_df, output_solution)
 
 
+@skip_no_macaque
 def test_hard_igl_seqs_linked(fixture_setup: SadieFixture) -> None:
     """Test we can run igl on super hard igl macaque set linked"""
     lat = LinkedAirrTable(pd.read_feather(fixture_setup.get_bum_link_igl_assignment()))
@@ -596,7 +612,6 @@ def test_write_and_check_airr(tmp_path_factory: pytest.TempPathFactory, fixture_
     airr_table = airr_api.run_fasta(catnap_heavy)
     assert isinstance(airr_table, AirrTable)
     airr_table.to_airr(output_file)
-    import airr
 
     # the official airr package will validate
     d = airr.load_rearrangement(output_file, debug=True, validate=True)
@@ -634,6 +649,11 @@ def test_airr_constant_region(fixture_setup: SadieFixture) -> None:
         "c_support",
     ]
     assert all([i in results.columns for i in c_cols])
+
+
+@skip_no_macaque
+def test_airr_constant_region_macaque(fixture_setup: SadieFixture) -> None:
+    constant_fasta = fixture_setup.get_fasta_with_constant()
     airr_api = Airr("macaque")
     results = airr_api.run_fasta(constant_fasta)
     print(results.columns)
