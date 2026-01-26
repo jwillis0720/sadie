@@ -12,9 +12,10 @@ import warnings
 from multiprocessing import cpu_count
 from pathlib import Path
 from types import GeneratorType
-from typing import Generator, Iterator, List, Optional, Set, Union
+from typing import Dict, Generator, Iterator, List, Optional, Set, Union
 
 # third party
+import numpy as np
 import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -559,6 +560,7 @@ class Airr:
 
             # this is worthless since query
             result.insert(2, "reference_name", pd.Series([self.name] * len(result)))
+            result = self._add_source_columns(result)  # Add source tracking columns
             result = AirrTable(result)
             result["v_penalty"] = self._v_gene_penalty
             result["d_penalty"] = self._d_gene_penalty
@@ -667,6 +669,57 @@ class Airr:
         result = self._recalculate_complete_vdj(result)
 
         return result
+
+    def _lookup_source(self, call_value, lookup: Dict[str, str]):
+        """
+        Look up source for a gene call.
+
+        Parameters
+        ----------
+        call_value : str or None
+            Gene call, possibly comma-separated (e.g., "IGHV1-69*01,IGHV1-69*02")
+        lookup : Dict[str, str]
+            Gene name to source mapping
+
+        Returns
+        -------
+        str or np.nan
+            Source provider name or np.nan if call is NaN/empty
+        """
+        if pd.isna(call_value) or not call_value:
+            return np.nan
+
+        # Get first allele from comma-separated list
+        first_allele = str(call_value).split(",")[0].strip()
+
+        return lookup.get(first_allele, "unknown")
+
+    def _add_source_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Add v_call_source, d_call_source, j_call_source, c_call_source columns.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            AIRR DataFrame with v_call, d_call, j_call, c_call columns
+
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame with source columns added
+        """
+        source_lookup = self.germline_data.get_source_lookup()
+
+        for segment in ['v', 'd', 'j', 'c']:
+            call_col = f"{segment}_call"
+            source_col = f"{segment}_call_source"
+
+            if call_col in df.columns:
+                df[source_col] = df[call_col].apply(
+                    lambda x: self._lookup_source(x, source_lookup)
+                )
+
+        return df
 
     def _recalculate_complete_vdj(self, result: AirrTable) -> AirrTable:
         """
@@ -799,8 +852,11 @@ class Airr:
         # so the best match will be the top one
         heavy_chain_table = heavy_chain_table.groupby(["sequence_id", "sequence"]).head(1)
         light_chain_table = light_chain_table.groupby(["sequence_id", "sequence"]).head(1)
-        _heavy_airr = AirrTable(heavy_chain_table.reset_index(drop=True))
-        _light_airr = AirrTable(light_chain_table.reset_index(drop=True))
+        # Add source columns before merge so they get _heavy/_light suffixes
+        heavy_chain_table = self._add_source_columns(heavy_chain_table.reset_index(drop=True))
+        light_chain_table = self._add_source_columns(light_chain_table.reset_index(drop=True))
+        _heavy_airr = AirrTable(heavy_chain_table)
+        _light_airr = AirrTable(light_chain_table)
         # Fix IgBLAST complete_vdj quirk for both chains before merge
         _heavy_airr = self._recalculate_complete_vdj(_heavy_airr)
         _light_airr = self._recalculate_complete_vdj(_light_airr)

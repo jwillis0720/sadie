@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import warnings
+from functools import lru_cache
 from pathlib import Path
 from typing import Dict, Optional, Set
 
@@ -384,3 +385,33 @@ class GermlineData:
         datasets.update(y.get_names())
 
         return datasets
+
+    @lru_cache(maxsize=1)
+    def get_source_lookup(self) -> Dict[str, str]:
+        """
+        Build gene name → source lookup table.
+
+        Returns
+        -------
+        Dict[str, str]
+            Mapping from gene name to source provider
+            (imgt, vdjbase, ogrdb, custom)
+        """
+        from sadie.germlines import GermlineManager
+
+        lookup: Dict[str, str] = {}
+        manager = GermlineManager()
+
+        for segment in ['V', 'D', 'J', 'C']:
+            for chain in ['H', 'K', 'L']:
+                try:
+                    genes = manager.get_genes(
+                        self.name, segment, chain,
+                        functional_only=False, strict=False
+                    )
+                    for gene in genes:
+                        lookup[gene.name] = gene.source
+                except Exception:
+                    pass  # Some segment/chain combos may not exist
+
+        return lookup
