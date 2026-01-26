@@ -43,7 +43,6 @@ sadie reference build ref.yml -o /tmp/db --use-germlines  # FAILS
 The G3 API is deprecated and scheduled for removal:
 - `src/sadie/airr/igblast/germline.py:96` — Deprecation warning
 - `src/sadie/germlines/utils/feature_flags.py:46` — Deprecation warning
-- `tests/unit/germlines/test_germline_data_legacy.py:74` — Test skipped due to deprecation
 
 **Migration Status:**
 - ✓ Default switched to germlines module (`SADIE_USE_GERMLINES_MODULE=true`)
