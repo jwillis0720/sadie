@@ -458,7 +458,7 @@
 
 **Depends on:** Phase 27
 
-**Status:** Not started
+**Status:** ✓ Complete
 
 **Context:** Current priority order doesn't reflect data quality hierarchy:
 - VDJbase: Best for human and macaque (curated, validated alleles)
@@ -473,14 +473,23 @@
 - PRIO-04: Test priority order with multi-source queries
 
 **Success Criteria:**
-1. `GermlineManager` default priority is `['vdjbase', 'ogrdb', 'imgt', 'custom']`
-2. Human/macaque queries prefer VDJbase alleles when available
-3. Mouse queries get OGRDB alleles (VDJbase has limited mouse data)
-4. Fallback chain works correctly when preferred source lacks data
+1. ✓ `GermlineManager` default priority is `['vdjbase', 'ogrdb', 'imgt', 'custom']`
+2. ✓ Human/macaque queries prefer VDJbase alleles when available
+3. ✓ Mouse queries get OGRDB alleles (VDJbase has limited mouse data)
+4. ✓ Fallback chain works correctly when preferred source lacks data
 
-**Files to modify:**
-- `src/sadie/germlines/manager.py` — Update DEFAULT_PROVIDERS order
-- `src/sadie/germlines/` — Update any hardcoded priority lists
+**Files modified:**
+- `src/sadie/germlines/manager.py` — Updated DEFAULT_PROVIDERS order + docstrings
+- `src/sadie/germlines/pipeline.py` — Updated hardcoded source iteration
+- `tests/unit/germlines/test_compliance.py` — Updated test assertions
+- `tests/unit/germlines/test_manager.py` — Updated test assertions
+- `src/sadie/germlines/__init__.py` — Updated module docstrings
+- Documentation files (7 files) — Updated priority references
+
+---
+
+*Milestone v1.3 created: 2026-01-25*
+*Milestone v1.3 completed: 2026-01-25*
 
 ---
 

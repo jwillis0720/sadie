@@ -172,10 +172,10 @@ Requirements for Test Infrastructure & Species Expansion milestone.
 
 ### Phase 28: Fix Germline Priority Order
 
-- [ ] **PRIO-01**: Update default provider priority in GermlineManager
-- [ ] **PRIO-02**: Document priority rationale in code comments
-- [ ] **PRIO-03**: Verify priority order used in fallback resolution
-- [ ] **PRIO-04**: Test priority order with multi-source queries
+- [x] **PRIO-01**: Update default provider priority in GermlineManager
+- [x] **PRIO-02**: Document priority rationale in code comments
+- [x] **PRIO-03**: Verify priority order used in fallback resolution
+- [x] **PRIO-04**: Test priority order with multi-source queries
 
 ### v1.3 Requirements Mapping
 
@@ -192,17 +192,17 @@ Requirements for Test Infrastructure & Species Expansion milestone.
 | G3-02 | Phase 27 | Complete |
 | G3-03 | Phase 27 | Complete |
 | G3-04 | Phase 27 | Complete |
-| PRIO-01 | Phase 28 | Pending |
-| PRIO-02 | Phase 28 | Pending |
-| PRIO-03 | Phase 28 | Pending |
-| PRIO-04 | Phase 28 | Pending |
+| PRIO-01 | Phase 28 | Complete |
+| PRIO-02 | Phase 28 | Complete |
+| PRIO-03 | Phase 28 | Complete |
+| PRIO-04 | Phase 28 | Complete |
 
 **v1.3 Coverage:**
 - Total requirements: 15
 - Mapped to phases: 15
-- Complete: 11 (Phases 25-27)
-- Pending: 4 (Phase 28)
+- Complete: 15 ✓
+- Pending: 0 ✓
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-25 — v1.3 Phase 27 requirements complete*
+*Last updated: 2026-01-25 — v1.3 Milestone complete*
