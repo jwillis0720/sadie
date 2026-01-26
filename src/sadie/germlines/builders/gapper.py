@@ -202,7 +202,8 @@ class GapperService:
             template = self._get_template(segment=segment, chain=chain, gene_name=gene_name, species=species)
 
             if template is None:
-                logger.warning(f"No template found for {gene_name or f'{chain}{segment}'} - " f"returning ungapped")
+                # Novel genes may not have templates - this is expected, returning ungapped
+                logger.debug(f"No template found for {gene_name or f'{chain}{segment}'} - returning ungapped")
                 return None
 
             # Translate to amino acid for alignment

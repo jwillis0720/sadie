@@ -397,7 +397,7 @@ class Airr:
         if not isinstance(seq_id, str):
             raise TypeError(f"seq_id must be instance of str, passed {type(seq_id)}")
 
-        records = [SeqRecord(Seq(seq), id=seq_id, name=seq_id)]
+        records = [SeqRecord(Seq(seq), id=seq_id, name=seq_id, description="")]
         return self.run_records(records, scfv=scfv)
 
     def run_dataframe(
@@ -500,12 +500,17 @@ class Airr:
                 f"seqrecords must be an instance of {SequenceIterator} or be a list of {SeqRecord} not {type(seqrecords)}"
             )
 
-        # write to tempfile
-        with tempfile.NamedTemporaryFile(suffix=".fasta", dir=self.temp_directory) as temp_fasta:
-            SeqIO.write(seqrecords, temp_fasta.name, "fasta")
+        # write to tempfile - use mode='w' and write to handle for proper flushing
+        with tempfile.NamedTemporaryFile(suffix=".fasta", dir=self.temp_directory, mode="w", delete=False) as temp_fasta:
+            SeqIO.write(seqrecords, temp_fasta, "fasta")
+            temp_path = temp_fasta.name
+        try:
             logger.info("Running AIRR annotation on records")
-            logger.debug(f"Running tempfile {temp_fasta.name}")
-            results = self.run_fasta(temp_fasta.name, scfv=scfv)
+            logger.debug(f"Running tempfile {temp_path}")
+            results = self.run_fasta(temp_path, scfv=scfv)
+        finally:
+            # Clean up temp file
+            Path(temp_path).unlink(missing_ok=True)
         return results
 
     def run_fasta(self, file: Union[Path, str], scfv: bool = False) -> Union[AirrTable, LinkedAirrTable]:
@@ -792,7 +797,7 @@ class Airr:
         remaining_id = result_a["sequence_id"]
 
         # Make some seqeuncing records
-        seq_records: List[SeqRecord] = [SeqRecord(Seq(x), id=str(name)) for x, name in zip(remaining_seq, remaining_id)]
+        seq_records: List[SeqRecord] = [SeqRecord(Seq(x), id=str(name), description="") for x, name in zip(remaining_seq, remaining_id)]
         with tempfile.NamedTemporaryFile() as tmpfile:
             SeqIO.write(seq_records, tmpfile.name, "fasta")
             # Now run airr again, but this time on the remaining sequencess

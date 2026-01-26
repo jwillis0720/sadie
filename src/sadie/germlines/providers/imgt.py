@@ -62,6 +62,22 @@ class IMGTProvider(GermlineProvider):
     >>> print(f"Found {len(genes)} IMGT IGHV genes")
     """
 
+    def __init__(self, data_dir: Optional[Path] = None):
+        """
+        Initialize IMGT provider.
+
+        Parameters
+        ----------
+        data_dir : Path, optional
+            Base directory for IMGT data.
+            Defaults to sources/imgt/
+        """
+        if data_dir is None:
+            data_dir = Path(__file__).parent.parent / "sources" / "imgt"
+
+        super().__init__(data_dir)
+        self.name = "imgt"
+
     def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch IMGT genes from pre-downloaded FASTA files.

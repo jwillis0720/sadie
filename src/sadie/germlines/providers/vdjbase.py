@@ -167,7 +167,8 @@ class VDJbaseProvider(GermlineProvider):
         fasta_path = self.get_fasta_path(species, segment, chain)
 
         if not fasta_path.exists():
-            logger.warning(f"VDJbase data not found at {fasta_path}. " "Skipping VDJbase provider.")
+            # D genes don't exist for light chains - this is expected
+            logger.debug(f"VDJbase data not found at {fasta_path}. Skipping.")
             return []
 
         logger.info(f"Loading VDJbase FASTA: {fasta_path}")

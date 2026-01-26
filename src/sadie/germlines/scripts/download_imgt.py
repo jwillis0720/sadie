@@ -538,8 +538,8 @@ class IMGTDownloader:
         species = parts[2]
         functionality = parts[3] if len(parts) > 3 else "F"
 
-        # Filter by species
-        if species.lower() != target_species.lower():
+        # Filter by species (use startswith to handle strain suffixes like "Macaca mulatta_AG07107")
+        if not species.lower().startswith(target_species.lower()):
             return None
 
         # Filter by functionality (F = functional, ORF = open reading frame)

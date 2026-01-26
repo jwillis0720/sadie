@@ -67,6 +67,22 @@ class OGRDBProvider(GermlineProvider):
     >>> provider.download(["human", "mouse"])
     """
 
+    def __init__(self, data_dir: Optional[Path] = None):
+        """
+        Initialize OGRDB provider.
+
+        Parameters
+        ----------
+        data_dir : Path, optional
+            Base directory for OGRDB data.
+            Defaults to sources/ogrdb/
+        """
+        if data_dir is None:
+            data_dir = Path(__file__).parent.parent / "sources" / "ogrdb"
+
+        super().__init__(data_dir)
+        self.name = "ogrdb"
+
     def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch OGRDB genes from downloaded FASTA files.

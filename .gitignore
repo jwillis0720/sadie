@@ -62,8 +62,7 @@ src/site/
 !specs/**/*.md
 !.planning/
 !.planning/**/*.md
-!audit/
-!audit/**/*.md
+audit/
 
 # testing files
 scrap.ipynb

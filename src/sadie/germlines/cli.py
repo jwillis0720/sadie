@@ -261,7 +261,7 @@ def run_post_download_build(provider_name: str, species_list: List[str], progres
 
     console.print("\n[bold]Running post-download build pipeline...[/bold]")
 
-    task = progress.add_task("[cyan]Building databases...", total=3)
+    task = progress.add_task("[cyan]Building databases...", total=4)
 
     try:
         from .scripts.build_aux_files import build_aux_file_for_species
@@ -284,6 +284,25 @@ def run_post_download_build(provider_name: str, species_list: List[str], progres
             build_internal_data_for_species(sp)
         except Exception as e:
             logger.warning(f"Failed to build internal_data for {sp}: {e}")
+    progress.advance(task)
+
+    progress.update(task, description="[cyan]Building HMMs for renumbering...")
+    try:
+        from .renumbering_integration import LocalHMMBuilder
+
+        hmm_builder = LocalHMMBuilder()
+        hmm_count = 0
+        for sp in species_list:
+            for chain in ["H", "K", "L"]:
+                try:
+                    hmm_builder.get_hmm(sp, chain)
+                    hmm_count += 1
+                except Exception as e:
+                    logger.debug(f"Could not build HMM for {sp} {chain}: {e}")
+        if hmm_count > 0:
+            console.print(f"[dim]Built {hmm_count} HMM models[/dim]")
+    except ImportError:
+        console.print("[yellow]HMM builder not available, skipping[/yellow]")
     progress.advance(task)
 
     progress.update(task, description="[cyan]Build complete")
