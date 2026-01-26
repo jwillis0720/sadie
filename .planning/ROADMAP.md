@@ -195,7 +195,7 @@
 
 ## Milestone: v1.2 Reference Module Unification
 
-**Phases:** 19-23 (continuing from v1.1)
+**Phases:** 19-24 (continuing from v1.1)
 **Goal:** Enable reference.yml to select alleles from all germline sources (imgt, ogrdb, vdjbase, custom), using germlines module as data provider instead of G3 API. Full workflow: build CLI + runtime usage of prebuilt databases.
 
 ---
@@ -270,7 +270,7 @@
 **Files modified:**
 - `src/sadie/app.py` — Added `@reference.command("build")` with Click decorators
 
-**Note:** `--use-germlines` flag has gap — germlines adapter missing IMGT region fields
+**Note:** `--use-germlines` gap closed in Phase 24
 
 ---
 
@@ -325,5 +325,163 @@
 
 ---
 
+## Phase 24: v1.2 Gap Closure (Validation + IMGT Regions)
+
+**Goal:** Close remaining gaps so `use_germlines` flows work end-to-end and milestone can be verified
+
+**Depends on:** Phase 23
+
+**Status:** ✓ Complete
+
+**Requirements:**
+- SRC-02: Validate source exists in germlines before processing
+
+**Gaps closed:**
+- ✓ SRC-02: Validate source exists in germlines before processing
+- ✓ `--use-germlines` build failure (missing IMGT region fields)
+- ✓ Missing phase verification artifacts (19-23)
+
+**Success Criteria:**
+1. ✓ `sadie reference build ... --use-germlines` completes with full database structure
+2. ✓ `References.from_yaml(use_germlines=True)` builds internal data without missing IMGT fields
+3. ✓ Provider/species validation fails fast with clear error
+4. ✓ Phase 19 SUMMARY and phases 19-23 VERIFICATION.md files exist
+
+---
+
 *Milestone v1.2 created: 2026-01-23*
-*Milestone v1.2 completed: 2026-01-23*
+*Milestone v1.2 completed: 2026-01-25*
+
+---
+
+## Milestone: v1.3 Test Infrastructure & Species Expansion
+
+**Phases:** 25-28
+**Goal:** Fix skipped tests by adding macaque germlines, airr package dependency, removing deprecated G3 tests, and fix germline priority order
+
+---
+
+## Phase 25: Macaque Germlines Integration
+
+**Goal:** Build macaque germline databases to enable skipped macaque tests
+
+**Depends on:** Phase 24 (v1.2 complete)
+
+**Status:** ✓ Complete
+
+**Context:** 6 tests currently skipped with "macaque germlines not available":
+- `test_five_and_three_prime_extension`
+- `test_hard_igl_seqs`
+- `test_hard_igl_seqs_linked`
+- `test_airr_constant_region_macaque`
+- `test_run_five_prime_buffer`
+- `test_run_three_prime_buffer`
+
+**Requirements:**
+- MAC-01: Build macaque IgBLAST databases in germlines module
+- MAC-02: Generate macaque internal_data and aux files
+- MAC-03: Verify macaque AIRR annotation works
+- MAC-04: Remove skip markers from macaque tests
+
+**Success Criteria:**
+1. `GermlineData("macaque")` resolves without error
+2. All 6 macaque tests pass (not skipped)
+3. Macaque annotation produces valid AIRR output
+
+**Files to modify:**
+- `src/sadie/germlines/igblast/Ig/internal_data/macaque/` — Create database
+- `src/sadie/germlines/igblast/aux_db/macaque_gl.aux` — Create aux file
+- `tests/unit/airr/test_airr.py` — Remove `@skip_no_macaque` markers
+- `tests/unit/airr/test_methods.py` — Remove `@skip_no_macaque` markers
+
+---
+
+## Phase 26: Add AIRR Package Dependency
+
+**Goal:** Add airr package to dependencies so AIRR validation test runs
+
+**Depends on:** Phase 25
+
+**Status:** ✓ Complete
+
+**Context:** 1 test skipped with "airr package not installed":
+- `test_write_and_check_airr`
+
+**Requirements:**
+- AIRR-01: Add `airr` package to pyproject.toml dependencies
+- AIRR-02: Verify airr package installs correctly
+- AIRR-03: Remove importorskip from test
+
+**Success Criteria:**
+1. ✓ `pip install sadie` includes airr package
+2. ✓ `test_write_and_check_airr` passes (not skipped)
+3. ✓ AIRR table validation works with official airr package
+
+**Files modified:**
+- `pyproject.toml` — Moved airr from dev to main dependencies
+- `tests/unit/airr/test_airr.py` — Added `import airr`, removed `pytest.importorskip("airr")`
+
+---
+
+## Phase 27: Remove Deprecated G3 Tests
+
+**Goal:** Remove or migrate tests that depend on deprecated G3 API
+
+**Depends on:** Phase 26
+
+**Status:** Not started
+
+**Context:** 2 tests skipped with "G3 API deprecated, will be removed after 2026-06-01":
+- `test_v_gene_dir_attribute_exists`
+- `test_aux_path_attribute_exists`
+
+**Requirements:**
+- G3-01: Review what these tests are validating
+- G3-02: Determine if equivalent germlines module tests exist
+- G3-03: Either migrate tests to germlines or remove if redundant
+- G3-04: Update deprecation timeline documentation
+
+**Success Criteria:**
+1. No tests reference deprecated G3 API
+2. All test functionality covered by germlines module tests
+3. Clear documentation of G3 deprecation timeline
+
+**Files to modify:**
+- `tests/unit/germlines/test_germline_data_legacy.py` — Remove or migrate tests
+- Documentation — Update deprecation notes
+
+---
+
+## Phase 28: Fix Germline Priority Order
+
+**Goal:** Reorder germline provider priority to ['vdjbase', 'ogrdb', 'imgt', 'custom'] for optimal data quality
+
+**Depends on:** Phase 27
+
+**Status:** Not started
+
+**Context:** Current priority order doesn't reflect data quality hierarchy:
+- VDJbase: Best for human and macaque (curated, validated alleles)
+- OGRDB: Good fallback for human, excellent for mouse (community-curated)
+- IMGT: Good for species diversity (comprehensive reference)
+- Custom: Fill gaps from internal lab data
+
+**Requirements:**
+- PRIO-01: Update default provider priority in GermlineManager
+- PRIO-02: Document priority rationale in code comments
+- PRIO-03: Verify priority order used in fallback resolution
+- PRIO-04: Test priority order with multi-source queries
+
+**Success Criteria:**
+1. `GermlineManager` default priority is `['vdjbase', 'ogrdb', 'imgt', 'custom']`
+2. Human/macaque queries prefer VDJbase alleles when available
+3. Mouse queries get OGRDB alleles (VDJbase has limited mouse data)
+4. Fallback chain works correctly when preferred source lacks data
+
+**Files to modify:**
+- `src/sadie/germlines/manager.py` — Update DEFAULT_PROVIDERS order
+- `src/sadie/germlines/` — Update any hardcoded priority lists
+
+---
+
+*Milestone v1.3 created: 2026-01-25*

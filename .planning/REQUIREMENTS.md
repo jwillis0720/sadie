@@ -10,7 +10,7 @@ Requirements for Reference Module Unification milestone.
 ### Source Validation
 
 - [x] **SRC-01**: Expand VALID_SOURCES to include `ogrdb`, `vdjbase`
-- [ ] **SRC-02**: Validate source exists in germlines before processing
+- [x] **SRC-02**: Validate source exists in germlines before processing
 
 ### Integration
 
@@ -94,24 +94,24 @@ Requirements for audit validation milestone.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SRC-01 | Phase 19 | Pending |
-| SRC-02 | Phase 19 | Pending |
-| INT-01 | Phase 20 | Pending |
-| INT-02 | Phase 20 | Pending |
-| INT-03 | Phase 20 | Pending |
-| CLI-01 | Phase 21 | Pending |
-| CLI-02 | Phase 21 | Pending |
-| CLI-03 | Phase 21 | Pending |
-| RUN-01 | Phase 22 | Pending |
-| RUN-02 | Phase 22 | Pending |
-| RUN-03 | Phase 22 | Pending |
-| DOC-01 | Phase 23 | Pending |
-| DOC-02 | Phase 23 | Pending |
+| SRC-01 | Phase 19 | Complete |
+| SRC-02 | Phase 24 | Complete |
+| INT-01 | Phase 20 | Complete |
+| INT-02 | Phase 20 | Complete |
+| INT-03 | Phase 20 | Complete |
+| CLI-01 | Phase 21 | Complete |
+| CLI-02 | Phase 21 | Complete |
+| CLI-03 | Phase 21 | Complete |
+| RUN-01 | Phase 22 | Complete |
+| RUN-02 | Phase 22 | Complete |
+| RUN-03 | Phase 22 | Complete |
+| DOC-01 | Phase 23 | Complete |
+| DOC-02 | Phase 23 | Complete |
 
 **v1.2 Coverage:**
 - Total requirements: 12
 - Mapped to phases: 12
-- Complete: 0
+- Complete: 12 ✓
 - Unmapped: 0 ✓
 
 ### v1.1 Requirements Mapping
@@ -145,5 +145,64 @@ Requirements for audit validation milestone.
 - Unmapped: 0 ✓
 
 ---
+
+## v1.3 Requirements
+
+Requirements for Test Infrastructure & Species Expansion milestone.
+
+### Phase 25: Macaque Germlines Integration
+
+- [x] **MAC-01**: Build macaque IgBLAST databases in germlines module
+- [x] **MAC-02**: Generate macaque internal_data and aux files
+- [x] **MAC-03**: Verify macaque AIRR annotation works
+- [x] **MAC-04**: Remove skip markers from macaque tests
+
+### Phase 26: AIRR Package Dependency
+
+- [x] **AIRR-01**: Add `airr` package to pyproject.toml dependencies
+- [x] **AIRR-02**: Verify airr package installs correctly
+- [x] **AIRR-03**: Remove importorskip from test
+
+### Phase 27: Remove Deprecated G3 Tests
+
+- [ ] **G3-01**: Review what these tests are validating
+- [ ] **G3-02**: Determine if equivalent germlines module tests exist
+- [ ] **G3-03**: Either migrate tests to germlines or remove if redundant
+- [ ] **G3-04**: Update deprecation timeline documentation
+
+### Phase 28: Fix Germline Priority Order
+
+- [ ] **PRIO-01**: Update default provider priority in GermlineManager
+- [ ] **PRIO-02**: Document priority rationale in code comments
+- [ ] **PRIO-03**: Verify priority order used in fallback resolution
+- [ ] **PRIO-04**: Test priority order with multi-source queries
+
+### v1.3 Requirements Mapping
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| MAC-01 | Phase 25 | Complete |
+| MAC-02 | Phase 25 | Complete |
+| MAC-03 | Phase 25 | Complete |
+| MAC-04 | Phase 25 | Complete |
+| AIRR-01 | Phase 26 | Complete |
+| AIRR-02 | Phase 26 | Complete |
+| AIRR-03 | Phase 26 | Complete |
+| G3-01 | Phase 27 | Pending |
+| G3-02 | Phase 27 | Pending |
+| G3-03 | Phase 27 | Pending |
+| G3-04 | Phase 27 | Pending |
+| PRIO-01 | Phase 28 | Pending |
+| PRIO-02 | Phase 28 | Pending |
+| PRIO-03 | Phase 28 | Pending |
+| PRIO-04 | Phase 28 | Pending |
+
+**v1.3 Coverage:**
+- Total requirements: 15
+- Mapped to phases: 15
+- Complete: 7 (Phases 25-26)
+- Pending: 8 (Phases 27-28)
+
+---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-23 — v1.2 requirements mapped*
+*Last updated: 2026-01-25 — v1.3 Phase 26 requirements complete*
