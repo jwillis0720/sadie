@@ -93,7 +93,6 @@ The G3 API is deprecated and scheduled for removal:
 
 | File | Reason | Risk |
 |------|--------|------|
-| `tests/unit/germlines/test_germline_data_legacy.py:74` | G3 API deprecated | Low (expected) |
 | `tests/unit/germlines/test_multi_species.py:197,238,278,359` | Species config incomplete | Medium |
 | `tests/unit/germlines/test_compliance.py:262` | Aux file not found | Medium |
 
