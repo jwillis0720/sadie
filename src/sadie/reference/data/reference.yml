@@ -1,18 +1,25 @@
 dog:
   imgt:
     dog:
+    - IGHA*01
+    - IGHA*02
+    - IGHD*01
     - IGHD1*01
     - IGHD2*01
     - IGHD3*01
     - IGHD4*01
     - IGHD5*01
     - IGHD6*01
+    - IGHE*01
+    - IGHE*02
+    - IGHG2*01
     - IGHJ1*01
     - IGHJ2*01
     - IGHJ3*01
     - IGHJ4*01
     - IGHJ5*01
     - IGHJ6*01
+    - IGHM*01
     - IGHV1-15*01
     - IGHV1-30*01
     - IGHV3-10*01
@@ -67,6 +74,8 @@ dog:
     - IGHV3-83*01
     - IGHV3-9*01
     - IGHV4-1*01
+    - IGKC*01
+    - IGKC*02
     - IGKJ1*01
     - IGKJ2*01
     - IGKJ3*01
@@ -130,6 +139,14 @@ dog:
     - IGKV4-15*01
     - IGKV9-24*02
     - IGKV9-24*03
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC4*01
+    - IGLC5*01
+    - IGLC6*01
+    - IGLC7*01
+    - IGLC9*01
     - IGLJ1*01
     - IGLJ2*01
     - IGLJ3*01
@@ -2738,17 +2755,44 @@ mouse:
   imgt:
     mouse:
     - IGHA*01
+    - IGHA*02
+    - IGHA*03
+    - IGHA*04
+    - IGHA*05
+    - IGHA*06
+    - IGHA*07
+    - IGHA*08
+    - IGHA*09
+    - IGHD*01
+    - IGHD*02
+    - IGHD*03
+    - IGHD1-1*01
     - IGHD1-1*02
+    - IGHD1-2*01
     - IGHD1-3*01
+    - IGHD2-1*01
+    - IGHD2-10*01
     - IGHD2-10*02
+    - IGHD2-12*01
+    - IGHD2-13*01
+    - IGHD2-14*01
     - IGHD2-15*01
+    - IGHD2-2*01
+    - IGHD2-3*01
+    - IGHD2-4*01
+    - IGHD2-5*01
     - IGHD2-9*01
     - IGHD3-1*01
+    - IGHD3-2*01
+    - IGHD3-2*02
     - IGHD3-3*01
+    - IGHD4-1*01
+    - IGHD4-1*02
     - IGHD5-1*01
     - IGHD5-1-1*01
     - IGHD5-10*01
     - IGHD5-5*01
+    - IGHD5-7*01
     - IGHD5-9*01
     - IGHD6-1*01
     - IGHD6-1*02
@@ -2757,13 +2801,38 @@ mouse:
     - IGHD6-11*01
     - IGHD6-2*01
     - IGHD6-2-1*02
+    - IGHE*01
+    - IGHE*02
+    - IGHE*03
+    - IGHE*04
+    - IGHE*05
+    - IGHE*06
+    - IGHG1*01
+    - IGHG1*02
+    - IGHG1*03
+    - IGHG1*04
+    - IGHG2A*01
+    - IGHG2A*02
+    - IGHG2A*03
+    - IGHG2B*01
     - IGHG2B*02
+    - IGHG2B*03
+    - IGHG2B*04
+    - IGHG2C*01
+    - IGHG2C*02
+    - IGHG2C*03
+    - IGHG3*01
     - IGHG3*02
+    - IGHG3*03
     - IGHJ1*02
     - IGHJ2*02
     - IGHJ2*03
     - IGHJ3*02
+    - IGHM*01
+    - IGHM*02
     - IGHM*03
+    - IGHM*04
+    - IGHM*05
     - IGHV1-11*02
     - IGHV1-12*02
     - IGHV1-12*03
@@ -3347,6 +3416,8 @@ mouse:
     - IGHV9S7*01
     - IGHV9S8*01
     - IGKC*01
+    - IGKC*02
+    - IGKC*03
     - IGKV1-115*01
     - IGKV1-131*01
     - IGKV1-35*01
@@ -3398,6 +3469,10 @@ mouse:
     - IGKV9-123*01
     - IGKV9-124*01
     - IGKV9-128*01
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC4*02
     - IGLJ2P*01
     - IGLJ4*01
     - IGLV1*02
@@ -3406,6 +3481,26 @@ mouse:
 rabbit:
   imgt:
     rabbit:
+    - IGHA1*01
+    - IGHA1*02
+    - IGHA10*01
+    - IGHA11*01
+    - IGHA12*01
+    - IGHA13*01
+    - IGHA13*02
+    - IGHA14*01
+    - IGHA2*01
+    - IGHA2*02
+    - IGHA3*01
+    - IGHA4*01
+    - IGHA4*02
+    - IGHA5*01
+    - IGHA5*02
+    - IGHA5*03
+    - IGHA6*01
+    - IGHA7*01
+    - IGHA8*01
+    - IGHA9*01
     - IGHD1-1*01
     - IGHD2-1*01
     - IGHD3-1*01
@@ -3416,6 +3511,19 @@ rabbit:
     - IGHD6-1*01
     - IGHD7-1*01
     - IGHD8-1*01
+    - IGHE*01
+    - IGHG*01
+    - IGHG*02
+    - IGHG*03
+    - IGHG*04
+    - IGHG*05
+    - IGHG*06
+    - IGHG*07
+    - IGHG*08
+    - IGHG*09
+    - IGHG*10
+    - IGHG*11
+    - IGHG*12
     - IGHJ1*01
     - IGHJ2*01
     - IGHJ2*02
@@ -3427,6 +3535,8 @@ rabbit:
     - IGHJ5*02
     - IGHJ6*01
     - IGHJ6*02
+    - IGHM*01
+    - IGHM*02
     - IGHV1S1*01
     - IGHV1S13*01
     - IGHV1S17*01
@@ -3474,6 +3584,17 @@ rabbit:
     - IGHV1S69*01
     - IGHV1S7*01
     - IGHV1S8*01
+    - IGKC1*01
+    - IGKC1*02
+    - IGKC1*03
+    - IGKC1*04
+    - IGKC1*05
+    - IGKC1*06
+    - IGKC1*07
+    - IGKC1*08
+    - IGKC2*01
+    - IGKC2*02
+    - IGKC2*03
     - IGKJ1-1*01
     - IGKJ1-1*02
     - IGKJ1-1*03
@@ -3560,6 +3681,13 @@ rabbit:
     - IGKV1S7*01
     - IGKV1S8*01
     - IGKV1S9*01
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC4*01
+    - IGLC4*02
+    - IGLC5*01
+    - IGLC6*01
     - IGLJ1*01
     - IGLJ3*01
     - IGLJ5*01
@@ -3596,6 +3724,9 @@ rabbit:
 rat:
   imgt:
     rat:
+    - IGHA*01
+    - IGHA*02
+    - IGHD*01
     - IGHD1-1*01
     - IGHD1-10*01
     - IGHD1-11*01
@@ -3631,10 +3762,18 @@ rat:
     - IGHD4-5*01
     - IGHD4-6*01
     - IGHD5-1*01
+    - IGHE*01
+    - IGHE*02
+    - IGHG1*01
+    - IGHG2A*01
+    - IGHG2B*01
+    - IGHG2C*01
     - IGHJ1*01
     - IGHJ2*01
     - IGHJ3*01
     - IGHJ4*01
+    - IGHM*01
+    - IGHM*02
     - IGHV1-10*01
     - IGHV1-11*01
     - IGHV1-12*01
@@ -3858,6 +3997,8 @@ rat:
     - IGHV9-7*01
     - IGHV9-8*01
     - IGHV9S3*01
+    - IGKC*01
+    - IGKC*02
     - IGKJ1*01
     - IGKJ2-1*01
     - IGKJ2-2*01
@@ -4024,6 +4165,9 @@ rat:
     - IGKV8S9*01
     - IGKV9S1*01
     - IGKV9S2*01
+    - IGLC1*01
+    - IGLC1*02
+    - IGLC2*01
     - IGLJ1*01
     - IGLJ2*01
     - IGLV1S1*01
@@ -7725,12 +7869,112 @@ macaque:
     - IGHA*06
     - IGHA*07
     - IGHA*08
+    - IGHA*09
+    - IGHA*10
+    - IGHA*11
+    - IGHA*12
+    - IGHA*13
+    - IGHA*22
+    - IGHA*23
+    - IGHA*24
+    - IGHD*03
+    - IGHD*04
+    - IGHD1-1*01
+    - IGHD1-1-1*01
+    - IGHD1-14*01
+    - IGHD1-20*01
+    - IGHD1-20*02
+    - IGHD1-26*01
+    - IGHD1-32*01
+    - IGHD1-38*01
+    - IGHD1-44*01
+    - IGHD1-44*02
+    - IGHD1-7*02
+    - IGHD2-15*01
+    - IGHD2-2*01
+    - IGHD2-21*01
+    - IGHD2-21*02
+    - IGHD2-27*01
+    - IGHD2-33*01
+    - IGHD2-39*01
+    - IGHD2-39*02
+    - IGHD2-8*01
+    - IGHD3-16*01
+    - IGHD3-22*01
+    - IGHD3-22*02
+    - IGHD3-28*01
+    - IGHD3-28*02
+    - IGHD3-3*01
+    - IGHD3-3*02
+    - IGHD3-3*03
+    - IGHD3-40*01
+    - IGHD3-9*01
+    - IGHD4-11*01
+    - IGHD4-17*01
+    - IGHD4-23*01
+    - IGHD4-29*01
+    - IGHD4-29*02
+    - IGHD4-35*01
+    - IGHD4-4*01
+    - IGHD5-12*01
+    - IGHD5-24*01
+    - IGHD5-24*02
+    - IGHD5-30*01
+    - IGHD5-30*02
+    - IGHD5-36*01
+    - IGHD5-36*02
+    - IGHD5-42*01
+    - IGHD6-13*01
+    - IGHD6-19*01
+    - IGHD6-25*01
+    - IGHD6-31*01
+    - IGHD6-31*02
+    - IGHD6-37*01
+    - IGHD6-43*01
+    - IGHD7-45*01
+    - IGHE*01
+    - IGHE*02
+    - IGHG1*01
+    - IGHG1*02
+    - IGHG1*03
+    - IGHG2*01
+    - IGHG2*02
+    - IGHG2*03
+    - IGHG2*04
+    - IGHG2*06
+    - IGHG2*07
+    - IGHG2*08
+    - IGHG2*09
+    - IGHG3*01
+    - IGHG3*02
+    - IGHG3*03
+    - IGHG3*04
     - IGHG3*06
+    - IGHG3*07
+    - IGHG3*08
+    - IGHG4*01
+    - IGHG4*02
+    - IGHG4*03
+    - IGHG4*04
+    - IGHG4*05
+    - IGHG4*06
+    - IGHM*03
+    - IGHM*04
     - IGHV3-102*01
     - IGHV3-14*01
     - IGHV3-48*02
     - IGHV5-189*01
     - IGHV5-189*02
+    - IGKC*01
+    - IGKC*02
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC2*02
+    - IGLC2A*01
+    - IGLC6*01
+    - IGLC6*02
+    - IGLC7*01
+    - IGLC7*02
     - IGLV1S6*01
     - IGLV3-18*01
     - IGLV3-18*02
@@ -8599,17 +8843,44 @@ clk:
     - IGLV2-11*01
     mouse:
     - IGHA*01
+    - IGHA*02
+    - IGHA*03
+    - IGHA*04
+    - IGHA*05
+    - IGHA*06
+    - IGHA*07
+    - IGHA*08
+    - IGHA*09
+    - IGHD*01
+    - IGHD*02
+    - IGHD*03
+    - IGHD1-1*01
     - IGHD1-1*02
+    - IGHD1-2*01
     - IGHD1-3*01
+    - IGHD2-1*01
+    - IGHD2-10*01
     - IGHD2-10*02
+    - IGHD2-12*01
+    - IGHD2-13*01
+    - IGHD2-14*01
     - IGHD2-15*01
+    - IGHD2-2*01
+    - IGHD2-3*01
+    - IGHD2-4*01
+    - IGHD2-5*01
     - IGHD2-9*01
     - IGHD3-1*01
+    - IGHD3-2*01
+    - IGHD3-2*02
     - IGHD3-3*01
+    - IGHD4-1*01
+    - IGHD4-1*02
     - IGHD5-1*01
     - IGHD5-1-1*01
     - IGHD5-10*01
     - IGHD5-5*01
+    - IGHD5-7*01
     - IGHD5-9*01
     - IGHD6-1*01
     - IGHD6-1*02
@@ -8618,13 +8889,38 @@ clk:
     - IGHD6-11*01
     - IGHD6-2*01
     - IGHD6-2-1*02
+    - IGHE*01
+    - IGHE*02
+    - IGHE*03
+    - IGHE*04
+    - IGHE*05
+    - IGHE*06
+    - IGHG1*01
+    - IGHG1*02
+    - IGHG1*03
+    - IGHG1*04
+    - IGHG2A*01
+    - IGHG2A*02
+    - IGHG2A*03
+    - IGHG2B*01
     - IGHG2B*02
+    - IGHG2B*03
+    - IGHG2B*04
+    - IGHG2C*01
+    - IGHG2C*02
+    - IGHG2C*03
+    - IGHG3*01
     - IGHG3*02
+    - IGHG3*03
     - IGHJ1*02
     - IGHJ2*02
     - IGHJ2*03
     - IGHJ3*02
+    - IGHM*01
+    - IGHM*02
     - IGHM*03
+    - IGHM*04
+    - IGHM*05
     - IGHV1-11*02
     - IGHV1-12*02
     - IGHV1-12*03
@@ -9208,6 +9504,8 @@ clk:
     - IGHV9S7*01
     - IGHV9S8*01
     - IGKC*01
+    - IGKC*02
+    - IGKC*03
     - IGKV1-115*01
     - IGKV1-131*01
     - IGKV1-35*01
@@ -9259,6 +9557,10 @@ clk:
     - IGKV9-123*01
     - IGKV9-124*01
     - IGKV9-128*01
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC4*02
     - IGLJ2P*01
     - IGLJ4*01
     - IGLV1*02
@@ -10114,17 +10416,44 @@ se09:
     - IGKV1-33*01
     mouse:
     - IGHA*01
+    - IGHA*02
+    - IGHA*03
+    - IGHA*04
+    - IGHA*05
+    - IGHA*06
+    - IGHA*07
+    - IGHA*08
+    - IGHA*09
+    - IGHD*01
+    - IGHD*02
+    - IGHD*03
+    - IGHD1-1*01
     - IGHD1-1*02
+    - IGHD1-2*01
     - IGHD1-3*01
+    - IGHD2-1*01
+    - IGHD2-10*01
     - IGHD2-10*02
+    - IGHD2-12*01
+    - IGHD2-13*01
+    - IGHD2-14*01
     - IGHD2-15*01
+    - IGHD2-2*01
+    - IGHD2-3*01
+    - IGHD2-4*01
+    - IGHD2-5*01
     - IGHD2-9*01
     - IGHD3-1*01
+    - IGHD3-2*01
+    - IGHD3-2*02
     - IGHD3-3*01
+    - IGHD4-1*01
+    - IGHD4-1*02
     - IGHD5-1*01
     - IGHD5-1-1*01
     - IGHD5-10*01
     - IGHD5-5*01
+    - IGHD5-7*01
     - IGHD5-9*01
     - IGHD6-1*01
     - IGHD6-1*02
@@ -10133,13 +10462,38 @@ se09:
     - IGHD6-11*01
     - IGHD6-2*01
     - IGHD6-2-1*02
+    - IGHE*01
+    - IGHE*02
+    - IGHE*03
+    - IGHE*04
+    - IGHE*05
+    - IGHE*06
+    - IGHG1*01
+    - IGHG1*02
+    - IGHG1*03
+    - IGHG1*04
+    - IGHG2A*01
+    - IGHG2A*02
+    - IGHG2A*03
+    - IGHG2B*01
     - IGHG2B*02
+    - IGHG2B*03
+    - IGHG2B*04
+    - IGHG2C*01
+    - IGHG2C*02
+    - IGHG2C*03
+    - IGHG3*01
     - IGHG3*02
+    - IGHG3*03
     - IGHJ1*02
     - IGHJ2*02
     - IGHJ2*03
     - IGHJ3*02
+    - IGHM*01
+    - IGHM*02
     - IGHM*03
+    - IGHM*04
+    - IGHM*05
     - IGHV1-11*02
     - IGHV1-12*02
     - IGHV1-12*03
@@ -10723,6 +11077,8 @@ se09:
     - IGHV9S7*01
     - IGHV9S8*01
     - IGKC*01
+    - IGKC*02
+    - IGKC*03
     - IGKV1-115*01
     - IGKV1-131*01
     - IGKV1-35*01
@@ -10774,6 +11130,10 @@ se09:
     - IGKV9-123*01
     - IGKV9-124*01
     - IGKV9-128*01
+    - IGLC1*01
+    - IGLC2*01
+    - IGLC3*01
+    - IGLC4*02
     - IGLJ2P*01
     - IGLJ4*01
     - IGLV1*02
