@@ -5,20 +5,20 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Enable researchers to select germline database for AIRR annotation and renumbering
-**Current focus:** v1.3 Test Infrastructure & Species Expansion
+**Current focus:** v1.3 Test Infrastructure & Species Expansion — COMPLETE
 
 ## Current Position
 
-Phase: 27 — Remove Deprecated G3 Tests
-Plan: .planning/phases/27-remove-deprecated-g3-tests/PLAN.md
+Phase: 28 — Fix Germline Priority Order
+Plan: .planning/phases/28-fix-germline-priority-order/PLAN.md
 Status: Complete
-Last activity: 2026-01-25 — Completed Phase 27 (remove deprecated G3 tests)
+Last activity: 2026-01-25 — Completed Phase 28 (fix germline priority order)
 
-Progress: ███████████████░░░░░ 75% (3/4 phases complete)
+Progress: ████████████████████ 100% (4/4 phases complete)
 
-**Milestone v1.3: Test Infrastructure & Species Expansion** — In Progress (phases 25-28)
+**Milestone v1.3: Test Infrastructure & Species Expansion** — COMPLETE (phases 25-28)
 
-**Next Phase:** Phase 28 — Fix Germline Priority Order
+**Next Phase:** None — Milestone v1.3 complete
 
 ## Milestone v1.3 Overview
 
@@ -38,9 +38,9 @@ Progress: ███████████████░░░░░ 75% (3/4 
 - ✓ Create G3 deprecation documentation
 - ✓ Update CONCERNS.md to remove deleted test reference
 
-### Phase 28: Fix Germline Priority Order
-- [ ] Update default priority to ['vdjbase', 'ogrdb', 'imgt', 'custom']
-- [ ] Document priority rationale
+### Phase 28: Fix Germline Priority Order ✓
+- ✓ Update default priority to ['vdjbase', 'ogrdb', 'imgt', 'custom']
+- ✓ Document priority rationale
 
 ---
 
@@ -105,8 +105,8 @@ Progress: ███████████████░░░░░ 75% (3/4 
 
 ## Session Continuity
 
-Last session: 2026-01-25T19:34:16Z
-Stopped at: Completed phase-24/PLAN.md
+Last session: 2026-01-25
+Stopped at: Completed Phase 28 — Milestone v1.3 complete
 Resume file: None
 
 ---
