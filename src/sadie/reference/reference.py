@@ -649,8 +649,8 @@ class References:
             # blast reads these suffixes depending on receptor
             suffix = "V"
             db_outpath = Path(str(name_internal_df_path) + f"/{name}_{suffix}")
-            # Pass the dataframe and write out the blast database
-            make_blast_db_for_internal(group_df, db_outpath)
+            # Pass the V-gene filtered dataframe to write out the blast database
+            make_blast_db_for_internal(filtered_data, db_outpath)
 
     @staticmethod
     def from_json(path: Path | str) -> "References":
