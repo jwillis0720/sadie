@@ -101,11 +101,12 @@ The Zenodo archive contains an SQL dump with the `gene_description` table:
 | `sequence` | Ungapped nucleotide sequence |
 | `coding_seq_imgt` | IMGT-gapped nucleotide sequence |
 
-## Priority with IMGT
+## Priority with Other Sources
 
-Default priority order: `custom > ogrdb > vdjbase > imgt`
+Default priority order: `vdjbase > ogrdb > imgt > custom`
 
-- If a gene exists in both OGRDB and IMGT → OGRDB version is used (higher priority)
+- VDJbase has highest priority for human/macaque data
+- If a gene exists in both OGRDB and IMGT → OGRDB version is used (OGRDB > IMGT)
 - Novel genes only in OGRDB → included
 - Customize priority:
 

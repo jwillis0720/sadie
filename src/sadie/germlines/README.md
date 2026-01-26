@@ -46,7 +46,13 @@ Fetch & Parse     Merge & Gap       Build DBs
 
 ### Priority System
 
-Default priority order: **custom > ogrdb > vdjbase > imgt**
+Default priority order: **vdjbase > ogrdb > imgt > custom**
+
+This order prioritizes data quality:
+- **VDJbase**: Curated, validated alleles (best for human/macaque)
+- **OGRDB**: Community-curated novel alleles (excellent for mouse)
+- **IMGT**: Comprehensive reference coverage
+- **Custom**: Internal lab sequences to fill gaps
 
 Deduplication rules:
 1. Same gene name → first provider wins
@@ -57,13 +63,13 @@ Deduplication rules:
 # Default priority
 from sadie.germlines import get_germline_genes
 genes = get_germline_genes("human", "V", "H")
-# Uses: custom, then IMGT, then OGRDB
+# Uses: VDJbase, then OGRDB, then IMGT, then custom
 
 # Custom priority
 from sadie.germlines import GermlineManager
 manager = GermlineManager(providers=["ogrdb", "imgt"])
 genes = manager.get_genes("human", "V", "H")
-# Uses only OGRDB and IMGT (no custom)
+# Uses only OGRDB and IMGT (no VDJbase or custom)
 ```
 
 ## Directory Structure

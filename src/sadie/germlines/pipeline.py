@@ -165,7 +165,7 @@ class GermlinePipeline:
         latest_normalized = self._get_latest_mtime(normalized_files)
 
         # Check all source directories
-        for source_name in ["custom", "ogrdb", "vdjbase", "imgt"]:
+        for source_name in ["vdjbase", "ogrdb", "imgt", "custom"]:
             if self._source_newer_than(source_name, species, latest_normalized):
                 return True
 

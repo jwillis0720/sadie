@@ -25,11 +25,11 @@ class GermlineManager:
     """
     Manages multiple germline databases with priority-based lookup.
 
-    Default priority: custom > imgt > ogrdb > vdjbase
-    - Custom sequences override everything
-    - IMGT provides validated reference
-    - OGRDB adds novel alleles
-    - VDJbase provides population-specific genotypes
+    Default priority: vdjbase > ogrdb > imgt > custom
+    - VDJbase: Best for human/macaque (curated, validated alleles from population studies)
+    - OGRDB: Good for mouse (community-curated novel alleles)
+    - IMGT: Species diversity (comprehensive reference database)
+    - Custom: Fill gaps (internal lab sequences for edge cases)
 
     Deduplication Logic:
     1. If gene names match exactly → use first provider's version
@@ -38,7 +38,7 @@ class GermlineManager:
 
     Examples
     --------
-    >>> # Default priority: custom, imgt, ogrdb
+    >>> # Default priority: vdjbase, ogrdb, imgt, custom
     >>> manager = GermlineManager()
     >>> genes = manager.get_genes("human", "V", "H")
     >>>
@@ -47,7 +47,12 @@ class GermlineManager:
     >>> genes = manager.get_genes("human", "V", "H")
     """
 
-    DEFAULT_PROVIDERS = ["custom", "ogrdb", "vdjbase", "imgt"]
+    # Default provider priority order (highest to lowest):
+    # 1. VDJbase: Best for human/macaque - curated, validated alleles from population studies
+    # 2. OGRDB: Good for mouse - community-curated novel alleles
+    # 3. IMGT: Species diversity - comprehensive reference database
+    # 4. Custom: Fill gaps - internal lab sequences for edge cases
+    DEFAULT_PROVIDERS = ["vdjbase", "ogrdb", "imgt", "custom"]
 
     def __init__(self, providers: Optional[List[str]] = None, data_dir: Optional[Path] = None):
         """
@@ -57,7 +62,7 @@ class GermlineManager:
         ----------
         providers : List[str], optional
             Ordered list of provider names.
-            Default: ["custom", "imgt", "ogrdb", "vdjbase"]
+            Default: ["vdjbase", "ogrdb", "imgt", "custom"]
             First provider has highest priority.
         data_dir : Path, optional
             Base directory for germline data.
@@ -324,3 +329,60 @@ class GermlineManager:
                 logger.debug(f"Could not get species from {provider.name}: {e}")
 
         return sorted(species_set)
+
+    def get_provider(self, name: str) -> GermlineProvider:
+        """
+        Get a configured provider by name.
+
+        Parameters
+        ----------
+        name : str
+            Provider name (e.g., "imgt", "ogrdb")
+
+        Returns
+        -------
+        GermlineProvider
+            Provider instance
+
+        Raises
+        ------
+        ValueError
+            If provider is not configured
+        """
+        for provider in self.providers:
+            if provider.name == name:
+                return provider
+
+        raise ValueError(f"Provider '{name}' is not configured. Available providers: {self.provider_names}")
+
+    def validate_species(self, name: str, species: str) -> None:
+        """
+        Validate provider availability for a species.
+
+        Parameters
+        ----------
+        name : str
+            Provider name (e.g., "imgt", "vdjbase")
+        species : str
+            Species name
+
+        Raises
+        ------
+        ValueError
+            If provider has no data for the species
+        """
+        provider = self.get_provider(name)
+
+        if provider.is_available(species):
+            return
+
+        try:
+            available_species = sorted(provider.get_metadata().species_available)
+        except Exception as e:
+            logger.debug(f"Could not get metadata for {provider.name}: {e}")
+            available_species = []
+
+        raise ValueError(
+            f"Provider '{provider.name}' has no data for species '{species}'. "
+            f"Available species: {available_species}."
+        )

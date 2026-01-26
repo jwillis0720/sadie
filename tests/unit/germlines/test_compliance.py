@@ -24,8 +24,8 @@ class TestPriorityOrder:
     """T058: Test default provider priority order (FR-004)."""
 
     def test_default_priority_order(self):
-        """Verify default priority is custom > ogrdb > vdjbase > imgt."""
-        expected = ["custom", "ogrdb", "vdjbase", "imgt"]
+        """Verify default priority is vdjbase > ogrdb > imgt > custom."""
+        expected = ["vdjbase", "ogrdb", "imgt", "custom"]
         assert (
             GermlineManager.DEFAULT_PROVIDERS == expected
         ), f"Expected priority {expected}, got {GermlineManager.DEFAULT_PROVIDERS}"
@@ -33,13 +33,13 @@ class TestPriorityOrder:
     def test_manager_initializes_with_default_priority(self):
         """Verify manager uses default priority when none specified."""
         manager = GermlineManager()
-        assert manager.provider_names == ["custom", "ogrdb", "vdjbase", "imgt"]
+        assert manager.provider_names == ["vdjbase", "ogrdb", "imgt", "custom"]
 
-    def test_custom_provider_overrides_others(self):
-        """Verify custom provider sequences take precedence."""
+    def test_vdjbase_provider_has_highest_priority(self):
+        """Verify VDJbase provider sequences take precedence."""
         manager = GermlineManager()
-        # First provider in list should be custom
-        assert manager.provider_names[0] == "custom"
+        # First provider in list should be vdjbase
+        assert manager.provider_names[0] == "vdjbase"
 
 
 class TestSingleProvider:

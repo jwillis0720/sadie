@@ -9,7 +9,7 @@ This module can be extracted as a standalone package for use in other projects.
 Basic Usage:
     >>> from sadie.germlines import get_germline_genes, GermlineManager
     >>>
-    >>> # Simple API - uses default priority (custom > imgt > ogrdb > vdjbase)
+    >>> # Simple API - uses default priority (vdjbase > ogrdb > imgt > custom)
     >>> genes = get_germline_genes("human", "V", "H")
     >>>
     >>> # Advanced API with custom priority
@@ -17,7 +17,7 @@ Basic Usage:
     >>> genes = manager.get_genes("human", "V", "H")
 
 Priority Logic:
-    - Multiple databases are used by default (custom, IMGT, OGRDB, VDJbase)
+    - Multiple databases are used by default (VDJbase, OGRDB, IMGT, custom)
     - First database in list has priority for conflicts
     - Conflicts resolved by: (1) gene name, (2) exact sequence match
     - Novel genes from any source are included
@@ -99,7 +99,7 @@ def get_germline_genes(
     chain : str
         Chain type: "H", "K", or "L"
     providers : List[str], optional
-        Custom provider priority order. Default: ["custom", "imgt", "ogrdb", "vdjbase"]
+        Custom provider priority order. Default: ["vdjbase", "ogrdb", "imgt", "custom"]
     functional_only : bool
         Only return functional genes (default: True)
 

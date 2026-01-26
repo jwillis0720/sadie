@@ -100,7 +100,7 @@ Optional metadata fields:
 
 2. **Novel Alleles**: Many VDJbase sequences are novel alleles discovered through repertoire sequencing. These may not exist in IMGT or OGRDB.
 
-3. **Priority**: By default, VDJbase has lower priority than OGRDB and IMGT. Configure priority in GermlineManager if you want VDJbase sequences to take precedence.
+3. **Priority**: By default, VDJbase has HIGHEST priority (`vdjbase > ogrdb > imgt > custom`). VDJbase provides curated, validated alleles from population studies, making it the preferred source for human and macaque data.
 
 4. **Updates**: VDJbase is actively updated. Re-run download periodically to get new sequences.
 

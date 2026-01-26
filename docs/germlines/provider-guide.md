@@ -169,22 +169,23 @@ When multiple providers have sequences with the same name, SADIE uses priority-b
 
 **Priority Order (Highest to Lowest):**
 
-1. **Custom** sequences (your data)
-2. **OGRDB** sequences (novel validated alleles)
-3. **VDJbase** sequences (population-specific)
-4. **IMGT** sequences (reference standard)
+1. **VDJbase** sequences (curated, validated alleles from population studies)
+2. **OGRDB** sequences (community-curated novel alleles)
+3. **IMGT** sequences (comprehensive reference database)
+4. **Custom** sequences (internal lab sequences for edge cases)
 
 **Example Scenario:**
 
-Suppose IMGT, OGRDB, and your custom sequences all have `IGHV3-30*01`:
+Suppose VDJbase, OGRDB, IMGT, and your custom sequences all have `IGHV3-30*01`:
 
 ```
-Custom:  IGHV3-30*01  → CAGGTGCAGCT... (500bp)
+VDJbase: IGHV3-30*01  → CAGGTGCAGCT... (500bp)
 OGRDB:   IGHV3-30*01  → CAGGTGCAGCT... (500bp)
 IMGT:    IGHV3-30*01  → CAGGTGCAGCT... (495bp)
+Custom:  IGHV3-30*01  → CAGGTGCAGCT... (500bp)
 ```
 
-**Result:** SADIE uses your **custom** sequence because it has the highest priority.
+**Result:** SADIE uses the **VDJbase** sequence because it has the highest priority.
 
 ### Deduplication Strategy
 
@@ -206,15 +207,16 @@ SADIE does **not** merge partial sequences or attempt sequence alignment. Each s
 
 **Comprehensive Coverage:**
 
-- Get all sequences from IMGT (comprehensive)
+- Get curated alleles from VDJbase (validated population data)
 - Plus novel alleles from OGRDB (recent discoveries)
+- Plus comprehensive reference from IMGT (species diversity)
 - Plus your custom sequences (unpublished findings)
 
 **Automatic Conflict Resolution:**
 
 - No manual intervention needed
 - Deterministic priority rules
-- Your data always takes precedence
+- VDJbase curated data takes precedence
 
 **Reproducibility:**
 

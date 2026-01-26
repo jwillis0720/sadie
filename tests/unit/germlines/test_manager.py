@@ -25,8 +25,8 @@ def test_manager_default_providers():
     from sadie.germlines.manager import GermlineManager
 
     manager = GermlineManager()
-    # Priority: custom > ogrdb > vdjbase > imgt (novel alleles prioritized)
-    assert manager.provider_names == ["custom", "ogrdb", "vdjbase", "imgt"]
+    # Priority: vdjbase > ogrdb > imgt > custom (data quality prioritized)
+    assert manager.provider_names == ["vdjbase", "ogrdb", "imgt", "custom"]
 
 
 def test_manager_custom_providers():
