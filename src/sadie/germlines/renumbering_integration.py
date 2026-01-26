@@ -38,15 +38,33 @@ class LocalHMMBuilder:
 
     def __init__(self):
         """Initialize HMM builder with pyhmmer components."""
-        self.alphabet = pyhmmer.easel.Alphabet.amino()
-        self.builder = pyhmmer.plan7.Builder(self.alphabet)
-        self.background = pyhmmer.plan7.Background(self.alphabet)
+        self._init_pyhmmer()
 
         # Cache directory for HMM files
         from sadie.germlines import get_germlines_base_dir
 
         self.hmm_dir = get_germlines_base_dir() / "hmms"
         self.hmm_dir.mkdir(parents=True, exist_ok=True)
+
+    def _init_pyhmmer(self):
+        """Initialize pyhmmer objects (called on init and unpickle)."""
+        self.alphabet = pyhmmer.easel.Alphabet.amino()
+        self.builder = pyhmmer.plan7.Builder(self.alphabet)
+        self.background = pyhmmer.plan7.Background(self.alphabet)
+
+    def __getstate__(self):
+        """Return state for pickling (exclude unpicklable pyhmmer objects)."""
+        state = self.__dict__.copy()
+        # Remove pyhmmer objects that can't be pickled
+        state.pop("alphabet", None)
+        state.pop("builder", None)
+        state.pop("background", None)
+        return state
+
+    def __setstate__(self, state):
+        """Restore state from pickle and reinitialize pyhmmer objects."""
+        self.__dict__.update(state)
+        self._init_pyhmmer()
 
     @lru_cache(maxsize=None)
     def get_hmm(self, species: Species, chain: Chain, source: Source = "imgt") -> pyhmmer.plan7.HMM:

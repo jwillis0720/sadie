@@ -14,22 +14,14 @@ import argparse
 import logging
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from Bio import SeqIO
 
+from sadie.germlines.builders.imgt_positions import calculate_imgt_v_positions
+
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
-
-# IMGT V gene regions (nucleotide positions in gapped sequence)
-# These are the standard IMGT positions for a complete V gene
-IMGT_V_REGIONS = {
-    "FR1": (1, 78),  # 26 codons
-    "CDR1": (79, 114),  # 12 codons (can have insertions)
-    "FR2": (115, 165),  # 17 codons
-    "CDR2": (166, 195),  # 10 codons (can have insertions)
-    "FR3": (196, 312),  # 39 codons
-}
 
 # Chain type mapping
 CHAIN_TYPES = {
@@ -42,57 +34,6 @@ CHAIN_TYPES = {
 def get_germlines_root() -> Path:
     """Get the germlines module root directory."""
     return Path(__file__).parent.parent
-
-
-def calculate_ungapped_positions(gapped_seq: str) -> Dict[str, tuple]:
-    """
-    Calculate ungapped FR/CDR positions from an IMGT-gapped sequence.
-
-    The IMGT gapping uses dots to maintain alignment. We need to calculate
-    where each region falls in the ungapped sequence.
-
-    Parameters
-    ----------
-    gapped_seq : str
-        IMGT-gapped nucleotide sequence
-
-    Returns
-    -------
-    Dict[str, tuple]
-        Mapping of region name to (start, end) positions in ungapped sequence
-    """
-    # Remove gaps to get ungapped sequence
-    ungapped_seq = gapped_seq.replace(".", "").replace("-", "")
-
-    # Track position mapping: gapped_pos -> ungapped_pos
-    ungapped_pos = 0
-    pos_map = {}
-
-    for gapped_pos, char in enumerate(gapped_seq, 1):
-        if char not in ".-":
-            ungapped_pos += 1
-            pos_map[gapped_pos] = ungapped_pos
-
-    # Calculate ungapped positions for each region
-    regions = {}
-    for region_name, (gapped_start, gapped_end) in IMGT_V_REGIONS.items():
-        # Find the ungapped positions
-        # Start: first non-gap position >= gapped_start
-        # End: last non-gap position <= gapped_end
-
-        start_pos = None
-        end_pos = None
-
-        for g_pos in range(gapped_start, min(gapped_end + 1, len(gapped_seq) + 1)):
-            if g_pos in pos_map:
-                if start_pos is None:
-                    start_pos = pos_map[g_pos]
-                end_pos = pos_map[g_pos]
-
-        if start_pos is not None and end_pos is not None:
-            regions[region_name] = (start_pos, end_pos)
-
-    return regions, len(ungapped_seq)
 
 
 def generate_ndm_entry(gene_name: str, gapped_seq: str, chain: str) -> Optional[str]:
@@ -119,10 +60,10 @@ def generate_ndm_entry(gene_name: str, gapped_seq: str, chain: str) -> Optional[
     if not gapped_seq or "." not in gapped_seq:
         return None
 
-    regions, seq_len = calculate_ungapped_positions(gapped_seq)
+    regions = calculate_imgt_v_positions(gapped_seq, zero_based=False)
 
     # Need at least FR1 through FR3 start
-    required = ["FR1", "CDR1", "FR2", "CDR2", "FR3"]
+    required = ["fwr1", "cdr1", "fwr2", "cdr2", "fwr3"]
     if not all(r in regions for r in required):
         return None
 
@@ -131,11 +72,11 @@ def generate_ndm_entry(gene_name: str, gapped_seq: str, chain: str) -> Optional[
     # Format: gene  fr1_start  fr1_end  cdr1_start  cdr1_end  fr2_start  fr2_end  cdr2_start  cdr2_end  fr3_start  seq_len  chain_type  flag
     entry = (
         f"{gene_name}\t"
-        f"{regions['FR1'][0]}\t{regions['FR1'][1]}\t"
-        f"{regions['CDR1'][0]}\t{regions['CDR1'][1]}\t"
-        f"{regions['FR2'][0]}\t{regions['FR2'][1]}\t"
-        f"{regions['CDR2'][0]}\t{regions['CDR2'][1]}\t"
-        f"{regions['FR3'][0]}\t{regions['FR3'][1]}\t"
+        f"{regions['fwr1'][0]}\t{regions['fwr1'][1]}\t"
+        f"{regions['cdr1'][0]}\t{regions['cdr1'][1]}\t"
+        f"{regions['fwr2'][0]}\t{regions['fwr2'][1]}\t"
+        f"{regions['cdr2'][0]}\t{regions['cdr2'][1]}\t"
+        f"{regions['fwr3'][0]}\t{regions['fwr3'][1]}\t"
         f"{chain_type}\t0"
     )
 

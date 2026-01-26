@@ -24,6 +24,13 @@ ACTACTTTGACTACTGGGGCCAAGGAACCCTGGTCACCGTCTCCTCAG
 """
         (vdjbase_dir / "IGHJ.fasta").write_text(j_fasta)
 
+        imgt_dir = tmp_path / "imgt" / "human"
+        imgt_dir.mkdir(parents=True)
+        imgt_template = """>X00001|IGHV1-69*01|Homo sapiens|F|V-REGION
+CAGGTGCAGC....TGGTGCAGTCTGGGGCTAAAA
+"""
+        (imgt_dir / "IGHV_gapped.fasta").write_text(imgt_template)
+
         return tmp_path / "vdjbase"
 
     def test_fetch_genes_returns_genes(self, vdjbase_env):
@@ -100,6 +107,17 @@ ACTACTTTGACTACTGGGGCCAAGGAACCCTGGTCACCGTCTCCTCAG
 
         assert len(genes) >= 1
         assert any("IGHJ4" in g.name for g in genes)
+
+    def test_vdjbase_gaps_v_genes_when_template_available(self, vdjbase_env):
+        from sadie.germlines.providers.vdjbase import VDJbaseProvider
+
+        provider = VDJbaseProvider(data_dir=vdjbase_env)
+        genes = provider.fetch_genes("human", "V", "H")
+
+        target = next((g for g in genes if g.name == "IGHV1-69*01"), None)
+        assert target is not None
+        assert target.sequence_gapped is not None
+        assert "." in target.sequence_gapped
 
 
 class TestVDJbaseInPriority:

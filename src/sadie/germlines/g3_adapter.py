@@ -17,6 +17,8 @@ import hashlib
 import logging
 from typing import Any, Dict, List
 
+from sadie.germlines.builders.imgt_positions import derive_imgt_v_regions
+from sadie.germlines.builders.j_gene_data import get_j_gene_data
 from sadie.germlines.models import GermlineGene
 
 logger = logging.getLogger(__name__)
@@ -121,6 +123,14 @@ class GermlineToG3Adapter:
         # Add regions if available
         if gene.regions and gene.region_positions:
             self._add_regions_to_imgt(imgt_dict, gene)
+
+        # Derive V-region positions from IMGT-gapped sequence when available
+        if gene.segment == "V" and gene.sequence_gapped:
+            self._add_imgt_v_regions_from_gapped(imgt_dict, gene)
+
+        # Derive J-region metadata needed for aux file generation
+        if gene.segment == "J":
+            self._add_imgt_j_regions(imgt_dict, gene, chain)
 
         g3_dict["imgt"] = imgt_dict
 
@@ -238,6 +248,60 @@ class GermlineToG3Adapter:
                 start, end = gene.region_positions[region_name]
                 imgt_dict[f"{region_name}_start"] = start
                 imgt_dict[f"{region_name}_end"] = end
+
+    def _add_imgt_v_regions_from_gapped(self, imgt_dict: Dict[str, Any], gene: GermlineGene) -> None:
+        """
+        Derive IMGT V-region positions/sequences from gapped sequence.
+
+        This fills fwr1/cdr1/fwr2/cdr2/fwr3 positions (0-based) and sequences
+        when they are missing from the IMGT dict.
+        """
+        positions, regions = derive_imgt_v_regions(gene.sequence_gapped, gene.sequence, zero_based=True)
+
+        for region_name, (start, end) in positions.items():
+            start_key = f"{region_name}_start"
+            end_key = f"{region_name}_end"
+
+            if start_key not in imgt_dict:
+                imgt_dict[start_key] = start
+            if end_key not in imgt_dict:
+                imgt_dict[end_key] = end
+
+            if region_name in regions and region_name not in imgt_dict:
+                imgt_dict[region_name] = regions[region_name]
+
+    def _add_imgt_j_regions(self, imgt_dict: Dict[str, Any], gene: GermlineGene, chain: str) -> None:
+        """
+        Derive IMGT J-region positions and aux fields.
+
+        Populates cdr3/fwr4 boundaries, reading frame, and remainder used by
+        auxiliary file generation.
+        """
+        reading_frame, _chain_type, cdr3_end_aux, _is_functional = get_j_gene_data(gene.name, chain)
+
+        cdr3_end = cdr3_end_aux + 1  # G3 uses 0-based inclusive end (aux value + 1)
+        sequence = gene.sequence or ""
+        if sequence:
+            cdr3_end = min(cdr3_end, len(sequence) - 1)
+
+        cdr3_start = 0
+        fwr4_start = cdr3_end + 1
+        fwr4_end = len(sequence) - 1 if sequence else cdr3_end
+
+        if "cdr3" not in imgt_dict and sequence:
+            imgt_dict["cdr3"] = sequence[cdr3_start : cdr3_end + 1]
+        if "fwr4" not in imgt_dict and sequence and fwr4_start < len(sequence):
+            imgt_dict["fwr4"] = sequence[fwr4_start:]
+
+        imgt_dict.setdefault("cdr3_start", cdr3_start)
+        imgt_dict.setdefault("cdr3_end", cdr3_end)
+        imgt_dict.setdefault("fwr4_start", fwr4_start)
+        imgt_dict.setdefault("fwr4_end", fwr4_end)
+        imgt_dict.setdefault("reading_frame", reading_frame)
+
+        if "remainder" not in imgt_dict:
+            remainder = (len(sequence) - cdr3_end) % 3 if sequence else 0
+            imgt_dict["remainder"] = remainder
 
 
 def create_g3_adapter() -> GermlineToG3Adapter:

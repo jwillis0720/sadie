@@ -109,6 +109,12 @@ class Reference:
         # make gene model
         gene_valid = GeneEntry(**gene)
 
+        if self.use_germlines:
+            from sadie.germlines import GermlineManager
+
+            manager = GermlineManager(providers=[gene_valid.source])
+            manager.validate_species(gene_valid.source, gene_valid.species)
+
         # add dictionaries to list from G3
         self.data.append(self._get_gene(gene_valid))
 
@@ -131,6 +137,13 @@ class Reference:
         ref_class.add_genes('human','imgt',genes)
         """
         genes_valid = GeneEntries(species=species, source=source, genes=genes)
+
+        if self.use_germlines:
+            from sadie.germlines import GermlineManager
+
+            manager = GermlineManager(providers=[genes_valid.source])
+            manager.validate_species(genes_valid.source, genes_valid.species)
+
         self.data += self._get_genes(genes_valid)
 
     def _g3_get(self, query: str) -> Tuple[int, List[Dict[str, str]]]:
@@ -478,6 +491,35 @@ class References:
 
         # get the database as a dataframe
         database = self.get_dataframe()
+        required_columns = [
+            "imgt.fwr1_start",
+            "imgt.fwr1_end",
+            "imgt.cdr1_start",
+            "imgt.cdr1_end",
+            "imgt.fwr2_start",
+            "imgt.fwr2_end",
+            "imgt.cdr2_start",
+            "imgt.cdr2_end",
+            "imgt.fwr3_start",
+            "imgt.fwr3_end",
+        ]
+
+        v_gene_df = database.loc[database["gene_segment"] == "V"].copy()
+        missing_columns = [col for col in required_columns if col not in database.columns]
+        if missing_columns:
+            missing_genes = sorted(v_gene_df["gene"].dropna().unique().tolist())
+            raise ValueError(
+                "Missing IMGT V-region position columns "
+                f"{missing_columns} for genes: {missing_genes}"
+            )
+
+        missing_positions = v_gene_df[v_gene_df[required_columns].isna().any(axis=1)]
+        if not missing_positions.empty:
+            missing_genes = sorted(missing_positions["gene"].dropna().unique().tolist())
+            raise ValueError(
+                f"Missing IMGT V-region positions for genes: {missing_genes}. "
+                "Ensure IMGT-gapped sequences are available."
+            )
         if database[database.label == "D-REGION"].empty:
             raise ValueError("No D-REGION found in reference object...make sure to add D gene")
 

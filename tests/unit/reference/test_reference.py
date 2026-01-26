@@ -103,6 +103,19 @@ def test_reference_use_germlines() -> None:
     assert df["_id"].iloc[0] == df2["_id"].iloc[0]
 
 
+def test_reference_use_germlines_missing_species() -> None:
+    """Test germlines source/species validation for missing provider data."""
+    ref = Reference(use_germlines=True)
+
+    with pytest.raises(ValueError) as exc_info:
+        ref.add_gene({"species": "mouse", "gene": "IGHV1-69*01", "source": "vdjbase"})
+
+    message = str(exc_info.value)
+    assert "vdjbase" in message
+    assert "mouse" in message
+    assert "Available species" in message
+
+
 def test_references_from_yaml_use_germlines(fixture_setup: "SadieFixture") -> None:
     """Test References.from_yaml with use_germlines parameter (v1.2 INT-01)"""
     shortened_yaml = fixture_setup.get_shortened_yaml()
@@ -117,6 +130,45 @@ def test_references_from_yaml_use_germlines(fixture_setup: "SadieFixture") -> No
     df = refs.get_dataframe()
     assert "_id" in df.columns
     assert df["_id"].notna().all()  # All rows have _id
+
+
+def test_missing_imgt_positions_fail_fast(tmp_path_factory: pytest.TempPathFactory) -> None:
+    from sadie.germlines import get_gene_by_name
+    from sadie.germlines.g3_adapter import GermlineToG3Adapter
+
+    gene = get_gene_by_name("IGHV1-69*01", "human")
+    assert gene is not None
+
+    adapter = GermlineToG3Adapter()
+    g3_dict = adapter.to_g3_format(gene)
+
+    for key in [
+        "fwr1_start",
+        "fwr1_end",
+        "cdr1_start",
+        "cdr1_end",
+        "fwr2_start",
+        "fwr2_end",
+        "cdr2_start",
+        "cdr2_end",
+        "fwr3_start",
+        "fwr3_end",
+    ]:
+        g3_dict["imgt"][key] = None
+
+    ref = Reference(use_germlines=True)
+    ref.data = [g3_dict]
+
+    refs = References()
+    refs.add_reference("test", ref)
+
+    outpath = tmp_path_factory.mktemp("missing_imgt_positions")
+    with pytest.raises(ValueError) as exc_info:
+        refs.make_airr_database(outpath)
+
+    message = str(exc_info.value)
+    assert "Missing IMGT V-region positions" in message
+    assert "IGHV1-69*01" in message
 
 
 def test_util_methods(tmp_path_factory: pytest.TempPathFactory) -> None:

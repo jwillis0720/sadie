@@ -14,6 +14,7 @@ from .aux import AuxFileBuilder
 from .blast import BlastDBBuilder
 from .gapper import GapperService, gap_sequences_batch
 from .hmm import HMMBuilder, get_gapped_sequences
+from .imgt_positions import calculate_imgt_v_positions, derive_imgt_v_regions
 
 __all__ = [
     "BlastDBBuilder",
@@ -22,4 +23,6 @@ __all__ = [
     "gap_sequences_batch",
     "HMMBuilder",
     "get_gapped_sequences",
+    "calculate_imgt_v_positions",
+    "derive_imgt_v_regions",
 ]

@@ -161,7 +161,18 @@ class GermlineData:
 
         # Determine base directory based on feature flag
         if database_dir:
+            # Custom database directory provided (e.g., from References.make_airr_database)
             self.base_dir = Path(database_dir).absolute()
+            # Set up paths relative to custom database directory
+            # make_airr_database creates: output_path/Ig/blastdb/{name}/{name}_V, etc.
+            self.blast_dir = self.base_dir / f"Ig/blastdb/{name}/{name}_"
+            self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
+            self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
+            self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
+            self.c_gene_dir = Path(self.blast_dir.__str__() + "C")
+            self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
+            # IGDATA for custom databases points to the Ig/ directory
+            self.igdata = self.base_dir / "Ig"
         elif _use_germlines_module():
             # Use germlines module paths (new default)
             germlines_igblast = _get_germlines_igblast_dir()

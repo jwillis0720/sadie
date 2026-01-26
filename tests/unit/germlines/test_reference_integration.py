@@ -24,11 +24,11 @@ class TestReferenceIntegration:
         # Enable germlines backend for Reference
         ref = Reference(use_germlines=True)
 
-        # Verify germlines components initialized
+        # Verify germlines mode is enabled
+        # Note: GermlineManager and G3Adapter are imported locally in _get_gene/_get_genes
+        # rather than stored as instance attributes (for lazy loading)
         assert hasattr(ref, "use_germlines"), "Should have use_germlines attribute"
         assert ref.use_germlines is True, "Should be using germlines backend"
-        assert hasattr(ref, "germline_manager"), "Should have germline manager"
-        assert hasattr(ref, "g3_adapter"), "Should have G3 adapter"
 
         # Add a gene using germlines backend
         gene_dict = {"species": "human", "gene": "IGHV1-69*01", "source": "imgt"}
@@ -174,6 +174,35 @@ class TestGermlineToG3Adapter:
         # Verify IMGT fields
         assert "sequence_gapped" in g3_dict["imgt"], "Should have gapped sequence"
         assert "imgt_functional" in g3_dict["imgt"], "Should have functionality"
+
+    def test_adapter_imgt_positions_for_v_gene(self, monkeypatch):
+        """Test adapter derives IMGT V-region positions."""
+        from sadie.germlines import get_gene_by_name
+        from sadie.germlines.g3_adapter import GermlineToG3Adapter
+
+        gene = get_gene_by_name("IGHV1-69*01", "human")
+        assert gene is not None, "Should find gene in germlines"
+
+        adapter = GermlineToG3Adapter()
+        g3_dict = adapter.to_g3_format(gene)
+
+        imgt = g3_dict["imgt"]
+        required_keys = [
+            "fwr1_start",
+            "fwr1_end",
+            "cdr1_start",
+            "cdr1_end",
+            "fwr2_start",
+            "fwr2_end",
+            "cdr2_start",
+            "cdr2_end",
+            "fwr3_start",
+            "fwr3_end",
+        ]
+
+        for key in required_keys:
+            assert key in imgt, f"Missing IMGT position: {key}"
+            assert isinstance(imgt[key], int), f"{key} should be an int"
 
     def test_adapter_batch_transform(self, monkeypatch):
         """Test adapter batch transformation."""
