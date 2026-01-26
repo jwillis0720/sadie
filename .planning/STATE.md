@@ -9,16 +9,16 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 26 — Add AIRR Package Dependency
-Plan: .planning/phases/26-airr-package-dependency/PLAN.md
+Phase: 27 — Remove Deprecated G3 Tests
+Plan: .planning/phases/27-remove-deprecated-g3-tests/PLAN.md
 Status: Complete
-Last activity: 2026-01-25 — Completed Phase 26 (airr dependency)
+Last activity: 2026-01-25 — Completed Phase 27 (remove deprecated G3 tests)
 
-Progress: ██████████░░░░░░░░░░ 50% (2/4 phases complete)
+Progress: ███████████████░░░░░ 75% (3/4 phases complete)
 
 **Milestone v1.3: Test Infrastructure & Species Expansion** — In Progress (phases 25-28)
 
-**Next Phase:** Phase 27 — Remove Deprecated G3 Tests
+**Next Phase:** Phase 28 — Fix Germline Priority Order
 
 ## Milestone v1.3 Overview
 
@@ -33,8 +33,10 @@ Progress: ██████████░░░░░░░░░░ 50% (2/4 
 - ✓ Add airr to pyproject.toml
 - ✓ Remove importorskip from test
 
-### Phase 27: Remove Deprecated G3 Tests
-- [ ] Review and migrate/remove 2 G3 legacy tests
+### Phase 27: Remove Deprecated G3 Tests ✓
+- ✓ Remove TestGermlineDataPaths class (deprecated G3 API tests)
+- ✓ Create G3 deprecation documentation
+- ✓ Update CONCERNS.md to remove deleted test reference
 
 ### Phase 28: Fix Germline Priority Order
 - [ ] Update default priority to ['vdjbase', 'ogrdb', 'imgt', 'custom']
