@@ -5,20 +5,26 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Enable researchers to select germline database for AIRR annotation and renumbering
-**Current focus:** v1.3 Test Infrastructure & Species Expansion — COMPLETE
+**Current focus:** Phase 29 Germline Source Tracking — COMPLETE
 
 ## Current Position
 
-Phase: 28 — Fix Germline Priority Order
-Plan: .planning/phases/28-fix-germline-priority-order/PLAN.md
+Phase: 29 — Germline Source Tracking
+Plan: .planning/phases/29-germline-source-tracking/29-02-PLAN.md
 Status: Complete
-Last activity: 2026-01-25 — Completed Phase 28 (fix germline priority order)
+Last activity: 2026-01-26 — Completed Phase 29 (germline source tracking)
 
-Progress: ████████████████████ 100% (4/4 phases complete)
+Progress: ████████████████████ 100% (2/2 plans complete)
 
-**Milestone v1.3: Test Infrastructure & Species Expansion** — COMPLETE (phases 25-28)
+**Phase 29: Germline Source Tracking** — COMPLETE
 
-**Next Phase:** None — Milestone v1.3 complete
+### Phase 29: Germline Source Tracking ✓
+- ✓ Add get_source_lookup() to GermlineData
+- ✓ Add _lookup_source() and _add_source_columns() to Airr
+- ✓ Integrate source columns into run_fasta() and _run_scfv()
+- ✓ Add 4 unit tests for source tracking
+
+**Next Phase:** None — Phase 29 complete
 
 ## Milestone v1.3 Overview
 
@@ -105,9 +111,9 @@ Progress: ████████████████████ 100% (4/4
 
 ## Session Continuity
 
-Last session: 2026-01-25
-Stopped at: Completed Phase 28 — Milestone v1.3 complete
+Last session: 2026-01-26
+Stopped at: Completed Phase 29 — Germline source tracking complete
 Resume file: None
 
 ---
-*Last updated: 2026-01-25*
+*Last updated: 2026-01-26*

@@ -499,7 +499,7 @@
 
 **Depends on:** Phase 28
 
-**Status:** Not started
+**Status:** ✓ Complete
 
 **Context:** Users cannot currently tell which germline source (imgt, vdjbase, ogrdb, custom) each matched gene came from in the AIRR output. The `source` field exists in `GermlineGene` objects at the GermlineManager level, but is not propagated to the final annotation results.
 
@@ -527,12 +527,12 @@
 - Cache lookup table for performance (avoid repeated source lookups)
 - Consider adding source info to aux file or separate metadata file
 
-**Files to modify:**
-- `src/sadie/airr/igblast/germline.py` — Build gene→source lookup table
-- `src/sadie/airr/igblast/igblast.py` — Add source columns during result parsing
-- `src/sadie/airr/airrtable/airrtable.py` — Handle source columns in table operations
-- `tests/unit/airr/test_airr.py` — Add tests for source columns
+**Files modified:**
+- `src/sadie/airr/igblast/germline.py` — Added `get_source_lookup()` method to GermlineData
+- `src/sadie/airr/airr.py` — Added `_lookup_source()`, `_add_source_columns()` methods; integrated into `run_fasta()` and `_run_scfv()`
+- `tests/unit/airr/test_airr.py` — Added 4 test functions for source tracking
 
 ---
 
-*Milestone v1.3 created: 2026-01-25*
+*Phase 29 created: 2026-01-26*
+*Phase 29 completed: 2026-01-26*
