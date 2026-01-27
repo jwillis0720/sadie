@@ -629,3 +629,79 @@
 - `src/sadie/renumbering/renumbering.py` — Add `database` parameter to `Renumbering`
 - `src/sadie/renumbering/aligners/hmmer.py` — Add `hmm_dir` parameter to `HMMER`
 - `src/sadie/germlines/renumbering_integration.py` — Reference for Stockholm + HMM building logic
+
+---
+
+## Phase 32: Fix IgBLAST internal_data to Use Combined VDJC File
+
+**Goal:** Restructure germlines `internal_data/` to match G3's working structure: a single combined VDJC file named `{species}_V.fasta` (plus BLAST db files) and remove all symlinks
+
+**Depends on:** Phase 31
+
+**Status:** ✓ Complete
+
+**Files modified:**
+- `src/sadie/germlines/scripts/build_internal_data.py` — Create combined VDJC files instead of symlinks
+- `src/sadie/reference/reference.py` — Include D/J/C segments in internal_data BLAST db
+- `src/sadie/airr/igblast/germline.py` — Point V/D/J/C dirs to database/ (not internal_data/)
+- `src/sadie/airr/airr.py` — Remove `_recalculate_complete_vdj()` workaround
+- `src/sadie/germlines/builders/j_gene_data.py` — Remove `J_GENE_LENGTHS` dictionary
+- `tests/unit/germlines/test_build_internal_data.py` — New tests for combined structure
+- `tests/unit/airr/test_complete_vdj.py` — New tests for complete_vdj verification
+
+**Problem Statement:**
+The germlines module uses symlinks and separate V/D/J/C files in internal_data, while G3 uses a single combined file containing all segments. IgBLAST doesn't work well with symlinks and expects the combined structure. This causes `complete_vdj` calculation issues that led to the Phase 17 workaround using a hardcoded `J_GENE_LENGTHS` dictionary (which only works for human).
+
+**Current State (Broken - Germlines):**
+```
+internal_data/human/
+├── human.ndm.imgt
+├── human_V.* -> symlinks to database/ (V-only, 684 seqs)
+├── human_D.* -> symlinks to database/
+├── human_J.* -> symlinks to database/
+└── human_C.* -> symlinks to database/
+```
+
+**Target State (Working - Match G3):**
+```
+internal_data/human/
+├── human.ndm.imgt
+└── human_V.* (COMBINED VDJC file with all segments, actual files not symlinks)
+
+database/human/  (separate search databases, unchanged)
+├── human_V.*
+├── human_D.*
+├── human_J.*
+└── human_C.*
+```
+
+**G3 Reference (What Works):**
+G3's `internal_data/human/human_V.fasta` contains all segments combined:
+- 271 IGHV + 57 IGKV + 71 IGLV (V genes)
+- 35 IGHD (D genes)
+- 13 IGHJ + 9 IGKJ + 10 IGLJ (J genes)
+- 2 IGHA + 4 IGHG + 1 IGHE + 1 IGHM + 1 IGKC + 4 IGLC (C genes)
+= 479 total sequences in ONE file named `human_V.fasta`
+
+**Requirements:**
+- IDATA-01: Remove all symlinks from `internal_data/` directories (all species)
+- IDATA-02: Create combined VDJC files for each species
+  - Concatenate V + D + J + C FASTAs into single `{species}_V.fasta`
+  - Build BLAST database from combined file
+  - Place actual files (not symlinks) in internal_data
+- IDATA-03: Update database build scripts to generate combined files
+- IDATA-04: Remove Phase 17 workaround (`_recalculate_complete_vdj`, `J_GENE_LENGTHS`)
+- IDATA-05: Apply to all 29+ species
+
+**Success Criteria:**
+1. No symlinks in any `internal_data/{species}/` directory
+2. Each species has combined `{species}_V.fasta` with all VDJC segments
+3. `complete_vdj` works correctly for all species without hardcoded dictionary
+4. Passes existing test suite
+5. Audit shows parity with G3 for `complete_vdj` field
+
+**Files to modify:**
+- `src/sadie/germlines/igblast/Ig/internal_data/*/` — Remove symlinks, add combined files
+- `src/sadie/germlines/scripts/build_internal_data.py` — Generate combined VDJC
+- `src/sadie/airr/airr.py` — Remove `_recalculate_complete_vdj()`
+- `src/sadie/germlines/builders/j_gene_data.py` — Remove `J_GENE_LENGTHS`
