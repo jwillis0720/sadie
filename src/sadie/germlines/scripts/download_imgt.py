@@ -515,6 +515,28 @@ class IMGTDownloader:
         """
         c_genes: Dict[str, List[Tuple[str, str]]] = {"H": [], "K": [], "L": []}
 
+        # Extract base species prefixes for prefix matching
+        # e.g., "Macaca mulatta_17573" -> "Macaca mulatta"
+        # This allows matching GENE-DB strains not in V-QUEST (e.g., "Macaca mulatta_RUp15")
+        species_prefixes: Set[str] = set()
+        for variant in species_variants:
+            # Split on underscore and take genus + species (first two words)
+            # Handle cases like "Macaca mulatta" (no underscore) and "Macaca mulatta_17573"
+            if "_" in variant:
+                # Check if it's genus_species_strain format
+                parts = variant.split("_")
+                # If first part has space, it's already "Genus species"
+                if " " in parts[0]:
+                    species_prefixes.add(parts[0])
+                else:
+                    # It's "Genus_species_strain" format - reconstruct base
+                    species_prefixes.add(f"{parts[0]} {parts[1]}" if len(parts) > 1 else parts[0])
+            else:
+                # No underscore - use as-is (e.g., "Homo sapiens")
+                species_prefixes.add(variant)
+        
+        logger.debug(f"Using {len(species_prefixes)} species prefixes for C gene matching: {species_prefixes}")
+
         # C gene name patterns (including isotype genes)
         # IGHC: IGHA1, IGHA2, IGHD, IGHE, IGHG1-4, IGHM, IGHGP
         # IGKC: IGKC
@@ -536,7 +558,7 @@ class IMGTDownloader:
             if line.startswith(">"):
                 # Save previous sequence
                 if current_header:
-                    gene_info = self._parse_genedb_header(current_header, species_variants, c_gene_patterns)
+                    gene_info = self._parse_genedb_header(current_header, species_prefixes, c_gene_patterns)
                     if gene_info:
                         chain, gene_name = gene_info
                         sequence = "".join(current_seq)
@@ -549,7 +571,7 @@ class IMGTDownloader:
 
         # Save last sequence
         if current_header:
-            gene_info = self._parse_genedb_header(current_header, species_variants, c_gene_patterns)
+            gene_info = self._parse_genedb_header(current_header, species_prefixes, c_gene_patterns)
             if gene_info:
                 chain, gene_name = gene_info
                 sequence = "".join(current_seq)
@@ -558,7 +580,7 @@ class IMGTDownloader:
         return c_genes
 
     def _parse_genedb_header(
-        self, header: str, species_variants: Set[str], c_gene_patterns: Dict[str, re.Pattern]
+        self, header: str, species_prefixes: Set[str], c_gene_patterns: Dict[str, re.Pattern]
     ) -> Optional[Tuple[str, str]]:
         """
         Parse GENE-DB header to extract C gene info.
@@ -567,8 +589,8 @@ class IMGTDownloader:
         ----------
         header : str
             FASTA header (without ">")
-        species_variants : Set[str]
-            Set of exact species/strain names to match
+        species_prefixes : Set[str]
+            Set of species name prefixes to match (e.g., "Macaca mulatta")
         c_gene_patterns : Dict
             Regex patterns for C gene identification
 
@@ -588,8 +610,10 @@ class IMGTDownloader:
         # Strip parentheses and brackets from functionality (e.g., "(F)" -> "F", "[ORF]" -> "ORF")
         functionality = functionality.strip("()[]")
 
-        # Filter by species using exact matching against collected variants
-        if species not in species_variants:
+        # Filter by species using prefix matching
+        # This captures all strains like "Macaca mulatta_RUp15" when prefix is "Macaca mulatta"
+        species_match = any(species.startswith(prefix) for prefix in species_prefixes)
+        if not species_match:
             return None
 
         # Filter by functionality (F = functional, ORF = open reading frame)
