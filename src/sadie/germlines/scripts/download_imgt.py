@@ -47,6 +47,7 @@ from urllib.request import Request, urlopen
 logger = logging.getLogger(__name__)
 
 CHECKPOINT_FILE = ".download_progress.json"
+SPECIES_MAPPING_FILE = "species_mapping.json"
 
 
 def _load_checkpoint(checkpoint_path: Path) -> dict:
@@ -60,6 +61,28 @@ def _load_checkpoint(checkpoint_path: Path) -> dict:
 
 def _save_checkpoint(checkpoint_path: Path, data: dict):
     checkpoint_path.write_text(json.dumps(data, indent=2))
+
+
+def _load_species_mapping(mapping_path: Path) -> Set[str]:
+    """Load species mapping from JSON file."""
+    if mapping_path.exists():
+        try:
+            data = json.loads(mapping_path.read_text())
+            return set(data.get("species_variants", []))
+        except Exception:
+            return set()
+    return set()
+
+
+def _save_species_mapping(mapping_path: Path, species_variants: Set[str], internal_name: str):
+    """Save species mapping to JSON file."""
+    data = {
+        "internal_name": internal_name,
+        "species_variants": sorted(species_variants),
+        "count": len(species_variants),
+        "updated_at": datetime.now().isoformat(),
+    }
+    mapping_path.write_text(json.dumps(data, indent=2))
 
 
 # IMGT V-QUEST reference directory base URL
@@ -322,11 +345,15 @@ class IMGTDownloader:
         if checkpoint_path.exists():
             checkpoint_path.unlink()
 
+        # Save species mapping to JSON for future C gene downloads
+        mapping_path = species_dir / SPECIES_MAPPING_FILE
         if all_species_variants:
             logger.info(f"Found {len(all_species_variants)} species/strain variants in V-QUEST data")
+            _save_species_mapping(mapping_path, all_species_variants, internal_name)
+            logger.info(f"Saved species mapping to {mapping_path}")
 
         # Download C genes from GENE-DB (not available in V-QUEST)
-        # Use exact species names collected from V-QUEST headers
+        # Use exact species names collected from V-QUEST headers (or load from JSON)
         c_count = self._download_c_genes_from_genedb(internal_name, all_species_variants, force)
         total_count += c_count
 
@@ -389,6 +416,13 @@ class IMGTDownloader:
             )
             logger.debug(f"Skipping C genes (exists with {count} sequences)")
             return count
+
+        # If no species variants provided, try to load from saved mapping
+        if not species_variants:
+            mapping_path = species_dir / SPECIES_MAPPING_FILE
+            species_variants = _load_species_mapping(mapping_path)
+            if species_variants:
+                logger.info(f"Loaded {len(species_variants)} species variants from {mapping_path}")
 
         if not species_variants:
             logger.debug(f"No species variants found for {internal_name}, skipping C genes")

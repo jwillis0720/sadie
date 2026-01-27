@@ -1,0 +1,15 @@
+{
+  "internal_name": "dog",
+  "species_variants": [
+    "Canis lupus familiaris_Basenji",
+    "Canis lupus familiaris_Bernese Mountain Dog",
+    "Canis lupus familiaris_Boxer",
+    "Canis lupus familiaris_Cairn Terrier",
+    "Canis lupus familiaris_German Shepherd",
+    "Canis lupus familiaris_Great Dane",
+    "Canis lupus familiaris_Labrador Retriever",
+    "Canis lupus familiaris_boxer"
+  ],
+  "count": 8,
+  "updated_at": "2026-01-26T18:15:33.749612"
+}

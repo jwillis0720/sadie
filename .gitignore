@@ -75,3 +75,8 @@ nb/
 
 # Testing files and databases
 my_database/
+
+# helpers tailored for user specific needs
+.claude/
+.cursor/
+.factory/

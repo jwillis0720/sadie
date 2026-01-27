@@ -1,0 +1,9 @@
+{
+  "internal_name": "zebrafish",
+  "species_variants": [
+    "Danio rerio",
+    "Danio rerio_Tuebingen"
+  ],
+  "count": 2,
+  "updated_at": "2026-01-26T18:16:38.802802"
+}

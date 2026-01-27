@@ -2,6 +2,7 @@ macaque:
   imgt:
     macaque:
     - IGHA*01
+    - IGHA*24
     - IGHM*03
     - IGHE*01
     - IGHG1*01
