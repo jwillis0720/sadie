@@ -9,14 +9,20 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 29 — Germline Source Tracking
-Plan: .planning/phases/29-germline-source-tracking/29-02-PLAN.md
+Phase: 30 — Add _gapped.fasta Support to CustomProvider
+Plan: .planning/phases/30-add-gapped-fasta-support-to-customprovider/30-01-PLAN.md
 Status: Complete
-Last activity: 2026-01-26 — Completed Phase 29 (germline source tracking)
+Last activity: 2026-01-27 — Completed Plan 30-01
 
-Progress: ████████████████████ 100% (2/2 plans complete)
+Progress: ████████████████████ 100% (1/1 plans complete)
 
-**Phase 29: Germline Source Tracking** — COMPLETE
+**Phase 30: Add _gapped.fasta Support to CustomProvider** — COMPLETE
+
+### Phase 30: Add _gapped.fasta Support to CustomProvider ✓
+- ✓ Add _get_gapped_fasta_path() and _load_gapped_sequences() methods
+- ✓ Modify fetch_genes() to load gapped sequences from _gapped.fasta
+- ✓ Update _create_gene_from_record() to use pre-loaded gapped sequences
+- ✓ Add 3 unit tests for _gapped.fasta support
 
 ### Phase 29: Germline Source Tracking ✓
 - ✓ Add get_source_lookup() to GermlineData
@@ -24,7 +30,7 @@ Progress: ████████████████████ 100% (2/2
 - ✓ Integrate source columns into run_fasta() and _run_scfv()
 - ✓ Add 4 unit tests for source tracking
 
-**Next Phase:** None — Phase 29 complete
+**Next Phase:** TBD
 
 ## Milestone v1.3 Overview
 
@@ -111,6 +117,9 @@ Progress: ████████████████████ 100% (2/2
 
 ## Accumulated Context
 
+### Roadmap Evolution
+- Phase 30 complete: Add _gapped.fasta support to CustomProvider
+
 ### Pending Todos
 - 1 pending todo(s) in `.planning/todos/pending/`
 
@@ -121,4 +130,4 @@ Stopped at: Completed Phase 29 — Germline source tracking complete
 Resume file: None
 
 ---
-*Last updated: 2026-01-26*
+*Last updated: 2026-01-27*
