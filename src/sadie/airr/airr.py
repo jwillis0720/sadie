@@ -670,9 +670,6 @@ class Airr:
         if self.correct_indel:
             result.correct_indel()  # type: ignore[attr-defined]
 
-        # Fix IgBLAST complete_vdj quirk (see audit/igblast-quirk.md)
-        result = self._recalculate_complete_vdj(result)
-
         return result
 
     def _lookup_source(self, call_value, lookup: Dict[str, str]):
@@ -723,55 +720,6 @@ class Airr:
                 df[source_col] = df[call_col].apply(lambda x: self._lookup_source(x, source_lookup))
 
         return df
-
-    def _recalculate_complete_vdj(self, result: AirrTable) -> AirrTable:
-        """
-        Recalculate complete_vdj based on AIRR standard definition.
-
-        IgBLAST's complete_vdj calculation can vary based on allele selection.
-        This post-processing ensures consistent results based purely on
-        alignment positions per AIRR Standards v1.6.
-
-        AIRR Definition: True if alignment spans entire V(D)J region:
-        - v_germline_start == 1 (starts at V gene beginning)
-        - j_germline_end == expected_j_length (extends to J gene end)
-
-        Parameters
-        ----------
-        result : AirrTable
-            The AIRR table with IgBLAST results
-
-        Returns
-        -------
-        AirrTable
-            Updated AIRR table with recalculated complete_vdj values
-        """
-        from sadie.germlines.builders.j_gene_data import get_j_gene_length
-
-        def calc_complete(row):
-            # Handle missing position data
-            v_start = row.get("v_germline_start")
-            j_end = row.get("j_germline_end")
-            j_call = row.get("j_call")
-
-            if pd.isna(v_start) or pd.isna(j_end) or pd.isna(j_call) or not j_call:
-                return None
-
-            # Get first allele if multiple
-            j_allele = str(j_call).split(",")[0].strip()
-            expected_j_len = get_j_gene_length(j_allele)
-
-            if expected_j_len is None:
-                return None
-
-            # AIRR standard: spans entire V(D)J region
-            v_complete = int(v_start) == 1
-            j_complete = int(j_end) == expected_j_len
-
-            return v_complete and j_complete
-
-        result["complete_vdj"] = result.apply(calc_complete, axis=1)
-        return result
 
     # private run methods
     def _run_scfv(self, file: Union[Path, str]) -> LinkedAirrTable:
@@ -862,9 +810,6 @@ class Airr:
         light_chain_table = self._add_source_columns(light_chain_table.reset_index(drop=True))
         _heavy_airr = AirrTable(heavy_chain_table)
         _light_airr = AirrTable(light_chain_table)
-        # Fix IgBLAST complete_vdj quirk for both chains before merge
-        _heavy_airr = self._recalculate_complete_vdj(_heavy_airr)
-        _light_airr = self._recalculate_complete_vdj(_light_airr)
         linked_table = _heavy_airr.merge(_light_airr, suffixes=("_heavy", "_light"), on="sequence_id")
         return LinkedAirrTable(linked_table)
 
