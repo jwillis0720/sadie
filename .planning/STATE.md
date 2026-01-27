@@ -10,13 +10,20 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 31 — Add Database Parameter Support to Renumbering
-Plan: .planning/phases/31-add-database-parameter-support-to-renumbering/31-01-PLAN.md
+Plan: .planning/phases/31-add-database-parameter-support-to-renumbering/31-02-PLAN.md
 Status: Complete
-Last activity: 2026-01-27 — Completed Plan 31-01 (HMM Building)
+Last activity: 2026-01-27 — Completed Plan 31-02 (Database Parameter Support)
 
-Progress: ████████████████████ 100% (1/? plans complete)
+Progress: ████████████████████ 100% (2/2 plans complete)
 
-**Phase 31-01: Add HMM Building to Reference Database Build** — COMPLETE
+**Phase 31: Add Database Parameter Support to Renumbering** — COMPLETE
+
+### Phase 31-02: Add Database Parameter Support to Renumbering and HMMER ✓
+- ✓ Add `hmm_dir: Optional[Path]` parameter to HMMER class
+- ✓ Modify HMMER.get_hmm_models() to check custom directory first
+- ✓ Add `database: Optional[Path | str]` parameter to Renumbering class
+- ✓ Validate database structure (hmms/ directory exists)
+- ✓ Add 4 unit tests for database parameter functionality
 
 ### Phase 31-01: Add HMM Building to Reference Database Build ✓
 - ✓ Add _make_hmm_files() method to References class
@@ -138,7 +145,7 @@ Progress: ████████████████████ 100% (1/?
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed Phase 31-01 — HMM building added to reference database build
+Stopped at: Completed Phase 31-02 — Database parameter support added to Renumbering and HMMER
 Resume file: None
 
 ---
