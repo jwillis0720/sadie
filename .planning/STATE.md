@@ -10,13 +10,22 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 32 — Fix IgBLAST internal_data to Use Combined VDJC File
-Plan: .planning/phases/32-fix-igblast-internal-data-combined-vdjc/32-01-PLAN.md
+Plan: .planning/phases/32-fix-igblast-internal-data-combined-vdjc/32-02-PLAN.md
 Status: Complete
-Last activity: 2026-01-27 — Completed Plan 32-01 (Combined VDJC Files)
+Last activity: 2026-01-27 — Completed Plan 32-02 (Remove Workaround)
 
-Progress: ████████████████████ 100% (1/1 plans complete)
+Progress: ████████████████████ 100% (2/2 plans complete)
 
 **Phase 32: Fix IgBLAST internal_data to Use Combined VDJC File** — COMPLETE
+
+### Phase 32-02: Remove Phase 17 Workaround Code ✓
+- ✓ Removed _recalculate_complete_vdj() method from Airr class
+- ✓ Removed calls in run_fasta() and _run_scfv()
+- ✓ Removed J_GENE_LENGTHS dictionary from j_gene_data.py
+- ✓ Removed get_j_gene_length() function
+- ✓ Preserved HUMAN_J_GENE_DATA and get_j_gene_data() for aux file generation
+- ✓ Added 8 unit tests verifying workaround removal and complete_vdj works
+- ✓ Updated test fixture for improved macaque complete_vdj accuracy
 
 ### Phase 32-01: Create Combined VDJC Files for internal_data ✓
 - ✓ Modified build_internal_data.py to create combined VDJC FASTA (not symlinks)
@@ -159,7 +168,7 @@ Progress: ████████████████████ 100% (1/1
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed Phase 32-01 — Combined VDJC files for internal_data, fixing complete_vdj
+Stopped at: Completed Phase 32-02 — Removed Phase 17 workaround code
 Resume file: None
 
 ---
