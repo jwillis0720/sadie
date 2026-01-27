@@ -109,6 +109,11 @@ Progress: ████████████████████ 100% (2/2
 - `audit/parity-notes.md` — Parity explanation
 - `audit/igblast-quirk.md` — IgBLAST quirk documentation
 
+## Accumulated Context
+
+### Pending Todos
+- 1 pending todo(s) in `.planning/todos/pending/`
+
 ## Session Continuity
 
 Last session: 2026-01-26
