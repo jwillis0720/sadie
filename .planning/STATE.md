@@ -5,18 +5,25 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Enable researchers to select germline database for AIRR annotation and renumbering
-**Current focus:** Phase 29 Germline Source Tracking — COMPLETE
+**Current focus:** Phase 31 — Add Database Parameter Support to Renumbering
 
 ## Current Position
 
-Phase: 30 — Add _gapped.fasta Support to CustomProvider
-Plan: .planning/phases/30-add-gapped-fasta-support-to-customprovider/30-01-PLAN.md
+Phase: 31 — Add Database Parameter Support to Renumbering
+Plan: .planning/phases/31-add-database-parameter-support-to-renumbering/31-01-PLAN.md
 Status: Complete
-Last activity: 2026-01-27 — Completed Plan 30-01
+Last activity: 2026-01-27 — Completed Plan 31-01 (HMM Building)
 
-Progress: ████████████████████ 100% (1/1 plans complete)
+Progress: ████████████████████ 100% (1/? plans complete)
 
-**Phase 30: Add _gapped.fasta Support to CustomProvider** — COMPLETE
+**Phase 31-01: Add HMM Building to Reference Database Build** — COMPLETE
+
+### Phase 31-01: Add HMM Building to Reference Database Build ✓
+- ✓ Add _make_hmm_files() method to References class
+- ✓ Add _write_stockholm_file() helper for Stockholm format
+- ✓ Add _translate_gapped_nt_to_aa() for NT-to-AA fallback
+- ✓ Integrate _make_hmm_files() into make_airr_database()
+- ✓ Add 3 unit tests for HMM building functionality
 
 ### Phase 30: Add _gapped.fasta Support to CustomProvider ✓
 - ✓ Add _get_gapped_fasta_path() and _load_gapped_sequences() methods
@@ -103,6 +110,10 @@ Progress: ████████████████████ 100% (1/1
 
 ## Key Files
 
+### v1.3 Target Files (Phase 31)
+- `src/sadie/reference/reference.py` — HMM building methods added
+- `src/sadie/germlines/renumbering_integration.py` — LocalHMMBuilder reference implementation
+
 ### v1.2 Target Files
 - `src/sadie/reference/models.py` — Source validation expansion
 - `src/sadie/reference/reference.py` — from_yaml() germlines integration
@@ -126,8 +137,8 @@ Progress: ████████████████████ 100% (1/1
 
 ## Session Continuity
 
-Last session: 2026-01-26
-Stopped at: Completed Phase 29 — Germline source tracking complete
+Last session: 2026-01-27
+Stopped at: Completed Phase 31-01 — HMM building added to reference database build
 Resume file: None
 
 ---
