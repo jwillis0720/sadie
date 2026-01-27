@@ -364,12 +364,19 @@ def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None
     default=False,
     help="Use local germlines module instead of G3 API",
 )
+@click.option(
+    "--force",
+    "-f",
+    is_flag=True,
+    default=False,
+    help="Remove existing output directory before building (clean build)",
+)
 @click.argument(
     "yaml_path",
     required=True,
     type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True),
 )
-def build_reference(verbose: int, output: str, use_germlines: bool, yaml_path: str) -> None:
+def build_reference(verbose: int, output: str, use_germlines: bool, force: bool, yaml_path: str) -> None:
     """Build IgBLAST database from reference.yml configuration.
 
     Creates complete database structure including blast databases, internal
@@ -379,7 +386,9 @@ def build_reference(verbose: int, output: str, use_germlines: bool, yaml_path: s
     Examples:
         sadie reference build reference.yml --output ./db
         sadie reference build my_refs.yml -o /data/germlines --use-germlines
+        sadie reference build ref.yml -o ./db --force  # Clean build
     """
+    import shutil
     import sys
     from pathlib import Path
 
@@ -388,6 +397,11 @@ def build_reference(verbose: int, output: str, use_germlines: bool, yaml_path: s
     logging.basicConfig(level=numeric_level)
 
     output_path = Path(output)
+
+    # Clean existing directory if --force flag is set
+    if force and output_path.exists():
+        click.echo(f"Removing existing directory: {output_path}")
+        shutil.rmtree(output_path)
 
     try:
         # Progress: Loading YAML
