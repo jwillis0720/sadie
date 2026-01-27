@@ -536,3 +536,89 @@
 
 *Phase 29 created: 2026-01-26*
 *Phase 29 completed: 2026-01-26*
+
+---
+
+## Phase 30: Add _gapped.fasta Support to CustomProvider
+
+**Goal:** Make CustomProvider consistent with IMGTProvider by supporting optional `_gapped.fasta` files for pre-gapped custom sequences
+
+**Depends on:** Phase 29
+
+**Status:** ✓ Complete
+
+**Files modified:**
+- `src/sadie/germlines/providers/custom.py` — Added `_get_gapped_fasta_path()`, `_load_gapped_sequences()`, updated fetch logic
+- `tests/unit/germlines/test_custom_provider.py` — Added 3 tests for _gapped.fasta support
+
+**Context:** CustomProvider currently only reads `IG{chain}{segment}.fasta` and auto-gaps using GapperService with IMGT templates. IMGTProvider reads both `.fasta` and `_gapped.fasta` files, using pre-gapped sequences when available. This inconsistency means users cannot provide pre-gapped custom sequences.
+
+**Current Behavior:** CustomProvider only reads ungapped FASTA, auto-gaps via GapperService
+**Desired Behavior:** Check for `_gapped.fasta` first; if present, use those sequences directly; fall back to auto-gapping if not
+
+**Requirements:**
+- GAP-01: Add `_get_gapped_fasta_path()` method to CustomProvider (same pattern as IMGTProvider)
+- GAP-02: Add `_load_gapped_sequences()` method to load gapped sequences into a dict
+- GAP-03: Modify `fetch_genes()` to load gapped sequences first if file exists
+- GAP-04: Modify `_create_gene_from_record()` to check pre-loaded gapped dict before auto-gapping
+- GAP-05: Update docstrings to document the new behavior
+
+**Success Criteria:**
+1. If `sources/custom/cat/IGHV_gapped.fasta` exists, those sequences are used for gapping
+2. If no `_gapped.fasta` exists, auto-gapping via GapperService still works
+3. Existing tests pass
+4. Add unit test verifying `_gapped.fasta` is read when present
+
+**Files to modify:**
+- `src/sadie/germlines/providers/custom.py` — Add gapped file support
+- `tests/unit/germlines/test_custom_provider.py` — Add gapped file test
+
+---
+
+## Phase 31: Add Database Parameter Support to Renumbering
+
+**Goal:** Enable `Renumbering(database='./my_database')` to work like `Airr(database='./my_database')`, allowing users to run `sadie reference build reference.yml -o ./my_database --use-germlines` and have HMMs built on-the-fly so renumbering can use the custom database.
+
+**Depends on:** Phase 30
+
+**Status:** Not started
+
+**Context:**
+- `Airr` class already supports `database` parameter pointing to prebuilt database from `sadie reference build`
+- `Renumbering` uses `HMMER` class which gets HMMs via: LocalHMMBuilder → Legacy ANARCI HMMs → G3 API
+- HMM building requires: gapped V+J AA sequences → Stockholm alignment (.sto) → pyhmmer → HMM (.hmm)
+- `LocalHMMBuilder` in `src/sadie/germlines/renumbering_integration.py` has the HMM building logic
+- Gapped sequences are available in reference data as `imgt.sequence_gapped_aa` field
+
+**HMM Build Pipeline:**
+1. Collect gapped amino acid sequences for V and J genes per species/chain
+2. Write Stockholm alignment file (.sto) with padded sequences and RF annotation line
+3. Build HMM from Stockholm using pyhmmer (`builder.build_msa()`)
+4. Save HMM binary file (.hmm)
+
+**Requirements:**
+- HMM-01: Extend `References.make_airr_database()` to build HMMs
+  - Create `stockholms/` and `hmms/` directories in output path
+  - Generate `{species}_{chain}.sto` Stockholm alignment files
+  - Build `{species}_{chain}.hmm` files from Stockholm alignments
+  - Use gapped AA sequences from reference DataFrame
+  - Reuse or adapt `LocalHMMBuilder._write_stockholm()` and `_build_hmm()` logic
+- HMM-02: Add `database` parameter to `Renumbering.__init__()`
+  - Accept `database: Optional[Path | str] = None`
+  - When provided, pass custom HMM directory to HMMER
+- HMM-03: Extend `HMMER` class to support custom HMM directory
+  - Add `hmm_dir: Optional[Path] = None` parameter
+  - In `get_hmm_models()`, check custom directory first before priority fallback
+
+**Success Criteria:**
+1. `sadie reference build reference.yml -o ./my_database --use-germlines` creates Stockholm and HMM files
+2. Output structure includes: `stockholms/{species}_{chain}.sto` and `hmms/{species}_{chain}.hmm`
+3. `Renumbering(database='./my_database')` loads HMMs from that directory
+4. Existing behavior without `database` parameter unchanged
+5. Tests pass for both Airr and Renumbering with custom database
+
+**Files to modify:**
+- `src/sadie/reference/reference.py` — Add HMM building to `make_airr_database()`
+- `src/sadie/renumbering/renumbering.py` — Add `database` parameter to `Renumbering`
+- `src/sadie/renumbering/aligners/hmmer.py` — Add `hmm_dir` parameter to `HMMER`
+- `src/sadie/germlines/renumbering_integration.py` — Reference for Stockholm + HMM building logic

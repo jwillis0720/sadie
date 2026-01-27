@@ -30,7 +30,7 @@ Progress: ████████████████████ 100% (1/1
 - ✓ Integrate source columns into run_fasta() and _run_scfv()
 - ✓ Add 4 unit tests for source tracking
 
-**Next Phase:** TBD
+**Next Phase:** Phase 31 — Add Database Parameter Support to Renumbering
 
 ## Milestone v1.3 Overview
 
@@ -119,6 +119,7 @@ Progress: ████████████████████ 100% (1/1
 
 ### Roadmap Evolution
 - Phase 30 complete: Add _gapped.fasta support to CustomProvider
+- Phase 31 added: Add Database Parameter Support to Renumbering
 
 ### Pending Todos
 - 1 pending todo(s) in `.planning/todos/pending/`
