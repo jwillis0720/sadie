@@ -319,10 +319,25 @@ def reference() -> None:
 def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None:
     """make the igblast reference files
 
+    DEPRECATED: This command is deprecated. Use 'sadie reference build' instead.
+
     This script will make the imgt reference files used by igblast or airr, including internal data, the blast
     the blast database, and the auxillary files. It uses the reference.yml to configure select genes and species.
     If you update the reference.yml file, run this again.
     """
+    # Show deprecation warning
+    import warnings
+
+    warnings.warn(
+        "The 'sadie reference make' command is deprecated and will be removed in a future release.\n"
+        "Please use 'sadie reference build' instead:\n"
+        "  sadie reference build reference.yml -o /path/to/output",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+
+    click.echo("⚠️  WARNING: 'sadie reference make' is deprecated. Use 'sadie reference build' instead.\n")
+
     # Set the root logger in the console script
     # Get back a numeric level associated with number of clicks
     numeric_level = getVerbosityLevel(verbose)
@@ -359,10 +374,9 @@ def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None
     type=click.Path(resolve_path=True, dir_okay=True, writable=True),
 )
 @click.option(
-    "--use-germlines",
-    is_flag=True,
-    default=False,
-    help="Use local germlines module instead of G3 API",
+    "--use-germlines/--no-use-germlines",
+    default=True,
+    help="Use local germlines module instead of G3 API (default: germlines module)",
 )
 @click.argument(
     "yaml_path",
@@ -410,6 +424,133 @@ def build_reference(verbose: int, output: str, use_germlines: bool, yaml_path: s
     except Exception as e:
         click.echo(f"Error: {str(e)}", err=True)
         sys.exit(1)
+
+
+@reference.command("generate")
+@click.option(
+    "--output",
+    "-o",
+    type=click.Path(resolve_path=True),
+    default="reference.yml",
+    help="Output YAML file path (default: reference.yml)",
+    show_default=True,
+)
+@click.option(
+    "--generate-all",
+    is_flag=True,
+    help="Generate complete reference.yml with all configured references",
+)
+@click.option(
+    "--name",
+    help="Reference name (e.g., human, mouse, clk)",
+)
+@click.option(
+    "--species",
+    help="Species to query (e.g., human, mouse, macaque)",
+)
+@click.option(
+    "--providers",
+    multiple=True,
+    type=click.Choice(["vdjbase", "ogrdb", "imgt", "custom"]),
+    default=["vdjbase", "ogrdb", "imgt"],
+    help="Germline providers to include (default: vdjbase ogrdb imgt)",
+)
+@click.option(
+    "--functional-only/--include-non-functional",
+    default=True,
+    help="Include only functional genes (default: functional-only)",
+)
+@click.option(
+    "--interactive",
+    "-i",
+    is_flag=True,
+    help="Interactive mode for gene selection",
+)
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Show what would be done without making changes",
+)
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="Show detailed output",
+)
+@click.option(
+    "--list-species",
+    is_flag=True,
+    help="List available species from germlines module",
+)
+def generate_reference(
+    output: str,
+    generate_all: bool,
+    name: Optional[str],
+    species: Optional[str],
+    providers: tuple,
+    functional_only: bool,
+    interactive: bool,
+    dry_run: bool,
+    verbose: bool,
+    list_species: bool,
+) -> None:
+    """Generate reference.yml file using SADIE germlines module.
+
+    This command uses the local germlines database (IMGT, OGRDB, VDJbase) to generate
+    reference.yml files used by 'sadie reference build' command.
+
+    \b
+    Examples:
+        sadie reference generate --generate-all
+        sadie reference generate --species human --output human.yml
+        sadie reference generate --interactive
+        sadie reference generate --list-species
+    """
+    import sys
+    from pathlib import Path
+
+    # Import the script's main functionality
+    script_path = Path(__file__).parent.parent.parent / "scripts" / "generate_reference_yaml_germlines.py"
+
+    if not script_path.exists():
+        click.echo("Error: generate_reference_yaml_germlines.py script not found", err=True)
+        sys.exit(1)
+
+    # Build command arguments
+    cmd = [sys.executable, str(script_path)]
+
+    if list_species:
+        cmd.append("--list-species")
+    elif interactive:
+        cmd.append("--interactive")
+    elif generate_all:
+        cmd.append("--generate-all")
+    elif species:
+        cmd.extend(["--species", species])
+        if name:
+            cmd.extend(["--name", name])
+    else:
+        click.echo("Error: Specify --generate-all, --species, --interactive, or --list-species", err=True)
+        sys.exit(1)
+
+    cmd.extend(["--output", output])
+
+    if providers:
+        cmd.append("--providers")
+        cmd.extend(providers)
+
+    if not functional_only:
+        cmd.append("--include-non-functional")
+
+    if dry_run:
+        cmd.append("--dry-run")
+
+    if verbose:
+        cmd.append("--verbose")
+
+    # Execute the script
+    result = subprocess.run(cmd, capture_output=False, text=True)
+    sys.exit(result.returncode)
 
 
 @sadie.command()
@@ -468,6 +609,12 @@ def make_all(
 ) -> None:
     """Comprehensive database generation for SADIE AIRR analysis
 
+    DEPRECATED: This command is deprecated and will be removed in a future release.
+    Use the new workflow instead:
+      1. sadie germlines populate              # Download germline data
+      2. sadie reference generate --generate-all  # Generate reference.yml
+      3. sadie reference build reference.yml -o ./db  # Build database
+
     This command performs all necessary steps to set up a complete AIRR analysis environment:
 
     1. Generates or updates reference.yml configuration (if needed)
@@ -499,6 +646,21 @@ def make_all(
     │       └── ...
     └── .references_dataframe.csv.gz  # Reference index
     """
+    # Show deprecation warning
+    import warnings
+
+    warnings.warn(
+        "The 'sadie make-all' command is deprecated and will be removed in a future release.\n"
+        "Please use the new workflow:\n"
+        "  1. sadie germlines populate              # Download germline data\n"
+        "  2. sadie reference generate --generate-all  # Generate reference.yml\n"
+        "  3. sadie reference build reference.yml -o ./db  # Build database",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+
+    click.echo("⚠️  WARNING: 'sadie make-all' is deprecated. See documentation for new workflow.\n")
+
     # Set logging level
     numeric_level = getVerbosityLevel(verbose)
     logging.basicConfig(level=numeric_level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
