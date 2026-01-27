@@ -581,7 +581,14 @@
 
 **Depends on:** Phase 30
 
-**Status:** Not started
+**Status:** ✓ Complete
+
+**Files modified:**
+- `src/sadie/reference/reference.py` — Added `_make_hmm_files()`, `_write_stockholm_file()`, `_translate_gapped_nt_to_aa()`, integrated into `make_airr_database()`
+- `src/sadie/renumbering/renumbering.py` — Added `database` parameter to `Renumbering.__init__()`
+- `src/sadie/renumbering/aligners/hmmer.py` — Added `hmm_dir` parameter to `HMMER` class
+- `tests/unit/reference/test_reference.py` — Added 3 HMM building tests
+- `tests/unit/renumbering/test_renumbering.py` — Added 4 database parameter tests
 
 **Context:**
 - `Airr` class already supports `database` parameter pointing to prebuilt database from `sadie reference build`
