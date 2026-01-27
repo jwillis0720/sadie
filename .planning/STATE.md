@@ -9,12 +9,23 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 31 — Add Database Parameter Support to Renumbering
-Plan: .planning/phases/31-add-database-parameter-support-to-renumbering/31-02-PLAN.md
+Phase: 32 — Fix IgBLAST internal_data to Use Combined VDJC File
+Plan: .planning/phases/32-fix-igblast-internal-data-combined-vdjc/32-01-PLAN.md
 Status: Complete
-Last activity: 2026-01-27 — Completed Plan 31-02 (Database Parameter Support)
+Last activity: 2026-01-27 — Completed Plan 32-01 (Combined VDJC Files)
 
-Progress: ████████████████████ 100% (2/2 plans complete)
+Progress: ████████████████████ 100% (1/1 plans complete)
+
+**Phase 32: Fix IgBLAST internal_data to Use Combined VDJC File** — COMPLETE
+
+### Phase 32-01: Create Combined VDJC Files for internal_data ✓
+- ✓ Modified build_internal_data.py to create combined VDJC FASTA (not symlinks)
+- ✓ Added deduplication to handle duplicate sequences across files
+- ✓ Updated Reference Builder to include D/J/C in BLAST database
+- ✓ Added 9 unit tests for combined VDJC structure
+- ✓ Updated GermlineData to point V/D/J/C to database/ directory
+- ✓ Rebuilt internal_data for human, chicken, macaque, mouse, rhesus_macaque
+- ✓ Verified complete_vdj=True works for full-length sequences
 
 **Phase 31: Add Database Parameter Support to Renumbering** — COMPLETE
 
@@ -44,7 +55,7 @@ Progress: ████████████████████ 100% (2/2
 - ✓ Integrate source columns into run_fasta() and _run_scfv()
 - ✓ Add 4 unit tests for source tracking
 
-**Next Phase:** TBD (Phase 31 complete)
+**Next Phase:** TBD — Phase 32 complete, evaluate next priorities
 
 ## Milestone v1.3 Overview
 
@@ -139,6 +150,8 @@ Progress: ████████████████████ 100% (2/2
 - Phase 30 complete: Add _gapped.fasta support to CustomProvider
 - Phase 31 added: Add Database Parameter Support to Renumbering
 - Phase 31 complete: Add Database Parameter Support to Renumbering (HMM build + Renumbering/HMMER params)
+- Phase 32 added: Fix IgBLAST internal_data to Use Combined VDJC File (remove symlinks, match G3 structure)
+- Phase 32 complete: Create combined VDJC files for internal_data, fix complete_vdj calculation
 
 ### Pending Todos
 - 1 pending todo(s) in `.planning/todos/pending/`
@@ -146,7 +159,7 @@ Progress: ████████████████████ 100% (2/2
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed Phase 31-02 — Database parameter support added to Renumbering and HMMER
+Stopped at: Completed Phase 32-01 — Combined VDJC files for internal_data, fixing complete_vdj
 Resume file: None
 
 ---
