@@ -114,9 +114,10 @@ class GermlineGene(BaseModel):
     @field_validator("sequence")
     @classmethod
     def validate_sequence(cls, v: str) -> str:
-        """Validate sequence contains only valid nucleotides."""
+        """Validate sequence contains only valid nucleotides (including IUPAC ambiguity codes)."""
         v = v.upper()
-        valid_chars = set("ACGTN")
+        # Standard nucleotides + N (any) + IUPAC ambiguity codes + gap characters
+        valid_chars = set("ACGTNRYSWKMBDHV.-")
         invalid = set(v) - valid_chars
         if invalid:
             raise ValueError(f"Sequence contains invalid characters: {invalid}")
