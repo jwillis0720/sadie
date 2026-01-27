@@ -3,8 +3,13 @@
 Build IgBLAST internal_data directories for species.
 
 Creates Ig/internal_data/{species}/ with:
-1. Symlinks to BLAST databases from database/{species}/
-2. Generated .ndm.imgt files from gapped sequences
+1. Combined VDJC FASTA file ({species}_V.fasta) containing all segments
+2. BLAST database built from combined FASTA
+3. Generated .ndm.imgt files from gapped sequences
+
+The combined VDJC file is required for IgBLAST's complete_vdj calculation.
+IgBLAST expects internal_data/{species}/{species}_V to contain ALL gene segments
+(V, D, J, C) for proper annotation.
 
 Usage:
     python build_internal_data.py mouse rhesus_macaque chicken
@@ -13,6 +18,9 @@ Usage:
 import argparse
 import logging
 import os
+import platform
+import shutil
+import subprocess
 from pathlib import Path
 from typing import List, Optional
 
@@ -29,6 +37,116 @@ CHAIN_TYPES = {
     "K": "VK",
     "L": "VL",
 }
+
+
+def build_combined_fasta(species: str, database_dir: Path, internal_data_dir: Path) -> Path:
+    """
+    Concatenate V+D+J+C FASTAs into single combined file with deduplication.
+
+    IgBLAST requires a single file named {species}_V.fasta in internal_data/
+    that contains ALL gene segments (V, D, J, C) for proper complete_vdj calculation.
+
+    Sequences are deduplicated by ID to avoid BLAST database errors when the
+    same gene appears in multiple segment files.
+
+    Parameters
+    ----------
+    species : str
+        Species name
+    database_dir : Path
+        Path to database/{species}/ containing separate segment FASTAs
+    internal_data_dir : Path
+        Path to internal_data/{species}/ for output
+
+    Returns
+    -------
+    Path
+        Path to combined FASTA file
+    """
+    combined_fasta = internal_data_dir / f"{species}_V.fasta"
+
+    # Ordered segments: V, D, J, C (D may not exist for all species)
+    segments = ["V", "D", "J", "C"]
+
+    # Track seen IDs to deduplicate
+    seen_ids: set = set()
+    total_sequences = 0
+    duplicates_skipped = 0
+
+    with open(combined_fasta, "w") as out:
+        for segment in segments:
+            fasta_file = database_dir / f"{species}_{segment}.fasta"
+            if fasta_file.exists():
+                segment_count = 0
+                for record in SeqIO.parse(fasta_file, "fasta"):
+                    seq_id = record.id
+                    if seq_id in seen_ids:
+                        duplicates_skipped += 1
+                        continue
+                    seen_ids.add(seq_id)
+                    out.write(f">{seq_id}\n{str(record.seq)}\n")
+                    segment_count += 1
+                    total_sequences += 1
+                logger.info(f"  Added {segment_count} {segment} genes from {fasta_file.name}")
+            else:
+                logger.debug(f"  No {segment} genes found at {fasta_file}")
+
+    if duplicates_skipped > 0:
+        logger.info(f"  Skipped {duplicates_skipped} duplicate sequences")
+    logger.info(f"  Combined FASTA: {total_sequences} unique sequences")
+    return combined_fasta
+
+
+def build_blast_db(fasta_path: Path, db_prefix: Path) -> bool:
+    """
+    Build BLAST database from FASTA file.
+
+    Parameters
+    ----------
+    fasta_path : Path
+        Path to input FASTA file
+    db_prefix : Path
+        Output database prefix (e.g., internal_data/human/human_V)
+
+    Returns
+    -------
+    bool
+        True if successful
+    """
+    # Find makeblastdb binary
+    system = platform.system().lower()
+    reference_bin_dir = Path(__file__).parent.parent.parent / "reference" / "bin" / system
+    make_blast_db_bin = reference_bin_dir / "makeblastdb"
+
+    if not shutil.which(str(make_blast_db_bin)):
+        # Try system makeblastdb
+        make_blast_db_bin = shutil.which("makeblastdb")  # type: ignore
+        if not make_blast_db_bin:
+            logger.error("makeblastdb not found - ensure BLAST+ is installed")
+            return False
+
+    cmd = [
+        str(make_blast_db_bin),
+        "-in",
+        str(fasta_path),
+        "-dbtype",
+        "nucl",
+        "-hash_index",
+        "-parse_seqids",
+        "-out",
+        str(db_prefix),
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        logger.info(f"  Built BLAST database at {db_prefix}")
+        return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"makeblastdb failed: {e.stderr}")
+        return False
+    except FileNotFoundError:
+        logger.error("makeblastdb not found - ensure BLAST+ is installed")
+        return False
 
 
 def get_germlines_root() -> Path:
@@ -130,8 +248,16 @@ def build_internal_data(species: str, germlines_root: Path) -> bool:
 
     Creates:
     - Ig/internal_data/{species}/ directory
-    - Symlinks to BLAST databases
-    - {species}.ndm.imgt file
+    - Combined VDJC FASTA ({species}_V.fasta) containing all segments
+    - BLAST database built from combined FASTA
+    - {species}.ndm.imgt file (V genes only, for region annotations)
+
+    The combined VDJC file is required for IgBLAST's complete_vdj calculation.
+    IgBLAST reads {species}_V from internal_data/ for its internal annotation
+    database, which must contain ALL gene segments.
+
+    Note: The separate V/D/J/C BLAST databases in database/{species}/ are used
+    by IgBLAST's -germline_db_V, -germline_db_D, etc. options for alignment.
 
     Parameters
     ----------
@@ -153,23 +279,31 @@ def build_internal_data(species: str, germlines_root: Path) -> bool:
         logger.error(f"Database directory not found: {database_dir}")
         return False
 
+    # Clean internal_data directory - remove old symlinks and files
+    if internal_data_dir.exists():
+        for item in internal_data_dir.iterdir():
+            # Remove symlinks and old segment files (but keep .ndm.imgt for now)
+            if item.is_symlink() or item.name.startswith(f"{species}_"):
+                item.unlink()
+                logger.debug(f"  Removed: {item.name}")
+
     # Create internal_data directory
     internal_data_dir.mkdir(parents=True, exist_ok=True)
     logger.info(f"Created: {internal_data_dir}")
 
-    # Symlink BLAST database files
-    for db_file in database_dir.glob(f"{species}_*"):
-        link_path = internal_data_dir / db_file.name
-        if link_path.exists() or link_path.is_symlink():
-            link_path.unlink()
+    # Create combined VDJC FASTA
+    combined_fasta = build_combined_fasta(species, database_dir, internal_data_dir)
+    if not combined_fasta.exists() or combined_fasta.stat().st_size == 0:
+        logger.error(f"Failed to create combined FASTA for {species}")
+        return False
 
-        # Use relative symlink
-        rel_path = os.path.relpath(db_file, internal_data_dir)
-        link_path.symlink_to(rel_path)
+    # Build BLAST database from combined file
+    db_prefix = internal_data_dir / f"{species}_V"
+    if not build_blast_db(combined_fasta, db_prefix):
+        logger.error(f"Failed to build BLAST database for {species}")
+        return False
 
-    logger.info(f"Symlinked BLAST databases from {database_dir}")
-
-    # Generate NDM file
+    # Generate NDM file (V genes only - for framework/CDR region annotations)
     ndm_entries = build_ndm_file(species, germlines_root)
 
     if not ndm_entries:

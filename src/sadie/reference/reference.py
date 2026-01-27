@@ -594,21 +594,33 @@ class References:
             logger.info(f"Wrote aux to {aux_file_name}")
 
     def _make_internal_annotaion_file(self, outpath: Path) -> None:
-        """Generate the internal database file for IgBlast
+        """Generate the internal database file for IgBlast.
+
+        Creates combined VDJC FASTA and BLAST database for each reference name.
+        The combined file is required for IgBLAST's complete_vdj calculation.
 
         Parameters
         ----------
         outpath : Path
             The output path to. example -> path/to/output.
             Then the database will dump to path/to/output/{Ig,TCR}/internal_data/{name}/{name}.ndm.imgt
+
+        Notes
+        -----
+        IgBLAST requires a single file named {name}_V in internal_data/ that
+        contains ALL gene segments (V, D, J, C) for proper complete_vdj calculation.
+        The NDM file still only includes V gene annotations (framework/CDR regions).
         """
         logger.debug(f"Generating internal annotation file at {outpath}")
         # The internal data file structure goes Ig/internal_path/{name}/
 
         database = self.get_dataframe()
         for name, group_df in database.groupby("name"):
-            # get a filtered database for V genes
-            filtered_data = group_df.loc[group_df["gene_segment"] == "V"].copy()
+            # V genes for NDM file (framework/CDR regions)
+            v_genes = group_df.loc[group_df["gene_segment"] == "V"].copy()
+
+            # All segments for combined FASTA - IgBLAST needs V+D+J+C in internal_data
+            all_segments = group_df.loc[group_df["gene_segment"].isin(["V", "D", "J", "C"])].copy()
 
             # the species is the actual entity we are using for the annotation, e.g se09 or human
             name_internal_df_path = Path(outpath).joinpath(Path(f"Ig/internal_data/{name}/"))
@@ -616,42 +628,47 @@ class References:
                 logger.info(f"Creating {name_internal_df_path}")
                 name_internal_df_path.mkdir(parents=True)
 
-            # subselect and order
-            index_df = filtered_data[
-                [
-                    "gene",
-                    "imgt.fwr1_start",
-                    "imgt.fwr1_end",
-                    "imgt.cdr1_start",
-                    "imgt.cdr1_end",
-                    "imgt.fwr2_start",
-                    "imgt.fwr2_end",
-                    "imgt.cdr2_start",
-                    "imgt.cdr2_end",
-                    "imgt.fwr3_start",
-                    "imgt.fwr3_end",
-                ]
-            ].copy()
+            # Generate NDM file from V genes only (framework/CDR region annotations)
+            if not v_genes.empty:
+                # subselect and order
+                index_df = v_genes[
+                    [
+                        "gene",
+                        "imgt.fwr1_start",
+                        "imgt.fwr1_end",
+                        "imgt.cdr1_start",
+                        "imgt.cdr1_end",
+                        "imgt.fwr2_start",
+                        "imgt.fwr2_end",
+                        "imgt.cdr2_start",
+                        "imgt.cdr2_end",
+                        "imgt.fwr3_start",
+                        "imgt.fwr3_end",
+                    ]
+                ].copy()
 
-            # makes everything an integer. sets gene to index so its not affected
-            # add +1 to so we get 1-based indexing
-            index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
+                # makes everything an integer. sets gene to index so its not affected
+                # add +1 to so we get 1-based indexing
+                index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
 
-            # drop anything where there is an na in the annotation idnex
-            index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
-            scheme = "imgt"
-            internal_annotations_file_path = name_internal_df_path.joinpath(f"{name}.ndm.{scheme}")
+                # drop anything where there is an na in the annotation index
+                index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
+                scheme = "imgt"
+                internal_annotations_file_path = name_internal_df_path.joinpath(f"{name}.ndm.{scheme}")
 
-            segment = [i.split("|")[-1].split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
-            index_df["segment"] = segment
-            index_df["weird_buffer"] = 0
-            logger.info(f"Writing to annotation file {internal_annotations_file_path}")
-            index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
-            # blast reads these suffixes depending on receptor
+                segment = [i.split("|")[-1].split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
+                index_df["segment"] = segment
+                index_df["weird_buffer"] = 0
+                logger.info(f"Writing to annotation file {internal_annotations_file_path}")
+                index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
+
+            # Build combined VDJC BLAST database
+            # IgBLAST reads {name}_V from internal_data/ for its internal annotation
             suffix = "V"
             db_outpath = Path(str(name_internal_df_path) + f"/{name}_{suffix}")
-            # Pass the V-gene filtered dataframe to write out the blast database
-            make_blast_db_for_internal(filtered_data, db_outpath)
+            # Pass ALL segments (V+D+J+C) to the BLAST database
+            make_blast_db_for_internal(all_segments, db_outpath)
+            logger.info(f"Built combined VDJC database with {len(all_segments)} sequences for {name}")
 
     def _make_hmm_files(self, outpath: Path) -> None:
         """Generate HMM files for renumbering from gapped AA sequences.
