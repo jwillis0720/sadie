@@ -204,5 +204,54 @@ Requirements for Test Infrastructure & Species Expansion milestone.
 - Pending: 0 ✓
 
 ---
+
+## v1.4 Requirements
+
+Requirements for G3-Germlines Parity Validation milestone.
+
+### Test Infrastructure
+
+- [ ] **TEST-01**: Create `tests/migration/valid_parity.py` test file
+- [ ] **TEST-02**: Build G3-based database from `reference.g3.yml`
+- [ ] **TEST-03**: Build Germlines-based database from same `reference.g3.yml`
+- [ ] **TEST-04**: Ensure both databases use identical alleles
+
+### Parity Validation
+
+- [ ] **PAR-01**: Run AIRR annotation with G3 database on human test sequences
+- [ ] **PAR-02**: Run AIRR annotation with Germlines database on same sequences
+- [ ] **PAR-03**: Compare all columns for strict equality (except source columns)
+- [ ] **PAR-04**: Fail fast on first mismatch with detailed report
+
+### Reporting
+
+- [ ] **REP-01**: Report which column differs
+- [ ] **REP-02**: Report row index and sequence ID
+- [ ] **REP-03**: Report expected (G3) vs actual (Germlines) values
+- [ ] **REP-04**: Document root cause for any discovered discrepancies
+
+### v1.4 Requirements Mapping
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| TEST-01 | Phase 33 | Pending |
+| TEST-02 | Phase 33 | Pending |
+| TEST-03 | Phase 33 | Pending |
+| TEST-04 | Phase 33 | Pending |
+| PAR-01 | Phase 33 | Pending |
+| PAR-02 | Phase 33 | Pending |
+| PAR-03 | Phase 33 | Pending |
+| PAR-04 | Phase 33 | Pending |
+| REP-01 | Phase 33 | Pending |
+| REP-02 | Phase 33 | Pending |
+| REP-03 | Phase 33 | Pending |
+| REP-04 | Phase 33 | Pending |
+
+**v1.4 Coverage:**
+- Total requirements: 12
+- Mapped to phases: 12
+- Pending: 12
+
+---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-25 — v1.3 Milestone complete*
+*Last updated: 2026-01-28 — v1.4 Milestone requirements added*

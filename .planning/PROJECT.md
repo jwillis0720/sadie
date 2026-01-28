@@ -84,16 +84,16 @@ Enable researchers to select which germline database their AIRR annotation and a
 - Single provider selection per run (no per-segment mixing)
 - Default priority: custom > ogrdb > vdjbase > imgt
 
-## Current Milestone: v1.2 Reference Module Unification
+## Current Milestone: v1.4 G3-Germlines Parity Validation
 
-**Goal:** Enable reference.yml to select alleles from all germlines sources (imgt, ogrdb, vdjbase, custom), using germlines module as data provider instead of G3 API.
+**Goal:** Validate every AIRR column produces identical output between G3 and Germlines backends using `reference.g3.yml` to ensure both backends are built with identical alleles.
 
 **Target features:**
-- Expand source validation to accept imgt, ogrdb, vdjbase, custom
-- Create germlines-to-reference adapter (replace G3 API calls)
-- Add `use_g3=False` parameter (soft deprecation, G3 still available)
-- Create reference-sample.yml demonstrating multi-source selection
-- Enable chimeric references combining species from different sources
+- Single parity test file at `tests/migration/valid_parity.py`
+- Use `reference.g3.yml` to build databases for both backends with identical alleles
+- Loop through human test sequences (OAS, CATNAP, PG9)
+- Strict column comparison (fail on ANY difference except source columns)
+- Fail-fast reporting with detailed mismatch info
 
 ---
 *Last updated: 2026-01-23 after v1.2 milestone start*

@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 32 — Fix IgBLAST internal_data to Use Combined VDJC File
-Plan: .planning/phases/32-fix-igblast-internal-data-combined-vdjc/32-02-PLAN.md
-Status: Complete
-Last activity: 2026-01-27 — Completed Plan 32-02 (Remove Workaround)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements for v1.4 milestone
+Last activity: 2026-01-28 — Milestone v1.4 started (G3-Germlines Parity Validation)
 
-Progress: ████████████████████ 100% (2/2 plans complete)
+Progress: ░░░░░░░░░░░░░░░░░░░░ 0% (requirements phase)
 
 **Phase 32: Fix IgBLAST internal_data to Use Combined VDJC File** — COMPLETE
 

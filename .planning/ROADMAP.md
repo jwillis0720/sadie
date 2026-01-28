@@ -705,3 +705,66 @@ G3's `internal_data/human/human_V.fasta` contains all segments combined:
 - `src/sadie/germlines/scripts/build_internal_data.py` — Generate combined VDJC
 - `src/sadie/airr/airr.py` — Remove `_recalculate_complete_vdj()`
 - `src/sadie/germlines/builders/j_gene_data.py` — Remove `J_GENE_LENGTHS`
+
+---
+
+## Milestone: v1.4 G3-Germlines Parity Validation
+
+**Phases:** 33
+**Goal:** Validate every AIRR column produces identical output between G3 and Germlines backends using identical alleles from `reference.g3.yml`.
+
+---
+
+## Phase 33: G3-Germlines Parity Test
+
+**Goal:** Create automated parity test that validates G3 and Germlines backends produce identical AIRR output when built with the same alleles
+
+**Depends on:** Phase 32
+
+**Status:** Pending
+
+**Context:**
+- `reference.g3.yml` defines alleles for 6 species (human, mouse, dog, rabbit, rat, macaque)
+- Building databases from same YAML ensures identical allele sets
+- Human test sequences (OAS, CATNAP, PG9) used for validation
+- Strict equality comparison (fail on ANY difference except source columns)
+
+**Requirements:**
+- TEST-01: Create `tests/migration/valid_parity.py` test file
+- TEST-02: Build G3-based database from `reference.g3.yml`
+- TEST-03: Build Germlines-based database from same `reference.g3.yml`
+- TEST-04: Ensure both databases use identical alleles
+- PAR-01: Run AIRR annotation with G3 database on human test sequences
+- PAR-02: Run AIRR annotation with Germlines database on same sequences
+- PAR-03: Compare all columns for strict equality (except source columns)
+- PAR-04: Fail fast on first mismatch with detailed report
+- REP-01: Report which column differs
+- REP-02: Report row index and sequence ID
+- REP-03: Report expected (G3) vs actual (Germlines) values
+- REP-04: Document root cause for any discovered discrepancies
+
+**Success Criteria:**
+1. `tests/migration/valid_parity.py` exists and is executable
+2. Test builds G3 database from `reference.g3.yml` (use_germlines=False)
+3. Test builds Germlines database from `reference.g3.yml` (use_germlines=True)
+4. Test runs AIRR on human sequences with both databases
+5. All non-source columns match exactly between backends
+6. Test fails immediately on first mismatch with clear diagnostics
+7. Test passes when backends produce identical output
+
+**Test Data:**
+- Input: `tests/data/fixtures/fasta_inputs/OAS_subsample_1000.fasta` (or smaller sample)
+- Input: `tests/data/fixtures/fasta_inputs/PG9_H.fasta`, `PG9_L.fasta`
+- Reference: `reference.g3.yml` (human species)
+
+**Excluded Columns (expected to differ):**
+- `v_call_source`, `d_call_source`, `j_call_source`, `c_call_source` (source tracking columns)
+
+**Files to create:**
+- `tests/migration/` — New directory for migration tests
+- `tests/migration/__init__.py` — Package marker
+- `tests/migration/valid_parity.py` — Parity validation test
+
+---
+
+*Milestone v1.4 created: 2026-01-28*
