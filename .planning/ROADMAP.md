@@ -721,7 +721,19 @@ G3's `internal_data/human/human_V.fasta` contains all segments combined:
 
 **Depends on:** Phase 32
 
-**Status:** Pending
+**Status:** ✓ Complete
+
+**Findings:**
+- Test infrastructure created successfully
+- Parity test detected j_cigar column difference between backends
+- G3: `'355S9N53M'` vs Germlines: `'355S9N53M1N'`
+- Investigation needed for j_cigar format discrepancy
+
+**Files created:**
+- `tests/migration/__init__.py` — Package marker
+- `tests/migration/conftest.py` — Session-scoped database fixtures
+- `tests/migration/test_valid_parity.py` — Parametrized parity test
+- `tests/migration/reference_parity_test.yml` — Human-only reference for testing
 
 **Context:**
 - `reference.g3.yml` defines alleles for 6 species (human, mouse, dog, rabbit, rat, macaque)
