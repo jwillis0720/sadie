@@ -178,19 +178,27 @@ class GermlineData:
             # Use germlines module paths (new default)
             germlines_igblast = _get_germlines_igblast_dir()
             internal_data_species = germlines_igblast / "Ig" / "internal_data" / name
+            database_species = germlines_igblast / "database" / name
 
             # Check if this species has databases in germlines module
             if internal_data_species.exists():
                 self.base_dir = germlines_igblast
-                # Germlines module uses IgBLAST-compatible directory structure:
-                # igblast/Ig/internal_data/{species}/ contains both .ndm.imgt and BLAST databases
-                self.blast_dir = internal_data_species / f"{name}_"
-                self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
-                self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
-                self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
-                self.c_gene_dir = Path(self.blast_dir.__str__() + "C")
+
+                # V/D/J/C BLAST databases are in database/{species}/
+                # These are used by IgBLAST for -germline_db_V, -germline_db_D, etc.
+                # The database/ dir contains separate BLAST dbs for each segment type
+                blast_prefix = database_species / f"{name}_"
+                self.blast_dir = blast_prefix
+                self.v_gene_dir = Path(str(blast_prefix) + "V")
+                self.d_gene_dir = Path(str(blast_prefix) + "D")
+                self.j_gene_dir = Path(str(blast_prefix) + "J")
+                self.c_gene_dir = Path(str(blast_prefix) + "C")
+
                 self.aux_path = germlines_igblast / "aux_db" / f"{name}_gl.aux"
-                # IGDATA points to the directory containing internal_data/
+
+                # IGDATA points to Ig/ which contains internal_data/{species}/
+                # internal_data has combined VDJC file named {species}_V for IgBLAST's
+                # internal annotation database (used for complete_vdj calculation)
                 self.igdata = germlines_igblast / "Ig"
             else:
                 # NFR-002: No silent fallback to G3 when germlines is selected

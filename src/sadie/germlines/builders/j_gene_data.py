@@ -58,69 +58,6 @@ CHAIN_TYPE_MAP = {
 }
 
 
-# J gene sequence lengths (nucleotides) for complete_vdj calculation
-# Sourced from SADIE germline database FASTA files
-J_GENE_LENGTHS = {
-    # Heavy chain
-    "IGHJ1*01": 52,
-    "IGHJ2*01": 53,
-    "IGHJ3*01": 50,
-    "IGHJ3*02": 50,
-    "IGHJ4*01": 48,
-    "IGHJ4*02": 48,
-    "IGHJ4*03": 48,
-    "IGHJ5*01": 51,
-    "IGHJ5*02": 51,
-    "IGHJ5*03": 51,
-    "IGHJ5*04": 51,
-    "IGHJ6*01": 63,
-    "IGHJ6*02": 63,
-    "IGHJ6*03": 63,
-    "IGHJ6*04": 63,
-    # Kappa chain
-    "IGKJ1*01": 38,
-    "IGKJ2*01": 39,
-    "IGKJ2*02": 38,
-    "IGKJ2*03": 39,
-    "IGKJ2*04": 39,
-    "IGKJ3*01": 38,
-    "IGKJ4*01": 38,
-    "IGKJ4*02": 38,
-    "IGKJ4*03": 38,
-    "IGKJ5*01": 38,
-    # Lambda chain
-    "IGLJ1*01": 38,
-    "IGLJ2*01": 38,
-    "IGLJ3*02": 38,
-    "IGLJ4*01": 38,
-    "IGLJ5*01": 38,
-    "IGLJ5*02": 38,
-    "IGLJ6*01": 38,
-    "IGLJ7*01": 38,
-    "IGLJ7*02": 38,
-}
-
-
-def get_j_gene_length(allele_name: str) -> int | None:
-    """Get expected J gene length for complete_vdj calculation.
-
-    Parameters
-    ----------
-    allele_name : str
-        Full allele name (e.g., "IGHJ1*01")
-
-    Returns
-    -------
-    int | None
-        Expected J gene length in nucleotides, or None if not found
-    """
-    if allele_name in J_GENE_LENGTHS:
-        return J_GENE_LENGTHS[allele_name]
-    # Try gene family (remove allele suffix, use *01)
-    gene = allele_name.split("*")[0] + "*01"
-    return J_GENE_LENGTHS.get(gene)
-
-
 def get_j_gene_data(allele_name: str, chain: str) -> tuple:
     """
     Get J gene reference data for an allele.

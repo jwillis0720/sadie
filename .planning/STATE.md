@@ -5,18 +5,58 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Enable researchers to select germline database for AIRR annotation and renumbering
-**Current focus:** Phase 29 Germline Source Tracking — COMPLETE
+**Current focus:** Phase 31 — Add Database Parameter Support to Renumbering
 
 ## Current Position
 
-Phase: 29 — Germline Source Tracking
-Plan: .planning/phases/29-germline-source-tracking/29-02-PLAN.md
+Phase: 32 — Fix IgBLAST internal_data to Use Combined VDJC File
+Plan: .planning/phases/32-fix-igblast-internal-data-combined-vdjc/32-02-PLAN.md
 Status: Complete
-Last activity: 2026-01-26 — Completed Phase 29 (germline source tracking)
+Last activity: 2026-01-27 — Completed Plan 32-02 (Remove Workaround)
 
 Progress: ████████████████████ 100% (2/2 plans complete)
 
-**Phase 29: Germline Source Tracking** — COMPLETE
+**Phase 32: Fix IgBLAST internal_data to Use Combined VDJC File** — COMPLETE
+
+### Phase 32-02: Remove Phase 17 Workaround Code ✓
+- ✓ Removed _recalculate_complete_vdj() method from Airr class
+- ✓ Removed calls in run_fasta() and _run_scfv()
+- ✓ Removed J_GENE_LENGTHS dictionary from j_gene_data.py
+- ✓ Removed get_j_gene_length() function
+- ✓ Preserved HUMAN_J_GENE_DATA and get_j_gene_data() for aux file generation
+- ✓ Added 8 unit tests verifying workaround removal and complete_vdj works
+- ✓ Updated test fixture for improved macaque complete_vdj accuracy
+
+### Phase 32-01: Create Combined VDJC Files for internal_data ✓
+- ✓ Modified build_internal_data.py to create combined VDJC FASTA (not symlinks)
+- ✓ Added deduplication to handle duplicate sequences across files
+- ✓ Updated Reference Builder to include D/J/C in BLAST database
+- ✓ Added 9 unit tests for combined VDJC structure
+- ✓ Updated GermlineData to point V/D/J/C to database/ directory
+- ✓ Rebuilt internal_data for human, chicken, macaque, mouse, rhesus_macaque
+- ✓ Verified complete_vdj=True works for full-length sequences
+
+**Phase 31: Add Database Parameter Support to Renumbering** — COMPLETE
+
+### Phase 31-02: Add Database Parameter Support to Renumbering and HMMER ✓
+- ✓ Add `hmm_dir: Optional[Path]` parameter to HMMER class
+- ✓ Modify HMMER.get_hmm_models() to check custom directory first
+- ✓ Add `database: Optional[Path | str]` parameter to Renumbering class
+- ✓ Validate database structure (hmms/ directory exists)
+- ✓ Add 4 unit tests for database parameter functionality
+
+### Phase 31-01: Add HMM Building to Reference Database Build ✓
+- ✓ Add _make_hmm_files() method to References class
+- ✓ Add _write_stockholm_file() helper for Stockholm format
+- ✓ Add _translate_gapped_nt_to_aa() for NT-to-AA fallback
+- ✓ Integrate _make_hmm_files() into make_airr_database()
+- ✓ Add 3 unit tests for HMM building functionality
+
+### Phase 30: Add _gapped.fasta Support to CustomProvider ✓
+- ✓ Add _get_gapped_fasta_path() and _load_gapped_sequences() methods
+- ✓ Modify fetch_genes() to load gapped sequences from _gapped.fasta
+- ✓ Update _create_gene_from_record() to use pre-loaded gapped sequences
+- ✓ Add 3 unit tests for _gapped.fasta support
 
 ### Phase 29: Germline Source Tracking ✓
 - ✓ Add get_source_lookup() to GermlineData
@@ -24,7 +64,7 @@ Progress: ████████████████████ 100% (2/2
 - ✓ Integrate source columns into run_fasta() and _run_scfv()
 - ✓ Add 4 unit tests for source tracking
 
-**Next Phase:** None — Phase 29 complete
+**Next Phase:** TBD — Phase 32 complete, evaluate next priorities
 
 ## Milestone v1.3 Overview
 
@@ -97,6 +137,10 @@ Progress: ████████████████████ 100% (2/2
 
 ## Key Files
 
+### v1.3 Target Files (Phase 31)
+- `src/sadie/reference/reference.py` — HMM building methods added
+- `src/sadie/germlines/renumbering_integration.py` — LocalHMMBuilder reference implementation
+
 ### v1.2 Target Files
 - `src/sadie/reference/models.py` — Source validation expansion
 - `src/sadie/reference/reference.py` — from_yaml() germlines integration
@@ -111,14 +155,21 @@ Progress: ████████████████████ 100% (2/2
 
 ## Accumulated Context
 
+### Roadmap Evolution
+- Phase 30 complete: Add _gapped.fasta support to CustomProvider
+- Phase 31 added: Add Database Parameter Support to Renumbering
+- Phase 31 complete: Add Database Parameter Support to Renumbering (HMM build + Renumbering/HMMER params)
+- Phase 32 added: Fix IgBLAST internal_data to Use Combined VDJC File (remove symlinks, match G3 structure)
+- Phase 32 complete: Create combined VDJC files for internal_data, fix complete_vdj calculation
+
 ### Pending Todos
 - 1 pending todo(s) in `.planning/todos/pending/`
 
 ## Session Continuity
 
-Last session: 2026-01-26
-Stopped at: Completed Phase 29 — Germline source tracking complete
+Last session: 2026-01-27
+Stopped at: Completed Phase 32-02 — Removed Phase 17 workaround code
 Resume file: None
 
 ---
-*Last updated: 2026-01-26*
+*Last updated: 2026-01-27*

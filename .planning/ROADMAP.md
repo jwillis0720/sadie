@@ -536,3 +536,172 @@
 
 *Phase 29 created: 2026-01-26*
 *Phase 29 completed: 2026-01-26*
+
+---
+
+## Phase 30: Add _gapped.fasta Support to CustomProvider
+
+**Goal:** Make CustomProvider consistent with IMGTProvider by supporting optional `_gapped.fasta` files for pre-gapped custom sequences
+
+**Depends on:** Phase 29
+
+**Status:** ✓ Complete
+
+**Files modified:**
+- `src/sadie/germlines/providers/custom.py` — Added `_get_gapped_fasta_path()`, `_load_gapped_sequences()`, updated fetch logic
+- `tests/unit/germlines/test_custom_provider.py` — Added 3 tests for _gapped.fasta support
+
+**Context:** CustomProvider currently only reads `IG{chain}{segment}.fasta` and auto-gaps using GapperService with IMGT templates. IMGTProvider reads both `.fasta` and `_gapped.fasta` files, using pre-gapped sequences when available. This inconsistency means users cannot provide pre-gapped custom sequences.
+
+**Current Behavior:** CustomProvider only reads ungapped FASTA, auto-gaps via GapperService
+**Desired Behavior:** Check for `_gapped.fasta` first; if present, use those sequences directly; fall back to auto-gapping if not
+
+**Requirements:**
+- GAP-01: Add `_get_gapped_fasta_path()` method to CustomProvider (same pattern as IMGTProvider)
+- GAP-02: Add `_load_gapped_sequences()` method to load gapped sequences into a dict
+- GAP-03: Modify `fetch_genes()` to load gapped sequences first if file exists
+- GAP-04: Modify `_create_gene_from_record()` to check pre-loaded gapped dict before auto-gapping
+- GAP-05: Update docstrings to document the new behavior
+
+**Success Criteria:**
+1. If `sources/custom/cat/IGHV_gapped.fasta` exists, those sequences are used for gapping
+2. If no `_gapped.fasta` exists, auto-gapping via GapperService still works
+3. Existing tests pass
+4. Add unit test verifying `_gapped.fasta` is read when present
+
+**Files to modify:**
+- `src/sadie/germlines/providers/custom.py` — Add gapped file support
+- `tests/unit/germlines/test_custom_provider.py` — Add gapped file test
+
+---
+
+## Phase 31: Add Database Parameter Support to Renumbering
+
+**Goal:** Enable `Renumbering(database='./my_database')` to work like `Airr(database='./my_database')`, allowing users to run `sadie reference build reference.yml -o ./my_database --use-germlines` and have HMMs built on-the-fly so renumbering can use the custom database.
+
+**Depends on:** Phase 30
+
+**Status:** ✓ Complete
+
+**Files modified:**
+- `src/sadie/reference/reference.py` — Added `_make_hmm_files()`, `_write_stockholm_file()`, `_translate_gapped_nt_to_aa()`, integrated into `make_airr_database()`
+- `src/sadie/renumbering/renumbering.py` — Added `database` parameter to `Renumbering.__init__()`
+- `src/sadie/renumbering/aligners/hmmer.py` — Added `hmm_dir` parameter to `HMMER` class
+- `tests/unit/reference/test_reference.py` — Added 3 HMM building tests
+- `tests/unit/renumbering/test_renumbering.py` — Added 4 database parameter tests
+
+**Context:**
+- `Airr` class already supports `database` parameter pointing to prebuilt database from `sadie reference build`
+- `Renumbering` uses `HMMER` class which gets HMMs via: LocalHMMBuilder → Legacy ANARCI HMMs → G3 API
+- HMM building requires: gapped V+J AA sequences → Stockholm alignment (.sto) → pyhmmer → HMM (.hmm)
+- `LocalHMMBuilder` in `src/sadie/germlines/renumbering_integration.py` has the HMM building logic
+- Gapped sequences are available in reference data as `imgt.sequence_gapped_aa` field
+
+**HMM Build Pipeline:**
+1. Collect gapped amino acid sequences for V and J genes per species/chain
+2. Write Stockholm alignment file (.sto) with padded sequences and RF annotation line
+3. Build HMM from Stockholm using pyhmmer (`builder.build_msa()`)
+4. Save HMM binary file (.hmm)
+
+**Requirements:**
+- HMM-01: Extend `References.make_airr_database()` to build HMMs
+  - Create `stockholms/` and `hmms/` directories in output path
+  - Generate `{species}_{chain}.sto` Stockholm alignment files
+  - Build `{species}_{chain}.hmm` files from Stockholm alignments
+  - Use gapped AA sequences from reference DataFrame
+  - Reuse or adapt `LocalHMMBuilder._write_stockholm()` and `_build_hmm()` logic
+- HMM-02: Add `database` parameter to `Renumbering.__init__()`
+  - Accept `database: Optional[Path | str] = None`
+  - When provided, pass custom HMM directory to HMMER
+- HMM-03: Extend `HMMER` class to support custom HMM directory
+  - Add `hmm_dir: Optional[Path] = None` parameter
+  - In `get_hmm_models()`, check custom directory first before priority fallback
+
+**Success Criteria:**
+1. `sadie reference build reference.yml -o ./my_database --use-germlines` creates Stockholm and HMM files
+2. Output structure includes: `stockholms/{species}_{chain}.sto` and `hmms/{species}_{chain}.hmm`
+3. `Renumbering(database='./my_database')` loads HMMs from that directory
+4. Existing behavior without `database` parameter unchanged
+5. Tests pass for both Airr and Renumbering with custom database
+
+**Files to modify:**
+- `src/sadie/reference/reference.py` — Add HMM building to `make_airr_database()`
+- `src/sadie/renumbering/renumbering.py` — Add `database` parameter to `Renumbering`
+- `src/sadie/renumbering/aligners/hmmer.py` — Add `hmm_dir` parameter to `HMMER`
+- `src/sadie/germlines/renumbering_integration.py` — Reference for Stockholm + HMM building logic
+
+---
+
+## Phase 32: Fix IgBLAST internal_data to Use Combined VDJC File
+
+**Goal:** Restructure germlines `internal_data/` to match G3's working structure: a single combined VDJC file named `{species}_V.fasta` (plus BLAST db files) and remove all symlinks
+
+**Depends on:** Phase 31
+
+**Status:** ✓ Complete
+
+**Files modified:**
+- `src/sadie/germlines/scripts/build_internal_data.py` — Create combined VDJC files instead of symlinks
+- `src/sadie/reference/reference.py` — Include D/J/C segments in internal_data BLAST db
+- `src/sadie/airr/igblast/germline.py` — Point V/D/J/C dirs to database/ (not internal_data/)
+- `src/sadie/airr/airr.py` — Remove `_recalculate_complete_vdj()` workaround
+- `src/sadie/germlines/builders/j_gene_data.py` — Remove `J_GENE_LENGTHS` dictionary
+- `tests/unit/germlines/test_build_internal_data.py` — New tests for combined structure
+- `tests/unit/airr/test_complete_vdj.py` — New tests for complete_vdj verification
+
+**Problem Statement:**
+The germlines module uses symlinks and separate V/D/J/C files in internal_data, while G3 uses a single combined file containing all segments. IgBLAST doesn't work well with symlinks and expects the combined structure. This causes `complete_vdj` calculation issues that led to the Phase 17 workaround using a hardcoded `J_GENE_LENGTHS` dictionary (which only works for human).
+
+**Current State (Broken - Germlines):**
+```
+internal_data/human/
+├── human.ndm.imgt
+├── human_V.* -> symlinks to database/ (V-only, 684 seqs)
+├── human_D.* -> symlinks to database/
+├── human_J.* -> symlinks to database/
+└── human_C.* -> symlinks to database/
+```
+
+**Target State (Working - Match G3):**
+```
+internal_data/human/
+├── human.ndm.imgt
+└── human_V.* (COMBINED VDJC file with all segments, actual files not symlinks)
+
+database/human/  (separate search databases, unchanged)
+├── human_V.*
+├── human_D.*
+├── human_J.*
+└── human_C.*
+```
+
+**G3 Reference (What Works):**
+G3's `internal_data/human/human_V.fasta` contains all segments combined:
+- 271 IGHV + 57 IGKV + 71 IGLV (V genes)
+- 35 IGHD (D genes)
+- 13 IGHJ + 9 IGKJ + 10 IGLJ (J genes)
+- 2 IGHA + 4 IGHG + 1 IGHE + 1 IGHM + 1 IGKC + 4 IGLC (C genes)
+= 479 total sequences in ONE file named `human_V.fasta`
+
+**Requirements:**
+- IDATA-01: Remove all symlinks from `internal_data/` directories (all species)
+- IDATA-02: Create combined VDJC files for each species
+  - Concatenate V + D + J + C FASTAs into single `{species}_V.fasta`
+  - Build BLAST database from combined file
+  - Place actual files (not symlinks) in internal_data
+- IDATA-03: Update database build scripts to generate combined files
+- IDATA-04: Remove Phase 17 workaround (`_recalculate_complete_vdj`, `J_GENE_LENGTHS`)
+- IDATA-05: Apply to all 29+ species
+
+**Success Criteria:**
+1. No symlinks in any `internal_data/{species}/` directory
+2. Each species has combined `{species}_V.fasta` with all VDJC segments
+3. `complete_vdj` works correctly for all species without hardcoded dictionary
+4. Passes existing test suite
+5. Audit shows parity with G3 for `complete_vdj` field
+
+**Files to modify:**
+- `src/sadie/germlines/igblast/Ig/internal_data/*/` — Remove symlinks, add combined files
+- `src/sadie/germlines/scripts/build_internal_data.py` — Generate combined VDJC
+- `src/sadie/airr/airr.py` — Remove `_recalculate_complete_vdj()`
+- `src/sadie/germlines/builders/j_gene_data.py` — Remove `J_GENE_LENGTHS`

@@ -29,7 +29,7 @@ FASTA Format (flexible):
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from Bio import SeqIO
 
@@ -134,11 +134,62 @@ class CustomProvider(GermlineProvider):
 
         return self._gappers[cache_key]
 
+    def _get_gapped_fasta_path(self, species: str, segment: str, chain: str) -> Path:
+        """
+        Get path to gapped FASTA file.
+
+        Parameters
+        ----------
+        species : str
+            Species name
+        segment : str
+            Segment type
+        chain : str
+            Chain type
+
+        Returns
+        -------
+        Path
+            Path to gapped FASTA file (e.g., sources/custom/human/IGHV_gapped.fasta)
+        """
+        return self.data_dir / species / f"IG{chain}{segment}_gapped.fasta"
+
+    def _load_gapped_sequences(self, fasta_path: Path) -> Dict[str, str]:
+        """
+        Load gapped sequences from FASTA file.
+
+        Parses a gapped FASTA file and returns a mapping of gene names to
+        their gapped sequences. Gene names are extracted from FASTA headers,
+        handling both simple names and IMGT-style pipe-delimited headers.
+
+        Parameters
+        ----------
+        fasta_path : Path
+            Path to gapped FASTA file
+
+        Returns
+        -------
+        Dict[str, str]
+            Mapping of gene name to gapped sequence
+        """
+        gapped = {}
+        try:
+            for record in SeqIO.parse(fasta_path, "fasta"):
+                # Handle both simple headers and IMGT-style: >ACCESSION|GENE_NAME|...
+                header_parts = record.id.split("|")
+                gene_name = header_parts[1] if len(header_parts) > 1 else header_parts[0]
+                gapped[gene_name] = str(record.seq).upper()
+        except Exception as e:
+            logger.warning(f"Failed to load gapped sequences from {fasta_path}: {e}")
+        return gapped
+
     def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch custom genes from user-supplied FASTA files.
 
-        Automatically processes ungapped sequences if needed.
+        Automatically processes ungapped sequences if needed. If a corresponding
+        `_gapped.fasta` file exists, pre-gapped sequences from that file are used
+        instead of auto-gapping.
 
         Parameters
         ----------
@@ -155,6 +206,7 @@ class CustomProvider(GermlineProvider):
             Custom genes
         """
         fasta_path = self.get_fasta_path(species, segment, chain)
+        gapped_path = self._get_gapped_fasta_path(species, segment, chain)
 
         # Guard: file doesn't exist
         if not fasta_path.exists():
@@ -163,13 +215,26 @@ class CustomProvider(GermlineProvider):
 
         logger.info(f"Processing custom FASTA: {fasta_path}")
 
-        genes = self._parse_fasta_file(fasta_path, species, segment, chain)
+        # Load gapped sequences if available
+        gapped_sequences: Dict[str, str] = {}
+        if gapped_path.exists():
+            gapped_sequences = self._load_gapped_sequences(gapped_path)
+            logger.debug(f"Loaded {len(gapped_sequences)} pre-gapped sequences from {gapped_path}")
+
+        genes = self._parse_fasta_file(fasta_path, species, segment, chain, gapped_sequences)
 
         logger.info(f"Loaded {len(genes)} custom genes")
 
         return genes
 
-    def _parse_fasta_file(self, fasta_path: Path, species: str, segment: str, chain: str) -> List[GermlineGene]:
+    def _parse_fasta_file(
+        self,
+        fasta_path: Path,
+        species: str,
+        segment: str,
+        chain: str,
+        gapped_sequences: Optional[Dict[str, str]] = None,
+    ) -> List[GermlineGene]:
         """
         Parse FASTA file and create GermlineGene objects.
 
@@ -183,6 +248,8 @@ class CustomProvider(GermlineProvider):
             Segment type
         chain : str
             Chain type
+        gapped_sequences : Dict[str, str], optional
+            Pre-loaded gapped sequences mapping gene name to gapped sequence
 
         Returns
         -------
@@ -190,6 +257,7 @@ class CustomProvider(GermlineProvider):
             Parsed genes
         """
         genes = []
+        gapped_sequences = gapped_sequences or {}
 
         try:
             records = list(SeqIO.parse(fasta_path, "fasta"))
@@ -198,18 +266,26 @@ class CustomProvider(GermlineProvider):
             return []
 
         for record in records:
-            gene = self._create_gene_from_record(record, species, segment, chain)
+            gene = self._create_gene_from_record(record, species, segment, chain, gapped_sequences)
             if gene:
                 genes.append(gene)
 
         return genes
 
-    def _create_gene_from_record(self, record, species: str, segment: str, chain: str) -> Optional[GermlineGene]:
+    def _create_gene_from_record(
+        self,
+        record,
+        species: str,
+        segment: str,
+        chain: str,
+        gapped_sequences: Optional[Dict[str, str]] = None,
+    ) -> Optional[GermlineGene]:
         """
         Create GermlineGene from SeqRecord.
 
         Handles both gapped and ungapped sequences. For ungapped sequences,
-        attempts to auto-gap using the GapperService with IMGT templates.
+        first checks for a pre-loaded gapped sequence from a `_gapped.fasta` file,
+        then falls back to auto-gapping using the GapperService with IMGT templates.
 
         Parameters
         ----------
@@ -221,12 +297,16 @@ class CustomProvider(GermlineProvider):
             Segment type
         chain : str
             Chain type
+        gapped_sequences : Dict[str, str], optional
+            Pre-loaded gapped sequences from `_gapped.fasta` file
 
         Returns
         -------
         GermlineGene or None
             Gene object if successful
         """
+        gapped_sequences = gapped_sequences or {}
+
         sequence = str(record.seq).upper()
         gene_name = self._clean_gene_name(record.id, segment, chain)
 
@@ -239,23 +319,29 @@ class CustomProvider(GermlineProvider):
 
         # Determine gapped/ungapped versions
         if is_gapped:
+            # Input sequence is already gapped - use directly
             sequence_gapped = sequence
             sequence_ungapped = sequence.replace(".", "").replace("-", "")
         else:
             sequence_ungapped = sequence
-            # Auto-gap using GapperService
-            gapper, template_species = self._get_gapper(species)
-            sequence_gapped = gapper.gap_sequence(
-                sequence=sequence_ungapped,
-                segment=segment,
-                chain=chain,
-                gene_name=gene_name,
-                species=template_species,  # Use template species for lookup
-            )
-            if sequence_gapped:
-                logger.debug(f"Auto-gapped {gene_name} using {template_species} templates")
+            # Check pre-loaded gapped sequences FIRST
+            if gene_name in gapped_sequences:
+                sequence_gapped = gapped_sequences[gene_name]
+                logger.debug(f"Using pre-gapped sequence for {gene_name}")
             else:
-                logger.debug(f"Could not auto-gap {gene_name}, storing ungapped only")
+                # Auto-gap using GapperService (fallback)
+                gapper, template_species = self._get_gapper(species)
+                sequence_gapped = gapper.gap_sequence(
+                    sequence=sequence_ungapped,
+                    segment=segment,
+                    chain=chain,
+                    gene_name=gene_name,
+                    species=template_species,  # Use template species for lookup
+                )
+                if sequence_gapped:
+                    logger.debug(f"Auto-gapped {gene_name} using {template_species} templates")
+                else:
+                    logger.debug(f"Could not auto-gap {gene_name}, storing ungapped only")
 
         try:
             gene = GermlineGene(
