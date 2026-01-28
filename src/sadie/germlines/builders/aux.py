@@ -4,20 +4,22 @@ Auxiliary File Builder
 
 Generates IgBLAST auxiliary files from gapped germline sequences.
 
-IgBLAST auxiliary files for J genes contain (5 columns, tab-separated):
-<gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<extra_bps>
+IgBLAST auxiliary files contain two formats:
 
-Where:
-- gene_name: J gene allele name (e.g., IGHJ1*01)
-- reading_frame: First coding frame start position (0, 1, or 2)
-- chain_type: JH, JK, or JL
-- cdr3_end: CDR3 stop position (0-based)
-- extra_bps: Extra base pairs beyond J coding end (typically 1)
+V genes (10 columns, tab-separated):
+<gene_name>\t<reading_frame>\t<fwr1_end>\t<cdr1_start>\t<cdr1_end>\t<fwr2_start>\t<fwr2_end>\t<cdr2_start>\t<cdr2_end>\t<fwr3_end>
+
+Where all positions are amino acid positions (1-based) in the ungapped sequence.
+Truncated regions use 0 for missing end positions.
+
+Example:
+IGHV1-2*01	1	26	27	38	39	55	56	65	104
+
+J genes (5 columns, tab-separated):
+<gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<extra_bps>
 
 Example:
 IGHJ1*01	0	JH	17	1
-IGHJ2*01	1	JH	18	1
-IGKJ1*01	1	JK	6	1
 """
 
 import logging
@@ -26,6 +28,7 @@ from typing import List, Optional
 
 from Bio import SeqIO
 
+from sadie.germlines.builders.imgt_positions import calculate_imgt_v_positions
 from sadie.germlines.builders.j_gene_data import get_j_gene_data
 
 logger = logging.getLogger(__name__)
@@ -33,8 +36,9 @@ logger = logging.getLogger(__name__)
 
 # Constants
 CHAINS = ["H", "K", "L"]
-# Only J segments are needed for IgBLAST aux files
-SEGMENTS = ["J"]
+# V and J segments for aux files (V for region boundaries, J for CDR3 end)
+V_SEGMENTS = ["V"]
+J_SEGMENTS = ["J"]
 
 
 class AuxFileBuilder:
@@ -57,7 +61,8 @@ class AuxFileBuilder:
         """
         Build auxiliary file for species.
 
-        IgBLAST auxiliary files only contain J gene data.
+        IgBLAST auxiliary files contain both V-gene region boundaries
+        and J-gene CDR3 end positions.
 
         Parameters
         ----------
@@ -74,9 +79,14 @@ class AuxFileBuilder:
 
         aux_lines = []
 
-        # Process J segments only (IgBLAST aux files only need J genes)
+        # Process V segments first (10-column format for region boundaries)
         for chain in CHAINS:
-            lines = self._process_segment(species, chain, "J", source_dir)  # Only J segments
+            lines = self._process_v_segment(species, chain, source_dir)
+            aux_lines.extend(lines)
+
+        # Process J segments (5-column format for CDR3 end)
+        for chain in CHAINS:
+            lines = self._process_j_segment(species, chain, source_dir)
             aux_lines.extend(lines)
 
         # Write auxiliary file
@@ -86,29 +96,26 @@ class AuxFileBuilder:
         else:
             logger.warning(f"No auxiliary entries generated for {species}")
 
-    def _process_segment(self, species: str, chain: str, segment: str, source_dir: Path) -> List[str]:
+    def _process_v_segment(self, species: str, chain: str, source_dir: Path) -> List[str]:
         """
-        Process single segment to generate aux entries.
+        Process V segment to generate aux entries with region boundaries.
 
         Parameters
         ----------
         species : str
             Species name
         chain : str
-            Chain type
-        segment : str
-            Segment type
+            Chain type (H, K, L)
         source_dir : Path
-            Source directory
+            Source directory with gapped FASTA files
 
         Returns
         -------
         List[str]
-            Auxiliary file lines for this segment
+            Auxiliary file lines (10-column format) for V genes
         """
-        fasta_path = source_dir / f"IG{chain}{segment}.fasta"
+        fasta_path = source_dir / f"IG{chain}V.fasta"
 
-        # Guard: file doesn't exist
         if not fasta_path.exists():
             logger.debug(f"No file: {fasta_path}")
             return []
@@ -122,44 +129,125 @@ class AuxFileBuilder:
             return []
 
         for record in records:
-            aux_line = self._create_aux_entry(record, chain, segment, species)
+            aux_line = self._create_v_aux_entry(record)
             if aux_line:
                 aux_lines.append(aux_line)
 
-        logger.info(f"Generated {len(aux_lines)} aux entries from {fasta_path.name}")
-
+        logger.info(f"Generated {len(aux_lines)} V-gene aux entries from {fasta_path.name}")
         return aux_lines
 
-    def _create_aux_entry(self, record, chain: str, segment: str, species: str) -> Optional[str]:
+    def _process_j_segment(self, species: str, chain: str, source_dir: Path) -> List[str]:
+        """
+        Process J segment to generate aux entries with CDR3 end positions.
+
+        Parameters
+        ----------
+        species : str
+            Species name
+        chain : str
+            Chain type (H, K, L)
+        source_dir : Path
+            Source directory with gapped FASTA files
+
+        Returns
+        -------
+        List[str]
+            Auxiliary file lines (5-column format) for J genes
+        """
+        fasta_path = source_dir / f"IG{chain}J.fasta"
+
+        if not fasta_path.exists():
+            logger.debug(f"No file: {fasta_path}")
+            return []
+
+        aux_lines = []
+
+        try:
+            records = list(SeqIO.parse(fasta_path, "fasta"))
+        except Exception as e:
+            logger.error(f"Failed to parse {fasta_path}: {e}")
+            return []
+
+        for record in records:
+            aux_line = self._create_j_aux_entry(record, chain, species)
+            if aux_line:
+                aux_lines.append(aux_line)
+
+        logger.info(f"Generated {len(aux_lines)} J-gene aux entries from {fasta_path.name}")
+        return aux_lines
+
+    def _create_v_aux_entry(self, record) -> Optional[str]:
+        """
+        Create auxiliary file entry for a V gene sequence.
+
+        IgBLAST aux format for V genes (10 columns, tab-separated):
+        <gene_name>\t<reading_frame>\t<fwr1_end>\t<cdr1_start>\t<cdr1_end>\t<fwr2_start>\t<fwr2_end>\t<cdr2_start>\t<cdr2_end>\t<fwr3_end>
+
+        All positions are amino acid positions (1-based) in the ungapped sequence.
+        Truncated regions use 0 for missing positions.
+
+        Parameters
+        ----------
+        record : SeqRecord
+            Gapped V gene sequence record
+
+        Returns
+        -------
+        str or None
+            Auxiliary file line for V gene, None if positions cannot be determined
+        """
+        gene_name = record.id
+        gapped_sequence = str(record.seq)
+
+        # Calculate nucleotide positions from gapped sequence (0-based)
+        nt_positions = calculate_imgt_v_positions(gapped_sequence, zero_based=True)
+
+        if not nt_positions:
+            logger.debug(f"Could not calculate positions for {gene_name}")
+            return None
+
+        # Convert nucleotide positions to amino acid positions (1-based)
+        # Formula: aa_pos = (nt_pos // 3) + 1
+        def nt_to_aa(nt_pos: int) -> int:
+            """Convert 0-based nucleotide position to 1-based amino acid position."""
+            return (nt_pos // 3) + 1
+
+        # Extract region boundaries, using 0 for missing regions
+        fwr1_end = nt_to_aa(nt_positions.get("fwr1", (0, 0))[1]) if "fwr1" in nt_positions else 0
+        cdr1_start = nt_to_aa(nt_positions.get("cdr1", (0, 0))[0]) if "cdr1" in nt_positions else 0
+        cdr1_end = nt_to_aa(nt_positions.get("cdr1", (0, 0))[1]) if "cdr1" in nt_positions else 0
+        fwr2_start = nt_to_aa(nt_positions.get("fwr2", (0, 0))[0]) if "fwr2" in nt_positions else 0
+        fwr2_end = nt_to_aa(nt_positions.get("fwr2", (0, 0))[1]) if "fwr2" in nt_positions else 0
+        cdr2_start = nt_to_aa(nt_positions.get("cdr2", (0, 0))[0]) if "cdr2" in nt_positions else 0
+        cdr2_end = nt_to_aa(nt_positions.get("cdr2", (0, 0))[1]) if "cdr2" in nt_positions else 0
+        fwr3_end = nt_to_aa(nt_positions.get("fwr3", (0, 0))[1]) if "fwr3" in nt_positions else 0
+
+        # Reading frame is typically 1 for V genes (starts at first codon)
+        reading_frame = 1
+
+        return f"{gene_name}\t{reading_frame}\t{fwr1_end}\t{cdr1_start}\t{cdr1_end}\t{fwr2_start}\t{fwr2_end}\t{cdr2_start}\t{cdr2_end}\t{fwr3_end}"
+
+    def _create_j_aux_entry(self, record, chain: str, species: str) -> Optional[str]:
         """
         Create auxiliary file entry for a J gene sequence.
 
         IgBLAST aux format for J genes (5 columns, tab-separated):
         <gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<extra_bps>
 
-        Uses species-specific amino acid motif patterns (from G3's motif lookup)
-        to identify the conserved FWR4 start position.
-
         Parameters
         ----------
         record : SeqRecord
-            Sequence record
+            J gene sequence record
         chain : str
             Chain type (H, K, L)
-        segment : str
-            Segment type (must be "J")
         species : str
             Species name for motif lookup
 
         Returns
         -------
         str or None
-            Auxiliary file line for J gene, None for other segments
+            Auxiliary file line for J gene
         """
-        if segment != "J":
-            # Only J genes go in aux file
-            return None
-
         gene_name = record.id
         sequence = str(record.seq).replace(".", "").replace("-", "").upper()
 
@@ -173,6 +261,10 @@ class AuxFileBuilder:
     def validate_aux_file(self, aux_file: Path) -> bool:
         """
         Validate auxiliary file format.
+
+        Aux files contain two formats:
+        - V genes: 10 columns (region boundaries)
+        - J genes: 5 columns (CDR3 end)
 
         Parameters
         ----------
@@ -195,14 +287,22 @@ class AuxFileBuilder:
                 logger.error("Aux file is empty")
                 return False
 
-            # Validate J gene format (5 columns)
+            v_count = 0
+            j_count = 0
+
             for line in lines:
                 fields = line.split("\t")
-                if len(fields) != 5:
-                    logger.error(f"Invalid aux line (expected 5 columns): {line}")
-                    return False
+                gene_name = fields[0] if fields else ""
 
-            logger.info(f"Aux file valid: {len(lines)} entries")
+                # V genes have 10 columns, J genes have 5 columns
+                if "V" in gene_name and len(fields) == 10:
+                    v_count += 1
+                elif "J" in gene_name and len(fields) == 5:
+                    j_count += 1
+                else:
+                    logger.warning(f"Unexpected aux line format: {line}")
+
+            logger.info(f"Aux file valid: {v_count} V-gene entries, {j_count} J-gene entries")
             return True
 
         except Exception as e:

@@ -46,11 +46,19 @@ VDJBASE_ADMIN_API_BASE = "https://vdjbase.org/admin/api"
 # Species name mapping (VDJbase API names to internal names)
 SPECIES_MAP = {
     "Human": "human",
-    "Rhesus Macaque": "macaque",  # Changed from rhesus_macaque
+    "Rhesus Macaque": "macaque",
     "Mouse": "mouse",
 }
 
+# Aliases for consistent naming across providers
+# Both "macaque" and "rhesus_macaque" should work
+SPECIES_ALIASES = {
+    "rhesus_macaque": "macaque",  # Normalize to canonical name
+}
+
 SPECIES_MAP_REVERSE = {v: k for k, v in SPECIES_MAP.items()}
+# Add alias reverse mappings
+SPECIES_MAP_REVERSE["rhesus_macaque"] = "Rhesus Macaque"
 
 # Chain to dataset mapping
 CHAIN_TO_DATASET = {
@@ -146,6 +154,10 @@ class VDJbaseProvider(GermlineProvider):
 
         return self._gappers[cache_key]
 
+    def _normalize_species(self, species: str) -> str:
+        """Normalize species name using aliases."""
+        return SPECIES_ALIASES.get(species, species)
+
     def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch VDJbase genes from local FASTA files.
@@ -164,6 +176,8 @@ class VDJbaseProvider(GermlineProvider):
         List[GermlineGene]
             VDJbase genes
         """
+        # Normalize species name (e.g., rhesus_macaque -> macaque)
+        species = self._normalize_species(species)
         fasta_path = self.get_fasta_path(species, segment, chain)
 
         if not fasta_path.exists():
@@ -284,6 +298,17 @@ class VDJbaseProvider(GermlineProvider):
         is_novel = "novel" in record.description.lower()
         low_confidence = "low_confidence" in record.description.lower()
 
+        # Fix data discrepancy for human IGHJ6*02 and IGHJ6*03
+        # Some sources include 63 bp sequences with an extra 'G' at the end (first
+        # nucleotide of C-REGION). The canonical J-REGION boundary is 62 bp.
+        # This matches G3's curated data and IMGT gene table definitions.
+        if species == "human" and gene_name in ("IGHJ6*02", "IGHJ6*03"):
+            if sequence_ungapped.endswith("G") and len(sequence_ungapped) == 63:
+                sequence_ungapped = sequence_ungapped[:-1]  # Remove trailing 'G'
+                logger.debug(f"Trimmed extra C-REGION nucleotide from {gene_name}: 63bp -> 62bp")
+                if sequence_gapped and sequence_gapped.endswith("G"):
+                    sequence_gapped = sequence_gapped[:-1]
+
         try:
             gene = GermlineGene(
                 name=gene_name,
@@ -341,6 +366,8 @@ class VDJbaseProvider(GermlineProvider):
         bool
             True if data available
         """
+        # Normalize species name (e.g., rhesus_macaque -> macaque)
+        species = self._normalize_species(species)
         species_dir = self.data_dir / species
 
         if not species_dir.exists():

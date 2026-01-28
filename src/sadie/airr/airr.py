@@ -99,6 +99,7 @@ class Airr:
         gap_extend: int = 2,
         coerce: bool = False,
         database: Optional[Path | str] = None,
+        providers: Optional[List[str]] = None,
     ):
         """Airr constructor
 
@@ -158,7 +159,12 @@ class Airr:
             When provided, uses database directly without germlines/G3 lookup.
             Expected structure: Ig/blastdb/, Ig/internal_data/, aux_db/.
             By default None (uses germlines module or G3).
+        providers : List[str], optional
+            Ordered list of germline providers to use for source tracking.
+            Default: ["vdjbase", "ogrdb", "imgt", "custom"]
+            Example: ["imgt"] for IMGT-only source tracking.
         """
+        self._providers = providers
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
@@ -260,7 +266,9 @@ class Airr:
                 raise FileNotFoundError(f"Database path not found: {database_path}")
 
             # Use prebuilt database - validate structure and use directly
-            self.germline_data = GermlineData(reference_name, receptor, database_path, scheme, prebuilt=True)
+            self.germline_data = GermlineData(
+                reference_name, receptor, database_path, scheme, prebuilt=True, providers=providers
+            )
         elif isinstance(references, References):
             _custom_avail = list(references.get_dataframe()["name"].unique())
             if self.name not in _custom_avail:
@@ -270,7 +278,7 @@ class Airr:
             out_data_path = references.make_airr_database(self.temp_directory / "germlines/")
 
             # set the germline database
-            self.germline_data = GermlineData(reference_name, receptor, out_data_path)
+            self.germline_data = GermlineData(reference_name, receptor, out_data_path, providers=providers)
         else:
             self._name = reference_name
 
@@ -280,7 +288,7 @@ class Airr:
                 raise BadDataSet(reference_name, list(_available_datasets))
 
             # set the germline data, None will use default germline
-            self.germline_data = GermlineData(self.name, receptor, None, scheme)
+            self.germline_data = GermlineData(self.name, receptor, None, scheme, providers=providers)
         # This will set all the igblast params given the Germline Data class whcih validates them
         self.igblast.igdata = self.germline_data.igdata
         self.igblast.germline_db_v = self.germline_data.v_gene_dir

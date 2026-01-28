@@ -82,7 +82,15 @@ SPECIES_MAP = {
     # Add more as needed
 }
 
+# Aliases for consistent naming across providers
+# Both "macaque" and "rhesus_macaque" should work
+SPECIES_ALIASES = {
+    "macaque": "rhesus_macaque",  # Normalize to canonical name for OGRDB
+}
+
 SPECIES_MAP_REVERSE = {v: k for k, v in SPECIES_MAP.items()}
+# Add alias reverse mappings
+SPECIES_MAP_REVERSE["macaque"] = "Macaca mulatta"
 
 # Segment type detection from gene names
 SEGMENT_PATTERNS = {

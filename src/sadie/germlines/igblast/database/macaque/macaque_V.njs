@@ -6,9 +6,9 @@
   "description": "src/sadie/germlines/igblast/database/macaque/macaque_V.fasta",
   "number-of-letters": 1043313,
   "number-of-sequences": 3540,
-  "last-updated": "2026-01-25T14:05:00",
+  "last-updated": "2026-01-27T23:40:00",
   "number-of-volumes": 1,
-  "bytes-total": 981300,
+  "bytes-total": 1006492,
   "bytes-to-cache": 305674,
   "files": [
     "macaque_V.ndb",

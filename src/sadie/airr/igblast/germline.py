@@ -4,7 +4,7 @@ import logging
 import warnings
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from sadie.airr.igblast.igblast import ensure_prefix_to
 from sadie.reference import YamlRef
@@ -127,6 +127,7 @@ class GermlineData:
         database_dir: Optional[str | Path] = None,
         scheme: str = "imgt",
         prebuilt: bool = False,
+        providers: Optional[List[str]] = None,
     ):
         """
 
@@ -144,8 +145,13 @@ class GermlineData:
             If True, database_dir is a prebuilt database from `sadie reference build`.
             Validates structure and uses paths directly without germlines/G3 lookup.
             By default False.
+        providers : List[str], optional
+            Ordered list of germline providers to use.
+            Default: ["vdjbase", "ogrdb", "imgt", "custom"]
+            Example: ["imgt"] for IMGT-only
         """
         self.name = name
+        self.providers = providers
 
         # Handle prebuilt database path - skip all other lookups
         if prebuilt and database_dir:
@@ -394,7 +400,6 @@ class GermlineData:
 
         return datasets
 
-    @lru_cache(maxsize=1)
     def get_source_lookup(self) -> Dict[str, str]:
         """
         Build gene name → source lookup table.
@@ -408,7 +413,7 @@ class GermlineData:
         from sadie.germlines import GermlineManager
 
         lookup: Dict[str, str] = {}
-        manager = GermlineManager()
+        manager = GermlineManager(providers=self.providers)
 
         for segment in ["V", "D", "J", "C"]:
             for chain in ["H", "K", "L"]:

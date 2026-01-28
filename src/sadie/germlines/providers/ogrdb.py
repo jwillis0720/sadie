@@ -34,6 +34,12 @@ from .base import GermlineProvider
 
 logger = logging.getLogger(__name__)
 
+# Aliases for consistent naming across providers
+# Both "macaque" and "rhesus_macaque" should work
+SPECIES_ALIASES = {
+    "macaque": "rhesus_macaque",  # Normalize to OGRDB canonical name
+}
+
 
 class OGRDBProvider(GermlineProvider):
     """
@@ -83,6 +89,10 @@ class OGRDBProvider(GermlineProvider):
         super().__init__(data_dir)
         self.name = "ogrdb"
 
+    def _normalize_species(self, species: str) -> str:
+        """Normalize species name using aliases."""
+        return SPECIES_ALIASES.get(species, species)
+
     def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch OGRDB genes from downloaded FASTA files.
@@ -101,6 +111,8 @@ class OGRDBProvider(GermlineProvider):
         List[GermlineGene]
             OGRDB genes
         """
+        # Normalize species name (e.g., macaque -> rhesus_macaque)
+        species = self._normalize_species(species)
         fasta_path = self.get_fasta_path(species, segment, chain)
         gapped_path = self._get_gapped_fasta_path(species, segment, chain)
 
@@ -257,6 +269,17 @@ class OGRDBProvider(GermlineProvider):
             # Look up gapped sequence from pre-loaded file
             sequence_gapped = gapped_sequences.get(gene_name)
 
+        # Fix data discrepancy for human IGHJ6*02 and IGHJ6*03
+        # Some sources include 63 bp sequences with an extra 'G' at the end (first
+        # nucleotide of C-REGION). The canonical J-REGION boundary is 62 bp.
+        # This matches G3's curated data and IMGT gene table definitions.
+        if species == "human" and gene_name in ("IGHJ6*02", "IGHJ6*03"):
+            if sequence_ungapped.endswith("G") and len(sequence_ungapped) == 63:
+                sequence_ungapped = sequence_ungapped[:-1]  # Remove trailing 'G'
+                logger.debug(f"Trimmed extra C-REGION nucleotide from {gene_name}: 63bp -> 62bp")
+                if sequence_gapped and sequence_gapped.endswith("G"):
+                    sequence_gapped = sequence_gapped[:-1]
+
         try:
             gene = GermlineGene(
                 name=gene_name,
@@ -314,6 +337,8 @@ class OGRDBProvider(GermlineProvider):
         bool
             True if data available
         """
+        # Normalize species name (e.g., macaque -> rhesus_macaque)
+        species = self._normalize_species(species)
         species_dir = self.data_dir / species
 
         if not species_dir.exists():

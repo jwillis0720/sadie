@@ -377,7 +377,8 @@ class GermlinePipeline:
         Steps:
         1. Build BLAST databases from ungapped
         2. Build aux file from gapped
-        3. Generate organism.yaml
+        3. Build internal_data (combined VDJC for complete_vdj calculation)
+        4. Generate organism.yaml
 
         Parameters
         ----------
@@ -402,8 +403,34 @@ class GermlinePipeline:
             output_file=self.igblast_dir / "aux_db" / f"{species}_gl.aux",
         )
 
+        # Build internal_data (required for IgBLAST complete_vdj calculation)
+        self._build_internal_data(species)
+
         self._generate_organism_yaml(species)
         _log_timing("rebuild_igblast", start, species=species)
+
+    def _build_internal_data(self, species: str) -> None:
+        """
+        Build internal_data directory for IgBLAST complete_vdj calculation.
+
+        Creates Ig/internal_data/{species}/ with:
+        - Combined VDJC FASTA ({species}_V.fasta)
+        - BLAST database from combined FASTA
+        - NDM file ({species}.ndm.imgt) for region annotations
+
+        Parameters
+        ----------
+        species : str
+            Species name
+        """
+        from .scripts.build_internal_data import build_internal_data
+
+        germlines_root = Path(__file__).parent
+        success = build_internal_data(species, germlines_root)
+        if success:
+            logger.info(f"Built internal_data for {species}")
+        else:
+            logger.warning(f"Failed to build internal_data for {species} - complete_vdj may be affected")
 
     def _generate_organism_yaml(self, species: str) -> None:
         """
