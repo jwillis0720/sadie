@@ -21,12 +21,12 @@ organisms:
     - V
     - J
   cat:
+    aux_file: ../aux_db/cat_gl.aux
     database_path: ../database/cat
     segments:
     - V
     - D
     - J
-    aux_file: ../aux_db/cat_gl.aux
   channel_catfish:
     database_path: ../database/channel_catfish
     segments:
@@ -50,12 +50,12 @@ organisms:
     - D
     - J
   dog:
+    aux_file: ../aux_db/dog_gl.aux
     database_path: ../database/dog
     segments:
     - V
     - D
     - J
-    aux_file: ../aux_db/dog_gl.aux
   ferret:
     database_path: ../database/ferret
     segments:
@@ -80,18 +80,27 @@ organisms:
     - D
     - J
   human:
+    aux_file: ../aux_db/human_gl.aux
     database_path: ../database/human
     segments:
     - V
     - D
     - J
-    aux_file: ../aux_db/human_gl.aux
+    - C
   lemur:
     database_path: ../database/lemur
     segments:
     - V
     - D
     - J
+  macaque:
+    aux_file: ../aux_db/macaque_gl.aux
+    database_path: ../database/macaque
+    segments:
+    - V
+    - D
+    - J
+    - C
   mink:
     database_path: ../database/mink
     segments:
@@ -99,12 +108,12 @@ organisms:
     - D
     - J
   mouse:
+    aux_file: ../aux_db/mouse_gl.aux
     database_path: ../database/mouse
     segments:
     - V
     - D
     - J
-    aux_file: ../aux_db/mouse_gl.aux
   mouse_c57bl6j:
     database_path: ../database/mouse_c57bl6j
     segments:
@@ -154,12 +163,12 @@ organisms:
     - D
     - J
   rhesus_macaque:
+    aux_file: ../aux_db/rhesus_macaque_gl.aux
     database_path: ../database/rhesus_macaque
     segments:
     - V
     - D
     - J
-    aux_file: ../aux_db/rhesus_macaque_gl.aux
   sheep:
     database_path: ../database/sheep
     segments:

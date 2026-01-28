@@ -982,7 +982,9 @@ class IgBLASTN:
         with tempfile.NamedTemporaryFile(dir=self.temp_dir, suffix="_igblast.tsv") as tmpfile:
             cmd += ["-out", tmpfile.name]
             process = subprocess.run(cmd, env=local_env, capture_output=True)
-            if process.stderr:
+            # Only raise error if IgBLAST actually failed (non-zero return code)
+            # IgBLAST may output warnings to stderr but still succeed
+            if process.returncode != 0:
                 raise IgBLASTRunTimeError(process.stderr)
             # we read the dataframe from the tempfile, it should always be in .TSV.
             # We can also cast it to IGBLAST_AIRR dtypes to save memory

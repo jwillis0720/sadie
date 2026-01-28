@@ -9,7 +9,7 @@ This module can be extracted as a standalone package for use in other projects.
 Basic Usage:
     >>> from sadie.germlines import get_germline_genes, GermlineManager
     >>>
-    >>> # Simple API - uses default priority (custom > imgt > ogrdb > vdjbase)
+    >>> # Simple API - uses default priority (vdjbase > ogrdb > imgt > custom)
     >>> genes = get_germline_genes("human", "V", "H")
     >>>
     >>> # Advanced API with custom priority
@@ -17,7 +17,7 @@ Basic Usage:
     >>> genes = manager.get_genes("human", "V", "H")
 
 Priority Logic:
-    - Multiple databases are used by default (custom, IMGT, OGRDB, VDJbase)
+    - Multiple databases are used by default (VDJbase, OGRDB, IMGT, custom)
     - First database in list has priority for conflicts
     - Conflicts resolved by: (1) gene name, (2) exact sequence match
     - Novel genes from any source are included
@@ -54,8 +54,9 @@ def _log_event(level: int, event: str, **kwargs) -> None:
     fields = " ".join(f"{k}={v}" for k, v in kwargs.items())
     logger.log(level, f"event={event} {fields}")
 
-from .models import GermlineGene, ProviderMetadata
+
 from .manager import GermlineManager
+from .models import GermlineGene, ProviderMetadata
 from .pipeline import GermlinePipeline
 from .providers.vdjbase import VDJbaseProvider
 
@@ -77,17 +78,14 @@ def get_pipeline() -> GermlinePipeline:
     global _default_pipeline
     if _default_pipeline is None:
         from pathlib import Path
+
         base_dir = Path(__file__).parent
         _default_pipeline = GermlinePipeline(base_dir)
     return _default_pipeline
 
 
 def get_germline_genes(
-    species: str,
-    segment: str,
-    chain: str,
-    providers: Optional[List[str]] = None,
-    functional_only: bool = True
+    species: str, segment: str, chain: str, providers: Optional[List[str]] = None, functional_only: bool = True
 ) -> List[GermlineGene]:
     """
     Get germline genes from all available databases.
@@ -101,7 +99,7 @@ def get_germline_genes(
     chain : str
         Chain type: "H", "K", or "L"
     providers : List[str], optional
-        Custom provider priority order. Default: ["custom", "imgt", "ogrdb", "vdjbase"]
+        Custom provider priority order. Default: ["vdjbase", "ogrdb", "imgt", "custom"]
     functional_only : bool
         Only return functional genes (default: True)
 
@@ -126,11 +124,7 @@ def get_germline_genes(
     return manager.get_genes(species, segment, chain, functional_only)
 
 
-def get_gene_by_name(
-    name: str,
-    species: str,
-    providers: Optional[List[str]] = None
-) -> Optional[GermlineGene]:
+def get_gene_by_name(name: str, species: str, providers: Optional[List[str]] = None) -> Optional[GermlineGene]:
     """
     Get specific gene by name (first provider that has it wins).
 
@@ -159,6 +153,7 @@ def get_gene_by_name(
 def get_germlines_base_dir() -> "Path":
     """Get the base directory for the germlines module."""
     from pathlib import Path
+
     return Path(__file__).parent
 
 
@@ -192,7 +187,6 @@ __all__ = [
     "GermlineGene",
     "ProviderMetadata",
     "VDJbaseProvider",
-
     # Public API functions
     "get_germline_genes",
     "get_gene_by_name",

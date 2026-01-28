@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 import warnings
+from functools import lru_cache
 from pathlib import Path
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 from sadie.airr.igblast.igblast import ensure_prefix_to
 from sadie.reference import YamlRef
@@ -11,20 +12,96 @@ from sadie.reference import YamlRef
 logger = logging.getLogger(__name__)
 
 
+def validate_prebuilt_database(database_path: Path, name: str) -> Dict[str, Path]:
+    """Validate prebuilt database structure and return paths.
+
+    Expected structure from `sadie reference build`:
+        database_path/
+        ├── Ig/
+        │   ├── blastdb/{name}/{name}_V, {name}_D, {name}_J files
+        │   └── internal_data/{name}/{name}.ndm.imgt
+        ├── aux_db/imgt/{name}_gl.aux
+        └── .references_dataframe.csv.gz (optional)
+
+    Parameters
+    ----------
+    database_path : Path
+        Root path to prebuilt database
+    name : str
+        Reference name (species)
+
+    Returns
+    -------
+    Dict[str, Path]
+        Validated paths: base_dir, blast_dir, v_gene_dir, d_gene_dir,
+        j_gene_dir, c_gene_dir, aux_path, igdata
+
+    Raises
+    ------
+    FileNotFoundError
+        If required structure is missing
+    """
+    db = Path(database_path)
+    errors = []
+
+    # Required directories
+    ig_dir = db / "Ig"
+    internal_data = ig_dir / "internal_data" / name
+    blastdb = ig_dir / "blastdb" / name
+    aux_db = db / "aux_db"
+
+    if not ig_dir.exists():
+        errors.append(f"Missing Ig/ directory at {ig_dir}")
+    if not internal_data.exists():
+        errors.append(f"Missing internal_data/{name}/ at {internal_data}")
+    if not blastdb.exists():
+        errors.append(f"Missing blastdb/{name}/ at {blastdb}")
+    if not aux_db.exists():
+        errors.append(f"Missing aux_db/ directory at {aux_db}")
+
+    # Check for aux file (may be in aux_db/ or aux_db/imgt/)
+    aux_path = aux_db / "imgt" / f"{name}_gl.aux"
+    if not aux_path.exists():
+        # Try without imgt subdirectory
+        aux_path = aux_db / f"{name}_gl.aux"
+        if not aux_path.exists():
+            errors.append(f"Missing auxiliary file {name}_gl.aux in {aux_db}")
+
+    if errors:
+        raise FileNotFoundError(
+            f"Invalid prebuilt database at {database_path}:\n" + "\n".join(f"  - {e}" for e in errors)
+        )
+
+    # Build paths
+    blast_prefix = blastdb / f"{name}_"
+
+    return {
+        "base_dir": db,
+        "blast_dir": blast_prefix,
+        "v_gene_dir": Path(str(blast_prefix) + "V"),
+        "d_gene_dir": Path(str(blast_prefix) + "D"),
+        "j_gene_dir": Path(str(blast_prefix) + "J"),
+        "c_gene_dir": Path(str(blast_prefix) + "C"),
+        "aux_path": aux_path,
+        "igdata": ig_dir,
+    }
+
+
 def _use_germlines_module() -> bool:
     import os
+
     env_value = os.environ.get("SADIE_USE_GERMLINES_MODULE", "true").lower()
     use_germlines = env_value in ("true", "1", "yes")
     if not use_germlines:
         logger.warning(
-            "G3 API is deprecated. Set SADIE_USE_GERMLINES_MODULE=true. "
-            "G3 will be removed after 2026-06-01."
+            "G3 API is deprecated. Set SADIE_USE_GERMLINES_MODULE=true. " "G3 will be removed after 2026-06-01."
         )
     return use_germlines
 
 
 def _get_germlines_igblast_dir() -> Path:
     from sadie.germlines import get_germlines_base_dir
+
     return get_germlines_base_dir() / "igblast"
 
 
@@ -49,38 +126,79 @@ class GermlineData:
         receptor: str = "Ig",
         database_dir: Optional[str | Path] = None,
         scheme: str = "imgt",
+        prebuilt: bool = False,
     ):
         """
 
         Parameters
         ----------
-        species : str
+        name : str
             The species of interest, e.g. human
         receptor : str, optional
             the receptor type, by default "Ig"
+        database_dir : Optional[str | Path]
+            Custom database directory path
+        scheme : str, optional
+            Numbering scheme, by default "imgt"
+        prebuilt : bool, optional
+            If True, database_dir is a prebuilt database from `sadie reference build`.
+            Validates structure and uses paths directly without germlines/G3 lookup.
+            By default False.
         """
         self.name = name
 
+        # Handle prebuilt database path - skip all other lookups
+        if prebuilt and database_dir:
+            paths = validate_prebuilt_database(Path(database_dir), name)
+            self._base_dir = paths["base_dir"]
+            self._blast_dir = paths["blast_dir"]
+            self._v_gene_dir = paths["v_gene_dir"]
+            self._d_gene_dir = paths["d_gene_dir"]
+            self._j_gene_dir = paths["j_gene_dir"]
+            self._c_gene_dir = paths["c_gene_dir"]
+            self._aux_path = paths["aux_path"]
+            self._igdata = paths["igdata"]
+            return  # Skip all other initialization
+
         # Determine base directory based on feature flag
         if database_dir:
+            # Custom database directory provided (e.g., from References.make_airr_database)
             self.base_dir = Path(database_dir).absolute()
+            # Set up paths relative to custom database directory
+            # make_airr_database creates: output_path/Ig/blastdb/{name}/{name}_V, etc.
+            self.blast_dir = self.base_dir / f"Ig/blastdb/{name}/{name}_"
+            self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
+            self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
+            self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
+            self.c_gene_dir = Path(self.blast_dir.__str__() + "C")
+            self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
+            # IGDATA for custom databases points to the Ig/ directory
+            self.igdata = self.base_dir / "Ig"
         elif _use_germlines_module():
             # Use germlines module paths (new default)
             germlines_igblast = _get_germlines_igblast_dir()
             internal_data_species = germlines_igblast / "Ig" / "internal_data" / name
+            database_species = germlines_igblast / "database" / name
 
             # Check if this species has databases in germlines module
             if internal_data_species.exists():
                 self.base_dir = germlines_igblast
-                # Germlines module uses IgBLAST-compatible directory structure:
-                # igblast/Ig/internal_data/{species}/ contains both .ndm.imgt and BLAST databases
-                self.blast_dir = internal_data_species / f"{name}_"
-                self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
-                self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
-                self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
-                self.c_gene_dir = Path(self.blast_dir.__str__() + "C")
+
+                # V/D/J/C BLAST databases are in database/{species}/
+                # These are used by IgBLAST for -germline_db_V, -germline_db_D, etc.
+                # The database/ dir contains separate BLAST dbs for each segment type
+                blast_prefix = database_species / f"{name}_"
+                self.blast_dir = blast_prefix
+                self.v_gene_dir = Path(str(blast_prefix) + "V")
+                self.d_gene_dir = Path(str(blast_prefix) + "D")
+                self.j_gene_dir = Path(str(blast_prefix) + "J")
+                self.c_gene_dir = Path(str(blast_prefix) + "C")
+
                 self.aux_path = germlines_igblast / "aux_db" / f"{name}_gl.aux"
-                # IGDATA points to the directory containing internal_data/
+
+                # IGDATA points to Ig/ which contains internal_data/{species}/
+                # internal_data has combined VDJC file named {species}_V for IgBLAST's
+                # internal annotation database (used for complete_vdj calculation)
                 self.igdata = germlines_igblast / "Ig"
             else:
                 # NFR-002: No silent fallback to G3 when germlines is selected
@@ -261,17 +379,44 @@ class GermlineData:
             Set of available species names
         """
         datasets: Set[str] = set()
-        
+
         # Add germlines module species if feature flag is enabled
         if _use_germlines_module():
             germlines_internal_data = _get_germlines_igblast_dir() / "Ig" / "internal_data"
             if germlines_internal_data.exists():
                 for species_dir in germlines_internal_data.iterdir():
-                    if species_dir.is_dir() and not species_dir.name.startswith('.'):
+                    if species_dir.is_dir() and not species_dir.name.startswith("."):
                         datasets.add(species_dir.name)
-        
+
         # Also add legacy G3 species for backwards compatibility
         y = YamlRef()
         datasets.update(y.get_names())
-        
+
         return datasets
+
+    @lru_cache(maxsize=1)
+    def get_source_lookup(self) -> Dict[str, str]:
+        """
+        Build gene name → source lookup table.
+
+        Returns
+        -------
+        Dict[str, str]
+            Mapping from gene name to source provider
+            (imgt, vdjbase, ogrdb, custom)
+        """
+        from sadie.germlines import GermlineManager
+
+        lookup: Dict[str, str] = {}
+        manager = GermlineManager()
+
+        for segment in ["V", "D", "J", "C"]:
+            for chain in ["H", "K", "L"]:
+                try:
+                    genes = manager.get_genes(self.name, segment, chain, functional_only=False, strict=False)
+                    for gene in genes:
+                        lookup[gene.name] = gene.source
+                except Exception:
+                    pass  # Some segment/chain combos may not exist
+
+        return lookup

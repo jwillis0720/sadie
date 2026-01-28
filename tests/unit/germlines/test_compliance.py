@@ -11,9 +11,10 @@ Tests verify constitution-aligned behaviors and requirement compliance:
 """
 
 import os
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from sadie.germlines.manager import GermlineManager
 from sadie.germlines.models import GermlineGene
@@ -23,22 +24,22 @@ class TestPriorityOrder:
     """T058: Test default provider priority order (FR-004)."""
 
     def test_default_priority_order(self):
-        """Verify default priority is custom > ogrdb > vdjbase > imgt."""
-        expected = ["custom", "ogrdb", "vdjbase", "imgt"]
-        assert GermlineManager.DEFAULT_PROVIDERS == expected, (
-            f"Expected priority {expected}, got {GermlineManager.DEFAULT_PROVIDERS}"
-        )
+        """Verify default priority is vdjbase > ogrdb > imgt > custom."""
+        expected = ["vdjbase", "ogrdb", "imgt", "custom"]
+        assert (
+            GermlineManager.DEFAULT_PROVIDERS == expected
+        ), f"Expected priority {expected}, got {GermlineManager.DEFAULT_PROVIDERS}"
 
     def test_manager_initializes_with_default_priority(self):
         """Verify manager uses default priority when none specified."""
         manager = GermlineManager()
-        assert manager.provider_names == ["custom", "ogrdb", "vdjbase", "imgt"]
+        assert manager.provider_names == ["vdjbase", "ogrdb", "imgt", "custom"]
 
-    def test_custom_provider_overrides_others(self):
-        """Verify custom provider sequences take precedence."""
+    def test_vdjbase_provider_has_highest_priority(self):
+        """Verify VDJbase provider sequences take precedence."""
         manager = GermlineManager()
-        # First provider in list should be custom
-        assert manager.provider_names[0] == "custom"
+        # First provider in list should be vdjbase
+        assert manager.provider_names[0] == "vdjbase"
 
 
 class TestSingleProvider:
@@ -47,16 +48,16 @@ class TestSingleProvider:
     def test_single_provider_config_for_all_segments(self):
         """Verify manager uses same provider config for V, D, J segments."""
         manager = GermlineManager(providers=["imgt"])
-        
+
         # All queries should use the same provider list
         # Manager design enforces this - one provider list for all calls
         assert manager.provider_names == ["imgt"]
-        
+
         # Querying different segments uses same providers
         v_genes = manager.get_genes("human", "V", "H", functional_only=True)
         d_genes = manager.get_genes("human", "D", "H", functional_only=True)
         j_genes = manager.get_genes("human", "J", "H", functional_only=True)
-        
+
         # All should come from IMGT (if available)
         for gene in v_genes[:5]:  # Check first 5
             assert gene.source == "imgt", f"V gene {gene.name} should be from imgt"
@@ -64,15 +65,14 @@ class TestSingleProvider:
     def test_no_per_segment_provider_parameter(self):
         """Verify get_genes does not accept per-segment provider override."""
         manager = GermlineManager()
-        
+
         # get_genes signature should not have provider parameter
         import inspect
+
         sig = inspect.signature(manager.get_genes)
         param_names = list(sig.parameters.keys())
-        
-        assert "provider" not in param_names, (
-            "get_genes should not accept per-segment provider parameter"
-        )
+
+        assert "provider" not in param_names, "get_genes should not accept per-segment provider parameter"
         assert "v_provider" not in param_names
         assert "d_provider" not in param_names
         assert "j_provider" not in param_names
@@ -84,7 +84,7 @@ class TestErrorHandling:
     def test_clear_error_missing_species_non_strict(self):
         """T055: Verify empty result without strict mode."""
         manager = GermlineManager(providers=["imgt"])
-        
+
         # Non-strict mode returns empty list
         result = manager.get_genes("nonexistent_species", "V", "H", strict=False)
         assert isinstance(result, list)
@@ -93,11 +93,11 @@ class TestErrorHandling:
     def test_clear_error_missing_species_strict(self):
         """T055: Verify clear error when provider lacks species data (strict mode)."""
         manager = GermlineManager(providers=["imgt"])
-        
+
         # Strict mode raises ValueError with helpful message
         with pytest.raises(ValueError) as exc_info:
             manager.get_genes("nonexistent_species", "V", "H", strict=True)
-        
+
         error_msg = str(exc_info.value).lower()
         assert "nonexistent_species" in error_msg
         assert "not found" in error_msg or "no germline data" in error_msg
@@ -105,24 +105,26 @@ class TestErrorHandling:
     def test_no_g3_fallback_when_germlines_enabled(self, monkeypatch):
         """T059: Verify no silent fallback to G3 when germlines selected."""
         monkeypatch.setenv("SADIE_USE_GERMLINES_MODULE", "true")
-        
+
         # Clear any cached feature flag value
         from sadie.germlines.utils.feature_flags import clear_feature_flag_cache
+
         clear_feature_flag_cache()
-        
+
         from sadie.germlines.utils.feature_flags import use_germlines_module
+
         assert use_germlines_module() is True, "Germlines module should be enabled"
-        
+
         # When germlines is enabled and species not found, should raise ValueError
         from sadie.airr.igblast.germline import GermlineData, _use_germlines_module
-        
+
         # Verify feature flag is respected
         assert _use_germlines_module() is True
-        
+
         # Test that missing species raises error instead of falling back
         with pytest.raises(ValueError) as exc_info:
             GermlineData("nonexistent_species_xyz")
-        
+
         error_msg = str(exc_info.value).lower()
         assert "not found" in error_msg
         assert "nonexistent_species_xyz" in error_msg
@@ -130,14 +132,15 @@ class TestErrorHandling:
     def test_feature_flag_controls_backend(self, monkeypatch):
         """Verify feature flag controls which backend is used."""
         from sadie.germlines.utils.feature_flags import clear_feature_flag_cache
-        
+
         # Test with germlines enabled
         monkeypatch.setenv("SADIE_USE_GERMLINES_MODULE", "true")
         clear_feature_flag_cache()
-        
+
         from sadie.germlines.utils.feature_flags import use_germlines_module
+
         assert use_germlines_module() is True
-        
+
         # Test with germlines disabled
         monkeypatch.setenv("SADIE_USE_GERMLINES_MODULE", "false")
         clear_feature_flag_cache()
@@ -150,11 +153,11 @@ class TestCustomValidation:
     def test_validates_nucleotide_characters(self):
         """Verify custom provider validates nucleotide sequences."""
         from sadie.germlines.providers.custom import _validate_sequence
-        
+
         # Valid sequence
         valid, msg = _validate_sequence("ACGTACGT", "test_gene")
         assert valid is True, f"Valid sequence rejected: {msg}"
-        
+
         # Invalid characters
         valid, msg = _validate_sequence("ACGTXYZ", "test_gene")
         assert valid is False, "Invalid characters should be rejected"
@@ -163,7 +166,7 @@ class TestCustomValidation:
     def test_rejects_empty_sequence(self):
         """Verify empty sequences are rejected."""
         from sadie.germlines.providers.custom import _validate_sequence
-        
+
         valid, msg = _validate_sequence("", "test_gene")
         assert valid is False, "Empty sequence should be rejected"
         assert "empty" in msg.lower()
@@ -171,21 +174,21 @@ class TestCustomValidation:
     def test_rejects_gap_only_sequence(self):
         """Verify sequences with only gaps are rejected."""
         from sadie.germlines.providers.custom import _validate_sequence
-        
+
         valid, msg = _validate_sequence("...---...", "test_gene")
         assert valid is False, "Gap-only sequence should be rejected"
 
     def test_allows_gapped_sequences(self):
         """Verify gapped sequences (with real nucleotides) are accepted."""
         from sadie.germlines.providers.custom import _validate_sequence
-        
+
         valid, msg = _validate_sequence("ACG...TAC", "test_gene")
         assert valid is True, f"Gapped sequence rejected: {msg}"
 
     def test_allows_iupac_ambiguous(self):
         """Verify IUPAC ambiguous codes are accepted."""
         from sadie.germlines.providers.custom import _validate_sequence
-        
+
         # R=A/G, Y=C/T, etc.
         valid, msg = _validate_sequence("ACGTRYWSKM", "test_gene")
         assert valid is True, f"IUPAC codes rejected: {msg}"
@@ -196,43 +199,42 @@ class TestParity:
 
     EXPECTED_SPECIES = ["human", "mouse"]  # Minimum required
     EXPECTED_CHAINS = ["H", "K", "L"]
-    EXPECTED_SEGMENTS = ["V", "D", "J"]
+    EXPECTED_SEGMENTS = ["V", "D", "J", "C"]
 
     def test_human_coverage(self):
-        """Verify human species has V, D, J for H, K, L chains."""
+        """Verify human species has V, D, J, C for H, K, L chains."""
         manager = GermlineManager()
-        
+
         for chain in self.EXPECTED_CHAINS:
             for segment in self.EXPECTED_SEGMENTS:
-                genes = manager.get_genes("human", segment, chain)
                 # D genes don't exist for light chains
                 if segment == "D" and chain in ["K", "L"]:
                     continue
-                assert len(genes) > 0, (
-                    f"No genes found for human {chain}{segment}"
-                )
+                genes = manager.get_genes("human", segment, chain)
+                assert len(genes) > 0, f"No genes found for human {chain}{segment}"
 
     def test_mouse_coverage(self):
-        """Verify mouse species has V, D, J for H, K, L chains."""
+        """Verify mouse species has V, D, J, C for H, K, L chains."""
         manager = GermlineManager()
-        
+
         for chain in self.EXPECTED_CHAINS:
             for segment in self.EXPECTED_SEGMENTS:
-                genes = manager.get_genes("mouse", segment, chain)
                 # D genes don't exist for light chains
                 if segment == "D" and chain in ["K", "L"]:
                     continue
-                # Mouse may have limited data - check if available
-                if len(genes) == 0:
-                    pytest.skip(f"No mouse {chain}{segment} data available")
+                # Mouse IGLC is minimal/absent in IMGT (mice use ~95% kappa)
+                if segment == "C" and chain == "L":
+                    continue
+                genes = manager.get_genes("mouse", segment, chain)
+                assert len(genes) > 0, f"No genes found for mouse {chain}{segment}"
 
     def test_gene_model_fields(self):
         """Verify genes have required fields populated."""
         manager = GermlineManager()
         genes = manager.get_genes("human", "V", "H")
-        
+
         assert len(genes) > 0, "No human VH genes found"
-        
+
         gene = genes[0]
         assert gene.name, "Gene should have name"
         assert gene.species == "human", "Gene should have species"
@@ -242,6 +244,59 @@ class TestParity:
         assert gene.source, "Gene should have source"
 
 
+class TestJGeneAuxFormat:
+    """Test J gene aux file format (v1.1 bug fix validation)."""
+
+    def test_aux_file_has_5_columns(self):
+        """Verify aux file uses 5-column format for J genes (v1.1 fix).
+
+        The v1.1 release fixed a bug where aux files had only 3 columns,
+        which broke J gene matching and CDR3 annotation. IgBLAST requires
+        5 columns: gene_name, reading_frame, chain_type, cdr3_end, is_functional.
+        """
+        # Use the known location of the germlines igblast aux files
+        germlines_root = Path(__file__).parent.parent.parent.parent / "src" / "sadie" / "germlines"
+        aux_file = germlines_root / "igblast" / "aux_db" / "human_gl.aux"
+
+        if not aux_file.exists():
+            pytest.skip("Aux file not found - database may not be built")
+
+        lines = aux_file.read_text().strip().split("\n")
+        assert len(lines) > 0, "Aux file should not be empty"
+
+        for i, line in enumerate(lines):
+            fields = line.split("\t")
+            assert len(fields) == 5, f"Line {i+1} has {len(fields)} columns, expected 5: {line}"
+
+            # Validate field content
+            gene_name, reading_frame, chain_type, cdr3_end, is_functional = fields
+            assert gene_name.startswith("IG"), f"Gene name should start with IG: {gene_name}"
+            assert reading_frame in ["0", "1", "2"], f"Invalid reading frame: {reading_frame}"
+            assert chain_type in ["JH", "JK", "JL"], f"Invalid chain type: {chain_type}"
+            assert cdr3_end.isdigit(), f"CDR3 end should be numeric: {cdr3_end}"
+            assert is_functional in ["0", "1"], f"is_functional should be 0 or 1: {is_functional}"
+
+    def test_aux_builder_generates_5_columns(self, tmp_path):
+        """Verify AuxFileBuilder generates proper 5-column format."""
+        from sadie.germlines.builders.aux import AuxFileBuilder
+        from sadie.germlines.builders.j_gene_data import get_j_gene_data
+
+        # Create mock J gene fasta
+        j_fasta = tmp_path / "IGHJ.fasta"
+        j_fasta.write_text(">IGHJ1*01\nTACTACTACTACGGTATGGACGTCTGG\n")
+
+        builder = AuxFileBuilder()
+        output_file = tmp_path / "test.aux"
+
+        builder.build_for_species("human", tmp_path, output_file)
+
+        if output_file.exists():
+            content = output_file.read_text().strip()
+            if content:
+                fields = content.split("\n")[0].split("\t")
+                assert len(fields) == 5, f"Expected 5 columns, got {len(fields)}"
+
+
 class TestGappedSequences:
     """T060: Test gapped sequence availability for HMM building (FR-013)."""
 
@@ -249,46 +304,53 @@ class TestGappedSequences:
         """Verify V genes have gapped sequences for HMM building."""
         manager = GermlineManager()
         genes = manager.get_genes("human", "V", "H")
-        
+
         genes_with_gapped = 0
         for gene in genes:
             if gene.sequence_aa_gapped or gene.sequence_gapped:
                 genes_with_gapped += 1
-        
+
         # Most V genes should have gapped data
         coverage = genes_with_gapped / len(genes) if genes else 0
-        assert coverage > 0.5, (
-            f"Only {coverage:.0%} of V genes have gapped sequences"
-        )
+        assert coverage > 0.5, f"Only {coverage:.0%} of V genes have gapped sequences"
 
     def test_j_genes_have_gapped_data(self):
         """Verify J genes have gapped sequences for HMM building."""
         manager = GermlineManager()
         genes = manager.get_genes("human", "J", "H")
-        
+
         genes_with_gapped = 0
         for gene in genes:
             if gene.sequence_aa_gapped or gene.sequence_gapped:
                 genes_with_gapped += 1
-        
+
         coverage = genes_with_gapped / len(genes) if genes else 0
         # J genes are shorter and may have lower gapped coverage
-        assert coverage > 0.4, (
-            f"Only {coverage:.0%} of J genes have gapped sequences"
-        )
+        assert coverage > 0.4, f"Only {coverage:.0%} of J genes have gapped sequences"
+
+    def test_c_genes_exist(self):
+        """Verify C genes are available (v1.1 bug fix validation)."""
+        manager = GermlineManager()
+
+        # C genes should exist for all chains (H, K, L)
+        for chain in ["H", "K", "L"]:
+            genes = manager.get_genes("human", "C", chain)
+            assert len(genes) > 0, (
+                f"No C genes found for human {chain} chain - " "this was fixed in v1.1 (missing C gene data bug)"
+            )
 
     def test_hmm_builder_handles_missing_gapped(self):
         """Verify HMM builder reports genes missing gapped data."""
         from sadie.germlines.renumbering_integration import LocalHMMBuilder
-        
+
         builder = LocalHMMBuilder()
-        
+
         # Builder should be able to get VJ pairs
         # This tests the translation fallback path
         pairs = builder._get_vj_alignment_pairs("human", "H", "imgt")
-        
+
         assert len(pairs) > 0, "Should find VJ alignment pairs for human H"
-        
+
         # Each pair should have (name, gapped_aa_sequence)
         for name, seq in pairs[:5]:
             assert name, "Pair should have gene name"

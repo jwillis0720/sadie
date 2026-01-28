@@ -108,9 +108,16 @@ Use dots (`.`) for IMGT gaps. System will detect and use directly.
 
 ## Priority System
 
-**Custom sequences have HIGHEST priority!**
+**Custom sequences fill gaps from standard databases.**
 
-Default priority order: `custom > imgt > ogrdb`
+Default priority order: `vdjbase > ogrdb > imgt > custom`
+
+Custom sequences are applied LAST, after validated databases. This ensures:
+- **Validated data first**: VDJbase and OGRDB provide curated, community-validated alleles
+- **Gap filling**: Custom sequences add lab-specific alleles not in public databases
+- **Override capability**: To override a standard allele, use the same gene name in custom
+
+To explicitly override a VDJbase/OGRDB gene, add a custom sequence with the identical gene name.
 
 ### Examples:
 

@@ -16,15 +16,15 @@ Design Principles:
 import hashlib
 import logging
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import List
-from datetime import datetime
+
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from .models import GermlineGene
-
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def _check_offline_ready(sources_dir: Path, species: str) -> tuple[bool, str]:
 
 
 # Constants (extracted magic numbers per Zen)
-SEGMENTS = ["V", "D", "J"]
+SEGMENTS = ["V", "D", "J", "C"]
 CHAINS = ["H", "K", "L"]
 
 
@@ -165,18 +165,13 @@ class GermlinePipeline:
         latest_normalized = self._get_latest_mtime(normalized_files)
 
         # Check all source directories
-        for source_name in ["custom", "ogrdb", "vdjbase", "imgt"]:
+        for source_name in ["vdjbase", "ogrdb", "imgt", "custom"]:
             if self._source_newer_than(source_name, species, latest_normalized):
                 return True
 
         return False
 
-    def _source_newer_than(
-        self,
-        source_name: str,
-        species: str,
-        threshold: float
-    ) -> bool:
+    def _source_newer_than(self, source_name: str, species: str, threshold: float) -> bool:
         """
         Check if source directory has files newer than threshold.
 
@@ -289,13 +284,7 @@ class GermlinePipeline:
                 self._normalize_segment(manager, species, chain, segment)
         _log_timing("rebuild_normalized", start, species=species)
 
-    def _normalize_segment(
-        self,
-        manager,
-        species: str,
-        chain: str,
-        segment: str
-    ) -> None:
+    def _normalize_segment(self, manager, species: str, chain: str, segment: str) -> None:
         """
         Normalize single segment/chain combination.
 
@@ -316,20 +305,12 @@ class GermlinePipeline:
         if not genes:
             return
 
-        logger.info(
-            f"Processing {species} IG{chain}{segment}: {len(genes)} genes"
-        )
+        logger.info(f"Processing {species} IG{chain}{segment}: {len(genes)} genes")
 
         self._write_gapped_fasta(genes, species, chain, segment)
         self._write_ungapped_fasta(genes, species, chain, segment)
 
-    def _write_gapped_fasta(
-        self,
-        genes: List[GermlineGene],
-        species: str,
-        chain: str,
-        segment: str
-    ) -> None:
+    def _write_gapped_fasta(self, genes: List[GermlineGene], species: str, chain: str, segment: str) -> None:
         """
         Write gapped FASTA file.
 
@@ -346,12 +327,10 @@ class GermlinePipeline:
         """
         gapped_records = [
             SeqRecord(
-                seq=Seq(str(gene.sequence_gapped or gene.sequence)),
-                id=gene.name,
-                description=f"source={gene.source}"
+                seq=Seq(str(gene.sequence_gapped or gene.sequence)), id=gene.name, description=f"source={gene.source}"
             )
             for gene in genes
-            if gene.sequence_gapped or segment == "D"
+            if gene.sequence_gapped or segment in ["D", "J", "C"]  # D, J, and C segments may be ungapped
         ]
 
         # Guard: no gapped sequences
@@ -365,13 +344,7 @@ class GermlinePipeline:
         SeqIO.write(gapped_records, gapped_path, "fasta")
         logger.info(f"Wrote {len(gapped_records)} gapped to {gapped_path}")
 
-    def _write_ungapped_fasta(
-        self,
-        genes: List[GermlineGene],
-        species: str,
-        chain: str,
-        segment: str
-    ) -> None:
+    def _write_ungapped_fasta(self, genes: List[GermlineGene], species: str, chain: str, segment: str) -> None:
         """
         Write ungapped FASTA file.
 
@@ -387,12 +360,7 @@ class GermlinePipeline:
             Segment type
         """
         ungapped_records = [
-            SeqRecord(
-                seq=Seq(str(gene.sequence)),
-                id=gene.name,
-                description=f"source={gene.source}"
-            )
-            for gene in genes
+            SeqRecord(seq=Seq(str(gene.sequence)), id=gene.name, description=f"source={gene.source}") for gene in genes
         ]
 
         ungapped_dir = self.normalized_dir / species / "ungapped"
@@ -417,21 +385,21 @@ class GermlinePipeline:
             Species name
         """
         start = time.time()
-        from .builders.blast import BlastDBBuilder
         from .builders.aux import AuxFileBuilder
+        from .builders.blast import BlastDBBuilder
 
         blast_builder = BlastDBBuilder()
         blast_builder.build_for_species(
             species,
             source_dir=self.normalized_dir / species / "ungapped",
-            output_dir=self.igblast_dir / "database" / species
+            output_dir=self.igblast_dir / "database" / species,
         )
 
         aux_builder = AuxFileBuilder()
         aux_builder.build_for_species(
             species,
             source_dir=self.normalized_dir / species / "gapped",
-            output_file=self.igblast_dir / "aux_db" / f"{species}_gl.aux"
+            output_file=self.igblast_dir / "aux_db" / f"{species}_gl.aux",
         )
 
         self._generate_organism_yaml(species)
@@ -465,7 +433,7 @@ class GermlinePipeline:
         data["organisms"][species] = {
             "database_path": f"../database/{species}",
             "aux_file": f"../aux_db/{species}_gl.aux",
-            "segments": ["V", "D", "J"],
+            "segments": ["V", "D", "J", "C"],
         }
 
         with open(yaml_path, "w") as f:

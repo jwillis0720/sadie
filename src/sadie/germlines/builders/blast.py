@@ -19,13 +19,14 @@ import logging
 import subprocess
 from pathlib import Path
 from typing import Optional
+
 from Bio import SeqIO
 
 logger = logging.getLogger(__name__)
 
 
 # Constants
-SEGMENTS = ["V", "D", "J"]
+SEGMENTS = ["V", "D", "J", "C"]
 CHAINS = ["H", "K", "L"]
 
 
@@ -88,16 +89,11 @@ class BlastDBBuilder:
                 seq_id = truncated
             else:
                 # Just truncate if no underscores
-                seq_id = seq_id[:self.MAX_SEQ_ID_LENGTH]
+                seq_id = seq_id[: self.MAX_SEQ_ID_LENGTH]
 
         return seq_id
 
-    def build_for_species(
-        self,
-        species: str,
-        source_dir: Path,
-        output_dir: Path
-    ) -> None:
+    def build_for_species(self, species: str, source_dir: Path, output_dir: Path) -> None:
         """
         Build all BLAST databases for a species.
 
@@ -116,20 +112,9 @@ class BlastDBBuilder:
 
         # Combine all chains for each segment
         for segment in SEGMENTS:
-            self._build_segment_database(
-                species,
-                segment,
-                source_dir,
-                output_dir
-            )
+            self._build_segment_database(species, segment, source_dir, output_dir)
 
-    def _build_segment_database(
-        self,
-        species: str,
-        segment: str,
-        source_dir: Path,
-        output_dir: Path
-    ) -> None:
+    def _build_segment_database(self, species: str, segment: str, source_dir: Path, output_dir: Path) -> None:
         """
         Build BLAST database for single segment.
 
@@ -171,9 +156,7 @@ class BlastDBBuilder:
                     record.id = sanitized_id
                     record.description = ""  # Clear description to avoid issues
                 combined_sequences.extend(records)
-                logger.info(
-                    f"Added {len(records)} sequences from {fasta_path.name}"
-                )
+                logger.info(f"Added {len(records)} sequences from {fasta_path.name}")
             except Exception as e:
                 logger.error(f"Failed to read {fasta_path}: {e}")
 
@@ -185,9 +168,7 @@ class BlastDBBuilder:
         # Write combined FASTA
         combined_fasta = output_dir / f"{species}_{segment}.fasta"
         SeqIO.write(combined_sequences, combined_fasta, "fasta")
-        logger.info(
-            f"Wrote {len(combined_sequences)} sequences to {combined_fasta}"
-        )
+        logger.info(f"Wrote {len(combined_sequences)} sequences to {combined_fasta}")
 
         # Build BLAST database
         self._run_makeblastdb(combined_fasta, segment)
@@ -208,36 +189,29 @@ class BlastDBBuilder:
         try:
             cmd = [
                 "makeblastdb",
-                "-dbtype", "nucl",
-                "-in", str(fasta_path),
-                "-out", str(fasta_path.with_suffix("")),
+                "-dbtype",
+                "nucl",
+                "-in",
+                str(fasta_path),
+                "-out",
+                str(fasta_path.with_suffix("")),
                 "-parse_seqids",
                 "-hash_index",
             ]
 
             logger.debug(f"Running: {' '.join(cmd)}")
 
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                check=True
-            )
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
 
             logger.info(f"Built BLAST database: {db_name}")
             logger.debug(result.stdout)
 
         except subprocess.CalledProcessError as e:
-            logger.error(
-                f"makeblastdb failed for {db_name}: {e.stderr}"
-            )
+            logger.error(f"makeblastdb failed for {db_name}: {e.stderr}")
             raise
 
         except FileNotFoundError:
-            logger.error(
-                "makeblastdb not found. "
-                "Ensure BLAST+ is installed and in PATH."
-            )
+            logger.error("makeblastdb not found. " "Ensure BLAST+ is installed and in PATH.")
             raise
 
     def validate_database(self, db_path: Path) -> bool:

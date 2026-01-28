@@ -368,4 +368,3 @@ You've successfully integrated the germlines module with:
 - ✅ Reference system (gene queries)
 
 All integrations maintain backwards compatibility and can be toggled via the `SADIE_USE_GERMLINES_MODULE` environment variable.
-

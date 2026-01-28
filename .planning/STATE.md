@@ -1,178 +1,175 @@
 # State: Germline Database Integration
 
-## Current Phase
+## Project Reference
 
-**All Phases Complete** — Milestone Achieved! 🎉
+See: .planning/PROJECT.md (updated 2026-01-22)
 
-## Progress Summary
+**Core value:** Enable researchers to select germline database for AIRR annotation and renumbering
+**Current focus:** Phase 31 — Add Database Parameter Support to Renumbering
 
-| Phase | Status | Progress |
-|-------|--------|----------|
-| Phase 1: Setup | ✅ Complete | 5/5 (100%) |
-| Phase 2: Foundational | ✅ Complete | 5/5 (100%) |
-| Phase 3: US1 AIRR | ✅ Complete | 6/6 (100%) |
-| Phase 4: US2 Renumbering | ✅ Complete | 8/8 (100%) |
-| Phase 5: Reference | ✅ Complete | 7/7 (100%) |
-| Phase 6: US3 Tests | ✅ Complete | 11/11 (100%) |
-| Phase 7: US4 Offline | ✅ Complete | 5/5 (100%) |
-| Phase 8: Polish | ✅ Complete | 7/7 (100%) |
-| Phase 9: Compliance | ✅ Complete | 8/8 (100%) |
-| Phase 10: Species Expansion | ✅ Complete | 12/12 (100%) |
-| Phase 11: IMGT Gapped Fix | ✅ Complete | 7/7 (100%) |
-| Phase 12: Provider Auto-Population | ✅ Complete | 11/11 (100%) |
+## Current Position
 
-**Overall**: 92/92 tasks (100%)
+Phase: 32 — Fix IgBLAST internal_data to Use Combined VDJC File
+Plan: .planning/phases/32-fix-igblast-internal-data-combined-vdjc/32-02-PLAN.md
+Status: Complete
+Last activity: 2026-01-27 — Completed Plan 32-02 (Remove Workaround)
 
-## Phase 12: Provider Auto-Population ✅ Complete
+Progress: ████████████████████ 100% (2/2 plans complete)
 
-- [x] T080: Implement `sadie germlines populate` CLI command
-- [x] T081: Implement `IMGTProvider.download()` from existing script logic
-- [x] T082: Add version tracking for IMGT releases
-- [x] T083: Audit and download all OGRDB available species
-- [x] T084: Audit and download all VDJbase available species
-- [x] T085: Add `--force` flag for re-download
-- [x] T086: Add checkpoint/resume for fail-fast recovery
-- [x] T087: Add rich progress bars for download tracking
-- [x] T088: Integrate post-download build pipeline
-- [x] T089: Test CLI command with all providers (19/19 tests pass)
-- [x] T090: Verify downloaded data integrity
+**Phase 32: Fix IgBLAST internal_data to Use Combined VDJC File** — COMPLETE
 
-### Files Created
-- `src/sadie/germlines/cli.py` — CLI logic with progress bars, checkpointing, validation
-- `tests/unit/germlines/test_cli.py` — 19 unit tests for CLI functionality
+### Phase 32-02: Remove Phase 17 Workaround Code ✓
+- ✓ Removed _recalculate_complete_vdj() method from Airr class
+- ✓ Removed calls in run_fasta() and _run_scfv()
+- ✓ Removed J_GENE_LENGTHS dictionary from j_gene_data.py
+- ✓ Removed get_j_gene_length() function
+- ✓ Preserved HUMAN_J_GENE_DATA and get_j_gene_data() for aux file generation
+- ✓ Added 8 unit tests verifying workaround removal and complete_vdj works
+- ✓ Updated test fixture for improved macaque complete_vdj accuracy
 
-### Files Modified
-- `src/sadie/app.py` — Added `germlines` command group
-- `src/sadie/germlines/providers/imgt.py` — Implemented `download()` method
+### Phase 32-01: Create Combined VDJC Files for internal_data ✓
+- ✓ Modified build_internal_data.py to create combined VDJC FASTA (not symlinks)
+- ✓ Added deduplication to handle duplicate sequences across files
+- ✓ Updated Reference Builder to include D/J/C in BLAST database
+- ✓ Added 9 unit tests for combined VDJC structure
+- ✓ Updated GermlineData to point V/D/J/C to database/ directory
+- ✓ Rebuilt internal_data for human, chicken, macaque, mouse, rhesus_macaque
+- ✓ Verified complete_vdj=True works for full-length sequences
 
----
+**Phase 31: Add Database Parameter Support to Renumbering** — COMPLETE
 
-## Phase 11: IMGT Gapped Fix ✅ Complete
+### Phase 31-02: Add Database Parameter Support to Renumbering and HMMER ✓
+- ✓ Add `hmm_dir: Optional[Path]` parameter to HMMER class
+- ✓ Modify HMMER.get_hmm_models() to check custom directory first
+- ✓ Add `database: Optional[Path | str]` parameter to Renumbering class
+- ✓ Validate database structure (hmms/ directory exists)
+- ✓ Add 4 unit tests for database parameter functionality
 
-- [x] T073: Add `_get_gapped_fasta_path()` method to IMGT provider
-- [x] T074: Add `_load_gapped_sequences()` method to IMGT provider
-- [x] T075: Update `fetch_genes()` to merge gapped sequences
-- [x] T076: Test rabbit HMM generation now works
-- [x] T077: Test chicken HMM generation now works
-- [x] T078: Verify all 29 species have gapped sequences loaded (26/29 have IGHV gapped)
-- [x] T079: Run full test suite - 64/64 germlines tests pass
+### Phase 31-01: Add HMM Building to Reference Database Build ✓
+- ✓ Add _make_hmm_files() method to References class
+- ✓ Add _write_stockholm_file() helper for Stockholm format
+- ✓ Add _translate_gapped_nt_to_aa() for NT-to-AA fallback
+- ✓ Integrate _make_hmm_files() into make_airr_database()
+- ✓ Add 3 unit tests for HMM building functionality
 
-### Previous Phases Complete ✅
+### Phase 30: Add _gapped.fasta Support to CustomProvider ✓
+- ✓ Add _get_gapped_fasta_path() and _load_gapped_sequences() methods
+- ✓ Modify fetch_genes() to load gapped sequences from _gapped.fasta
+- ✓ Update _create_gene_from_record() to use pre-loaded gapped sequences
+- ✓ Add 3 unit tests for _gapped.fasta support
 
-- [x] T004a: Verify gapped AA/NT sequences for all V/J genes (Phase 1)
-- [x] T035a: Test gapped AA fallback translation (Phase 6)
+### Phase 29: Germline Source Tracking ✓
+- ✓ Add get_source_lookup() to GermlineData
+- ✓ Add _lookup_source() and _add_source_columns() to Airr
+- ✓ Integrate source columns into run_fasta() and _run_scfv()
+- ✓ Add 4 unit tests for source tracking
 
-### Phase 10: Species Expansion ✅ Complete
-- [x] T061: Download IMGT data for 29 SPECIES_MAP species (some species lack IMGT data)
-- [x] T062: Create auxiliary file generator script (build_aux_files.py)
-- [x] T063: Build IgBLAST BLAST databases for 29 species
-- [x] T064: Generate auxiliary files (*.aux) for species with gapped sequences
-- [x] T065: Update organism.yaml with all 29 species configurations
-- [x] T066: Verify BLAST database integrity for all species
-- [x] T067: Test AIRR annotation with mouse species
-- [x] T068: Test AIRR annotation with non-human primate (rhesus_macaque)
-- [x] T069: Test AIRR annotation with non-mammalian species (chicken)
-- [x] T070: Test renumbering HMM generation for mouse
-- [x] T071: Test renumbering HMM generation for rabbit
-- [x] T072: Add multi-species integration test suite (test_multi_species.py)
+**Next Phase:** TBD — Phase 32 complete, evaluate next priorities
 
-### Species Summary (29 species with BLAST databases)
-- **Primates (8)**: human, rhesus_macaque, cynomolgus, gorilla, orangutan_sumatran, orangutan_bornean, lemur
-- **Rodents (4)**: mouse, mouse_c57bl6j, rat
-- **Carnivores (4)**: dog, cat, ferret, mink
-- **Ungulates (8)**: rabbit, pig, cow, sheep, goat, horse, alpaca, camel
-- **Birds (1)**: chicken
-- **Fish (5)**: zebrafish, atlantic_salmon, rainbow_trout, atlantic_cod, channel_catfish
-- **Monotremes (1)**: platypus
+## Milestone v1.3 Overview
 
-Note: chimpanzee, owl_monkey, naked_mole_rat, dolphin have no IMGT data available
+**Goal:** Fix skipped tests by adding macaque germlines, airr package dependency, removing deprecated G3 tests, and fix germline priority order
 
-## Blockers
+### Phase 25: Macaque Germlines Integration ✓
+- ✓ Build macaque IgBLAST databases
+- ✓ Generate internal_data and aux files
+- ✓ Enable 6 previously skipped tests (4 pass, 2 fail due to pre-existing bug)
 
-None currently identified.
+### Phase 26: Add AIRR Package Dependency ✓
+- ✓ Add airr to pyproject.toml
+- ✓ Remove importorskip from test
 
-## Key Files Modified
+### Phase 27: Remove Deprecated G3 Tests ✓
+- ✓ Remove TestGermlineDataPaths class (deprecated G3 API tests)
+- ✓ Create G3 deprecation documentation
+- ✓ Update CONCERNS.md to remove deleted test reference
 
-### Integration Points (Complete)
-- `src/sadie/airr/igblast/germline.py` — IgBLAST paths
-- `src/sadie/renumbering/aligners/hmmer.py` — HMM generation
-- `src/sadie/reference/reference.py` — Reference system
-- `src/sadie/germlines/utils/feature_flags.py` — Feature flag
-
-### Adapters Created (Complete)
-- `src/sadie/germlines/g3_adapter.py` — G3 format conversion
-- `src/sadie/germlines/renumbering_integration.py` — LocalHMMBuilder
-
-### Test Suite (Complete)
-- `tests/unit/germlines/test_airr_integration.py`
-- `tests/unit/germlines/test_renumbering_integration.py`
-- `tests/unit/germlines/test_reference_integration.py`
-- `tests/unit/germlines/test_multi_species.py` — Multi-species verification (Phase 10)
-
-## Success Criteria Status
-
-| Criterion | Status |
-|-----------|--------|
-| SC-001: Mirrored AIRR tests pass | ✅ |
-| SC-002: Mirrored renumbering tests pass | ✅ |
-| SC-003: AIRR works with any provider | ✅ |
-| SC-004: Renumbering works with any provider | ✅ |
-| SC-005: Results match G3 IMGT | ✅ |
-| SC-006: Offline operation works | ✅ |
-| SC-007: No breaking changes | ✅ |
-
-## Session History
-
-- **2026-01-22**: Completed Phase 12 - Provider Auto-Population (100% complete)
-  - Implemented `sadie germlines populate` CLI command with progress bars
-  - Created `cli.py` with version tracking, checkpointing, validation
-  - Updated IMGT provider with working `download()` method
-  - Added 19 CLI tests (all passing)
-  - Total germlines tests: 88 passed
-  - **Milestone Complete**: All 12 phases finished, 92/92 tasks
-- **2026-01-22**: Planned Phase 12 - Provider Auto-Population
-  - Created detailed PLAN.md with 9 tasks
-  - CLI: `sadie germlines populate --provider <imgt|ogrdb|vdjbase|all>`
-  - Key files: app.py, providers/*.py, cli.py (new)
-  - Estimated effort: ~4 hours
-- **2026-01-22**: Updated Phase 12 - Provider Auto-Population
-  - Expanded scope: All providers (IMGT, OGRDB, VDJbase) auto-populate via CLI
-  - Decisions: CLI command trigger, all available species, fail-fast, version-check
-  - Tasks T080-T088: CLI command, IMGT download(), version tracking, all providers
-- **2026-01-22**: Added Phase 12 - OGRDB/VDJbase Expansion (later renamed)
-- **2026-01-22**: Completed Phase 11 - IMGT Gapped Fix (100% complete)
-  - Added `_get_gapped_fasta_path()` and `_load_gapped_sequences()` methods
-  - Updated `fetch_genes()` to merge gapped sequences from `*_gapped.fasta` files
-  - Rabbit and chicken HMM generation now works
-  - 26/29 species have gapped IGHV sequences (cat, goat, camel lack IGHV gapped files)
-  - All 64 germlines tests pass
-- **2026-01-21**: Added Phase 11 - IMGT Gapped Fix
-  - Root cause found: IMGT provider ignores `*_gapped.fasta` files
-  - Rabbit/chicken have 7/5 gapped files respectively that aren't being loaded
-  - Tasks T073-T079: Fix provider, test HMM generation for all species
-- **2026-01-21**: Completed Phase 6 T035a - Gapped AA fallback translation tests
-  - Added TestGappedAAFallbackTranslation class with 6 tests
-  - All tests passed - fallback translation verified working
-  - Project 100% complete (74/74 tasks)
-- **2026-01-21**: Verified Phase 1 T004a - Gapped sequences coverage
-  - All 29 species have gapped FASTA files for V/J genes
-  - HMM generation tested: 6/6 passed (human + mouse, all chains)
-  - Phase 1 now complete (5/5 tasks)
-- **2026-01-21**: Completed Phase 10 - Species Expansion
-  - Downloaded IMGT data for 27 new species (29 total with human/mouse)
-  - Built BLAST databases for all 29 species
-  - Generated aux files for species with gapped sequences
-  - Created multi-species test suite with 18 tests (13 passed, 5 skipped)
-  - Species missing IMGT data: chimpanzee, owl_monkey, naked_mole_rat, dolphin
-- **2026-01-21**: Added Phase 10 planning
-  - New phase to populate IgBLAST databases for all 33 IMGT-supported species
-  - Tasks T061-T072: Download, build databases, create aux files, testing
-- **2026-01-21**: Phase 9 compliance complete (97% overall)
-  - Implemented priority order fix, no-fallback enforcement, strict mode
-  - Created test_compliance.py with 20 tests (all passing)
-  - Updated airr tests for germlines compatibility
-- **2026-01-21**: Converted from spec-kit to GSD format at 84% completion
-- **Previous**: Phases 1-8 completed via spec-kit workflow
+### Phase 28: Fix Germline Priority Order ✓
+- ✓ Update default priority to ['vdjbase', 'ogrdb', 'imgt', 'custom']
+- ✓ Document priority rationale
 
 ---
-*Last updated: 2026-01-22*
+
+## Milestone v1.2 Overview (Complete)
+
+**Goal:** Enable reference.yml to select alleles from all germline sources (imgt, ogrdb, vdjbase, custom), using germlines module as data provider instead of G3 API.
+
+### Phase 19: Source Validation ✓
+- ✓ Expand VALID_SOURCES in models.py (imgt, ogrdb, vdjbase, custom)
+- SRC-02 moved to Phase 24 (validate source/species in germlines path)
+
+### Phase 20: Integration Foundation ✓
+- ✓ Add `use_germlines=True` to `References.from_yaml()`
+- ✓ Route explicit source to GermlineManager (providers=[source])
+- ✓ Generate synthetic `_id` in adapter (SHA-256 hash)
+
+### Phase 21: Build CLI ✓
+- ✓ Add `sadie reference build` command
+- ✓ Generate complete IgBLAST database structure
+- ✓ Progress output during build
+
+### Phase 22: Runtime Usage ✓
+- ✓ Add `Airr(database=<path>)` parameter
+- ✓ Skip germlines/G3 lookup with prebuilt
+- ✓ Validate database structure on load
+
+### Phase 23: Documentation ✓
+- ✓ Create reference-sample.yml (multi-source examples)
+- ✓ Document build → use workflow
+
+### Phase 24: Gap Closure ✓
+- ✓ Implement SRC-02 source/species validation for germlines
+- ✓ Add IMGT region positions so `--use-germlines` build succeeds
+- ✓ Create SUMMARY/VERIFICATION artifacts for phases 19-23
+
+## Milestone v1.1 Summary (Complete)
+
+**Final Result:** 98.29% structural parity between germlines and G3 backends
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 13 | Backend Parity Audit | ✓ Complete |
+| 14 | C Region Data Integration | ✓ Complete |
+| 15 | J Gene Matching & CDR3 Fix | ✓ Complete |
+| 16 | Fix NDM.IMGT FWR3 End | ✓ Complete |
+| 17 | Fix complete_vdj Quirk | ✓ Complete |
+| 18 | Document D-region Variance | ✓ Complete |
+
+## Key Files
+
+### v1.3 Target Files (Phase 31)
+- `src/sadie/reference/reference.py` — HMM building methods added
+- `src/sadie/germlines/renumbering_integration.py` — LocalHMMBuilder reference implementation
+
+### v1.2 Target Files
+- `src/sadie/reference/models.py` — Source validation expansion
+- `src/sadie/reference/reference.py` — from_yaml() germlines integration
+- `src/sadie/germlines/g3_adapter.py` — Add `_id` field generation
+- `src/sadie/reference/cli.py` — Build CLI command (new)
+- `src/sadie/airr/airr.py` — Database path parameter
+
+### v1.1 Artifacts
+- `audit/audit.md` — Detailed audit report
+- `audit/parity-notes.md` — Parity explanation
+- `audit/igblast-quirk.md` — IgBLAST quirk documentation
+
+## Accumulated Context
+
+### Roadmap Evolution
+- Phase 30 complete: Add _gapped.fasta support to CustomProvider
+- Phase 31 added: Add Database Parameter Support to Renumbering
+- Phase 31 complete: Add Database Parameter Support to Renumbering (HMM build + Renumbering/HMMER params)
+- Phase 32 added: Fix IgBLAST internal_data to Use Combined VDJC File (remove symlinks, match G3 structure)
+- Phase 32 complete: Create combined VDJC files for internal_data, fix complete_vdj calculation
+
+### Pending Todos
+- 1 pending todo(s) in `.planning/todos/pending/`
+
+## Session Continuity
+
+Last session: 2026-01-27
+Stopped at: Completed Phase 32-02 — Removed Phase 17 workaround code
+Resume file: None
+
+---
+*Last updated: 2026-01-27*

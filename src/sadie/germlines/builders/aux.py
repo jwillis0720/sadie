@@ -4,38 +4,30 @@ Auxiliary File Builder
 
 Generates IgBLAST auxiliary files from gapped germline sequences.
 
-IgBLAST auxiliary files contain:
-- CDR and FWR region boundaries
-- Chain type annotations
-- Sequence orientation
+IgBLAST auxiliary files for J genes contain (5 columns, tab-separated):
+<gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<is_functional>
 
-Format (tab-separated):
-<gene_name>\t<FWR1_start>\t<FWR1_end>\t<CDR1_start>\t<CDR1_end>...
+Example:
+IGHJ1*01	0	JH	17	1
+IGHJ2*01	1	JH	18	1
+IGKJ1*01	1	JK	6	1
 """
 
 import logging
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Optional
+
 from Bio import SeqIO
+
+from sadie.germlines.builders.j_gene_data import get_j_gene_data
 
 logger = logging.getLogger(__name__)
 
 
 # Constants
 CHAINS = ["H", "K", "L"]
-SEGMENTS = ["V", "J"]
-
-IMGT_REGIONS_V = {
-    "FWR1": (1, 26),
-    "CDR1": (27, 38),
-    "FWR2": (39, 55),
-    "CDR2": (56, 65),
-    "FWR3": (66, 104),
-}
-
-IMGT_REGIONS_J = {
-    "FWR4": (1, 13),
-}
+# Only J segments are needed for IgBLAST aux files
+SEGMENTS = ["J"]
 
 
 class AuxFileBuilder:
@@ -54,14 +46,11 @@ class AuxFileBuilder:
     ... )
     """
 
-    def build_for_species(
-        self,
-        species: str,
-        source_dir: Path,
-        output_file: Path
-    ) -> None:
+    def build_for_species(self, species: str, source_dir: Path, output_file: Path) -> None:
         """
         Build auxiliary file for species.
+
+        IgBLAST auxiliary files only contain J gene data.
 
         Parameters
         ----------
@@ -78,33 +67,19 @@ class AuxFileBuilder:
 
         aux_lines = []
 
-        # Process V and J segments (D doesn't have CDR/FWR)
+        # Process J segments only (IgBLAST aux files only need J genes)
         for chain in CHAINS:
-            for segment in SEGMENTS:
-                lines = self._process_segment(
-                    species,
-                    chain,
-                    segment,
-                    source_dir
-                )
-                aux_lines.extend(lines)
+            lines = self._process_segment(species, chain, "J", source_dir)  # Only J segments
+            aux_lines.extend(lines)
 
         # Write auxiliary file
         if aux_lines:
             output_file.write_text("\n".join(aux_lines) + "\n")
-            logger.info(
-                f"Wrote {len(aux_lines)} entries to {output_file}"
-            )
+            logger.info(f"Wrote {len(aux_lines)} entries to {output_file}")
         else:
             logger.warning(f"No auxiliary entries generated for {species}")
 
-    def _process_segment(
-        self,
-        species: str,
-        chain: str,
-        segment: str,
-        source_dir: Path
-    ) -> List[str]:
+    def _process_segment(self, species: str, chain: str, segment: str, source_dir: Path) -> List[str]:
         """
         Process single segment to generate aux entries.
 
@@ -144,130 +119,41 @@ class AuxFileBuilder:
             if aux_line:
                 aux_lines.append(aux_line)
 
-        logger.info(
-            f"Generated {len(aux_lines)} aux entries from {fasta_path.name}"
-        )
+        logger.info(f"Generated {len(aux_lines)} aux entries from {fasta_path.name}")
 
         return aux_lines
 
-    def _create_aux_entry(
-        self,
-        record,
-        chain: str,
-        segment: str
-    ) -> Optional[str]:
+    def _create_aux_entry(self, record, chain: str, segment: str) -> Optional[str]:
         """
-        Create auxiliary file entry for a single sequence.
+        Create auxiliary file entry for a J gene sequence.
 
-        IgBLAST aux format:
-        <gene_name>\t<FWR1_start>\t<FWR1_end>\t<CDR1_start>\t...
+        IgBLAST aux format for J genes (5 columns, tab-separated):
+        <gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<is_functional>
 
         Parameters
         ----------
         record : SeqRecord
             Sequence record
         chain : str
-            Chain type
+            Chain type (H, K, L)
         segment : str
-            Segment type
+            Segment type (must be "J")
 
         Returns
         -------
         str or None
-            Auxiliary file line
+            Auxiliary file line for J gene, None for other segments
         """
+        if segment != "J":
+            # Only J genes go in aux file
+            return None
+
         gene_name = record.id
-        gapped_seq = str(record.seq)
 
-        regions = self._parse_imgt_regions(gapped_seq, segment)
-        if not regions:
-            logger.debug(f"Could not parse regions for {gene_name}")
-            return None
+        # Get reference data for this J gene
+        reading_frame, chain_type, cdr3_end, is_functional = get_j_gene_data(gene_name, chain)
 
-        if segment == "V":
-            fields = [gene_name]
-            for region in ["FWR1", "CDR1", "FWR2", "CDR2", "FWR3"]:
-                if region in regions:
-                    start, end = regions[region]
-                    fields.extend([str(start), str(end)])
-                else:
-                    fields.extend(["0", "0"])
-            return "\t".join(fields)
-        elif segment == "J":
-            if "FWR4" in regions:
-                start, end = regions["FWR4"]
-                return f"{gene_name}\t{start}\t{end}"
-            return None
-
-        return None
-
-    def _parse_imgt_regions(
-        self,
-        gapped_sequence: str,
-        segment: str
-    ) -> Dict[str, tuple]:
-        """
-        Parse CDR/FWR regions from IMGT-gapped sequence.
-
-        Converts IMGT positions to ungapped sequence positions
-        by counting non-gap characters.
-
-        Parameters
-        ----------
-        gapped_sequence : str
-            IMGT-gapped sequence (with dots)
-        segment : str
-            Segment type (V or J)
-
-        Returns
-        -------
-        Dict[str, tuple]
-            Region boundaries {region_name: (start, end)}
-        """
-        if segment == "V":
-            imgt_regions = IMGT_REGIONS_V
-        elif segment == "J":
-            imgt_regions = IMGT_REGIONS_J
-        else:
-            return {}
-
-        position_map = self._build_position_map(gapped_sequence)
-        seq_len = len(gapped_sequence.replace(".", "").replace("-", ""))
-
-        regions = {}
-        for region_name, (imgt_start, imgt_end) in imgt_regions.items():
-            ungapped_start = position_map.get(imgt_start)
-            ungapped_end = position_map.get(imgt_end)
-
-            if ungapped_start is not None and ungapped_end is not None:
-                if ungapped_start <= seq_len and ungapped_end <= seq_len:
-                    regions[region_name] = (ungapped_start, ungapped_end)
-
-        return regions
-
-    def _build_position_map(self, gapped_sequence: str) -> Dict[int, int]:
-        """
-        Map IMGT gapped positions to ungapped positions.
-
-        Parameters
-        ----------
-        gapped_sequence : str
-            IMGT-gapped sequence
-
-        Returns
-        -------
-        Dict[int, int]
-            Mapping from IMGT position (1-based) to ungapped position
-        """
-        position_map = {}
-        ungapped_pos = 0
-
-        for gapped_pos, char in enumerate(gapped_sequence, start=1):
-            if char not in (".", "-"):
-                ungapped_pos += 1
-                position_map[gapped_pos] = ungapped_pos
-
-        return position_map
+        return f"{gene_name}\t{reading_frame}\t{chain_type}\t{cdr3_end}\t{is_functional}"
 
     def validate_aux_file(self, aux_file: Path) -> bool:
         """
@@ -294,11 +180,11 @@ class AuxFileBuilder:
                 logger.error("Aux file is empty")
                 return False
 
-            # Basic validation
+            # Validate J gene format (5 columns)
             for line in lines:
                 fields = line.split("\t")
-                if len(fields) < 4:
-                    logger.error(f"Invalid aux line: {line}")
+                if len(fields) != 5:
+                    logger.error(f"Invalid aux line (expected 5 columns): {line}")
                     return False
 
             logger.info(f"Aux file valid: {len(lines)} entries")

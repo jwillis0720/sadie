@@ -974,6 +974,89 @@ def test_imgt():
     print(number_imgt(state_vector, sequence))
 
 
+# =====================================================
+# Database Parameter Tests (Plan 31-02)
+# =====================================================
+
+
+def test_renumbering_with_database_parameter(tmp_path, fixture_setup):
+    """Test Renumbering uses custom HMMs from database path."""
+    import shutil
+
+    from sadie.germlines import get_germlines_base_dir
+
+    # Create mock HMM directory structure
+    hmms_dir = tmp_path / "hmms"
+    hmms_dir.mkdir()
+
+    # Copy an existing HMM file from germlines (if available)
+    germlines_hmm_dir = get_germlines_base_dir() / "hmms"
+    src_hmm = germlines_hmm_dir / "human_H.hmm"
+    if src_hmm.exists():
+        shutil.copy(src_hmm, hmms_dir / "human_H.hmm")
+    else:
+        # Build HMM if not available (requires LocalHMMBuilder)
+        pytest.skip("HMM file not found, skipping test")
+
+    # Test with database parameter
+    renumbering = Renumbering(
+        allowed_species=["human"],
+        allowed_chain=["H"],
+        database=tmp_path,
+    )
+
+    # Verify HMM directory was set correctly
+    assert renumbering.hmmer._hmm_dir == hmms_dir
+
+
+def test_renumbering_database_missing_hmms_raises(tmp_path):
+    """Test Renumbering raises error if hmms/ directory missing."""
+    with pytest.raises(FileNotFoundError, match="HMM directory not found"):
+        Renumbering(database=tmp_path)
+
+
+def test_renumbering_database_parameter_none():
+    """Test Renumbering default behavior without database parameter."""
+    renumbering = Renumbering(allowed_species=["human"])
+    assert renumbering.hmmer._hmm_dir is None
+
+
+def test_renumbering_with_database_runs_numbering(tmp_path, fixture_setup):
+    """Test Renumbering with custom database can actually number sequences."""
+    import shutil
+
+    from sadie.germlines import get_germlines_base_dir
+
+    # Create mock HMM directory structure
+    hmms_dir = tmp_path / "hmms"
+    hmms_dir.mkdir()
+
+    # Copy existing HMM file from germlines (if available)
+    germlines_hmm_dir = get_germlines_base_dir() / "hmms"
+    src_hmm = germlines_hmm_dir / "human_H.hmm"
+    if src_hmm.exists():
+        shutil.copy(src_hmm, hmms_dir / "human_H.hmm")
+    else:
+        pytest.skip("HMM file not found, skipping test")
+
+    # Test with database parameter
+    renumbering = Renumbering(
+        allowed_species=["human"],
+        allowed_chain=["H"],
+        database=tmp_path,
+    )
+
+    # Run numbering on a sequence
+    result = renumbering.run_single(
+        "test_seq",
+        "EVQLVESGGGLEQPGGSLRLSCAGSGFTFRDYAMTWVRQAPGKGLEWVSSISGSGGNTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKDRLSITIRPRYYGLDVWGQGTTVTVSS",
+    )
+
+    # Verify result is not empty
+    assert not result.empty
+    assert result.iloc[0].Id == "test_seq"
+
+
 # def benchmark_numbering_multi_on():
 #     renumbering_api = Renumbering(run_multiproc=True)
 #     seq_records = []

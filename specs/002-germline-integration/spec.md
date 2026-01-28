@@ -1,8 +1,8 @@
 # Feature Specification: Germline Database Integration
 
-**Feature Branch**: `002-germline-integration`  
-**Created**: 2026-01-19  
-**Status**: Planning Complete  
+**Feature Branch**: `002-germline-integration`
+**Created**: 2026-01-19
+**Status**: Planning Complete
 **Input**: Connect SADIE's new germline database to existing sadie.airr.Airr and sadie.numbering.Renumbering to allow picking new germlines database, plus create tests in tests/unit/germlines mirroring airr and renumbering tests using backend germline instead of default IMGT from G3
 
 ## User Scenarios & Testing *(mandatory)*

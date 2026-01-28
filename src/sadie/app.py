@@ -319,10 +319,25 @@ def reference() -> None:
 def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None:
     """make the igblast reference files
 
+    DEPRECATED: This command is deprecated. Use 'sadie reference build' instead.
+
     This script will make the imgt reference files used by igblast or airr, including internal data, the blast
     the blast database, and the auxillary files. It uses the reference.yml to configure select genes and species.
     If you update the reference.yml file, run this again.
     """
+    # Show deprecation warning
+    import warnings
+
+    warnings.warn(
+        "The 'sadie reference make' command is deprecated and will be removed in a future release.\n"
+        "Please use 'sadie reference build' instead:\n"
+        "  sadie reference build reference.yml -o /path/to/output",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+
+    click.echo("⚠️  WARNING: 'sadie reference make' is deprecated. Use 'sadie reference build' instead.\n")
+
     # Set the root logger in the console script
     # Get back a numeric level associated with number of clicks
     numeric_level = getVerbosityLevel(verbose)
@@ -341,6 +356,215 @@ def make_igblast_reference(verbose: int, outpath: Path, reference: Path) -> None
     germline_path = reference_object.make_airr_database(outpath)
     click.echo(f"Wrote germline database to {germline_path}")
     click.echo("Done!")
+
+
+@reference.command("build")
+@click.option(
+    "-v",
+    "--verbose",
+    count=True,
+    default=4,
+    help="Verbosity level, ex. -vvvvv for debug level logging",
+)
+@click.option(
+    "--output",
+    "-o",
+    required=True,
+    help="Output path for IgBLAST database structure",
+    type=click.Path(resolve_path=True, dir_okay=True, writable=True),
+)
+@click.option(
+    "--use-germlines/--no-use-germlines",
+    default=True,
+    help="Use local germlines module instead of G3 API (default: germlines module)",
+)
+@click.option(
+    "--force",
+    "-f",
+    is_flag=True,
+    default=False,
+    help="Remove existing output directory before building (clean build)",
+)
+@click.argument(
+    "yaml_path",
+    required=True,
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True),
+)
+def build_reference(verbose: int, output: str, use_germlines: bool, force: bool, yaml_path: str) -> None:
+    """Build IgBLAST database from reference.yml configuration.
+
+    Creates complete database structure including blast databases, internal
+    annotation files, and auxiliary files needed for AIRR annotation.
+
+    \b
+    Examples:
+        sadie reference build reference.yml --output ./db
+        sadie reference build my_refs.yml -o /data/germlines --use-germlines
+        sadie reference build ref.yml -o ./db --force  # Clean build
+    """
+    import shutil
+    import sys
+    from pathlib import Path
+
+    # Set logging level
+    numeric_level = getVerbosityLevel(verbose)
+    logging.basicConfig(level=numeric_level)
+
+    output_path = Path(output)
+
+    # Clean existing directory if --force flag is set
+    if force and output_path.exists():
+        click.echo(f"Removing existing directory: {output_path}")
+        shutil.rmtree(output_path)
+
+    try:
+        # Progress: Loading YAML
+        click.echo("Loading YAML...")
+        reference_object = References.from_yaml(Path(yaml_path), use_germlines=use_germlines)
+
+        # Progress: Fetching genes
+        click.echo("Fetching genes...")
+        # get_dataframe() triggers the actual gene fetching from G3/germlines
+        _ = reference_object.get_dataframe()
+
+        # Progress: Building databases...
+        click.echo("Building databases...")
+        germline_path = reference_object.make_airr_database(output_path)
+
+        # Progress: Complete
+        click.echo("Complete")
+        click.echo(f"Database written to: {germline_path}")
+
+    except Exception as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        sys.exit(1)
+
+
+@reference.command("generate")
+@click.option(
+    "--output",
+    "-o",
+    type=click.Path(resolve_path=True),
+    default="reference.yml",
+    help="Output YAML file path (default: reference.yml)",
+    show_default=True,
+)
+@click.option(
+    "--generate-all",
+    is_flag=True,
+    help="Generate complete reference.yml with all configured references",
+)
+@click.option(
+    "--name",
+    help="Reference name (e.g., human, mouse, clk)",
+)
+@click.option(
+    "--species",
+    help="Species to query (e.g., human, mouse, macaque)",
+)
+@click.option(
+    "--providers",
+    multiple=True,
+    type=click.Choice(["vdjbase", "ogrdb", "imgt", "custom"]),
+    default=["vdjbase", "ogrdb", "imgt"],
+    help="Germline providers to include (default: vdjbase ogrdb imgt)",
+)
+@click.option(
+    "--functional-only/--include-non-functional",
+    default=True,
+    help="Include only functional genes (default: functional-only)",
+)
+@click.option(
+    "--interactive",
+    "-i",
+    is_flag=True,
+    help="Interactive mode for gene selection",
+)
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Show what would be done without making changes",
+)
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="Show detailed output",
+)
+@click.option(
+    "--list-species",
+    is_flag=True,
+    help="List available species from germlines module",
+)
+def generate_reference(
+    output: str,
+    generate_all: bool,
+    name: Optional[str],
+    species: Optional[str],
+    providers: tuple,
+    functional_only: bool,
+    interactive: bool,
+    dry_run: bool,
+    verbose: bool,
+    list_species: bool,
+) -> None:
+    """Generate reference.yml file using SADIE germlines module.
+
+    This command uses the local germlines database (IMGT, OGRDB, VDJbase) to generate
+    reference.yml files used by 'sadie reference build' command.
+
+    \b
+    Examples:
+        sadie reference generate --generate-all
+        sadie reference generate --species human --output human.yml
+        sadie reference generate --interactive
+        sadie reference generate --list-species
+    """
+    import sys
+    from pathlib import Path
+
+    # Import the script's main functionality
+    script_path = Path(__file__).parent.parent.parent / "scripts" / "generate_reference_yaml_germlines.py"
+
+    if not script_path.exists():
+        click.echo("Error: generate_reference_yaml_germlines.py script not found", err=True)
+        sys.exit(1)
+
+    # Build command arguments
+    cmd = [sys.executable, str(script_path)]
+
+    if list_species:
+        cmd.append("--list-species")
+    elif interactive:
+        cmd.append("--interactive")
+    elif generate_all:
+        cmd.append("--generate-all")
+    elif species:
+        cmd.extend(["--species", species])
+        if name:
+            cmd.extend(["--name", name])
+    else:
+        click.echo("Error: Specify --generate-all, --species, --interactive, or --list-species", err=True)
+        sys.exit(1)
+
+    cmd.extend(["--output", output])
+
+    if providers:
+        cmd.append("--providers")
+        cmd.extend(providers)
+
+    if not functional_only:
+        cmd.append("--include-non-functional")
+
+    if dry_run:
+        cmd.append("--dry-run")
+
+    if verbose:
+        cmd.append("--verbose")
+
+    # Execute the script
+    result = subprocess.run(cmd, capture_output=False, text=True)
+    sys.exit(result.returncode)
 
 
 @sadie.command()
@@ -399,6 +623,12 @@ def make_all(
 ) -> None:
     """Comprehensive database generation for SADIE AIRR analysis
 
+    DEPRECATED: This command is deprecated and will be removed in a future release.
+    Use the new workflow instead:
+      1. sadie germlines populate              # Download germline data
+      2. sadie reference generate --generate-all  # Generate reference.yml
+      3. sadie reference build reference.yml -o ./db  # Build database
+
     This command performs all necessary steps to set up a complete AIRR analysis environment:
 
     1. Generates or updates reference.yml configuration (if needed)
@@ -430,11 +660,24 @@ def make_all(
     │       └── ...
     └── .references_dataframe.csv.gz  # Reference index
     """
+    # Show deprecation warning
+    import warnings
+
+    warnings.warn(
+        "The 'sadie make-all' command is deprecated and will be removed in a future release.\n"
+        "Please use the new workflow:\n"
+        "  1. sadie germlines populate              # Download germline data\n"
+        "  2. sadie reference generate --generate-all  # Generate reference.yml\n"
+        "  3. sadie reference build reference.yml -o ./db  # Build database",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+
+    click.echo("⚠️  WARNING: 'sadie make-all' is deprecated. See documentation for new workflow.\n")
+
     # Set logging level
     numeric_level = getVerbosityLevel(verbose)
     logging.basicConfig(level=numeric_level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    logger = logging.getLogger(__name__)
-
     # Default output path
     if not outpath:
         outpath = Path(__file__).parent.joinpath("airr/data/germlines").resolve()
@@ -473,7 +716,7 @@ def make_all(
 
             result = subprocess.run(cmd, capture_output=False, text=True)
             if result.returncode != 0:
-                click.echo(f"Error: Reference generation failed", err=True)
+                click.echo("Error: Reference generation failed", err=True)
                 raise click.ClickException("Failed to generate reference.yml")
             else:
                 click.echo("Reference.yml generated successfully")
@@ -487,12 +730,6 @@ def make_all(
     click.echo("STEP 2: Loading reference configuration")
     click.echo("=" * 60)
     reference_object = References.from_yaml(reference)
-
-    # Parse species list
-    if species == "all":
-        species_list = None  # Process all species in reference.yml
-    else:
-        species_list = [s.strip() for s in species.split(",")]
 
     # Step 3: Regenerate CATNAP references if requested
     if regenerate_catnap:
@@ -534,7 +771,7 @@ def make_all(
 
     try:
         # The make_airr_database method handles all three components
-        germline_path = reference_object.make_airr_database(Path(outpath) if outpath else Path.cwd())
+        reference_object.make_airr_database(Path(outpath) if outpath else Path.cwd())
 
         click.echo("\n✓ Database generation completed successfully!")
         click.echo(f"  - BLAST databases: {outpath}/Ig/blastdb/")
@@ -668,10 +905,10 @@ def germlines_populate(
 @germlines.command("status")
 def germlines_status() -> None:
     """Show status of germline databases."""
-    from sadie.germlines.cli import get_local_version, get_provider, is_up_to_date
-
     from rich.console import Console
     from rich.table import Table
+
+    from sadie.germlines.cli import get_local_version, is_up_to_date
 
     console = Console()
 
@@ -699,6 +936,328 @@ def germlines_status() -> None:
         table.add_row(prov_name, version, downloaded_at, str(species_count), status)
 
     console.print(table)
+
+
+@sadie.group("regenerate-tests")
+def regenerate_tests() -> None:
+    """Regenerate test fixtures for unit and integration tests.
+
+    These commands regenerate expected output files used by tests.
+    Run after making changes to germline databases or AIRR annotation logic.
+    """
+    pass
+
+
+@regenerate_tests.command("igl")
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="Show detailed output",
+)
+@click.option(
+    "--run-test",
+    is_flag=True,
+    help="Run associated tests after regeneration",
+)
+@click.option(
+    "--no-backup",
+    is_flag=True,
+    help="Skip backing up existing files",
+)
+def regenerate_igl(verbose: bool, run_test: bool, no_backup: bool) -> None:
+    """Regenerate IGL reference fixtures for macaque tests.
+
+    Regenerates:
+      - tests/data/fixtures/airr_tables/igl_out.feather
+      - tests/data/fixtures/airr_tables/bum_link_solution.feather
+
+    These fixtures are used by test_hard_igl_seqs and test_hard_igl_seqs_linked.
+
+    \b
+    Examples:
+        sadie regenerate-tests igl                    # Regenerate fixtures
+        sadie regenerate-tests igl --run-test         # Regenerate and run tests
+        sadie regenerate-tests igl --verbose          # Show detailed output
+    """
+    import shutil
+    from datetime import datetime
+
+    import pandas as pd
+
+    from sadie.airr import AirrTable, LinkedAirrTable
+    from sadie.airr import methods as airr_methods
+
+    # get_project_root() returns src/sadie, so go up two levels for actual project root
+    project_root = get_project_root().parent.parent
+    fixtures_dir = project_root / "tests" / "data" / "fixtures" / "airr_tables"
+
+    click.echo("=" * 60)
+    click.echo("Regenerating IGL Reference Fixtures")
+    click.echo("=" * 60)
+
+    # Define fixtures to regenerate
+    fixtures = [
+        {
+            "name": "IGL Single",
+            "input": fixtures_dir / "bum_igl_assignment_macaque.feather",
+            "output": fixtures_dir / "igl_out.feather",
+            "table_type": "AirrTable",
+        },
+        {
+            "name": "IGL Linked",
+            "input": fixtures_dir / "bum_link_input.feather",
+            "output": fixtures_dir / "bum_link_solution.feather",
+            "table_type": "LinkedAirrTable",
+        },
+    ]
+
+    results = []
+
+    for fixture in fixtures:
+        click.echo(f"\n[{fixture['name']}]")
+
+        # Check input exists
+        if not fixture["input"].exists():
+            click.echo(f"  ERROR: Input file not found: {fixture['input']}", err=True)
+            results.append({"name": fixture["name"], "status": "error", "reason": "input not found"})
+            continue
+
+        # Backup if exists and not skipped
+        if fixture["output"].exists() and not no_backup:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_path = fixture["output"].with_suffix(f".bak.{timestamp}.feather")
+            shutil.copy2(fixture["output"], backup_path)
+            if verbose:
+                click.echo(f"  Backed up to: {backup_path.name}")
+
+        try:
+            # Load input
+            if verbose:
+                click.echo(f"  Loading: {fixture['input'].name}")
+
+            if fixture["table_type"] == "AirrTable":
+                table = AirrTable(pd.read_feather(fixture["input"]))
+            else:
+                table = LinkedAirrTable(pd.read_feather(fixture["input"]))
+
+            # Process
+            if verbose:
+                click.echo("  Running termini buffers...")
+            processed = airr_methods.run_termini_buffers(table)
+
+            if verbose:
+                click.echo("  Running IGL assignment...")
+            output_df = airr_methods.run_igl_assignment(processed)
+
+            # Save
+            output_df.to_feather(fixture["output"])
+            click.echo(f"  SUCCESS: {fixture['output'].name} ({len(output_df)} rows)")
+            results.append({"name": fixture["name"], "status": "success", "rows": len(output_df)})
+
+        except Exception as e:
+            click.echo(f"  ERROR: {str(e)}", err=True)
+            results.append({"name": fixture["name"], "status": "error", "reason": str(e)})
+
+    # Summary
+    click.echo("\n" + "=" * 60)
+    success_count = sum(1 for r in results if r["status"] == "success")
+    click.echo(f"Completed: {success_count}/{len(fixtures)} fixtures regenerated")
+
+    # Run tests if requested
+    if run_test and success_count > 0:
+        click.echo("\n" + "=" * 60)
+        click.echo("Running Tests")
+        click.echo("=" * 60)
+
+        tests_dir = project_root / "tests" / "unit" / "airr"
+        test_cmd = [
+            sys.executable,
+            "-m",
+            "pytest",
+            str(tests_dir / "test_airr.py::test_hard_igl_seqs"),
+            str(tests_dir / "test_airr.py::test_hard_igl_seqs_linked"),
+            "-v",
+        ]
+
+        result = subprocess.run(test_cmd, capture_output=False)
+
+        if result.returncode == 0:
+            click.echo("\n✅ All tests passed!")
+        else:
+            click.echo("\n❌ Some tests failed", err=True)
+            sys.exit(1)
+
+
+@regenerate_tests.command("catnap")
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="Show detailed output",
+)
+@click.option(
+    "--run-test",
+    is_flag=True,
+    help="Run associated tests after regeneration",
+)
+@click.option(
+    "--no-backup",
+    is_flag=True,
+    help="Skip backing up existing files",
+)
+def regenerate_catnap(verbose: bool, run_test: bool, no_backup: bool) -> None:
+    """Regenerate CATNAP reference fixtures for integration tests.
+
+    Regenerates:
+      - tests/data/fixtures/airr_tables/catnap_heavy_airrtable.feather
+      - tests/data/fixtures/airr_tables/catnap_light_airrtable.feather
+
+    \b
+    Examples:
+        sadie regenerate-tests catnap                 # Regenerate fixtures
+        sadie regenerate-tests catnap --run-test     # Regenerate and run tests
+    """
+    import shutil
+    from datetime import datetime
+
+    # get_project_root() returns src/sadie, so go up two levels for actual project root
+    project_root = get_project_root().parent.parent
+    fixtures_dir = project_root / "tests" / "data" / "fixtures"
+
+    click.echo("=" * 60)
+    click.echo("Regenerating CATNAP Reference Fixtures")
+    click.echo("=" * 60)
+
+    fixtures = [
+        {
+            "name": "CATNAP Heavy",
+            "input": fixtures_dir / "fasta_inputs" / "catnap_nt_heavy.fasta",
+            "output": fixtures_dir / "airr_tables" / "catnap_heavy_airrtable.feather",
+        },
+        {
+            "name": "CATNAP Light",
+            "input": fixtures_dir / "fasta_inputs" / "catnap_nt_light.fasta",
+            "output": fixtures_dir / "airr_tables" / "catnap_light_airrtable.feather",
+        },
+    ]
+
+    results = []
+    airr_api = Airr("human", adaptable=True)
+
+    for fixture in fixtures:
+        click.echo(f"\n[{fixture['name']}]")
+
+        if not fixture["input"].exists():
+            click.echo(f"  ERROR: Input file not found: {fixture['input']}", err=True)
+            results.append({"name": fixture["name"], "status": "error"})
+            continue
+
+        # Backup
+        if fixture["output"].exists() and not no_backup:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_path = fixture["output"].with_suffix(f".bak.{timestamp}.feather")
+            shutil.copy2(fixture["output"], backup_path)
+            if verbose:
+                click.echo(f"  Backed up to: {backup_path.name}")
+
+        try:
+            if verbose:
+                click.echo(f"  Processing: {fixture['input'].name}")
+
+            result = airr_api.run_fasta(str(fixture["input"]))
+            result.to_feather(fixture["output"])
+
+            click.echo(f"  SUCCESS: {fixture['output'].name} ({len(result)} rows)")
+            results.append({"name": fixture["name"], "status": "success", "rows": len(result)})
+
+        except Exception as e:
+            click.echo(f"  ERROR: {str(e)}", err=True)
+            results.append({"name": fixture["name"], "status": "error"})
+
+    # Summary
+    click.echo("\n" + "=" * 60)
+    success_count = sum(1 for r in results if r["status"] == "success")
+    click.echo(f"Completed: {success_count}/{len(fixtures)} fixtures regenerated")
+
+
+@regenerate_tests.command("all")
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="Show detailed output",
+)
+@click.option(
+    "--run-tests",
+    is_flag=True,
+    help="Run all tests after regeneration",
+)
+@click.option(
+    "--no-backup",
+    is_flag=True,
+    help="Skip backing up existing files",
+)
+def regenerate_all(verbose: bool, run_tests: bool, no_backup: bool) -> None:
+    """Regenerate all test fixtures.
+
+    Runs all fixture regeneration commands in sequence:
+      1. IGL fixtures (macaque tests)
+      2. CATNAP fixtures (integration tests)
+
+    \b
+    Examples:
+        sadie regenerate-tests all                    # Regenerate all fixtures
+        sadie regenerate-tests all --run-tests       # Regenerate and run tests
+    """
+    from click.testing import CliRunner
+
+    runner = CliRunner()
+
+    click.echo("=" * 60)
+    click.echo("Regenerating All Test Fixtures")
+    click.echo("=" * 60)
+
+    # Build args
+    args = []
+    if verbose:
+        args.append("--verbose")
+    if no_backup:
+        args.append("--no-backup")
+
+    # Regenerate IGL
+    click.echo("\n>>> IGL Fixtures")
+    result = runner.invoke(regenerate_igl, args, catch_exceptions=False)
+    click.echo(result.output)
+
+    # Regenerate CATNAP
+    click.echo("\n>>> CATNAP Fixtures")
+    result = runner.invoke(regenerate_catnap, args, catch_exceptions=False)
+    click.echo(result.output)
+
+    # Run tests if requested
+    if run_tests:
+        click.echo("\n" + "=" * 60)
+        click.echo("Running Full Test Suite")
+        click.echo("=" * 60)
+
+        project_root = get_project_root().parent.parent
+        test_cmd = [
+            sys.executable,
+            "-m",
+            "pytest",
+            str(project_root / "tests" / "unit" / "airr"),
+            "-v",
+            "--tb=short",
+        ]
+
+        result = subprocess.run(test_cmd, capture_output=False)
+
+        if result.returncode == 0:
+            click.echo("\n✅ All tests passed!")
+        else:
+            click.echo("\n❌ Some tests failed", err=True)
+            sys.exit(1)
 
 
 if __name__ == "__main__":

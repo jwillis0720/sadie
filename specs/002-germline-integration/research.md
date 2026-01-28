@@ -248,4 +248,3 @@ Phase 0 complete. Proceed to Phase 1:
 2. Create contracts/ (API interfaces)
 3. Create quickstart.md (integration guide)
 4. Update agent context
-

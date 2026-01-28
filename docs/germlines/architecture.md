@@ -45,7 +45,7 @@ The germlines module is a staged pipeline that downloads, processes, merges, and
 ┌─────────────────────────────────────────────────────────────┐
 │                  Stage 2: Merge                              │
 │  Priority-based deduplication:                               │
-│  Custom > OGRDB > VDJbase > IMGT                            │
+│  VDJbase > OGRDB > IMGT > Custom                            │
 │                                                              │
 │  Output: Merged FASTA per species/locus                     │
 └────────────────────┬────────────────────────────────────────┘
@@ -230,7 +230,7 @@ def merge_sequences(
     merged = {}
 
     # Process in reverse priority order (lowest first)
-    for provider in ['imgt', 'vdjbase', 'ogrdb', 'custom']:
+    for provider in ['custom', 'imgt', 'ogrdb', 'vdjbase']:
         if provider not in providers:
             continue
 

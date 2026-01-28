@@ -1,0 +1,10 @@
+{
+  "internal_name": "sheep",
+  "species_variants": [
+    "Ovis aries",
+    "Ovis aries_Rambouillet",
+    "Ovis aries_Texel"
+  ],
+  "count": 3,
+  "updated_at": "2026-01-27T07:41:36.479639"
+}

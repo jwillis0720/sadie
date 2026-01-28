@@ -5,10 +5,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 SOURCES_DIR = Path(__file__).parent.parent / "sources"
@@ -47,7 +44,7 @@ def validate_fasta_file(path: Path) -> tuple[bool, list[str]]:
     except Exception as e:
         return False, [f"Read error: {e}"]
 
-    lines = content.strip().split('\n')
+    lines = content.strip().split("\n")
     if not lines:
         return False, ["No content"]
 
@@ -120,10 +117,7 @@ def validate_provider(provider: str, species: Optional[str] = None) -> tuple[boo
         for fasta in sp_dir.glob("*.fasta"):
             results["total_files"] += 1
             valid, errors = validate_fasta_file(fasta)
-            results["species"][sp_name]["files"][fasta.name] = {
-                "valid": valid,
-                "errors": errors
-            }
+            results["species"][sp_name]["files"][fasta.name] = {"valid": valid, "errors": errors}
             if valid:
                 results["valid_files"] += 1
             else:

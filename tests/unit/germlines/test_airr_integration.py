@@ -140,9 +140,9 @@ class TestAirrIntegration:
         # Verify GermlineData uses legacy paths
         gd = GermlineData("human")
         # Legacy path should be in airr/data/germlines
-        assert "airr" in str(gd.base_dir) or "data" in str(gd.base_dir), (
-            "Should use legacy G3 paths when feature flag disabled"
-        )
+        assert "airr" in str(gd.base_dir) or "data" in str(
+            gd.base_dir
+        ), "Should use legacy G3 paths when feature flag disabled"
 
 
 class TestGermlineDataPaths:
@@ -170,9 +170,7 @@ class TestGermlineDataPaths:
         gd = GermlineData("human")
 
         # Check that paths point to legacy location
-        assert "airr" in str(gd.base_dir) or "data" in str(gd.base_dir), (
-            f"Should use legacy path, got {gd.base_dir}"
-        )
+        assert "airr" in str(gd.base_dir) or "data" in str(gd.base_dir), f"Should use legacy path, got {gd.base_dir}"
 
 
 class TestOfflineOperation:
@@ -229,6 +227,7 @@ class TestOfflineOperation:
 
         # Patch germlines base dir to point to empty location
         from sadie.germlines import get_germlines_base_dir
+
         original_base_dir = get_germlines_base_dir()
 
         def mock_base_dir():
@@ -240,6 +239,7 @@ class TestOfflineOperation:
         # or raise a clear error
         try:
             from sadie.airr.igblast.germline import GermlineData as GD
+
             # This may raise an error about missing databases
             gd = GD("human")
             # If it doesn't raise, check that paths are properly set
@@ -247,6 +247,6 @@ class TestOfflineOperation:
         except (FileNotFoundError, ValueError) as e:
             # This is expected - should have clear error message
             error_msg = str(e).lower()
-            assert "not found" in error_msg or "missing" in error_msg or "exist" in error_msg, (
-                f"Error should mention missing database: {e}"
-            )
+            assert (
+                "not found" in error_msg or "missing" in error_msg or "exist" in error_msg
+            ), f"Error should mention missing database: {e}"

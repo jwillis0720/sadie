@@ -23,14 +23,14 @@ Download data using:
 
 import logging
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
-from datetime import datetime
+
 from Bio import SeqIO
 
-from .base import GermlineProvider
 from ..models import GermlineGene, ProviderMetadata
-
+from .base import GermlineProvider
 
 logger = logging.getLogger(__name__)
 
@@ -62,17 +62,28 @@ class OGRDBProvider(GermlineProvider):
     >>> provider = OGRDBProvider()
     >>> genes = provider.fetch_genes("human", "V", "H")
     >>> print(f"Found {len(genes)} OGRDB IGHV genes")
-    
+
     >>> # Download data from Zenodo archive
     >>> provider.download(["human", "mouse"])
     """
 
-    def fetch_genes(
-        self,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> List[GermlineGene]:
+    def __init__(self, data_dir: Optional[Path] = None):
+        """
+        Initialize OGRDB provider.
+
+        Parameters
+        ----------
+        data_dir : Path, optional
+            Base directory for OGRDB data.
+            Defaults to sources/ogrdb/
+        """
+        if data_dir is None:
+            data_dir = Path(__file__).parent.parent / "sources" / "ogrdb"
+
+        super().__init__(data_dir)
+        self.name = "ogrdb"
+
+    def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch OGRDB genes from downloaded FASTA files.
 
@@ -120,12 +131,7 @@ class OGRDBProvider(GermlineProvider):
 
         return genes
 
-    def _get_gapped_fasta_path(
-        self,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> Path:
+    def _get_gapped_fasta_path(self, species: str, segment: str, chain: str) -> Path:
         """
         Get path to gapped FASTA file.
 
@@ -174,7 +180,7 @@ class OGRDBProvider(GermlineProvider):
         species: str,
         segment: str,
         chain: str,
-        gapped_sequences: Optional[Dict[str, str]] = None
+        gapped_sequences: Optional[Dict[str, str]] = None,
     ) -> List[GermlineGene]:
         """
         Parse OGRDB FASTA file.
@@ -207,21 +213,14 @@ class OGRDBProvider(GermlineProvider):
             return []
 
         for record in records:
-            gene = self._create_ogrdb_gene(
-                record, species, segment, chain, gapped_sequences
-            )
+            gene = self._create_ogrdb_gene(record, species, segment, chain, gapped_sequences)
             if gene:
                 genes.append(gene)
 
         return genes
 
     def _create_ogrdb_gene(
-        self,
-        record,
-        species: str,
-        segment: str,
-        chain: str,
-        gapped_sequences: Optional[Dict[str, str]] = None
+        self, record, species: str, segment: str, chain: str, gapped_sequences: Optional[Dict[str, str]] = None
     ) -> Optional[GermlineGene]:
         """
         Create GermlineGene from OGRDB SeqRecord.
@@ -276,11 +275,7 @@ class OGRDBProvider(GermlineProvider):
             logger.error(f"Failed to create OGRDB gene {gene_name}: {e}")
             return None
 
-    def fetch_gene_by_name(
-        self,
-        name: str,
-        species: str
-    ) -> Optional[GermlineGene]:
+    def fetch_gene_by_name(self, name: str, species: str) -> Optional[GermlineGene]:
         """
         Fetch specific OGRDB gene by name.
 
@@ -296,7 +291,7 @@ class OGRDBProvider(GermlineProvider):
         GermlineGene or None
             Gene if found
         """
-        for segment in ["V", "D", "J"]:
+        for segment in ["V", "D", "J", "C"]:
             for chain in ["H", "K", "L"]:
                 genes = self.fetch_genes(species, segment, chain)
                 for gene in genes:
@@ -369,12 +364,12 @@ class OGRDBProvider(GermlineProvider):
         >>> provider.download(["human"])
         """
         from ..scripts.download_ogrdb import OGRDBDownloader
-        
+
         start_time = time.time()
-        
+
         downloader = OGRDBDownloader(output_dir=self.data_dir)
         downloader.download(species)
-        
+
         duration_ms = int((time.time() - start_time) * 1000)
         logger.info(
             f"operation=download provider=ogrdb "

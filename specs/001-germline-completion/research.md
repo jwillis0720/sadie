@@ -117,9 +117,9 @@ https://vdjbase.org/static/study_data/VDJbase/samples/{species}/{chain}/{study}/
 ```python
 class VDJbaseProvider(GermlineProvider):
     """VDJbase integration using REST API with local caching."""
-    
+
     BASE_URL = "https://vdjbase.org/admin/api"
-    
+
     def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         # 1. Check local cache first (offline-first)
         # 2. If not cached, paginate API and cache results

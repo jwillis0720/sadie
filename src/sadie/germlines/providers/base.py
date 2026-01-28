@@ -12,8 +12,8 @@ Design Principles:
 
 import logging
 from abc import ABC, abstractmethod
-from typing import List, Optional
 from pathlib import Path
+from typing import List, Optional
 
 from ..models import GermlineGene, ProviderMetadata
 
@@ -73,12 +73,7 @@ class GermlineProvider(ABC):
         return class_name.replace("Provider", "").lower()
 
     @abstractmethod
-    def fetch_genes(
-        self,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> List[GermlineGene]:
+    def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch genes for given species/segment/chain.
 
@@ -99,11 +94,7 @@ class GermlineProvider(ABC):
         pass
 
     @abstractmethod
-    def fetch_gene_by_name(
-        self,
-        name: str,
-        species: str
-    ) -> Optional[GermlineGene]:
+    def fetch_gene_by_name(self, name: str, species: str) -> Optional[GermlineGene]:
         """
         Fetch specific gene by name.
 
@@ -167,12 +158,7 @@ class GermlineProvider(ABC):
         """
         pass
 
-    def get_fasta_path(
-        self,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> Path:
+    def get_fasta_path(self, species: str, segment: str, chain: str) -> Path:
         """
         Get path to FASTA file for segment.
 

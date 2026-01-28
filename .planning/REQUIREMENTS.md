@@ -1,76 +1,208 @@
 # Requirements: Germline Database Integration
 
-## v1 Requirements
+**Defined:** 2026-01-22
+**Core Value:** Enable researchers to select germline database for AIRR annotation and renumbering
 
-### Provider Selection
+## v1.2 Requirements
 
-- [x] **PROV-01**: System MUST allow users to specify a germline provider (imgt, ogrdb, vdjbase, custom) when initializing AIRR analysis (FR-001)
-- [x] **PROV-02**: System MUST allow users to specify a germline provider when initializing Renumbering operations (FR-002)
-- [x] **PROV-03**: System MUST expose a `germline_backend` parameter accepting "g3" (default) or "germlines" (FR-003)
-- [ ] **PROV-04**: System MUST use default provider priority (custom > ogrdb > vdjbase > imgt) when no provider specified (FR-004)
-- [x] **PROV-05**: System MUST use local germlines module data when germlines backend selected (FR-005)
-- [ ] **PROV-06**: System MUST apply single provider selection to all V/D/J segments within a run (FR-014)
+Requirements for Reference Module Unification milestone.
 
-### Error Handling
+### Source Validation
 
-- [ ] **ERR-01**: System MUST provide clear error messages when provider has no data for specified species (FR-006)
-- [ ] **ERR-02**: System MUST validate custom germlines at ingestion, rejecting invalid sequences with detailed errors (FR-012)
-- [ ] **ERR-03**: System MUST ensure gapped AA sequences available for all V/J genes in HMM building; fail with clear error if missing (FR-013)
-- [ ] **ERR-04**: System MUST NOT silently fall back to G3 when germlines backend fails (NFR-002)
+- [x] **SRC-01**: Expand VALID_SOURCES to include `ogrdb`, `vdjbase`
+- [x] **SRC-02**: Validate source exists in germlines before processing
 
-### Backwards Compatibility
+### Integration
 
-- [x] **COMPAT-01**: G3 remains default backend; germlines is opt-in via explicit parameter (FR-007)
-- [x] **COMPAT-02**: Existing tests in tests/unit/airr/ continue to pass
-- [x] **COMPAT-03**: Existing tests in tests/unit/renumbering/ continue to pass
-- [x] **COMPAT-04**: Output format/schema identical regardless of provider (FR-011)
+- [x] **INT-01**: Add `use_germlines=True` parameter to `References.from_yaml()`
+- [x] **INT-02**: Route source selection through GermlineManager (explicit source, no priority)
+- [x] **INT-03**: Generate synthetic `_id` field in adapter
 
-### Testing
+### Build CLI
 
-- [x] **TEST-01**: New test directory tests/unit/germlines/ with mirrored AIRR tests (FR-008)
-- [x] **TEST-02**: Mirrored renumbering tests using germlines backend (FR-009)
-- [ ] **TEST-03**: Tests verify same species/chains/segments supported as existing modules (FR-010)
-- [ ] **TEST-04**: Gapped AA fallback translation test when only gapped NT available
+- [x] **CLI-01**: Add `sadie reference build <yaml> --output <path>` command
+- [x] **CLI-02**: Build generates complete IgBLAST database structure
+- [x] **CLI-03**: Progress output during build
 
-### Performance
+### Runtime Usage
 
-- [x] **PERF-01**: Germline lookup performance equivalent to G3 backend (NFR-001)
+- [x] **RUN-01**: Add `Airr(database=<path>)` parameter to use prebuilt database
+- [x] **RUN-02**: Skip germlines/G3 lookup when using prebuilt database
+- [x] **RUN-03**: Validate database structure on load
 
-## v2 Requirements (Deferred)
+### Documentation
 
-- Multi-provider blending per analysis (currently single provider per run)
-- GUI for provider selection
-- Provider-specific analytics/reporting
+- [x] **DOC-01**: Create reference-sample.yml (mouse=imgt, human=ogrdb, macaque=vdjbase)
+- [x] **DOC-02**: Document build → use workflow
+
+---
+
+## v1.1 Requirements (Complete)
+
+Requirements for audit validation milestone.
+
+### Phase 13: Audit
+
+- [x] **AUDIT-01**: Run AIRR annotation with germlines backend on test sequences
+- [x] **AUDIT-02**: Run AIRR annotation with G3 backend on same sequences
+- [x] **AUDIT-03**: Compare results for column-level identity (excluding source column)
+- [x] **AUDIT-04**: Document any discrepancies with root cause analysis
+
+### Phase 14: C Region Integration
+
+- [x] **CREG-01**: Update germlines sources to pull C region data from IMGT/OGRDB/VDJbase
+- [x] **CREG-02**: Generate IgBLAST C gene databases in germlines module
+- [x] **CREG-03**: Verify C gene columns present in AIRR output
+- [x] **CREG-04**: Re-run audit to validate parity improvement
+
+### Phase 15: J Gene Matching
+
+- [x] **JFIX-01**: Investigate IgBLAST J gene database configuration
+- [x] **JFIX-02**: Verify aux file format and content (fixed: 5-column format)
+- [x] **JFIX-03**: Check internal_data directory structure
+- [x] **JFIX-04**: Debug IgBLAST execution and parameters
+- [x] **JFIX-05**: Re-run audit to validate CDR3 annotation
+
+### Phase 16: NDM.IMGT FWR3 Fix
+
+- [x] **NDM-01**: Fix build_internal_data.py to calculate correct FWR3 end position
+- [x] **NDM-02**: Regenerate ndm.imgt files for human
+- [x] **NDM-03**: Re-run audit to validate parity improvement
+
+### Phase 17: complete_vdj Fix
+
+- [x] **VDJ-01**: Investigate post-processing solution (AIRR-standard recalculation)
+- [x] **VDJ-03**: Verify complete_vdj is accurate per AIRR standard
+- [x] **VDJ-04**: Document the IgBLAST quirk in audit/igblast-quirk.md
 
 ## Out of Scope
 
-- T-cell receptor (TR) germlines — focus on immunoglobulin (IG) only
-- Real-time provider synchronization — manual update via update_databases()
-- Provider switching mid-linked-analysis consistency — user responsibility
+| Feature | Reason |
+|---------|--------|
+| Renumbering parity audit | Focus on AIRR first, renumbering already tested in v1.0 |
+| Performance benchmarking | Parity focus, not speed |
+| Multi-species audit | Human only for initial validation |
+| Multi-provider blending per analysis | Out of scope for v1.2 |
+| Automatic G3 fallback | Explicit source only |
+| Real-time provider sync | Offline databases |
+| Per-gene source overrides | Reference-level source only |
+| TR (T-cell receptor) support | IG focus for v1.2 |
 
 ## Traceability
 
-| Requirement | Phase | Tasks |
-|-------------|-------|-------|
-| PROV-01 | Phase 3 (US1: AIRR) | T010-T015 |
-| PROV-02 | Phase 4 (US2: Renumbering) | T016-T023 |
-| PROV-03 | Phase 2 (Foundational) | T005-T009 |
-| PROV-04 | Phase 9 (Compliance) | T058 |
-| PROV-05 | Phase 3, 4 | T010-T023 |
-| PROV-06 | Phase 9 (Compliance) | T053-T054 |
-| ERR-01 | Phase 9 (Compliance) | T055 |
-| ERR-02 | Phase 9 (Compliance) | T056 |
-| ERR-03 | Phase 9 (Compliance) | T004a, T035a, T060 |
-| ERR-04 | Phase 9 (Compliance) | T055, T059 |
-| COMPAT-01 | Phase 2 (Foundational) | T009, T012 |
-| COMPAT-02 | Phase 8 (Polish) | T052 |
-| COMPAT-03 | Phase 8 (Polish) | T052 |
-| COMPAT-04 | Phase 5 (Reference) | T030 |
-| TEST-01 | Phase 6 (US3: Tests) | T031-T035 |
-| TEST-02 | Phase 6 (US3: Tests) | T036-T038 |
-| TEST-03 | Phase 9 (Compliance) | T057 |
-| TEST-04 | Phase 6 (US3: Tests) | T035a |
-| PERF-01 | Phase 8 (Polish) | T049-T050 |
+### v1.2 Requirements Mapping
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| SRC-01 | Phase 19 | Complete |
+| SRC-02 | Phase 24 | Complete |
+| INT-01 | Phase 20 | Complete |
+| INT-02 | Phase 20 | Complete |
+| INT-03 | Phase 20 | Complete |
+| CLI-01 | Phase 21 | Complete |
+| CLI-02 | Phase 21 | Complete |
+| CLI-03 | Phase 21 | Complete |
+| RUN-01 | Phase 22 | Complete |
+| RUN-02 | Phase 22 | Complete |
+| RUN-03 | Phase 22 | Complete |
+| DOC-01 | Phase 23 | Complete |
+| DOC-02 | Phase 23 | Complete |
+
+**v1.2 Coverage:**
+- Total requirements: 12
+- Mapped to phases: 12
+- Complete: 12 ✓
+- Unmapped: 0 ✓
+
+### v1.1 Requirements Mapping
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| AUDIT-01 | Phase 13 | Complete |
+| AUDIT-02 | Phase 13 | Complete |
+| AUDIT-03 | Phase 13 | Complete |
+| AUDIT-04 | Phase 13 | Complete |
+| CREG-01 | Phase 14 | Complete |
+| CREG-02 | Phase 14 | Complete |
+| CREG-03 | Phase 14 | Complete |
+| CREG-04 | Phase 14 | Complete |
+| JFIX-01 | Phase 15 | Complete |
+| JFIX-02 | Phase 15 | Complete |
+| JFIX-03 | Phase 15 | Complete |
+| JFIX-04 | Phase 15 | Complete |
+| JFIX-05 | Phase 15 | Complete |
+| NDM-01 | Phase 16 | Complete |
+| NDM-02 | Phase 16 | Complete |
+| NDM-03 | Phase 16 | Complete |
+| VDJ-01 | Phase 17 | Complete |
+| VDJ-03 | Phase 17 | Complete |
+| VDJ-04 | Phase 17 | Complete |
+
+**v1.1 Coverage:**
+- Total requirements: 19
+- Mapped to phases: 19
+- Complete: 19 ✓
+- Unmapped: 0 ✓
 
 ---
-*Last updated: 2026-01-21 — converted from spec-kit FR/NFR requirements*
+
+## v1.3 Requirements
+
+Requirements for Test Infrastructure & Species Expansion milestone.
+
+### Phase 25: Macaque Germlines Integration
+
+- [x] **MAC-01**: Build macaque IgBLAST databases in germlines module
+- [x] **MAC-02**: Generate macaque internal_data and aux files
+- [x] **MAC-03**: Verify macaque AIRR annotation works
+- [x] **MAC-04**: Remove skip markers from macaque tests
+
+### Phase 26: AIRR Package Dependency
+
+- [x] **AIRR-01**: Add `airr` package to pyproject.toml dependencies
+- [x] **AIRR-02**: Verify airr package installs correctly
+- [x] **AIRR-03**: Remove importorskip from test
+
+### Phase 27: Remove Deprecated G3 Tests
+
+- [x] **G3-01**: Review what these tests are validating
+- [x] **G3-02**: Determine if equivalent germlines module tests exist
+- [x] **G3-03**: Either migrate tests to germlines or remove if redundant
+- [x] **G3-04**: Update deprecation timeline documentation
+
+### Phase 28: Fix Germline Priority Order
+
+- [x] **PRIO-01**: Update default provider priority in GermlineManager
+- [x] **PRIO-02**: Document priority rationale in code comments
+- [x] **PRIO-03**: Verify priority order used in fallback resolution
+- [x] **PRIO-04**: Test priority order with multi-source queries
+
+### v1.3 Requirements Mapping
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| MAC-01 | Phase 25 | Complete |
+| MAC-02 | Phase 25 | Complete |
+| MAC-03 | Phase 25 | Complete |
+| MAC-04 | Phase 25 | Complete |
+| AIRR-01 | Phase 26 | Complete |
+| AIRR-02 | Phase 26 | Complete |
+| AIRR-03 | Phase 26 | Complete |
+| G3-01 | Phase 27 | Complete |
+| G3-02 | Phase 27 | Complete |
+| G3-03 | Phase 27 | Complete |
+| G3-04 | Phase 27 | Complete |
+| PRIO-01 | Phase 28 | Complete |
+| PRIO-02 | Phase 28 | Complete |
+| PRIO-03 | Phase 28 | Complete |
+| PRIO-04 | Phase 28 | Complete |
+
+**v1.3 Coverage:**
+- Total requirements: 15
+- Mapped to phases: 15
+- Complete: 15 ✓
+- Pending: 0 ✓
+
+---
+*Requirements defined: 2026-01-22*
+*Last updated: 2026-01-25 — v1.3 Milestone complete*

@@ -60,6 +60,7 @@ markdown_extensions: #
 nav: # this is how we layout the documents
   - SADIE: index.md
   - Reference Database: reference.md
+  - Custom Reference Databases: reference-workflow.md
   - Germline Database Management:
     - Overview: germlines/index.md
     - CLI Reference: germlines/cli-reference.md

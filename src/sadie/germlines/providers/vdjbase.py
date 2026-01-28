@@ -19,21 +19,22 @@ Supported Species:
 Note: VDJbase sequences are UNGAPPED - require gapper module for IMGT formatting.
 """
 
-import logging
 import json
+import logging
 import time
-from pathlib import Path
-from typing import List, Optional, Dict, Any
 from datetime import datetime
-from urllib.request import urlopen, Request
-from urllib.error import URLError, HTTPError
-from urllib.parse import quote
-from Bio import SeqIO
 from io import StringIO
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+from urllib.error import HTTPError, URLError
+from urllib.parse import quote
+from urllib.request import Request, urlopen
 
-from .base import GermlineProvider
+from Bio import SeqIO
+
+from ..builders.gapper import GapperService
 from ..models import GermlineGene, ProviderMetadata
-
+from .base import GermlineProvider
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ VDJBASE_ADMIN_API_BASE = "https://vdjbase.org/admin/api"
 # Species name mapping (VDJbase API names to internal names)
 SPECIES_MAP = {
     "Human": "human",
-    "Rhesus Macaque": "rhesus_macaque",
+    "Rhesus Macaque": "macaque",  # Changed from rhesus_macaque
     "Mouse": "mouse",
 }
 
@@ -54,7 +55,7 @@ SPECIES_MAP_REVERSE = {v: k for k, v in SPECIES_MAP.items()}
 # Chain to dataset mapping
 CHAIN_TO_DATASET = {
     "H": "IGH",
-    "K": "IGK", 
+    "K": "IGK",
     "L": "IGL",
 }
 
@@ -86,12 +87,12 @@ class VDJbaseProvider(GermlineProvider):
     >>> provider = VDJbaseProvider()
     >>> genes = provider.fetch_genes("human", "V", "H")
     >>> print(f"Found {len(genes)} VDJbase IGHV genes")
-    
+
     >>> # Download data from VDJbase API
     >>> provider.download(["human", "rhesus_macaque"])
     """
 
-    def __init__(self, data_dir: Optional[Path] = None):
+    def __init__(self, data_dir: Optional[Path] = None, template_dir: Optional[Path] = None):
         """
         Initialize VDJbase provider.
 
@@ -100,20 +101,52 @@ class VDJbaseProvider(GermlineProvider):
         data_dir : Path, optional
             Base directory for VDJbase data.
             Defaults to sources/vdjbase/
+        template_dir : Path, optional
+            Directory containing IMGT-gapped templates for auto-gapping.
+            Defaults to sources/imgt/ (sibling of vdjbase/)
         """
         if data_dir is None:
             data_dir = Path(__file__).parent.parent / "sources" / "vdjbase"
-        
+
         super().__init__(data_dir)
         self.name = "vdjbase"
         self._api_cache: Dict[str, Any] = {}
+        if template_dir is None:
+            template_dir = self.data_dir.parent / "imgt"
+        self.template_dir = template_dir
+        self._gappers: Dict[str, tuple[GapperService, str]] = {}
 
-    def fetch_genes(
-        self,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> List[GermlineGene]:
+    def _get_gapper(self, species: str) -> tuple[GapperService, str]:
+        """
+        Get or create a GapperService for the given species.
+
+        Falls back to human IMGT templates if species-specific templates
+        aren't available, since IG gene structure is conserved across species.
+        """
+        cache_key = species
+
+        if cache_key not in self._gappers:
+            if self.template_dir is None:
+                self._gappers[cache_key] = (GapperService(template_dir=None), species)
+                logger.warning(f"No IMGT templates found, gapping disabled for {species}")
+                return self._gappers[cache_key]
+
+            species_template_dir = self.template_dir / species
+            if species_template_dir.exists():
+                self._gappers[cache_key] = (GapperService(template_dir=self.template_dir), species)
+                logger.info(f"Initialized gapper with {species} templates")
+            else:
+                human_template_dir = self.template_dir / "human"
+                if human_template_dir.exists():
+                    self._gappers[cache_key] = (GapperService(template_dir=self.template_dir), "human")
+                    logger.info(f"Using human IMGT templates for {species} (no species-specific templates)")
+                else:
+                    self._gappers[cache_key] = (GapperService(template_dir=None), species)
+                    logger.warning(f"No IMGT templates found, gapping disabled for {species}")
+
+        return self._gappers[cache_key]
+
+    def fetch_genes(self, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Fetch VDJbase genes from local FASTA files.
 
@@ -134,16 +167,14 @@ class VDJbaseProvider(GermlineProvider):
         fasta_path = self.get_fasta_path(species, segment, chain)
 
         if not fasta_path.exists():
-            logger.warning(
-                f"VDJbase data not found at {fasta_path}. "
-                "Skipping VDJbase provider."
-            )
+            # D genes don't exist for light chains - this is expected
+            logger.debug(f"VDJbase data not found at {fasta_path}. Skipping.")
             return []
 
         logger.info(f"Loading VDJbase FASTA: {fasta_path}")
-        
+
         genes = self._parse_vdjbase_fasta(fasta_path, species, segment, chain)
-        
+
         logger.info(
             f"operation=load_vdjbase provider=vdjbase "
             f"species={species} segment={segment} chain={chain} "
@@ -152,13 +183,7 @@ class VDJbaseProvider(GermlineProvider):
 
         return genes
 
-    def _parse_vdjbase_fasta(
-        self,
-        fasta_path: Path,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> List[GermlineGene]:
+    def _parse_vdjbase_fasta(self, fasta_path: Path, species: str, segment: str, chain: str) -> List[GermlineGene]:
         """
         Parse VDJbase FASTA file.
 
@@ -196,13 +221,7 @@ class VDJbaseProvider(GermlineProvider):
 
         return genes
 
-    def _create_vdjbase_gene(
-        self,
-        record,
-        species: str,
-        segment: str,
-        chain: str
-    ) -> Optional[GermlineGene]:
+    def _create_vdjbase_gene(self, record, species: str, segment: str, chain: str) -> Optional[GermlineGene]:
         """
         Create GermlineGene from VDJbase SeqRecord.
 
@@ -225,7 +244,7 @@ class VDJbaseProvider(GermlineProvider):
         # Parse header - VDJbase format or simple gene name
         header_parts = record.description.split("|")
         gene_name = header_parts[0].strip()
-        
+
         # Extract metadata from header if present
         metadata = {}
         for part in header_parts[1:]:
@@ -234,16 +253,32 @@ class VDJbaseProvider(GermlineProvider):
                 metadata[key.strip()] = value.strip()
 
         sequence = str(record.seq).upper()
-        
+
         # VDJbase sequences are typically ungapped
         is_gapped = "." in sequence or "-" in sequence
+
+        segment_upper = segment.upper()
 
         if is_gapped:
             sequence_gapped = sequence
             sequence_ungapped = sequence.replace(".", "").replace("-", "")
         else:
             sequence_ungapped = sequence
-            sequence_gapped = None  # Will be gapped by gapper module
+            sequence_gapped = None  # Will be gapped by gapper module if possible
+
+            if segment_upper in ["V", "J"]:
+                gapper, template_species = self._get_gapper(species)
+                sequence_gapped = gapper.gap_sequence(
+                    sequence=sequence_ungapped,
+                    segment=segment_upper,
+                    chain=chain,
+                    gene_name=gene_name,
+                    species=template_species,
+                )
+                if sequence_gapped:
+                    logger.debug(f"Auto-gapped {gene_name} using {template_species} templates")
+                else:
+                    logger.debug(f"Could not auto-gap {gene_name}, storing ungapped only")
 
         # Extract novel/confidence flags if present in description
         is_novel = "novel" in record.description.lower()
@@ -267,11 +302,7 @@ class VDJbaseProvider(GermlineProvider):
             logger.error(f"Failed to create VDJbase gene {gene_name}: {e}")
             return None
 
-    def fetch_gene_by_name(
-        self,
-        name: str,
-        species: str
-    ) -> Optional[GermlineGene]:
+    def fetch_gene_by_name(self, name: str, species: str) -> Optional[GermlineGene]:
         """
         Fetch specific VDJbase gene by name.
 
@@ -287,7 +318,7 @@ class VDJbaseProvider(GermlineProvider):
         GermlineGene or None
             Gene if found
         """
-        for segment in ["V", "D", "J"]:
+        for segment in ["V", "D", "J", "C"]:
             for chain in ["H", "K", "L"]:
                 genes = self.fetch_genes(species, segment, chain)
                 for gene in genes:
@@ -355,11 +386,11 @@ class VDJbaseProvider(GermlineProvider):
             Species to download (e.g., ["human", "rhesus_macaque"])
         """
         start_time = time.time()
-        
+
         for sp in species:
             logger.info(f"Downloading VDJbase data for {sp}...")
             self._download_species(sp)
-        
+
         duration_ms = int((time.time() - start_time) * 1000)
         logger.info(
             f"operation=download provider=vdjbase "
@@ -381,18 +412,12 @@ class VDJbaseProvider(GermlineProvider):
 
         # Map to VDJbase API species name
         api_species = SPECIES_MAP_REVERSE.get(species, species)
-        
+
         # Download each chain
         for chain, dataset in CHAIN_TO_DATASET.items():
             self._download_chain(species, api_species, chain, dataset)
 
-    def _download_chain(
-        self,
-        species: str,
-        api_species: str,
-        chain: str,
-        dataset: str
-    ) -> None:
+    def _download_chain(self, species: str, api_species: str, chain: str, dataset: str) -> None:
         """
         Download sequences for a specific chain.
 
@@ -408,10 +433,10 @@ class VDJbaseProvider(GermlineProvider):
             Dataset name (IGH, IGK, IGL)
         """
         logger.info(f"Fetching {dataset} for {api_species}...")
-        
+
         # Fetch sequences from API
         sequences = self._fetch_sequences_from_api(api_species, dataset)
-        
+
         if not sequences:
             logger.warning(f"No sequences found for {api_species} {dataset}")
             return
@@ -422,14 +447,12 @@ class VDJbaseProvider(GermlineProvider):
             name = seq_data.get("name", "")
             if name and name not in unique_sequences:
                 unique_sequences[name] = seq_data
-        
-        logger.info(
-            f"Deduplicated {len(sequences)} sequences to {len(unique_sequences)} unique alleles"
-        )
 
-        # Group by segment type
-        segments = {"V": [], "D": [], "J": []}
-        
+        logger.info(f"Deduplicated {len(sequences)} sequences to {len(unique_sequences)} unique alleles")
+
+        # Group by segment type (V, D, J, C)
+        segments = {"V": [], "D": [], "J": [], "C": []}
+
         for seq_data in unique_sequences.values():
             seq_type = seq_data.get("type", "")
             if seq_type.endswith("V"):
@@ -438,6 +461,8 @@ class VDJbaseProvider(GermlineProvider):
                 segments["D"].append(seq_data)
             elif seq_type.endswith("J"):
                 segments["J"].append(seq_data)
+            elif seq_type.endswith("C"):
+                segments["C"].append(seq_data)
 
         # Write FASTA files for each segment
         for segment, seqs in segments.items():
@@ -445,11 +470,7 @@ class VDJbaseProvider(GermlineProvider):
                 self._write_fasta(species, chain, segment, seqs)
 
     def _fetch_sequences_from_api(
-        self,
-        api_species: str,
-        dataset: str,
-        page_size: int = 1000,
-        max_pages: int = 100
+        self, api_species: str, dataset: str, page_size: int = 1000, max_pages: int = 100
     ) -> List[Dict[str, Any]]:
         """
         Fetch all sequences from VDJbase API with pagination.
@@ -472,43 +493,40 @@ class VDJbaseProvider(GermlineProvider):
         """
         all_sequences = []
         page = 1
-        
+
         while page <= max_pages:
             url = (
                 f"{VDJBASE_ADMIN_API_BASE}/repseq/sequences/"
                 f"{quote(api_species)}/{dataset}?page={page}&per_page={page_size}"
             )
-            
+
             try:
                 logger.debug(f"Fetching: {url}")
-                
+
                 request = Request(url)
                 request.add_header("Accept", "application/json")
-                
+
                 with urlopen(request, timeout=30) as response:
                     data = json.loads(response.read().decode("utf-8"))
-                
+
                 samples = data.get("samples", [])
-                
+
                 if not samples:
                     break
-                
+
                 all_sequences.extend(samples)
-                
-                logger.info(
-                    f"Downloaded {len(all_sequences)} sequences "
-                    f"(page {page}/{max_pages})"
-                )
-                
+
+                logger.info(f"Downloaded {len(all_sequences)} sequences " f"(page {page}/{max_pages})")
+
                 # Check if we've reached the last page
                 if len(samples) < page_size:
                     break
-                
+
                 page += 1
-                
+
                 # Rate limiting - minimal delay
                 time.sleep(0.1)
-                
+
             except HTTPError as e:
                 if e.code == 404:
                     logger.warning(f"No data available for {api_species}/{dataset}")
@@ -524,20 +542,11 @@ class VDJbaseProvider(GermlineProvider):
                 break
 
         if page > max_pages:
-            logger.warning(
-                f"Reached max pages limit ({max_pages}). "
-                f"Some sequences may be missing."
-            )
+            logger.warning(f"Reached max pages limit ({max_pages}). " f"Some sequences may be missing.")
 
         return all_sequences
 
-    def _write_fasta(
-        self,
-        species: str,
-        chain: str,
-        segment: str,
-        sequences: List[Dict[str, Any]]
-    ) -> None:
+    def _write_fasta(self, species: str, chain: str, segment: str, sequences: List[Dict[str, Any]]) -> None:
         """
         Write sequences to FASTA file.
 
@@ -554,21 +563,21 @@ class VDJbaseProvider(GermlineProvider):
         """
         fasta_path = self.get_fasta_path(species, segment, chain)
         fasta_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         logger.info(f"Writing {len(sequences)} sequences to {fasta_path}")
-        
+
         with open(fasta_path, "w") as f:
             for seq_data in sequences:
                 name = seq_data.get("name", "unknown")
                 sequence = seq_data.get("seq", "")
-                
+
                 if not sequence:
                     continue
-                
+
                 # Build header with metadata
                 # Format: >gene_name|species|segment|chain[|metadata]
                 header_parts = [name]
-                
+
                 # Add optional metadata
                 if seq_data.get("novel"):
                     header_parts.append("novel=true")
@@ -576,12 +585,12 @@ class VDJbaseProvider(GermlineProvider):
                     header_parts.append("low_confidence=true")
                 if seq_data.get("appears"):
                     header_parts.append(f"appears={seq_data['appears']}")
-                
+
                 header = "|".join(header_parts)
-                
+
                 f.write(f">{header}\n")
                 f.write(f"{sequence.upper()}\n")
-        
+
         logger.info(f"Wrote {fasta_path}")
 
     def get_available_species(self) -> List[str]:
@@ -595,19 +604,16 @@ class VDJbaseProvider(GermlineProvider):
         """
         try:
             url = f"{VDJBASE_ADMIN_API_BASE}/genomic/species"
-            
+
             request = Request(url)
             request.add_header("Accept", "application/json")
-            
+
             with urlopen(request, timeout=10) as response:
                 data = json.loads(response.read().decode("utf-8"))
-            
+
             # Map API names to internal names
-            return [
-                SPECIES_MAP.get(sp, sp.lower().replace(" ", "_"))
-                for sp in data
-            ]
-            
+            return [SPECIES_MAP.get(sp, sp.lower().replace(" ", "_")) for sp in data]
+
         except Exception as e:
             logger.error(f"Failed to fetch species list: {e}")
             return []
@@ -627,18 +633,18 @@ class VDJbaseProvider(GermlineProvider):
             Available dataset names (IGH, IGK, IGL)
         """
         api_species = SPECIES_MAP_REVERSE.get(species, species)
-        
+
         try:
             url = f"{VDJBASE_ADMIN_API_BASE}/genomic/data_sets/{quote(api_species)}"
-            
+
             request = Request(url)
             request.add_header("Accept", "application/json")
-            
+
             with urlopen(request, timeout=10) as response:
                 data = json.loads(response.read().decode("utf-8"))
-            
+
             return [ds.get("dataset", "") for ds in data if ds.get("dataset")]
-            
+
         except Exception as e:
             logger.error(f"Failed to fetch datasets for {species}: {e}")
             return []
