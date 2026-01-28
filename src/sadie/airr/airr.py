@@ -12,9 +12,10 @@ import warnings
 from multiprocessing import cpu_count
 from pathlib import Path
 from types import GeneratorType
-from typing import Generator, Iterator, List, Optional, Set, Union
+from typing import Dict, Generator, Iterator, List, Optional, Set, Union
 
 # third party
+import numpy as np
 import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -97,6 +98,8 @@ class Airr:
         gap_open: int = 5,
         gap_extend: int = 2,
         coerce: bool = False,
+        database: Optional[Path | str] = None,
+        providers: Optional[List[str]] = None,
     ):
         """Airr constructor
 
@@ -151,10 +154,22 @@ class Airr:
             Gap extension penalty, by default 2
         coerce : bool
             Accept the highest scored allele that exists in the auxiliary files when exact match not found, by default False
+        database : Optional[Path | str]
+            Path to prebuilt database from `sadie reference build`.
+            When provided, uses database directly without germlines/G3 lookup.
+            Expected structure: Ig/blastdb/, Ig/internal_data/, aux_db/.
+            By default None (uses germlines module or G3).
+        providers : List[str], optional
+            Ordered list of germline providers to use for source tracking.
+            Default: ["vdjbase", "ogrdb", "imgt", "custom"]
+            Example: ["imgt"] for IMGT-only source tracking.
         """
+        self._providers = providers
 
         # If the temp directory is passed, it is important to keep track of it so we can delete it at the destructory
         self._create_temp = False
+        # Store database path for recursive Airr calls (penalty adaptation)
+        self._database_path = database
         self.references = references
         self.debug = debug
 
@@ -243,7 +258,18 @@ class Airr:
         # Pass theese as private since germline class will handle setter logic
         self._name = reference_name
         self.scheme = scheme  # Store scheme as instance attribute
-        if isinstance(references, References):
+
+        # Handle prebuilt database path - skip germlines/G3 lookup
+        if database:
+            database_path = Path(database)
+            if not database_path.exists():
+                raise FileNotFoundError(f"Database path not found: {database_path}")
+
+            # Use prebuilt database - validate structure and use directly
+            self.germline_data = GermlineData(
+                reference_name, receptor, database_path, scheme, prebuilt=True, providers=providers
+            )
+        elif isinstance(references, References):
             _custom_avail = list(references.get_dataframe()["name"].unique())
             if self.name not in _custom_avail:
                 raise BadDataSet(self.name, _custom_avail)
@@ -252,7 +278,7 @@ class Airr:
             out_data_path = references.make_airr_database(self.temp_directory / "germlines/")
 
             # set the germline database
-            self.germline_data = GermlineData(reference_name, receptor, out_data_path)
+            self.germline_data = GermlineData(reference_name, receptor, out_data_path, providers=providers)
         else:
             self._name = reference_name
 
@@ -262,7 +288,7 @@ class Airr:
                 raise BadDataSet(reference_name, list(_available_datasets))
 
             # set the germline data, None will use default germline
-            self.germline_data = GermlineData(self.name, receptor, None, scheme)
+            self.germline_data = GermlineData(self.name, receptor, None, scheme, providers=providers)
         # This will set all the igblast params given the Germline Data class whcih validates them
         self.igblast.igdata = self.germline_data.igdata
         self.igblast.germline_db_v = self.germline_data.v_gene_dir
@@ -377,7 +403,7 @@ class Airr:
         if not isinstance(seq_id, str):
             raise TypeError(f"seq_id must be instance of str, passed {type(seq_id)}")
 
-        records = [SeqRecord(Seq(seq), id=seq_id, name=seq_id)]
+        records = [SeqRecord(Seq(seq), id=seq_id, name=seq_id, description="")]
         return self.run_records(records, scfv=scfv)
 
     def run_dataframe(
@@ -480,12 +506,19 @@ class Airr:
                 f"seqrecords must be an instance of {SequenceIterator} or be a list of {SeqRecord} not {type(seqrecords)}"
             )
 
-        # write to tempfile
-        with tempfile.NamedTemporaryFile(suffix=".fasta", dir=self.temp_directory) as temp_fasta:
-            SeqIO.write(seqrecords, temp_fasta.name, "fasta")
+        # write to tempfile - use mode='w' and write to handle for proper flushing
+        with tempfile.NamedTemporaryFile(
+            suffix=".fasta", dir=self.temp_directory, mode="w", delete=False
+        ) as temp_fasta:
+            SeqIO.write(seqrecords, temp_fasta, "fasta")
+            temp_path = temp_fasta.name
+        try:
             logger.info("Running AIRR annotation on records")
-            logger.debug(f"Running tempfile {temp_fasta.name}")
-            results = self.run_fasta(temp_fasta.name, scfv=scfv)
+            logger.debug(f"Running tempfile {temp_path}")
+            results = self.run_fasta(temp_path, scfv=scfv)
+        finally:
+            # Clean up temp file
+            Path(temp_path).unlink(missing_ok=True)
         return results
 
     def run_fasta(self, file: Union[Path, str], scfv: bool = False) -> Union[AirrTable, LinkedAirrTable]:
@@ -540,6 +573,7 @@ class Airr:
 
             # this is worthless since query
             result.insert(2, "reference_name", pd.Series([self.name] * len(result)))
+            result = self._add_source_columns(result)  # Add source tracking columns
             result = AirrTable(result)
             result["v_penalty"] = self._v_gene_penalty
             result["d_penalty"] = self._d_gene_penalty
@@ -583,6 +617,7 @@ class Airr:
                                 gap_open=self.gap_open,
                                 gap_extend=self.gap_extend,
                                 coerce=self.coerce,
+                                database=self._database_path,
                             )
                             adapt_results = pd.DataFrame(adaptable_api.run_dataframe(_start_df, "index", "sequence"))
                             adapt_results = pd.DataFrame(
@@ -625,6 +660,7 @@ class Airr:
                             gap_open=self.gap_open,
                             gap_extend=self.gap_extend,
                             coerce=self.coerce,
+                            database=self._database_path,
                         )
                         adapt_results = adaptable_api.run_dataframe(_start_df, "index", "sequence")
                         adapt_results = (
@@ -643,6 +679,55 @@ class Airr:
             result.correct_indel()  # type: ignore[attr-defined]
 
         return result
+
+    def _lookup_source(self, call_value, lookup: Dict[str, str]):
+        """
+        Look up source for a gene call.
+
+        Parameters
+        ----------
+        call_value : str or None
+            Gene call, possibly comma-separated (e.g., "IGHV1-69*01,IGHV1-69*02")
+        lookup : Dict[str, str]
+            Gene name to source mapping
+
+        Returns
+        -------
+        str or np.nan
+            Source provider name or np.nan if call is NaN/empty
+        """
+        if pd.isna(call_value) or not call_value:
+            return np.nan
+
+        # Get first allele from comma-separated list
+        first_allele = str(call_value).split(",")[0].strip()
+
+        return lookup.get(first_allele, "unknown")
+
+    def _add_source_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Add v_call_source, d_call_source, j_call_source, c_call_source columns.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            AIRR DataFrame with v_call, d_call, j_call, c_call columns
+
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame with source columns added
+        """
+        source_lookup = self.germline_data.get_source_lookup()
+
+        for segment in ["v", "d", "j", "c"]:
+            call_col = f"{segment}_call"
+            source_col = f"{segment}_call_source"
+
+            if call_col in df.columns:
+                df[source_col] = df[call_col].apply(lambda x: self._lookup_source(x, source_lookup))
+
+        return df
 
     # private run methods
     def _run_scfv(self, file: Union[Path, str]) -> LinkedAirrTable:
@@ -666,7 +751,9 @@ class Airr:
         remaining_id = result_a["sequence_id"]
 
         # Make some seqeuncing records
-        seq_records: List[SeqRecord] = [SeqRecord(Seq(x), id=str(name)) for x, name in zip(remaining_seq, remaining_id)]
+        seq_records: List[SeqRecord] = [
+            SeqRecord(Seq(x), id=str(name), description="") for x, name in zip(remaining_seq, remaining_id)
+        ]
         with tempfile.NamedTemporaryFile() as tmpfile:
             SeqIO.write(seq_records, tmpfile.name, "fasta")
             # Now run airr again, but this time on the remaining sequencess
@@ -726,8 +813,11 @@ class Airr:
         # so the best match will be the top one
         heavy_chain_table = heavy_chain_table.groupby(["sequence_id", "sequence"]).head(1)
         light_chain_table = light_chain_table.groupby(["sequence_id", "sequence"]).head(1)
-        _heavy_airr = AirrTable(heavy_chain_table.reset_index(drop=True))
-        _light_airr = AirrTable(light_chain_table.reset_index(drop=True))
+        # Add source columns before merge so they get _heavy/_light suffixes
+        heavy_chain_table = self._add_source_columns(heavy_chain_table.reset_index(drop=True))
+        light_chain_table = self._add_source_columns(light_chain_table.reset_index(drop=True))
+        _heavy_airr = AirrTable(heavy_chain_table)
+        _light_airr = AirrTable(light_chain_table)
         linked_table = _heavy_airr.merge(_light_airr, suffixes=("_heavy", "_light"), on="sequence_id")
         return LinkedAirrTable(linked_table)
 

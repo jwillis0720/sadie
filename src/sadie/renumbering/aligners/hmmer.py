@@ -14,15 +14,26 @@ from sadie.renumbering.numbering_translator import NumberingTranslator
 from sadie.typing import Chain, Source, Species
 
 
+def _use_local_hmm_builder() -> bool:
+    """Check if germlines module should be used for HMM building."""
+    try:
+        from sadie.germlines.renumbering_integration import use_local_hmm_builder
+
+        return use_local_hmm_builder()
+    except ImportError:
+        return False
+
+
 class HMMER:
     """
-    Extension of Pyhmmer to accept local HMMs (from Numbering) and external HMMs (from G3).
+    Extension of Pyhmmer to accept local HMMs (from Numbering) and external HMMs (from G3 or germlines).
     """
 
     g3 = G3()
     numbering = (
         NumberingTranslator()
     )  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
+    _local_hmm_builder = None  # Lazy initialization
 
     def __init__(
         self,
@@ -30,7 +41,28 @@ class HMMER:
         chains: Optional[Union[List[Chain], Chain]] = None,
         source: Source = "imgt",
         use_numbering_hmms: bool = False,
+        hmm_dir: Optional[Path] = None,
     ) -> None:
+        """Initialize HMMER with optional custom HMM directory.
+
+        Parameters
+        ----------
+        species : Optional[Union[List[Species], Species]], optional
+            Species to load HMMs for, by default None (loads all)
+        chains : Optional[Union[List[Chain], Chain]], optional
+            Chains to load HMMs for, by default None (loads all)
+        source : Source, optional
+            Source database (e.g., "imgt"), by default "imgt"
+        use_numbering_hmms : bool, optional
+            If True, force use of legacy Numbering HMMs, by default False
+        hmm_dir : Optional[Path], optional
+            Path to custom HMM directory. When provided, HMMs are loaded from
+            `{hmm_dir}/{species}_{chain}.hmm`. Falls back to default HMM sources
+            if custom HMM not found. By default None.
+        """
+        # Store custom HMM directory path
+        self._hmm_dir = Path(hmm_dir) if hmm_dir else None
+
         # Force Numbering local HMMs to be used -- mostely for primiary testing
         self.hmms = self.get_hmm_models(
             species=species, chains=chains, source=source, use_numbering_hmms=use_numbering_hmms
@@ -59,11 +91,53 @@ class HMMER:
             HMM model for specific species
         """
         hmms = []
-        species = species if species else list(Species.species.values())  # type: ignore[assignment]
-        chains = chains if chains else list(Chain.chains)  # type: ignore[assignment]
+        # Normalize species to list
+        if species is None:
+            species = list(Species.species.values())
+        elif isinstance(species, str):
+            species = [species]
+        # Normalize chains to list
+        if chains is None:
+            chains = list(Chain.chains)
+        elif isinstance(chains, str):
+            chains = [chains]
+
+        # Check if we should use local HMM builder from germlines
+        use_local = _use_local_hmm_builder() and not use_numbering_hmms
+
         for single_species in species:
             for chain in chains:
-                # If not in G3 -- try Numbering
+                # Priority 0: Custom HMM directory (highest priority)
+                if self._hmm_dir:
+                    custom_hmm_path = self._hmm_dir / f"{single_species}_{chain}.hmm"
+                    if custom_hmm_path.exists():
+                        with pyhmmer.plan7.HMMFile(custom_hmm_path) as hmm_file:
+                            hmms.append(next(hmm_file))
+                        continue
+
+                # Priority 1: Local germlines HMM builder (new default)
+                if use_local:
+                    try:
+                        if self._local_hmm_builder is None:
+                            from sadie.germlines.renumbering_integration import (
+                                LocalHMMBuilder,
+                            )
+
+                            self._local_hmm_builder = LocalHMMBuilder()
+
+                        hmm = self._local_hmm_builder.get_hmm(species=single_species, chain=chain, source=source)
+                        hmms.append(hmm)
+                        continue
+                    except Exception as e:
+                        # Fall through to G3/Numbering on error
+                        import logging
+
+                        logging.warning(
+                            f"Local HMM builder failed for {single_species} {chain}: {e}. "
+                            f"Falling back to G3/Numbering."
+                        )
+
+                # Priority 2: If not in G3 or forced -- try Numbering
                 if chain not in self.g3.chains or single_species not in self.g3.species or use_numbering_hmms is True:
                     # Legacy HMMs have rhesus as the species for macaque
                     if single_species.strip() == "macaque":
@@ -77,7 +151,7 @@ class HMMER:
                         with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
                             hmm = next(hmm_file)
                             hmms.append(hmm)
-                # Build G3 HMMs
+                # Priority 3: Build G3 HMMs (legacy fallback)
                 else:
                     hmm = self.g3.get_hmm(
                         source=source,

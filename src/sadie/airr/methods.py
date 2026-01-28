@@ -188,6 +188,12 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
 
         # if germline == sequence, take the germline codon
         if germline_aa == sequence_aa:
+            # Boundary check
+            if sequence_index >= len(sequence_alignment_codons):
+                logger.debug(
+                    f"{row.name} - sequence_index {sequence_index} out of bounds (len={len(sequence_alignment_codons)})"
+                )
+                return np.nan
             codon = sequence_alignment_codons[sequence_index]
             germline_igl += codon
             germline_index += 1
@@ -197,6 +203,12 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
         elif germline_aa == "-":
             if germline_index == len(germline_alignment_aa) - 1:
                 # we are at the end so pad it with sequence
+                # Boundary check
+                if sequence_index >= len(sequence_alignment_codons):
+                    logger.debug(
+                        f"{row.name} - sequence_index {sequence_index} out of bounds for partial codon (len={len(sequence_alignment_codons)})"
+                    )
+                    return np.nan
                 partial_codon = sequence_alignment_codons[sequence_index]
                 best_codon = find_best_codon(partial_codon, sequence_aa)
                 logger.debug(f"Partial codon:{partial_codon} for mature {sequence_aa} choosing {best_codon}")
@@ -206,18 +218,40 @@ def get_igl_nt(row: pd.Series) -> str | float:  # type: ignore
 
         # if sequence is - (a deletion), increment the germline codon and take it
         elif sequence_aa == "-":
+            # Boundary check
+            if germline_index >= len(germline_alignment_codons):
+                logger.debug(
+                    f"{row.name} - germline_index {germline_index} out of bounds for deletion (len={len(germline_alignment_codons)})"
+                )
+                return np.nan
             germline_igl += germline_alignment_codons[germline_index]
             germline_index += 1
         else:
-            # finally, deal with the cases where the germline and sequence do not equal each other but are not idnesl
-            # if gerline is X or *, take mature codon
+            # finally, deal with the cases where the germline and sequence do not equal each other but are not indels
+            # if germline is X or *, take mature codon
             if germline_aa == "X" or germline_aa == "*":
-                germline_igl += sequence_alignment_codons[sequence_index]
+                # Boundary check: ensure sequence_index is within bounds
+                if sequence_index < len(sequence_alignment_codons):
+                    germline_igl += sequence_alignment_codons[sequence_index]
+                else:
+                    # Index out of bounds - likely alignment length mismatch, return NaN
+                    logger.debug(
+                        f"{row.name} - sequence_index {sequence_index} out of bounds for sequence_alignment_codons (len={len(sequence_alignment_codons)})"
+                    )
+                    return np.nan
 
             # else take germline
             else:
-                codon = germline_alignment_codons[germline_index]
-                germline_igl += codon
+                # Boundary check: ensure germline_index is within bounds
+                if germline_index < len(germline_alignment_codons):
+                    codon = germline_alignment_codons[germline_index]
+                    germline_igl += codon
+                else:
+                    # Index out of bounds - likely alignment length mismatch, return NaN
+                    logger.debug(
+                        f"{row.name} - germline_index {germline_index} out of bounds for germline_alignment_codons (len={len(germline_alignment_codons)})"
+                    )
+                    return np.nan
             sequence_index += 1
             germline_index += 1
 

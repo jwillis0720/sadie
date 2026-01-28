@@ -60,6 +60,15 @@ markdown_extensions: #
 nav: # this is how we layout the documents
   - SADIE: index.md
   - Reference Database: reference.md
+  - Custom Reference Databases: reference-workflow.md
+  - Germline Database Management:
+    - Overview: germlines/index.md
+    - CLI Reference: germlines/cli-reference.md
+    - Migration Guide: germlines/migration-guide.md
+    - Provider Guide: germlines/provider-guide.md
+    - Custom Sequences: germlines/custom-sequences.md
+    - Troubleshooting: germlines/troubleshooting.md
+    - Architecture: germlines/architecture.md
   - AIRR Sequence Annotation:
     - Annotating: annotation.md
     - Advanced Annotation Methods: advanced_annotation.md  # TODO: add to_datafarme a few other hidden methods

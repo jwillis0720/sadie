@@ -12,6 +12,41 @@ Annotation is the bedrock of all immunoformatics workflows. It is the process of
 
 SADIE leverages the AIRR to provide a standardized data representation for BCRs. You can read all the fields and values in the AIRR Rearrangement schema standard [here](https://docs.airr-community.org/en/stable/datarep/rearrangements.html#fields)
 
+## Germline Data Sources
+
+SADIE supports multiple germline data sources for AIRR annotation:
+
+**Providers:**
+
+- **IMGT** (default): International ImMunoGeneTics information system
+- **OGRDB**: Open Germline Receptor Database
+- **VDJbase**: Curated germline database
+- **Custom**: Your own novel sequences
+
+See [Germline Provider Guide](germlines/provider-guide.md) for details.
+
+### Using Local Germlines (Recommended)
+
+```python
+from sadie.airr import Airr
+
+# Uses local germlines automatically (default)
+airr = Airr("human")
+results = airr.run_file("sequences.fasta")
+```
+
+The germlines module is now the default. No code changes needed.
+
+### Using Legacy G3 API (Deprecated)
+
+```bash
+export SADIE_USE_GERMLINES_MODULE=false
+sadie airr sequences.fasta
+```
+
+!!! warning "G3 API Deprecation"
+    G3 support will be removed after **2026-06-01**. [Migrate to germlines](germlines/migration-guide.md).
+
 ## Single Sequence Annotation
 
 ```Python

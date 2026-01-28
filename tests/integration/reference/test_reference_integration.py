@@ -9,6 +9,7 @@ import pytest
 from click.testing import CliRunner
 
 from sadie import app
+from sadie.reference import References
 from tests.conftest import SadieFixture
 
 
@@ -290,3 +291,14 @@ def test_make_igblast_reference(fixture_setup: SadieFixture, tmp_path_factory: p
 
     # test internal dat file content
     assert _test_internal_data_file_structure(tmpdir, fixture_setup)
+
+
+def test_reference_build_with_germlines(fixture_setup: SadieFixture, tmp_path_factory: pytest.TempPathFactory) -> None:
+    """Build IgBLAST database using germlines backend."""
+    shortened_yaml = fixture_setup.get_shortened_yaml()
+    refs = References.from_yaml(shortened_yaml, use_germlines=True)
+
+    outpath = tmp_path_factory.mktemp("germlines_build")
+    output_db = refs.make_airr_database(outpath)
+
+    assert sorted([i.name for i in output_db.glob("*")]) == sorted([".references_dataframe.csv.gz", "aux_db", "Ig"])

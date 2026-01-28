@@ -90,6 +90,39 @@ $ pip install poetry
 $ poetry install --with dev
 ```
 
+## Germline Database Setup
+
+---
+
+After installation, set up local germline databases for AIRR annotation:
+
+```console
+$ sadie germlines populate
+```
+
+This one-time command downloads germline sequences from IMGT, OGRDB, and other providers, enabling:
+
+- **Offline operation**: No internet required after setup
+- **Multi-source support**: IMGT, OGRDB, VDJbase, and custom sequences
+- **Faster performance**: No API latency
+- **Reproducible analysis**: Fixed germline versions
+
+**Check status:**
+
+```console
+$ sadie germlines status
+```
+
+**Download specific species only:**
+
+```console
+$ sadie germlines populate -s human -s mouse
+```
+
+For complete documentation, see the [Germline Database Management Guide](https://sadie.jordanrwillis.com/germlines/).
+
+> **Note**: The legacy G3 API is deprecated and will be removed after 2026-06-01. Please use the local germlines module.
+
 ## Quick Usage
 
 Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage. Or checkout our [Colab](https://colab.research.google.com/github/jwillis0720/sadie/blob/main/notebooks/airr_c/SADIE_DEMO.ipynb) notebook

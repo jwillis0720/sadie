@@ -18,6 +18,17 @@ from sadie.airr.methods import (
 )
 from sadie.reference.reference import References
 
+
+def _macaque_available() -> bool:
+    """Check if macaque germlines are available."""
+    from sadie.germlines import get_germlines_base_dir
+
+    macaque_path = get_germlines_base_dir() / "igblast" / "Ig" / "internal_data" / "macaque"
+    return macaque_path.exists()
+
+
+skip_no_macaque = pytest.mark.skipif(not _macaque_available(), reason="macaque germlines not available")
+
 LOGGER = logging.getLogger("AirrMethod")
 
 
@@ -108,6 +119,7 @@ def test_run_mutational_analysis(fixture_setup, caplog) -> None:
         run_mutational_analysis(airrtable=None, scheme="imgt")
 
 
+@skip_no_macaque
 def test_run_five_prime_buffer(fixture_setup, caplog) -> None:
     df = pd.read_feather(fixture_setup.get_bum_igl_assignment())
     table = AirrTable(df)  # init and verify
@@ -121,6 +133,7 @@ def test_run_five_prime_buffer(fixture_setup, caplog) -> None:
         run_five_prime_buffer(table)
 
 
+@skip_no_macaque
 def test_run_three_prime_buffer(fixture_setup, caplog) -> None:
     df = pd.read_feather(fixture_setup.get_bum_igl_assignment())
     table = AirrTable(df)  # init and verify

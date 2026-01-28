@@ -112,6 +112,46 @@ $ conda install -c conda-forge biopython
 
 For additional help, please file an issue on the [SADIE GitHub](https://github.com/jwillis0720/sadie/issues).
 
+## Germline Database Management
+
+---
+
+SADIE now includes local germline database management, replacing the G3 API dependency.
+
+**New Features:**
+
+- **Offline operation**: No internet required after setup
+- **Multi-source**: IMGT, OGRDB, VDJbase, custom sequences
+- **Faster**: No API latency
+- **Reproducible**: Fixed data versions
+
+**Quick Start:**
+
+<div class="termy">
+
+```console
+$ # One-time setup
+$ sadie germlines populate
+---> 100%
+
+$ # Check status
+$ sadie germlines status
+
+$ # Use with AIRR annotation (automatic)
+$ sadie airr input.fasta -o output.tsv
+```
+
+</div>
+
+**Documentation:**
+
+- [Germline Overview](germlines/index.md) - Get started
+- [CLI Reference](germlines/cli-reference.md) - Complete commands
+- [Migration Guide](germlines/migration-guide.md) - Migrate from G3 API
+
+!!! warning "G3 API Deprecation"
+    G3 API support will be removed after **2026-06-01**. Please migrate to local germlines.
+
 # Quick Usage
 
 Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage. Or checkout our [Colab](https://colab.research.google.com/github/jwillis0720/sadie/blob/main/notebooks/airr_c/SADIE_DEMO.ipynb) notebook

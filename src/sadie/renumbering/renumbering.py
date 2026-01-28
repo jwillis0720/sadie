@@ -47,6 +47,7 @@ class Renumbering:
         run_multiproc: bool = True,
         num_cpus: int = cpu_count(),
         use_numbering_hmms: bool = False,
+        database: Union[Path, str, None] = None,
         # aligner: str = "hmmer",  # NOTE: only one aligner is supported at the moment
         *args,
         **kwargs,
@@ -81,12 +82,18 @@ class Renumbering:
         use_numbering_hmms : bool, optional
             if True, will use only backup hmms, by default False
             note: these backup hmms are legacy from the ANARCI team and are not updated.
+        database : Path | str, optional
+            Path to prebuilt database from `sadie reference build --use-germlines`.
+            When provided, uses HMMs from `{database}/hmms/` directory.
+            By default None (uses germlines module or legacy HMMs).
         *args, **kwargs  # for backwards compatibility options
 
         Raises
         ------
         NotImplementedError
             If the scheme + region assign combo is not implemented
+        FileNotFoundError
+            If database is provided but hmms/ directory doesn't exist
         """
         self.scheme = scheme
         self.region_definition = region_assign
@@ -97,8 +104,22 @@ class Renumbering:
         self.run_multiproc = run_multiproc
         self.threshold_bit = threshold
 
+        # Determine HMM directory from database path
+        hmm_dir = None
+        if database:
+            db_path = Path(database)
+            hmm_dir = db_path / "hmms"
+            if not hmm_dir.exists():
+                raise FileNotFoundError(
+                    f"HMM directory not found at {hmm_dir}. "
+                    f"Ensure database was built with `sadie reference build --use-germlines`."
+                )
+
         self.hmmer = HMMER(
-            species=self.allowed_species, chains=self.allowed_chains, use_numbering_hmms=use_numbering_hmms
+            species=self.allowed_species,
+            chains=self.allowed_chains,
+            use_numbering_hmms=use_numbering_hmms,
+            hmm_dir=hmm_dir,
         )
         self.numbering = Numbering()
 

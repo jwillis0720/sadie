@@ -1,0 +1,28 @@
+"""
+Builders - BLAST Database, Auxiliary File, Gapping, and HMM
+============================================================
+
+Utilities for building IgBLAST-compatible databases and auxiliary files.
+
+- BlastDBBuilder: Creates BLAST databases from FASTA files
+- AuxFileBuilder: Generates IgBLAST auxiliary files from gapped sequences
+- GapperService: Gaps ungapped sequences to IMGT numbering using BioPython
+- HMMBuilder: Generates Stockholm alignment files for HMMER
+"""
+
+from .aux import AuxFileBuilder
+from .blast import BlastDBBuilder
+from .gapper import GapperService, gap_sequences_batch
+from .hmm import HMMBuilder, get_gapped_sequences
+from .imgt_positions import calculate_imgt_v_positions, derive_imgt_v_regions
+
+__all__ = [
+    "BlastDBBuilder",
+    "AuxFileBuilder",
+    "GapperService",
+    "gap_sequences_batch",
+    "HMMBuilder",
+    "get_gapped_sequences",
+    "calculate_imgt_v_positions",
+    "derive_imgt_v_regions",
+]
