@@ -5,8 +5,8 @@ from pathlib import Path
 from sadie.reference import References
 
 
-# Use absolute path from project root
-YAML_PATH = Path(__file__).parent.parent.parent / "reference.g3.yml"
+# Use human-only reference for parity testing (avoids multi-species chimera issues)
+YAML_PATH = Path(__file__).parent / "reference_parity_test.yml"
 
 
 @pytest.fixture(scope="session")
