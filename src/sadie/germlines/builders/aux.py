@@ -5,7 +5,14 @@ Auxiliary File Builder
 Generates IgBLAST auxiliary files from gapped germline sequences.
 
 IgBLAST auxiliary files for J genes contain (5 columns, tab-separated):
-<gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<is_functional>
+<gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<extra_bps>
+
+Where:
+- gene_name: J gene allele name (e.g., IGHJ1*01)
+- reading_frame: First coding frame start position (0, 1, or 2)
+- chain_type: JH, JK, or JL
+- cdr3_end: CDR3 stop position (0-based)
+- extra_bps: Extra base pairs beyond J coding end (typically 1)
 
 Example:
 IGHJ1*01	0	JH	17	1
@@ -115,7 +122,7 @@ class AuxFileBuilder:
             return []
 
         for record in records:
-            aux_line = self._create_aux_entry(record, chain, segment)
+            aux_line = self._create_aux_entry(record, chain, segment, species)
             if aux_line:
                 aux_lines.append(aux_line)
 
@@ -123,12 +130,15 @@ class AuxFileBuilder:
 
         return aux_lines
 
-    def _create_aux_entry(self, record, chain: str, segment: str) -> Optional[str]:
+    def _create_aux_entry(self, record, chain: str, segment: str, species: str) -> Optional[str]:
         """
         Create auxiliary file entry for a J gene sequence.
 
         IgBLAST aux format for J genes (5 columns, tab-separated):
-        <gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<is_functional>
+        <gene_name>\t<reading_frame>\t<chain_type>\t<cdr3_end>\t<extra_bps>
+
+        Uses species-specific amino acid motif patterns (from G3's motif lookup)
+        to identify the conserved FWR4 start position.
 
         Parameters
         ----------
@@ -138,6 +148,8 @@ class AuxFileBuilder:
             Chain type (H, K, L)
         segment : str
             Segment type (must be "J")
+        species : str
+            Species name for motif lookup
 
         Returns
         -------
@@ -149,11 +161,14 @@ class AuxFileBuilder:
             return None
 
         gene_name = record.id
+        sequence = str(record.seq).replace(".", "").replace("-", "").upper()
 
-        # Get reference data for this J gene
-        reading_frame, chain_type, cdr3_end, is_functional = get_j_gene_data(gene_name, chain)
+        # Get reference data for this J gene (uses species-specific motif patterns)
+        reading_frame, chain_type, cdr3_end, extra_bps = get_j_gene_data(
+            gene_name, chain, sequence, species=species
+        )
 
-        return f"{gene_name}\t{reading_frame}\t{chain_type}\t{cdr3_end}\t{is_functional}"
+        return f"{gene_name}\t{reading_frame}\t{chain_type}\t{cdr3_end}\t{extra_bps}"
 
     def validate_aux_file(self, aux_file: Path) -> bool:
         """

@@ -1,0 +1,255 @@
+{
+    "mouse": {
+        "IGHJ": "WG.G",
+        "IGKJ": "F[SG].G",
+        "IGLJ": "FG.G",
+        "TRAJ": "[FLWC][GSVA].[GEWE]",
+        "TRBJ": "[FH][GA].G",
+        "TRGJ": "FA[EK]G",
+        "ignore": ["IGLJ3P", "TRAJ41", "TRAJ60", "TRAJ61", "TRBJ2-6"]
+    },
+    "rat": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG.G",
+        "IGLJ": "[FL]G.G",
+        "ignore": ["IGKJ3"]
+    },
+    "human": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG",
+        "IGLJ": "FG.G",
+        "TRAJ": "[FWC][GA].[GEN]",
+        "TRBJ": "[FVG][GR].[G]",
+        "TRGJ": "F[GA].G",
+        "TRDJ": "FG.G",
+        "ignore": []
+    },
+    "macaque": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG.G",
+        "IGLJ": "F[GC].GT",
+        "TRAJ": "[FWS][GV].[GSRE][TMVS]",
+        "TRBJ": "[F][G].[G]",
+        "TRDJ": "FG.G",
+        "TRGJ": "F[GA].[G*]",
+        "ignore": []
+    },
+    "rhesus_macaque": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG.G",
+        "IGLJ": "F[GC].GT",
+        "TRAJ": "[FWS][GV].[GSRE][TMVS]",
+        "TRBJ": "[F][G].[G]",
+        "TRDJ": "FG.G",
+        "TRGJ": "F[GA].[G*]",
+        "ignore": []
+    },
+    "cynomolgus": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG.G",
+        "IGLJ": "F[GC].GT",
+        "ignore": []
+    },
+    "crab_eating_macaque": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG.G",
+        "IGLJ": "F[GC].GT",
+        "ignore": []
+    },
+    "nhp": {
+        "TRAJ": "[F][G].[G][T]",
+        "TRBJ": "[F][G].[G][TS]",
+        "TRDJ": "F[GDA].[GT]T",
+        "TRGJ": "F[GDA].[GT]T",
+        "ignore": ["TRAJ34", "TRBJ1-1", "TRBJ1-4", "TRBJ1-5", "TRBJ2-5"]
+    },
+    "platypus": {
+        "IGHJ": "WGQG",
+        "ignore": []
+    },
+    "rabbit": {
+        "IGHJ": "WG.GT",
+        "IGKJ": "[FLR]G.[GE]T",
+        "IGLJ": "F[GS].[RG]T",
+        "TRAJ": "[FLW][GE].[CGRK][TMS]",
+        "TRBJ": "[F]G.G[TS]",
+        "TRDJ": "[F]G.G[TS]",
+        "TRGJ": "[F]G.GT",
+        "ignore": []
+    },
+    "night_monkey": {
+        "TRAJ": "[F][G].[G][T]",
+        "TRBJ": "[F][G].[G][TS]",
+        "TRDJ": "F[GA].[G]T",
+        "TRGJ": "F[GA].[G]T",
+        "ignore": ["TRAJ34", "TRBJ1-1", "TRBJ1-4", "TRBJ1-5", "TRBJ2-5", "TRDJ2"]
+    },
+    "boar": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG.GT",
+        "IGLJ": "FG.GT",
+        "TRBJ": "FG.G",
+        "ignore": []
+    },
+    "pig": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG.GT",
+        "IGLJ": "FG.GT",
+        "TRBJ": "FG.G",
+        "ignore": []
+    },
+    "cow": {
+        "IGHJ": "[WC][SG][QPSR].",
+        "IGKJ": "[FL]G.[GR]T..E",
+        "IGLJ": "[FL][GI][SG][GR]T",
+        "TRAJ": "[FWL][GAS].[GK][TS]",
+        "TRDJ": "FG.[GE]",
+        "TRGJ": "[FLY][GN][VEK][GA]",
+        "ignore": []
+    },
+    "dolphin": {
+        "TRAJ": "[FCLWSY][GS].[GRLK]",
+        "TRGJ": "[FCLWSY]G.[GRL]",
+        "TRDJ": "[FCLWSY][RG].[GRL]",
+        "ignore": []
+    },
+    "ferret": {
+        "TRBJ": "[F][GA].G",
+        "TRAJ": "[F][GA].G",
+        "ignore": []
+    },
+    "mink": {
+        "IGHJ": "WG.G",
+        "ignore": []
+    },
+    "camel": {
+        "IGHJ": "WG.G",
+        "IGKJ": "[FL]G.GT",
+        "IGLJ": "FG.GT",
+        "TRBJ": "FG.G",
+        "TRGJ": "FG.G",
+        "ignore": ["TRBJ3-4"]
+    },
+    "goat": {
+        "IGKJ": "[FL]G.GT",
+        "IGLJ": "[FL]G.GT",
+        "ignore": []
+    },
+    "horse": {
+        "IGKJ": "[F]G.GT",
+        "IGHJ": "[W][GD].G",
+        "ignore": []
+    },
+    "dog": {
+        "IGHJ": "WG.G",
+        "IGKJ": "F[GS].G",
+        "IGLJ": "FG.G",
+        "TRAJ": "[FSW][GW].[GRLER]",
+        "TRBJ": "[F][GA].[G]",
+        "TRGJ": "[LFM][GTA].[GDV]",
+        "TRDJ": "FG.[GL]",
+        "ignore": []
+    },
+    "cat": {
+        "IGHJ": "WG.G",
+        "IGKJ": "F[G].G",
+        "IGLJ": "F[GNS].G",
+        "TRAJ": "[FWL][ERGW].[GRCKEQ]",
+        "TRBJ": "[F][TG].[G]",
+        "TRGJ": "[SF][TGAD].[G]",
+        "TRDJ": "FG.[G]",
+        "ignore": []
+    },
+    "alpaca": {
+        "IGHJ": "[WL]G[TQK][VG]",
+        "ignore": []
+    },
+    "salmon": {
+        "IGHJ": "[W*][EG][KQ]GT",
+        "ignore": []
+    },
+    "atlantic_salmon": {
+        "IGHJ": "[W*][EG][KQ]GT",
+        "ignore": []
+    },
+    "sharks": {
+        "IGHJ": "[WCH][G].[RGS][TK]",
+        "ignore": [
+            "PEKGVGTVLTVR", "SYEYGGGTVVTVNP", "RHGLLGTRDHGDGDC",
+            "ACGDGTFVTVNP", "YGADTVVTVNP", "YAACGAGTAVTVNP",
+            "LSRLLGTRDHGDGDC", "YGSGTVLTVNP", "YGGGTVVTVNP",
+            "HHGLLGTRDHGDGDF", "GLLGTRDHGDGDC", "SFDEYGGGTVVT",
+            "SPNYWGGGSMVTVTC", "YAAVGDGTAVTVNP", "YAACGDATAVTVNP",
+            "DYKGGDTLLTVK", "SYEYGGGTVVT", "CGDNTAVTVNP",
+            "ERPGTALTVK", "QLCCMRRRHCRD", "MLHAEMALRDCES",
+            "YEKGAGTVLTVK", "NEKGAGTVLTVK", "DEEGAGTVLTVK",
+            "GGAGTVLTVK", "YGGGTGVTVNP", "LPRLLGTRDHGDGDC"
+        ]
+    },
+    "sheep": {
+        "IGLJ": "[LF]G[GS]GT",
+        "IGHJ": "W[GD].[GR]",
+        "IGKJ": "FG[PGQ]GT",
+        "TRAJ": "[LFWE][GAKW].[GQ][TDRA]",
+        "TRBJ": "[F][G].[G][TS]",
+        "TRDJ": "FG.[EG]T",
+        "ignore": ["FGDFYFLRGEGRRLAVV", "RPGAALTYGAGSGLAAG"]
+    },
+    "trout": {
+        "IGHJ": "WG.G",
+        "TRBJ": "FG.G[ATS]",
+        "ignore": ["SGAYAAYFGEXTKLTVL", "SYSEAYXXAGXKLTVL"]
+    },
+    "rainbow_trout": {
+        "IGHJ": "WG.G",
+        "TRBJ": "FG.G[ATS]",
+        "ignore": []
+    },
+    "zebrafish": {
+        "IGHJ": "WG.GT",
+        "TRAJ": "[FM][GAST].G[TVSM]",
+        "TRDJ": "FG.P",
+        "ignore": ["IGIJ1", "IGIJ2", "IGIJ3", "IGIJ5", "IGIJ6S1", "IGIJ7S1", "IGIJ8S1"]
+    },
+    "chicken": {
+        "IGHJ": "WG.G",
+        "IGLJ": "FG.G",
+        "ignore": []
+    },
+    "lemur": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG.G",
+        "IGLJ": "FG.G",
+        "ignore": []
+    },
+    "gorilla": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG",
+        "IGLJ": "FG.G",
+        "ignore": []
+    },
+    "orangutan": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG",
+        "IGLJ": "FG.G",
+        "ignore": []
+    },
+    "orangutan_bornean": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG",
+        "IGLJ": "FG.G",
+        "ignore": []
+    },
+    "orangutan_sumatran": {
+        "IGHJ": "WG.G",
+        "IGKJ": "FG",
+        "IGLJ": "FG.G",
+        "ignore": []
+    },
+    "mouse_c57bl6j": {
+        "IGHJ": "WG.G",
+        "IGKJ": "F[SG].G",
+        "IGLJ": "FG.G",
+        "ignore": []
+    }
+}

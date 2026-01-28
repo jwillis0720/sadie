@@ -21,13 +21,25 @@ EXCLUDED_COLUMNS = frozenset([
     "c_call_source",
 ])
 
+# E-value columns that can have tiny floating-point variations due to
+# IgBLAST's database statistics calculations (not related to sequence data)
+SUPPORT_COLUMNS = frozenset(["v_support", "d_support", "j_support", "c_support"])
 
-def values_equal(v1: Any, v2: Any) -> bool:
+# Relative tolerance for e-value comparisons (0.1% difference allowed)
+SUPPORT_RELATIVE_TOLERANCE = 0.001
+
+
+def values_equal(v1: Any, v2: Any, column: str = "") -> bool:
     """Compare values treating NaN == NaN as True.
+    
+    For support columns (e-values), uses relative tolerance comparison
+    since IgBLAST calculates these based on database statistics which
+    can vary slightly between builds.
     
     Args:
         v1: First value to compare.
         v2: Second value to compare.
+        column: Column name for context-aware comparison.
         
     Returns:
         True if values are equal (NaN == NaN is True).
@@ -36,6 +48,19 @@ def values_equal(v1: Any, v2: Any) -> bool:
         return True
     if pd.isna(v1) or pd.isna(v2):
         return False
+    
+    # For support columns, use relative tolerance for floating-point comparison
+    if column in SUPPORT_COLUMNS:
+        try:
+            f1, f2 = float(v1), float(v2)
+            if f1 == 0.0 and f2 == 0.0:
+                return True
+            if f1 != 0.0:
+                rel_diff = abs(f1 - f2) / abs(f1)
+                return rel_diff <= SUPPORT_RELATIVE_TOLERANCE
+        except (ValueError, TypeError):
+            pass
+    
     return v1 == v2
 
 
@@ -89,7 +114,7 @@ def compare_airr_outputs(
             g3_val = g3_df.loc[row_idx, col]
             germlines_val = germlines_df.loc[row_idx, col]
 
-            if not values_equal(g3_val, germlines_val):
+            if not values_equal(g3_val, germlines_val, col):
                 seq_id = g3_df.loc[row_idx, "sequence_id"]
                 pytest.fail(
                     f"\nPARITY MISMATCH DETECTED\n"

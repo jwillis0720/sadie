@@ -228,6 +228,20 @@ class IMGTProvider(GermlineProvider):
         # Determine if functional
         is_functional = functionality == "F"
 
+        # Fix IMGT V-QUEST data discrepancy for human IGHJ6*02 and IGHJ6*03
+        # The V-QUEST reference directory has 63 bp sequences that include the first
+        # nucleotide of the C-REGION (an extra 'G' at the end).
+        # The official IMGT gene table defines these as 62 bp sequences ending at the
+        # J-REGION boundary. This matches G3's curated data.
+        # See: https://www.imgt.org/IMGTrepertoire/ for canonical gene boundaries
+        if species == "human" and gene_name in ("IGHJ6*02", "IGHJ6*03"):
+            if sequence_ungapped.endswith("G") and len(sequence_ungapped) == 63:
+                sequence_ungapped = sequence_ungapped[:-1]  # Remove trailing 'G'
+                logger.debug(f"Trimmed extra C-REGION nucleotide from {gene_name}: 63bp -> 62bp")
+                # Also trim gapped sequence if present
+                if sequence_gapped and sequence_gapped.endswith("G"):
+                    sequence_gapped = sequence_gapped[:-1]
+
         try:
             gene = GermlineGene(
                 name=gene_name,

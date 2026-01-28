@@ -276,11 +276,18 @@ class GermlineToG3Adapter:
 
         Populates cdr3/fwr4 boundaries, reading frame, and remainder used by
         auxiliary file generation.
+
+        Uses species-specific amino acid motif patterns (from G3's motif lookup)
+        to identify the conserved FWR4 start position in the J gene sequence.
         """
-        reading_frame, _chain_type, cdr3_end_aux, _is_functional = get_j_gene_data(gene.name, chain)
+        sequence = gene.sequence or ""
+
+        # Pass sequence and species for motif-based calculation
+        reading_frame, _chain_type, cdr3_end_aux, extra_bps = get_j_gene_data(
+            gene.name, chain, sequence, species=gene.species
+        )
 
         cdr3_end = cdr3_end_aux + 1  # G3 uses 0-based inclusive end (aux value + 1)
-        sequence = gene.sequence or ""
         if sequence:
             cdr3_end = min(cdr3_end, len(sequence) - 1)
 
@@ -299,9 +306,9 @@ class GermlineToG3Adapter:
         imgt_dict.setdefault("fwr4_end", fwr4_end)
         imgt_dict.setdefault("reading_frame", reading_frame)
 
+        # Use extra_bps from get_j_gene_data() which uses validated static data for known genes
         if "remainder" not in imgt_dict:
-            remainder = (len(sequence) - cdr3_end) % 3 if sequence else 0
-            imgt_dict["remainder"] = remainder
+            imgt_dict["remainder"] = extra_bps
 
 
 def create_g3_adapter() -> GermlineToG3Adapter:
