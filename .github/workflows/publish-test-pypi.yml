@@ -86,7 +86,7 @@ jobs:
 
       - name: Display installed package info
         run: |
-          pip show sadie-test
+          pip show sadie-antibody
 
   publish-test-pypi:
     name: Publish to TestPyPI
