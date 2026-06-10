@@ -97,6 +97,25 @@ SEGMENTS = {
 }
 
 
+# Per-species regular expressions for the conserved J-gene framework-4 (FWR4) anchor.
+#
+# Each pattern marks the start of FWR4 in a *translated* germline J segment: the
+# IMGT invariant J-TRP 118 for the heavy locus (canonical ``WG.G`` == W-G-x-G) and
+# J-PHE 118 for the light loci (canonical ``FG.G`` == F-G-x-G). The non-canonical
+# variants -- more specific (``WGQG`` platypus, ``WG.GT`` rabbit), less specific
+# (``W[GD].G`` horse), or sideways (``[WL]G[TQK][VG]`` alpaca) -- are NOT taken from
+# any published source. They were curated empirically by inspecting the J alleles
+# available at IMGT/OGRDB for each organism; the per-species ``ignore`` lists (gene
+# ids such as ``IGKJ3`` and literal pseudogene peptides) are hand exceptions noted
+# during that curation. They are therefore reliable on the in-database alleles they
+# were fitted to, but not a dependable general caller for de-novo J alleles
+# (over-specific patterns miss divergent alleles; loose ones can mis-anchor).
+#
+# These motifs are a curation reference and are NOT used by SADIE's current FWR4
+# pipeline: FWR4 boundaries come from the IgBLAST auxiliary files
+# (``data/germlines/aux_db/imgt/*_gl.aux``) and the numbering schemes / G3. The
+# empirical accuracy of each pattern against the shipped germline J data is pinned
+# by tests/unit/reference/test_motif_lookup.py. See GitHub issue #267 for context.
 MOTIF_LOOKUP = {
     "mouse": {
         "IGHJ": r"WG.G",
@@ -110,7 +129,10 @@ MOTIF_LOOKUP = {
     "rat": {"IGHJ": r"WG.G", "IGKJ": r"FG.G", "IGLJ": r"[FL]G.G", "ignore": ["IGKJ3"]},
     "human": {
         "IGHJ": r"WG.G",
-        "IGKJ": r"FG",
+        # Anchored to the full F-G-x-G FR4 consensus (FGQG/FGPG/FGGG across all
+        # shipped human IGKJ alleles). A bare ``FG`` matches the first Phe-Gly
+        # dipeptide anywhere and can mis-anchor FR4 on de-novo alleles (#267).
+        "IGKJ": r"FG.G",
         "IGLJ": r"FG.G",
         "TRAJ": r"[FWC][GA].[GEN]",
         "TRBJ": r"[FVG][GR].[G]",
