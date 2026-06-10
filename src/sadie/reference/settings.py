@@ -97,6 +97,33 @@ SEGMENTS = {
 }
 
 
+# Per-species regular expressions for the conserved J-gene framework-4 (FWR4) anchor.
+#
+# Each pattern marks the start of FWR4 in a *translated* germline J segment: the
+# IMGT invariant J-TRP 118 for the heavy locus (canonical ``WG.G`` == W-G-x-G) and
+# J-PHE 118 for the light loci (canonical ``FG.G`` == F-G-x-G). The non-canonical
+# variants -- more specific (``WGQG`` platypus, ``WG.GT`` rabbit), less specific
+# (``W[GD].G`` horse), or sideways (``[WL]G[TQK][VG]`` alpaca) -- are NOT taken from
+# any published source. They were curated empirically by inspecting the J alleles
+# available at IMGT/OGRDB for each organism; the per-species ``ignore`` lists (gene
+# ids such as ``IGKJ3`` and literal pseudogene peptides) are hand exceptions noted
+# during that curation. They are therefore reliable on the in-database alleles they
+# were fitted to, but not a dependable general caller for de-novo J alleles
+# (over-specific patterns miss divergent alleles; loose ones can mis-anchor).
+#
+# Historically (from the 2020-11-17 pibody init commit 4d846853 through commit
+# d81db6ae on 2021-08-21) these motifs WERE the active FWR4 caller: the now-removed
+# ``genesegment.py`` matched each pattern against the translated J allele
+# (``re.findall(motif, aa)[0]`` -- the FIRST match) to compute the CDR3-end /
+# FWR4-start nucleotide index, and ``aux_file.py`` wrote that index into the IgBLAST
+# ``*_gl.aux`` files. That logic moved to G3, leaving this table as a curation
+# reference (it was an active caller, not orphaned at birth).
+#
+# These motifs are a curation reference and are NOT used by SADIE's current FWR4
+# pipeline: FWR4 boundaries come from the IgBLAST auxiliary files
+# (``data/germlines/aux_db/imgt/*_gl.aux``) and the numbering schemes / G3. The
+# empirical accuracy of each pattern against the shipped germline J data is pinned
+# by tests/unit/reference/test_motif_lookup.py. See GitHub issue #267 for context.
 MOTIF_LOOKUP = {
     "mouse": {
         "IGHJ": r"WG.G",
@@ -110,13 +137,16 @@ MOTIF_LOOKUP = {
     "rat": {"IGHJ": r"WG.G", "IGKJ": r"FG.G", "IGLJ": r"[FL]G.G", "ignore": ["IGKJ3"]},
     "human": {
         "IGHJ": r"WG.G",
-        "IGKJ": r"FG",
+        # Anchored to the full F-G-x-G FR4 consensus (FGQG/FGPG/FGGG across all
+        # shipped human IGKJ alleles). A bare ``FG`` matches the first Phe-Gly
+        # dipeptide anywhere and can mis-anchor FR4 on de-novo alleles (#267).
+        "IGKJ": r"FG.G",
         "IGLJ": r"FG.G",
         "TRAJ": r"[FWC][GA].[GEN]",
         "TRBJ": r"[FVG][GR].[G]",
         "TRGJ": r"F[GA].G",
         "TRDJ": r"FG.G",
-        "ignore": "",
+        "ignore": [],
     },
     "macaque": {
         "IGHJ": r"WG.G",
@@ -126,7 +156,7 @@ MOTIF_LOOKUP = {
         "TRBJ": r"[F][G].[G]",
         "TRDJ": r"FG.G",
         "TRGJ": r"F[GA].[G*]",
-        "ignore": "",
+        "ignore": [],
     },
     "nhp": {
         "TRAJ": r"[F][G].[G][T]",
@@ -154,14 +184,14 @@ MOTIF_LOOKUP = {
         "ignore": ["TRAJ34", "TRBJ1-1", "TRBJ1-4", "TRBJ1-5", "TRBJ2-5", "TRDJ2"],
     },
     "boar": {
-        "ignore": "",
+        "ignore": [],
         "IGHJ": r"WG.G",
         "IGKJ": r"FG.GT",
         "IGLJ": r"FG.GT",
         "TRBJ": r"FG.G",
     },
     "cow": {
-        "ignore": "",
+        "ignore": [],
         "IGHJ": r"[WC][SG][QPSR].",
         "IGKJ": r"[FL]G.[GR]T..E",
         "IGLJ": r"[FL][GI][SG][GR]T",
@@ -169,14 +199,14 @@ MOTIF_LOOKUP = {
         "TRDJ": r"FG.[GE]",
         "TRGJ": r"[FLY][GN][VEK][GA]",
     },
-    "crabmacaque": {"ignore": "", "IGHJ": r"WG.G"},
+    "crabmacaque": {"ignore": [], "IGHJ": r"WG.G"},
     "dolphin": {
-        "ignore": "",
+        "ignore": [],
         "TRAJ": r"[FCLWSY][GS].[GRLK]",
         "TRGJ": r"[FCLWSY]G.[GRL]",
         "TRDJ": r"[FCLWSY][RG].[GRL]",
     },
-    "ferret": {"ignore": "", "TRBJ": r"[F][GA].G", "TRAJ": r"[F][GA].G"},
+    "ferret": {"ignore": [], "TRBJ": r"[F][GA].G", "TRAJ": r"[F][GA].G"},
     "camel": {
         "ignore": ["TRBJ3-4"],
         "IGHJ": r"WG.G",
@@ -185,8 +215,8 @@ MOTIF_LOOKUP = {
         "TRBJ": r"FG.G",
         "TRGJ": r"FG.G",
     },
-    "goat": {"ignore": [""], "IGKJ": r"[FL]G.GT", "IGLJ": r"[FL]G.GT"},
-    "horse": {"ignore": [""], "IGKJ": r"[F]G.GT", "IGHJ": r"[W][GD].G"},
+    "goat": {"ignore": [], "IGKJ": r"[FL]G.GT", "IGLJ": r"[FL]G.GT"},
+    "horse": {"ignore": [], "IGKJ": r"[F]G.GT", "IGHJ": r"[W][GD].G"},
     "dog": {
         "IGHJ": r"WG.G",
         "IGKJ": r"F[GS].G",
@@ -195,7 +225,7 @@ MOTIF_LOOKUP = {
         "TRBJ": r"[F][GA].[G]",
         "TRGJ": r"[LFM][GTA].[GDV]",
         "TRDJ": r"FG.[GL]",
-        "ignore": "",
+        "ignore": [],
     },
     "cat": {
         "IGHJ": r"WG.G",
@@ -205,15 +235,14 @@ MOTIF_LOOKUP = {
         "TRBJ": r"[F][TG].[G]",
         "TRGJ": r"[SF][TGAD].[G]",
         "TRDJ": r"FG.[G]",
-        "ignore": "",
+        "ignore": [],
     },
-    "alpaca": {"IGHJ": r"[WL]G[TQK][VG]", "ignore": [""]},
-    "salmon": {"IGHJ": r"[W*][EG][KQ]GT", "ignore": [""]},
+    "alpaca": {"IGHJ": r"[WL]G[TQK][VG]", "ignore": []},
+    "salmon": {"IGHJ": r"[W*][EG][KQ]GT", "ignore": []},
     "sharks": {
         "ignore": [
             "PEKGVGTVLTVR",
             "SYEYGGGTVVTVNP",
-            "RHGLLGTRDHGDGDC",
             "RHGLLGTRDHGDGDC",
             "ACGDGTFVTVNP",
             "YGADTVVTVNP",
@@ -223,11 +252,9 @@ MOTIF_LOOKUP = {
             "YGGGTVVTVNP",
             "HHGLLGTRDHGDGDF",
             "GLLGTRDHGDGDC",
-            "YGGGTVVTVNP",
             "SFDEYGGGTVVT",
             "SPNYWGGGSMVTVTC",
             "YAAVGDGTAVTVNP",
-            "YGGGTVVTVNP",
             "YAACGDATAVTVNP",
             "DYKGGDTLLTVK",
             "SYEYGGGTVVT",
@@ -235,15 +262,12 @@ MOTIF_LOOKUP = {
             "ERPGTALTVK",
             "QLCCMRRRHCRD",
             "HHGLLGTRDHGDGDC",
-            "YGGGTVVTVNP",
             "MLHAEMALRDCES",
             "YEKGAGTVLTVK",
-            "HHGLLGTRDHGDGDC",
             "NEKGAGTVLTVK",
             "DEEGAGTVLTVK",
             "GGAGTVLTVK",
             "YGGGTGVTVNP",
-            "YGGGTVVTVNP",
             "LPRLLGTRDHGDGDC",
         ],
         "IGHJ": r"[WCH][G].[RGS][TK]",
@@ -267,6 +291,169 @@ MOTIF_LOOKUP = {
         "IGHJ": r"WG.GT",
         "TRAJ": r"[FM][GAST].G[TVSM]",
         "TRDJ": r"FG.P",
+    },
+}
+
+
+# Machine-readable provenance / curation metadata for ``MOTIF_LOOKUP`` -- one entry
+# per species key, recording where each set of motifs came from and how far it can
+# be trusted. ``imgt_validated`` is True only where the motif is the canonical
+# Lefranc IMGT-ONTOLOGY FR4 anchor end-to-end (W-G-x-G heavy / F-G-x-G light); every
+# other species is an empirical fit to the IMGT/OGRDB J alleles shipped with SADIE,
+# with no published per-species citation in repo history. See the comment above
+# ``MOTIF_LOOKUP`` and GitHub issue #267.
+_CANONICAL_FR4_SOURCE = (
+    "Canonical IMGT FR4 anchor (Lefranc IMGT-ONTOLOGY): J-TRP 118 (W-G-x-G, heavy) " "/ J-PHE 118 (F-G-x-G, light)."
+)
+_EMPIRICAL_FR4_SOURCE = (
+    "Empirical fit to the IMGT/OGRDB J alleles shipped with SADIE; introduced in the "
+    "original pibody init commit 4d846853 (2020-11-17, J. Willis). No published "
+    "per-species citation exists in repo history."
+)
+MOTIF_PROVENANCE = {
+    "mouse": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "IGHJ/IGLJ are canonical W-G-x-G / F-G-x-G; IGKJ F[SG].G is a non-canonical empirical variant.",
+    },
+    "rat": {
+        "source": _CANONICAL_FR4_SOURCE,
+        "imgt_validated": True,
+        "last_reviewed": "2026-06-10",
+        "notes": "IGHJ W-G-x-G and IGKJ/IGLJ F-G-x-G match the canonical IMGT FR4 anchor.",
+    },
+    "human": {
+        "source": _CANONICAL_FR4_SOURCE,
+        "imgt_validated": True,
+        "last_reviewed": "2026-06-10",
+        "notes": "IGKJ corrected FG->FG.G (#267) to avoid anchoring on an upstream Phe-Gly.",
+    },
+    "macaque": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "IGL F[GC].GT misses the divergent IGLJ7*02 allele (see KNOWN_MOTIF_MISSES).",
+    },
+    "nhp": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "TR-only motifs fitted to the shipped non-human-primate J alleles.",
+    },
+    "platypus": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Over-specific WGQG; will miss divergent de-novo alleles.",
+    },
+    "rabbit": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Motifs carry the rabbit-specific ...T tail; fitted to the shipped J alleles.",
+    },
+    "night_monkey": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "TR-only motifs fitted to the shipped Aotus (night monkey) J alleles.",
+    },
+    "boar": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Fitted to the shipped pig J alleles; de-novo reliability untested.",
+    },
+    "cow": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Highly bovine-specific heavy motif [WC][SG][QPSR].; needs IMGT validation.",
+    },
+    "crabmacaque": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Heavy-only WG.G fitted to the shipped crab-eating macaque J alleles.",
+    },
+    "dolphin": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Permissive TR motifs fitted to the shipped dolphin J alleles.",
+    },
+    "ferret": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "TR-only motifs fitted to the shipped ferret J alleles.",
+    },
+    "camel": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Fitted to the shipped camel J alleles; de-novo reliability low.",
+    },
+    "goat": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Light-only motifs fitted to the shipped goat J alleles.",
+    },
+    "horse": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Non-canonical W[GD].G heavy motif; fitted to the shipped horse J alleles.",
+    },
+    "dog": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Fitted to the shipped dog J alleles; de-novo reliability untested.",
+    },
+    "cat": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Fitted to the shipped cat J alleles; de-novo reliability untested.",
+    },
+    "alpaca": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Over-specific [WL]G[TQK][VG]; de-novo reliability low.",
+    },
+    "salmon": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Over-specific [W*][EG][KQ]GT; de-novo reliability low.",
+    },
+    "sharks": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Highly permissive [WCH][G].[RGS][TK]; needs IMGT validation.",
+    },
+    "sheep": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Fitted to the shipped sheep J alleles; de-novo reliability untested.",
+    },
+    "trout": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Fitted to the shipped trout J alleles; de-novo reliability low.",
+    },
+    "zebrafish": {
+        "source": _EMPIRICAL_FR4_SOURCE,
+        "imgt_validated": False,
+        "last_reviewed": "2026-06-10",
+        "notes": "Fitted to the shipped zebrafish J alleles; de-novo reliability low.",
     },
 }
 
