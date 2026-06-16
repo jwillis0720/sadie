@@ -110,7 +110,7 @@ MOTIF_LOOKUP = {
     "rat": {"IGHJ": r"WG.G", "IGKJ": r"FG.G", "IGLJ": r"[FL]G.G", "ignore": ["IGKJ3"]},
     "human": {
         "IGHJ": r"WG.G",
-        "IGKJ": r"FG",
+        "IGKJ": r"FG.G",
         "IGLJ": r"FG.G",
         "TRAJ": r"[FWC][GA].[GEN]",
         "TRBJ": r"[FVG][GR].[G]",
