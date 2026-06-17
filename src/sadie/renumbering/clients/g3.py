@@ -52,7 +52,7 @@ class G3:
             for record in _load_collection(source)
             if record["common"] == species and record["gene_segment"] == segment
         ]
-        if limit:
+        if limit is not None and limit > 0:
             records = records[:limit]
         return records
 
