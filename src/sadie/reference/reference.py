@@ -51,7 +51,7 @@ class Reference:
     """Reference class to handle reference databases for  sadie.airr and sadie.numbering"""
 
     # Default sentinel endpoint. The live G3 API is retired; genes resolve from bundled data.
-    _endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
+    _endpoint = "bundled"
 
     def __init__(self, endpoint: str = _endpoint):
         """Initialize the reference object
