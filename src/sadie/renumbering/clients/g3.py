@@ -4,14 +4,13 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import pyhmmer
-import requests as r
-from yarl import URL
 
+from sadie.reference.reference import _load_collection
 from sadie.typing import Chain, Source, Species
 
 
 class G3:
-    """API Wrapper with OpenAPI found here https://g3.jordanrwillis.com/docs"""
+    """Offline germline source: reads the bundled IMGT/custom G3 collections (the retired live G3 API)."""
 
     # TODO: most likely make this an import
     data_folder = Path(__file__).parent.parent / "data"
@@ -19,7 +18,6 @@ class G3:
     chains = {"H", "K", "L"}
 
     def __init__(self):
-        self.base_url = URL("https://g3.jordanrwillis.com/api/v1")
         self.not_usable_species = [
             "pig",
             "cow",
@@ -33,19 +31,13 @@ class G3:
         self.background = pyhmmer.plan7.Background(self.alphabet)
 
     @property
-    @lru_cache(maxsize=1)
-    def sources(self):
-        resp = r.get(self.base_url)
-        resp.raise_for_status()
-        return resp.json()["components"]["schemas"]["SourceName"]["enum"]
+    def sources(self) -> List[str]:
+        return ["custom", "imgt"]
 
     @property
-    @lru_cache(maxsize=1)
-    def species(self):
-        resp = r.get(self.base_url)
-        resp.raise_for_status()
-        species = resp.json()["components"]["schemas"]["CommonName"]["enum"]
-        return [single_species for single_species in species if single_species not in self.not_usable_species]
+    def species(self) -> List[str]:
+        commons = {record["common"] for source in self.sources for record in _load_collection(source)}
+        return sorted(common for common in commons if common not in self.not_usable_species)
 
     @lru_cache(maxsize=None)
     def __get_gene_resp(
@@ -54,16 +46,15 @@ class G3:
         species: Species = "human",
         segment: str = "V",
         limit: Optional[int] = None,
-    ) -> r.Response:
-        params = {
-            "source": source,
-            "common": species,
-            "segment": segment,
-            "limit": limit if limit else "-1",
-        }
-        resp = r.get(self.base_url / "genes", params=params)
-        resp.raise_for_status()
-        return resp
+    ) -> List[Dict]:
+        records = [
+            record
+            for record in _load_collection(source)
+            if record["common"] == species and record["gene_segment"] == segment
+        ]
+        if limit:
+            records = records[:limit]
+        return records
 
     def get_gene(
         self,
@@ -73,8 +64,10 @@ class G3:
         segment: str = "V",
         limit: Optional[int] = None,
     ):
-        resp = self.__get_gene_resp(source=source, species=species, segment=segment, limit=limit)
-        return [x for x in resp.json() if x["gene"][2].lower() == chain.lower()]
+        records = self.__get_gene_resp(source=source, species=species, segment=segment, limit=limit)
+        # Sort by gene name so the curated-alignment oracle's lexicographic ordering is reproduced
+        # (get_stockholm_pairs names collapse to a lossy key, so the last gene per key must match).
+        return sorted((x for x in records if x["gene"][2].lower() == chain.lower()), key=lambda x: x["gene"])
 
     def get_stockholm_pairs(
         self,
