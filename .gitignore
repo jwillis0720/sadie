@@ -65,3 +65,8 @@ test.ipynb
 # ignore testing backup files
 *.bak.*
 nb/
+
+# backup database
+G3.custom.json
+G3.imgt.json
+*Signature=8.1.json
