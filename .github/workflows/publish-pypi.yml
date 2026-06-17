@@ -17,12 +17,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0  # Important for poetry-dynamic-versioning to read tags
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -50,7 +50,7 @@ jobs:
           ls -lh dist/
 
       - name: Upload distribution packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: python-packages
           path: dist/
@@ -65,12 +65,12 @@ jobs:
 
     steps:
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Download built packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: python-packages
           path: dist/
@@ -98,7 +98,7 @@ jobs:
 
     steps:
       - name: Download built packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: python-packages
           path: dist/

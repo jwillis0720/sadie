@@ -1,21 +1,22 @@
 name: Docs Snippets
 on:
   push:
-    tags:
-      - '*'
     branches: ['main']
-  pull_request:
-    branches: ['main', 'development']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: '3.14'
       - name: Install dependencies and test docs
         run: |
           which python
