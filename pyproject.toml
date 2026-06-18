@@ -52,7 +52,7 @@ click = ">=8.0,<8.2"
 filetype = "^1.2.0"
 pandas = [
     { version = ">=2.0,<3.0", python = "<3.11" },
-    { version = ">=2.0", python = ">=3.11" },
+    { version = ">=2.0,<4.0", python = ">=3.11" },
 ]
 requests = "^2.32.0"
 pydantic = ">=2.0.0,<3.0.0"
