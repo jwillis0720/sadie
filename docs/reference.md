@@ -5,38 +5,19 @@ The SADIE reference module abstracts the underlying reference data used by the [
 !!! Abstract "Builtin reference"
 SADIE ships with a reference database that contains the most common species along with functional genes. The average user will not need to use this module as the database is comprehensive. You can see each entry by looking either directly at the paths used `src/sadie/airr/data/` for AIRR and `src/sadie/anarci/data` for the renumbering module. Another convenient way to look at the reference database is to view the [reference.yml](https://github.com/jwillis0720/sadie/blob/master/src/sadie/reference/data/reference.yml). More on how that file is structured will be [provided](#the-reference-yaml).
 
-## Germline Gene Gateway
+## Bundled Germline Gene Data
 
-New germline gene segments are being discovered at a rapid pace. To meet the needs of this changing landscape, SADIE gets all of the germline gene info from a programmatic API called the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This API is hosted as a free service. It consists of germline genes from [IMGT](https://www.imgt.org) as well as custom genes that have been annotated and cataloged by programs such as [IGDiscover](http://docs.igdiscover.se/en/stable/). To explore the API, visit the [Germline Gene Gateway](https://g3.jordanrwillis.com/docs/). This RESTful API conforms to the [OpenAPI 3.0](https://swagger.io/specification/) specification.
+New germline gene segments are being discovered at a rapid pace. To meet the needs of this changing landscape, SADIE ships bundled germline gene records from [IMGT](https://www.imgt.org) and custom genes annotated by programs such as [IGDiscover](http://docs.igdiscover.se/en/stable/). Reference generation reads these package resources offline.
 
-### Examples of how to use the G3 API
+### Example: read bundled IMGT genes offline
 
-The following examples show how to pull genes programmatically using the command line utilities `curl`, `wget` and the `requests` library in Python. It will fetch the first 5 V-Gene segments in IMGT notation.
+The example below reads `src/sadie/reference/data/imgt-g3.json.gz` through `importlib.resources` and writes the first 5 human V-gene segments in IMGT notation.
 
-=== ":material-console-line: curl"
+```Python
+{!> docs_src/reference/tutorial001.py!}
+```
 
-    <div class="termy">
-
-    ```console
-    $ curl -X 'GET' 'https://g3.jordanrwillis.com/api/v1/genes?source=imgt&segment=V&common=human&limit=5' -H 'accept: application/json' -o 'human_v.json'
-    ```
-    </div>
-
-=== ":material-console-line: wget"
-
-    <div class="termy">
-    ```console
-    $ wget 'https://g3.jordanrwillis.com/api/v1/genes?source=imgt&segment=V&common=human&limit=5' -O human_v.json
-    ```
-    </div>
-
-=== " :material-api: Python"
-
-    ```Python
-    {!> docs_src/reference/tutorial001.py!}
-    ```
-
-The output will be a JSON file containing the V-Gene segment and all relevant information needed by SADIE to write out databases needed by the AIRR and Numbering modules.
+The output will be a JSON file containing the V-gene segment records and all relevant information needed by SADIE to write out databases used by the AIRR and Numbering modules.
 
 ??? example "human_v.json"
 
@@ -46,9 +27,9 @@ The output will be a JSON file containing the V-Gene segment and all relevant in
     ```
     </div>
 
-!!! Tip "G3 API"
+!!! Tip "Offline reference data"
 
-    The G3 API can be explored live through the documentation. Go to the [G3 API Documentation](https://g3.jordanrwillis.com/docs/) to do so. It is a clean non-redundant dataset that can be used for any project programatically. To learn more, [explore the source code](https://github.com/jwillis0720/g3). SADIE abstracts most connections with G3, so you should not have to interact with the API directly.
+    No network call is needed. SADIE resolves reference genes from bundled package data; this direct gzip read is only for inspecting the records used by the docs.
 
 ## Generating AIRR Reference Database
 
@@ -122,7 +103,7 @@ name:
 
     The HuGL18 model will have the full mouse background and three gene segments knocked-in from a human.
 
-Again, a full list of databases, species and genes can be found by exploring the [G3 API](https://g3.jordanrwillis.com/docs#/G3/find_genes_api_v1_genes_get), click the `Try it out` button.
+Again, a full list of built-in databases, species and genes can be found in the bundled [reference.yml](https://github.com/jwillis0720/sadie/blob/master/src/sadie/reference/data/reference.yml) and the package data under `src/sadie/reference/data/`.
 
 ## Generating AIRR database with Reference Class
 

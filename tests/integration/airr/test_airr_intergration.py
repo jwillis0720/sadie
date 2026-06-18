@@ -1,4 +1,3 @@
-from distutils.version import StrictVersion
 from math import nan
 
 import pandas as pd
@@ -17,7 +16,7 @@ def fillna(df, fill_value=""):
         if fill_value not in df[col].cat.categories:
             df[col].cat.add_categories([fill_value], inplace=True)
     # Known bug https://github.com/pandas-dev/pandas/issues/25472
-    if StrictVersion(pd.__version__) >= StrictVersion("1.0"):
+    if tuple(int(x) for x in pd.__version__.split(".")[:2]) >= (1, 0):
         for col in df.dtypes[df.dtypes.apply(lambda x: x in ["float64", "Int16", "Int64"])].index:
             df[col] = df[col].astype("float")
     return df.fillna(fill_value)

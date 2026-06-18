@@ -1,13 +1,12 @@
+import gzip
 import json
+from importlib.resources import files
 
-import requests
+# The live G3 API is retired; gene records ship inside the package and are read offline.
+collection = files("sadie.reference") / "data" / "imgt-g3.json.gz"
+with gzip.open(collection, "rt") as handle:
+    genes = json.load(handle)
 
-from sadie.reference import G3Error
-
-url = "https://g3.jordanrwillis.com/api/v1/genes?source=imgt&segment=V&common=human&limit=5"
-response = requests.get(url)
-response_json = response.json()
-if response.status_code != 200:
-    raise G3Error("Error: " + str(response.status_code))
-print(json.dumps(response_json, indent=4))
-json.dump(response_json, open("human_v.json", "w"), indent=4)
+human_v = [g for g in genes if g["common"] == "human" and g["gene_segment"] == "V"][:5]
+print(json.dumps(human_v, indent=4))
+json.dump(human_v, open("human_v.json", "w"), indent=4)

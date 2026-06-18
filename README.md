@@ -62,11 +62,13 @@ SADIE is the **S**equencing **A**nalysis and **D**ata library for **I**mmunoinfo
 
 - Provide a **testable** and **reusable** library that WORKS!
 
-- Provide a **customizable** and **verified** germline reference library.
+- Provide a **bundled**, **customizable**, and **verified** germline reference library.
 
 - Maintain data formats consistent with standards governed by the [**AIRR community**](https://docs.airr-community.org/en/stable/#table-of-contents)
 
 - **Portability** ready to use out the box.
+
+SADIE ships germline gene data in the package. The retired live G3 API is no longer required for reference, AIRR, or renumbering workflows.
 
 SADIE is billed as a "**complete antibody library**", not because it aims to do everything, but because it aims to meet the needs of all immunoinformatics users. SADIE contains both low, mid and high level functionality for immunoinformatics tools and workflows. You can use SADIE as a framework to develop your own tools, use many of the prebuilt contributed tools, or run it in a notebook to enable data exploration. In addition, SADIE aims to port all code to python because relies heavily on the [Pandas](https://www.pandas.org) library, the workhorse of the data science/machine learning age.
 
@@ -80,19 +82,33 @@ Installation is handled using the python package installer `pip`
 $ pip install sadie-antibody
 ```
 
+No G3 API setup is required for the bundled germline references after installation.
+
 ### Development installation.
 
 Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.
 
 ```console
 $ git clone git@github.com/jwillis0720/sadie.git
-$ pip install poetry
-$ poetry install --with dev
+$ cd sadie
+$ pip install -e .
+```
+
+### Offline test run
+
+Run the frozen suite with HTTP proxies pointed at a dead local port:
+
+```console
+$ https_proxy=http://127.0.0.1:9 http_proxy=http://127.0.0.1:9 all_proxy=http://127.0.0.1:9 \
+  HTTPS_PROXY=http://127.0.0.1:9 HTTP_PROXY=http://127.0.0.1:9 ALL_PROXY=http://127.0.0.1:9 \
+  pytest tests -o addopts= -p no:cacheprovider
 ```
 
 ## Quick Usage
 
 Consult the [documentation](https://sadie.jordanrwillis.com) for complete usage. Or checkout our [Colab](https://colab.research.google.com/github/jwillis0720/sadie/blob/main/notebooks/airr_c/SADIE_DEMO.ipynb) notebook
+
+The packaged germline references are used by default; no live G3 lookup is made.
 
 ### Command Line Usage
 

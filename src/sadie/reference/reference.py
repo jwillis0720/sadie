@@ -2,17 +2,16 @@
 
 from __future__ import annotations
 
+import gzip
+import json
 import logging
+from functools import lru_cache
 from pathlib import Path
-from time import sleep
-from typing import Any, Dict, List, Optional, Tuple, Union
-from urllib.parse import quote as url_quote
+from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
-import requests
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from requests.exceptions import RequestException
 
 from sadie.reference.models import GeneEntries, GeneEntry
 from sadie.reference.util import (
@@ -28,6 +27,17 @@ logger = logging.getLogger("Reference")
 # column typing from pandas stubs
 Column = Union[Union[int, str], str]
 
+# bundled, normalized G3 collections that replace the retired live G3 API
+_DATA_DIR = Path(__file__).parent / "data"
+_COLLECTION_FILES = {"imgt": "imgt-g3.json.gz", "custom": "custom-g3.json.gz"}
+
+
+@lru_cache(maxsize=None)
+def _load_collection(source: str) -> List[Dict[str, Any]]:
+    """Load a bundled, normalized G3 collection (``imgt`` or ``custom``) from local gzip data."""
+    with gzip.open(_DATA_DIR / _COLLECTION_FILES[source], "rt") as handle:
+        return json.load(handle)
+
 
 class G3Error(Exception):
     """Exception for G3 - helps with being specific"""
@@ -40,8 +50,8 @@ class G3Error(Exception):
 class Reference:
     """Reference class to handle reference databases for  sadie.airr and sadie.numbering"""
 
-    # G3 API Endpoint
-    _endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
+    # Default sentinel endpoint. The live G3 API is retired; genes resolve from bundled data.
+    _endpoint = "bundled"
 
     def __init__(self, endpoint: str = _endpoint):
         """Initialize the reference object
@@ -49,7 +59,8 @@ class Reference:
         Parameters
         ----------
         endpoint : str, optional
-           The endpoint API address to get the data. Defaults to the G3 API.
+           Retained for backwards compatibility. Only the default sentinel is accepted; any other
+           value raises ``G3Error`` because remote endpoints are retired. No network call is made.
         """
         self.data: List[Dict[Column, str] | Dict[str, str]] = []
         self.endpoint = endpoint
@@ -60,26 +71,9 @@ class Reference:
 
     @endpoint.setter
     def endpoint(self, endpoint: str) -> None:
-        _counter = 0
-        while True:
-            try:
-                _get = requests.get(endpoint)
-            except RequestException as e:
-                # Handle connection errors (DNS failures, connection refused, etc.)
-                raise G3Error(f"Failed to connect to {endpoint}: {str(e)}")
-
-            if _get.status_code == 503:
-                _counter += 1
-                sleep(5)
-                logger.info(f"Waiting for G3 API {endpoint} to be available --try: {_counter}")
-            elif _get.status_code == 200:
-                break
-            else:
-                raise G3Error(f"Error loading G3 API {endpoint}")
-            if _counter > 5:
-                raise G3Error(f"{endpoint} is not a valid G3 API endpoint or is down")
-
-        logger.info(f"G3 API {endpoint} is available")
+        # Remote G3 is retired; only the default sentinel is accepted and it triggers no network call.
+        if endpoint != type(self)._endpoint:
+            raise G3Error(f"Remote G3 endpoint {endpoint} is retired; SADIE resolves genes from bundled data")
         self._endpoint = endpoint
 
     def add_gene(self, gene: Dict[str, str]) -> None:
@@ -123,33 +117,8 @@ class Reference:
         genes_valid = GeneEntries(species=species, source=source, genes=genes)
         self.data += self._get_genes(genes_valid)
 
-    def _g3_get(self, query: str) -> Tuple[int, List[Dict[str, str]]]:
-        """Use the G3 Restful API
-
-        Parameters
-        ----------
-        query : str
-            query string - ig. https://g3.jordanrwillis.com/api/v1/genes?source=imgt&common=human&gene=IGHV1-69%2A01
-
-        Returns
-        -------
-        Tuple[int, List[Dict[str,st]]]
-            status code and response
-
-        Raises
-        ------
-        G3Error
-            if the response is 404 and we can't find the gene
-        G3Error
-            Any other response code that is not 200
-        """
-        response = requests.get(query)
-        if response.status_code != 200:
-            raise G3Error(f"{response.url} error G3 database response: {response.status_code}\n{response.text}")
-        return response.status_code, response.json()
-
     def _get_gene(self, gene: GeneEntry) -> Dict[str, str]:
-        """Get a single gene from the G3 Restful API using a GeneEntry Model
+        """Resolve a single gene from the bundled local G3 collection using a GeneEntry model
 
         Parameters
         ----------
@@ -158,36 +127,35 @@ class Reference:
 
         Returns
         -------
-         Single Json -> Dict response
+         Single record -> Dict response
 
         Raises
         ------
         ValueError
             If gene is not a GeneEntry model
         G3Error
-            If more than one gene is found, i.e the list is longer than 1. Use _get_genes for more than 1.
+            If the gene is not found in the bundled collection
         """
         if not isinstance(gene, GeneEntry):
             raise ValueError(f"{gene} is not GeneEntry")
 
-        # change weird characters to url characters
-        gene_url = url_quote(gene.gene)
+        # one record per (source, common, gene) in the deduped bundle
+        matches = [
+            record
+            for record in _load_collection(gene.source)
+            if record["common"] == gene.species and record["gene"] == gene.gene
+        ]
+        logger.debug(f"{gene.source}:{gene.species}:{gene.gene} matched {len(matches)} bundled records")
+        if not matches:
+            raise G3Error(f"{gene.source}:{gene.species}:{gene.gene} not found in bundled G3 data")
 
-        # we should never have more than one match thanks to the index
-        query = f"{self.endpoint}?source={gene.source}&common={gene.species}&gene={gene_url}"
-
-        # use G3 get to return response and json
-        status_code, response_json = self._g3_get(query)
-        logger.debug(f"{gene.source}:{gene.species}:{gene.gene} database response: {status_code}")
-
-        # put the species in sub species in because they are not a part of G3.
-        logger.debug(f"have {len(response_json)} genes")
-        response_data: Dict[str, str] = response_json[0]
+        # copy so the cached collection is not mutated; species mirrors prior G3 behavior
+        response_data: Dict[str, str] = dict(matches[0])
         response_data["species"] = gene.species
         return response_data
 
     def _get_genes(self, genes: GeneEntries) -> List[Dict[str, str]]:
-        """Get a list of genes from entries model. Similar to _get_gene but for multiple genes
+        """Resolve a list of genes from the bundled local collection. Similar to _get_gene but for many genes
 
         Parameters
         ----------
@@ -197,7 +165,7 @@ class Reference:
         Returns
         -------
         List[dict]
-            A list of Json-> Dict responses from G3
+            A list of records from the bundled collection
 
 
         Raises
@@ -208,17 +176,14 @@ class Reference:
         if not isinstance(genes, GeneEntries):
             raise ValueError(f"{genes} is not GeneEntries")
 
-        # url query
-        query = f"{self.endpoint}?source={genes.source}&common={genes.species}&limit=-1"
-
-        # get request as method for future async
-        status_code, response_json = self._g3_get(query)
-        logger.debug(f"{genes.source}:{genes.species} database response: {status_code}")
-
-        # this is faster than getting individual genes from the g3 api
-        # @Todo, add a find_genes method to G3 rather than pulling all the data and filtering...
-        filtered_json = list(filter(lambda x: x["gene"] in genes.genes, response_json))
-        return filtered_json
+        wanted = set(genes.genes)
+        filtered = [
+            dict(record)
+            for record in _load_collection(genes.source)
+            if record["common"] == genes.species and record["gene"] in wanted
+        ]
+        logger.debug(f"{genes.source}:{genes.species} matched {len(filtered)} of {len(wanted)} requested genes")
+        return filtered
 
     def get_dataframe(self) -> pd.DataFrame:
         """Return a pandas dataframe of the references data"""
