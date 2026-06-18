@@ -109,7 +109,7 @@ def _make_sadie_comparable(df):
     # Just get compare keys
     df = pd.DataFrame(df)
     df = df[compare_key].drop(ignore, axis=1)
-    df.loc[:, starts_and_ends] = df[starts_and_ends].astype("Int64")
+    df[starts_and_ends] = df[starts_and_ends].astype("Int64")
     # Just get the gene top call IGHV1-2*01 -> IGHV1-2
     df.insert(
         df.columns.get_loc("v_call_top"),
@@ -201,7 +201,7 @@ def _make_imgt_comparable(df: pd.DataFrame) -> pd.DataFrame:
     df = df.drop(ignore, axis=1)
 
     # Convert the integer types
-    df.loc[:, starts_and_ends] = df[starts_and_ends].astype("Int64")
+    df[starts_and_ends] = df[starts_and_ends].astype("Int64")
     return df
 
 

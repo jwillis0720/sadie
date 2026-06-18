@@ -26,6 +26,7 @@ from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.airr.exceptions import BadDataSet, BadIgBLASTExe, BadRequstedFileType
 from sadie.airr.igblast import GermlineData, IgBLASTN
 from sadie.reference.reference import References
+from sadie.utility.io import get_file_buffer, guess_input_compression
 
 logger = logging.getLogger("AIRR")
 warnings.filterwarnings("ignore", "Partial codon")
@@ -520,7 +521,8 @@ class Airr:
 
         # make sure it's fasta - this will consume the generator but blast has its own fasta parser
         try:
-            next(SeqIO.parse(file, "fasta"))
+            with get_file_buffer(Path(file), guess_input_compression(file)) as handle:
+                next(SeqIO.parse(handle, "fasta"))
         except Exception:
             raise BadRequstedFileType("", ["fasta"])
 
@@ -639,6 +641,14 @@ class Airr:
                         if not adapt_results[~adapt_results["liable"]].empty:
                             result.update(adapt_results[~adapt_results["liable"]])
 
+                # DataFrame.update only writes non-NA values, so a re-run can copy its
+                # liable flag onto a row while leaving region columns from the original
+                # alignment intact, leaving `liable` inconsistent with the final regions.
+                # Recompute liable from the merged regions so the column always reflects
+                # the alignment actually present (matching a fresh AirrTable verify).
+                liability_keys = ["fwr1_aa", "cdr1_aa", "fwr2_aa", "cdr2_aa", "fwr3_aa", "cdr3_aa", "fwr4_aa"]
+                result["liable"] = result[liability_keys].apply(result._check_j_gene_liability, axis=1)
+
         if self.correct_indel:
             result.correct_indel()  # type: ignore[attr-defined]
 
@@ -660,7 +670,7 @@ class Airr:
         remaining_seq = (
             result_a[["sequence", "sequence_alignment"]]
             .fillna("")
-            .apply(lambda x: x[0].replace(x[1].replace("-", ""), ""), axis=1)
+            .apply(lambda x: x.iloc[0].replace(x.iloc[1].replace("-", ""), ""), axis=1)
         )
         # and get those ids
         remaining_id = result_a["sequence_id"]

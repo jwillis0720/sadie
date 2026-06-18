@@ -351,9 +351,9 @@ def run_mutational_analysis(
         lookup_specific = lookup_dataframe[[germ_tag, mat_tag]]
 
         # mutation array are all the mutations in a list
-        mutation_array = lookup_specific[lookup_specific.apply(lambda x: x[0] != x[1] and x[0] != "X", axis=1)].apply(
-            lambda x: x[0] + x.name + x[1], axis=1
-        )
+        mutation_array = lookup_specific[
+            lookup_specific.apply(lambda x: x.iloc[0] != x.iloc[1] and x.iloc[0] != "X", axis=1)
+        ].apply(lambda x: x.iloc[0] + x.name + x.iloc[1], axis=1)
         if mutation_array.empty:
             mutation_array = []  # type: ignore[assignment]
         else:
