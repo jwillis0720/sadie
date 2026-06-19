@@ -291,7 +291,7 @@ class AirrTable(pd.DataFrame):
         never passed into ``DataFrame.__init__``; that path is deprecated in
         pandas 2.1+ and raises in pandas 3.
         """
-        obj = cls._from_mgr(mgr, axes=axes)
+        obj = getattr(cls, "_from_mgr")(mgr, axes=axes)
         obj._in_constructor = False
         return obj
 
