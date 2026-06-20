@@ -321,7 +321,7 @@ class References:
         concat_df_groupby_name = concat_df.groupby("name")
 
         # within names, check how many species are there
-        chimeric_gb = concat_df_groupby_name.apply(lambda x: len(x["common"].unique()) > 1)
+        chimeric_gb = concat_df_groupby_name["common"].apply(lambda x: len(x.unique()) > 1)
 
         list_of_chimera: List[str] = chimeric_gb[chimeric_gb].index.to_list()
         logger.info(f"{list_of_chimera} are chimeric")

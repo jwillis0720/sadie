@@ -285,14 +285,14 @@ class AirrTable(pd.DataFrame):
 
     @classmethod
     def _constructor_from_mgr(cls, mgr, axes):
-        """Override to prevent recursion during internal pandas operations."""
-        # Create instance with the flag set to prevent verification
-        obj = cls.__new__(cls)
-        obj._in_constructor = True
-        # Call parent constructor
-        pd.DataFrame.__init__(obj, mgr)
+        """Build from a manager without re-running __init__/_verify.
+
+        Uses the ``_from_mgr`` fast path (NDFrame.__init__) so a BlockManager is
+        never passed into ``DataFrame.__init__``; that path is deprecated in
+        pandas 2.1+ and raises in pandas 3.
+        """
+        obj = getattr(cls, "_from_mgr")(mgr, axes=axes)
         obj._in_constructor = False
-        # Copy metadata from the original if available
         return obj
 
     @property
@@ -554,26 +554,24 @@ class AirrTable(pd.DataFrame):
                     )
 
                 # get mutation frequency rather than identity
-                self.loc[:, f"v_mutation{suffix}"] = self[f"v_identity{suffix}"].apply(lambda x: (1 - x))
-                # self.loc[:, f"v_identity{suffix}"] = self[f"v_identity{suffix}"].apply(lambda x: x / 100)
+                self[f"v_mutation{suffix}"] = self[f"v_identity{suffix}"].apply(lambda x: (1 - x))
+                # self[f"v_identity{suffix}"] = self[f"v_identity{suffix}"].apply(lambda x: x / 100)
 
                 # then get a percentage for AA by computing levenshtein
-                self.loc[:, f"v_mutation_aa{suffix}"] = self[
+                self[f"v_mutation_aa{suffix}"] = self[
                     [f"v_sequence_alignment_aa{suffix}", f"v_germline_alignment_aa{suffix}"]
                 ].apply(lambda x: self._get_aa_distance(x), axis=1)
 
                 # do the same for D and J gene segment portions
-                self.loc[:, f"d_mutation{suffix}"] = self[f"d_identity{suffix}"].apply(
-                    lambda x: (1 - x) if x else np.nan
-                )
-                # self.loc[:, f"d_identity{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: x / 100)
+                self[f"d_mutation{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: (1 - x) if x else np.nan)
+                # self[f"d_identity{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: x / 100)
 
-                self.loc[:, f"d_mutation_aa{suffix}"] = self[
+                self[f"d_mutation_aa{suffix}"] = self[
                     [f"d_sequence_alignment_aa{suffix}", f"d_germline_alignment_aa{suffix}"]
                 ].apply(lambda x: self._get_aa_distance(x), axis=1)
-                self.loc[:, f"j_mutation{suffix}"] = self[f"j_identity{suffix}"].apply(lambda x: (1 - x))
-                # self.loc[:, f"j_identity{suffix}"] = self[f"j_identity{suffix}"].apply(lambda x: x / 100)
-                self.loc[:, f"j_mutation_aa{suffix}"] = self[
+                self[f"j_mutation{suffix}"] = self[f"j_identity{suffix}"].apply(lambda x: (1 - x))
+                # self[f"j_identity{suffix}"] = self[f"j_identity{suffix}"].apply(lambda x: x / 100)
+                self[f"j_mutation_aa{suffix}"] = self[
                     [f"j_sequence_alignment_aa{suffix}", f"j_germline_alignment_aa{suffix}"]
                 ].apply(lambda x: self._get_aa_distance(x), axis=1)
 
@@ -590,21 +588,21 @@ class AirrTable(pd.DataFrame):
                     )
 
             # get mutation frequency rather than identity
-            self.loc[:, "v_mutation"] = self["v_identity"].apply(lambda x: (1 - x))
+            self["v_mutation"] = self["v_identity"].apply(lambda x: (1 - x))
 
             # then get a percentage for AA by computing levenshtein
-            self.loc[:, "v_mutation_aa"] = self[["v_sequence_alignment_aa", "v_germline_alignment_aa"]].apply(
+            self["v_mutation_aa"] = self[["v_sequence_alignment_aa", "v_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
             )
 
             # do the same for D and J gene segment portions
-            self.loc[:, "d_mutation"] = self["d_identity"].apply(lambda x: (1 - x) if x else np.nan)
-            self.loc[:, "d_mutation_aa"] = self[["d_sequence_alignment_aa", "d_germline_alignment_aa"]].apply(
+            self["d_mutation"] = self["d_identity"].apply(lambda x: (1 - x) if x else np.nan)
+            self["d_mutation_aa"] = self[["d_sequence_alignment_aa", "d_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
             )
-            self.loc[:, "j_mutation"] = self["j_identity"].apply(lambda x: (1 - x))
-            # self.loc[:, "j_identity"] = self["j_identity"].apply(lambda x: x / 100)
-            self.loc[:, "j_mutation_aa"] = self[["j_sequence_alignment_aa", "j_germline_alignment_aa"]].apply(
+            self["j_mutation"] = self["j_identity"].apply(lambda x: (1 - x))
+            # self["j_identity"] = self["j_identity"].apply(lambda x: x / 100)
+            self["j_mutation_aa"] = self[["j_sequence_alignment_aa", "j_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
             )
         self._verified = True
@@ -672,13 +670,12 @@ class AirrTable(pd.DataFrame):
         bool
            if the entry is liable or not based
         """
-        fw1 = X.iloc[0]
-        cdr1 = X.iloc[1]
-        fw2 = X.iloc[2]
-        cdr2 = X.iloc[3]
-        fw3 = X.iloc[4]
-        cdr3 = X.iloc[5]
-        fw4 = X.iloc[6]
+        # Canonicalize missing values to float('nan') so liability is computed identically
+        # regardless of how the backend stores NA. pandas 2 reads feather NA as None while
+        # pandas 3 reads it as float('nan'); since the checks below use isinstance(i, float)
+        # as the missing-value test, an unnormalized None and NaN for the same stored row
+        # would otherwise classify differently across pandas versions.
+        fw1, cdr1, fw2, cdr2, fw3, cdr3, fw4 = (float("nan") if pd.isna(i) else i for i in X.iloc[:7])
         isna = [isinstance(i, float) for i in [fw1, cdr1, fw2, cdr2, fw3, cdr3, fw4]]
         # if they are all nan:
         if all(isna):
@@ -730,7 +727,7 @@ class AirrTable(pd.DataFrame):
             # get indels in sequence_germline_alignment_aa that were not accounted for in the total alignment
             indel_indexes = _get_indel_index(field_1, field_2)
             logger.info(f"Have {len(indel_indexes)} possible indels that are not in amino acid germline alignment")
-            self.loc[:, f"{field_2}_corrected"] = False
+            self[f"{field_2}_corrected"] = False
             if not indel_indexes.empty:
                 # Pass self through top level dataframe to remove validation checks when using apply.
                 correction_alignments = pd.DataFrame(self.loc[indel_indexes, :]).apply(

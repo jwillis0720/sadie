@@ -143,7 +143,7 @@ def _test_auxilary_file_structure(tmpdir: Path, fixture_setup: SadieFixture) -> 
         df = pd.read_csv(
             file,
             skip_blank_lines=True,
-            delim_whitespace=True,
+            sep=r"\s+",
             skiprows=2,
             header=None,
             names=["gene", "reading_frame", "segment", "cdr3_end", "left_over"],

@@ -22,7 +22,8 @@ class YamlRef:
         if not filepath:
             filepath = Path(__file__).parent.joinpath("data/reference.yml")
         self.ref_path = filepath
-        self.yaml = load(open(self.ref_path), Loader=Loader)
+        with open(self.ref_path) as ref_handle:
+            self.yaml = load(ref_handle, Loader=Loader)
         self.yaml_df = self._normalize_and_verify_yaml()
 
     def get_names(self) -> Set[str]:
