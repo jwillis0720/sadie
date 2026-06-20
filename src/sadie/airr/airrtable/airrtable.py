@@ -563,13 +563,17 @@ class AirrTable(pd.DataFrame):
                 ].apply(lambda x: self._get_aa_distance(x), axis=1)
 
                 # do the same for D and J gene segment portions
-                self[f"d_mutation{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: (1 - x) if x else np.nan)
+                self[f"d_mutation{suffix}"] = self[f"d_identity{suffix}"].apply(
+                    lambda x: (1 - x) if pd.notna(x) else np.nan
+                )
                 # self[f"d_identity{suffix}"] = self[f"d_identity{suffix}"].apply(lambda x: x / 100)
 
                 self[f"d_mutation_aa{suffix}"] = self[
                     [f"d_sequence_alignment_aa{suffix}", f"d_germline_alignment_aa{suffix}"]
                 ].apply(lambda x: self._get_aa_distance(x), axis=1)
-                self[f"j_mutation{suffix}"] = self[f"j_identity{suffix}"].apply(lambda x: (1 - x))
+                self[f"j_mutation{suffix}"] = self[f"j_identity{suffix}"].apply(
+                    lambda x: (1 - x) if pd.notna(x) else np.nan
+                )
                 # self[f"j_identity{suffix}"] = self[f"j_identity{suffix}"].apply(lambda x: x / 100)
                 self[f"j_mutation_aa{suffix}"] = self[
                     [f"j_sequence_alignment_aa{suffix}", f"j_germline_alignment_aa{suffix}"]
@@ -596,11 +600,11 @@ class AirrTable(pd.DataFrame):
             )
 
             # do the same for D and J gene segment portions
-            self["d_mutation"] = self["d_identity"].apply(lambda x: (1 - x) if x else np.nan)
+            self["d_mutation"] = self["d_identity"].apply(lambda x: (1 - x) if pd.notna(x) else np.nan)
             self["d_mutation_aa"] = self[["d_sequence_alignment_aa", "d_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
             )
-            self["j_mutation"] = self["j_identity"].apply(lambda x: (1 - x))
+            self["j_mutation"] = self["j_identity"].apply(lambda x: (1 - x) if pd.notna(x) else np.nan)
             # self["j_identity"] = self["j_identity"].apply(lambda x: x / 100)
             self["j_mutation_aa"] = self[["j_sequence_alignment_aa", "j_germline_alignment_aa"]].apply(
                 lambda x: self._get_aa_distance(x), axis=1
