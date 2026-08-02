@@ -5,13 +5,10 @@ import re
 from typing import Any, Iterable, List, Optional, Union
 
 import numpy as np
-import numpy.typing as npt
 import pandas as pd
-from Levenshtein import distance as lev_distance
 from rapidfuzz.distance import Levenshtein
 from rapidfuzz.process import cdist
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics import pairwise_distances
 
 from sadie.airr import AirrTable, LinkedAirrTable
 
@@ -119,42 +116,30 @@ class Cluster:
             _lookup = self.lookup
         df_lookup = df[_lookup].to_dict(orient="index")
 
-        if not self.pad_somatic:
-            workers = -1 if len(df) >= _THREAD_MIN_ROWS else 1
-            distances = np.zeros((len(df), len(df)), dtype=np.float64)
-            for metric in self.lookup:
-                values = [str(row[metric]) for row in df_lookup.values()]
-                distances += cdist(
-                    values,
-                    values,
-                    scorer=Levenshtein.distance,
-                    workers=workers,
-                    dtype=np.int32,
-                )
-            return distances
+        rows = list(df_lookup.values())
+        workers = -1 if len(df) >= _THREAD_MIN_ROWS else 1
+        distances = np.zeros((len(df), len(df)), dtype=np.float64)
+        for metric in self.lookup:
+            values = [str(row[metric]) for row in rows]
+            distances += cdist(
+                values,
+                values,
+                scorer=Levenshtein.distance,
+                workers=workers,
+                dtype=np.int32,
+            )
 
-        def calc_lev(x: npt.ArrayLike, y: npt.ArrayLike) -> float:
-            dist = 0
-            for metric in self.lookup:
-                dist += lev_distance(str(df_lookup[x[0]][metric]), str(df_lookup[y[0]][metric]))  # type: ignore[index]
-            if self.pad_somatic and x[0] != y[0]:  # type: ignore[index]
-                if len(self.pad_somatic_values) == 2:
-                    _mutations_1_heavy = df_lookup[x[0]][self.pad_somatic_values[0]]  # type: ignore[index]
-                    _mutations_2_heavy = df_lookup[y[0]][self.pad_somatic_values[0]]  # type: ignore[index]
-                    _mutations_1_light = df_lookup[x[0]][self.pad_somatic_values[1]]  # type: ignore[index]
-                    _mutations_2_light = df_lookup[y[0]][self.pad_somatic_values[1]]  # type: ignore[index]
-                    subtract_heavy = len(np.intersect1d(_mutations_1_heavy, _mutations_2_heavy))
-                    subtract_light = len(np.intersect1d(_mutations_1_light, _mutations_2_light))
-                    subtract_all = subtract_heavy + subtract_light
-                else:
-                    _mutations_1 = df_lookup[x[0]][self.pad_somatic_values[0]]  # type: ignore[index]
-                    _mutations_2 = df_lookup[y[0]][self.pad_somatic_values[0]]  # type: ignore[index]
-                    subtract_all = len(np.intersect1d(_mutations_1, _mutations_2))
-                dist -= subtract_all
-            return max(dist, 0)
-
-        X: npt.ArrayLike = np.array(df.index).reshape(-1, 1)
-        return pairwise_distances(X, metric=calc_lev, n_jobs=-1)
+        if self.pad_somatic:
+            for metric in self.pad_somatic_values:
+                rows_by_mutation: dict[str, list[int]] = {}
+                for row_index, row in enumerate(rows):
+                    mutations: Iterable[str] = row[metric]
+                    for mutation in set(mutations):
+                        rows_by_mutation.setdefault(mutation, []).append(row_index)
+                for row_indexes in rows_by_mutation.values():
+                    distances[np.ix_(row_indexes, row_indexes)] -= 1
+            np.maximum(distances, 0, out=distances)
+        return distances
 
     def cluster(self, distance_threshold: int = 3) -> Union[AirrTable, LinkedAirrTable]:
         """Cluster the data.
@@ -204,5 +189,7 @@ class Cluster:
                     raise ValueError("groupby must be a string or a list/tuple of strings")
                 sub_df["cluster"] = labels
                 cluster_catcher.append(sub_df)
-            self.airrtable = pd.concat(cluster_catcher).__finalize__(self.airrtable)
-        return self.airrtable
+            self.airrtable = pd.concat(cluster_catcher)
+        if self._type == "unlinked":
+            return AirrTable(self.airrtable, key_column=self.key_column)
+        return LinkedAirrTable(self.airrtable, key_column=self.key_column)
