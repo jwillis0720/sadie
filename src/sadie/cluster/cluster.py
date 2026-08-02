@@ -8,12 +8,17 @@ import numpy as np
 import numpy.typing as npt
 import pandas as pd
 from Levenshtein import distance as lev_distance
+from rapidfuzz.distance import Levenshtein
+from rapidfuzz.process import cdist
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import pairwise_distances
 
 from sadie.airr import AirrTable, LinkedAirrTable
 
 logger = logging.getLogger("Cluster")
+
+# ponytail: measured thread crossover; expose tuning only if other hardware disagrees.
+_THREAD_MIN_ROWS = 150
 
 
 class Cluster:
@@ -114,6 +119,20 @@ class Cluster:
             _lookup = self.lookup
         df_lookup = df[_lookup].to_dict(orient="index")
 
+        if not self.pad_somatic:
+            workers = -1 if len(df) >= _THREAD_MIN_ROWS else 1
+            distances = np.zeros((len(df), len(df)), dtype=np.float64)
+            for metric in self.lookup:
+                values = [str(row[metric]) for row in df_lookup.values()]
+                distances += cdist(
+                    values,
+                    values,
+                    scorer=Levenshtein.distance,
+                    workers=workers,
+                    dtype=np.int32,
+                )
+            return distances
+
         def calc_lev(x: npt.ArrayLike, y: npt.ArrayLike) -> float:
             dist = 0
             for metric in self.lookup:
@@ -185,7 +204,5 @@ class Cluster:
                     raise ValueError("groupby must be a string or a list/tuple of strings")
                 sub_df["cluster"] = labels
                 cluster_catcher.append(sub_df)
-            self.airrtable = pd.concat(cluster_catcher)
-        if self._type == "unlinked":
-            return AirrTable(self.airrtable, key_column=self.key_column)
-        return LinkedAirrTable(self.airrtable, key_column=self.key_column)
+            self.airrtable = pd.concat(cluster_catcher).__finalize__(self.airrtable)
+        return self.airrtable

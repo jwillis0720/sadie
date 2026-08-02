@@ -1,8 +1,58 @@
+from unittest.mock import patch
+
+import numpy as np
 import pandas as pd
+from Levenshtein import distance as lev_distance
 
 from sadie.airr import AirrTable, LinkedAirrTable
 from sadie.cluster import Cluster
 from tests.conftest import SadieFixture
+
+
+def test_threaded_distance_matches_existing_value_normalization():
+    cluster = Cluster(AirrTable(pd.DataFrame({"cdr1_aa": ["AAA"]})), lookup=["cdr1_aa"])
+    values = (["AAA", "AAB", None, np.nan, pd.NA, 123, "Å"] * 22)[:151]
+    df = pd.DataFrame({"cdr1_aa": values}, index=np.arange(10, 312, 2), dtype=object)
+    lookup = df[["cdr1_aa"]].to_dict(orient="index")
+    rows = list(lookup.values())
+    expected = np.array(
+        [[lev_distance(str(left["cdr1_aa"]), str(right["cdr1_aa"])) for right in rows] for left in rows],
+        dtype=np.float64,
+    )
+
+    result = cluster._get_distance_df(df)
+
+    np.testing.assert_array_equal(result, expected)
+    assert result.dtype == np.float64
+    np.testing.assert_array_equal(result, result.T)
+    np.testing.assert_array_equal(np.diag(result), np.zeros(len(df)))
+
+
+def test_linked_cluster_preserves_exact_output_without_reconstruction(fixture_setup: SadieFixture):
+    ids = ["VRC26.05", "PCT64-18B", "VRC26.06", "PCT64-18C", "VRC26.08", "PCT64-18D"]
+    source = pd.read_feather(fixture_setup.get_catnap_joined_with_mutational_analysis())
+    linked = LinkedAirrTable(source.set_index("cellid").loc[ids].reset_index(), key_column="cellid")
+    expected = pd.DataFrame(linked).loc[[1, 3, 5, 0, 2, 4]].copy()
+    expected["cluster"] = [
+        "IGHV3-15*01_IGKV3-20*01_1",
+        "IGHV3-15*01_IGKV3-20*01_0",
+        "IGHV3-15*01_IGKV3-20*01_0",
+        "IGHV3-30*03_IGLV1-51*02_2",
+        "IGHV3-30*03_IGLV1-51*02_1",
+        "IGHV3-30*03_IGLV1-51*02_0",
+    ]
+    cluster = Cluster(linked, groupby=["v_call_top_heavy", "v_call_top_light"])
+
+    with patch.object(LinkedAirrTable, "__init__", side_effect=AssertionError("unexpected reconstruction")):
+        result = cluster.cluster(10)
+
+    pd.testing.assert_frame_equal(pd.DataFrame(result), expected)
+    assert result is cluster.airrtable
+    assert isinstance(result, LinkedAirrTable)
+    assert result.key_column == "cellid"
+    assert result.suffixes == ["_heavy", "_light"]
+    assert result.verified
+    assert "cluster" not in linked.columns
 
 
 def test_cluster(heavy_catnap_airrtable, light_catnap_airrtable):
