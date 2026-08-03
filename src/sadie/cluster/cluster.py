@@ -6,9 +6,12 @@ from typing import Any, Iterable, List, Optional, Union
 
 import numpy as np
 import pandas as pd
+from Levenshtein import distance as lev_distance
 from rapidfuzz.distance import Levenshtein
 from rapidfuzz.process import cdist
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import pairwise_distances
+from sklearn.utils.validation import check_array
 
 from sadie.airr import AirrTable, LinkedAirrTable
 
@@ -116,7 +119,68 @@ class Cluster:
             _lookup = self.lookup
         df_lookup = df[_lookup].to_dict(orient="index")
 
-        rows = list(df_lookup.values())
+        def legacy_distance() -> Any:
+            def calc_lev(x: Any, y: Any) -> float:
+                dist = sum(
+                    lev_distance(str(df_lookup[x[0]][metric]), str(df_lookup[y[0]][metric])) for metric in self.lookup
+                )
+                if self.pad_somatic and x[0] != y[0]:
+                    if len(self.pad_somatic_values) == 2:
+                        dist -= len(
+                            np.intersect1d(
+                                df_lookup[x[0]][self.pad_somatic_values[0]],
+                                df_lookup[y[0]][self.pad_somatic_values[0]],
+                            )
+                        ) + len(
+                            np.intersect1d(
+                                df_lookup[x[0]][self.pad_somatic_values[1]],
+                                df_lookup[y[0]][self.pad_somatic_values[1]],
+                            )
+                        )
+                    else:
+                        dist -= len(
+                            np.intersect1d(
+                                df_lookup[x[0]][self.pad_somatic_values[0]],
+                                df_lookup[y[0]][self.pad_somatic_values[0]],
+                            )
+                        )
+                return max(dist, 0)
+
+            indexes = np.array(df.index).reshape(-1, 1)
+            return pairwise_distances(indexes, metric=calc_lev, n_jobs=-1)
+
+        stable_types = (str, bytes, bool, int, float, complex, type(None))
+        use_fast_path = len(df) > 0 and all(
+            type(index) in stable_types or index is pd.NA or index is pd.NaT for index in df.index
+        )
+        if self.pad_somatic and len(self.pad_somatic_values) not in (1, 2):
+            use_fast_path = False
+        if use_fast_path:
+            use_fast_path = all(
+                type(row[metric]) in stable_types or row[metric] is pd.NA or row[metric] is pd.NaT
+                for row in df_lookup.values()
+                for metric in self.lookup
+            )
+        if use_fast_path and self.pad_somatic:
+            use_fast_path = all(
+                type(mutations) in (list, tuple, np.ndarray)
+                and not (type(mutations) is np.ndarray and mutations.ndim != 1)
+                and all(type(mutation) in (str, np.str_) and "\0" not in mutation for mutation in mutations)
+                for row in df_lookup.values()
+                for mutations in (row[metric] for metric in self.pad_somatic_values)
+            )
+        if not use_fast_path:
+            return legacy_distance()
+
+        index_values = np.array(df.index)
+        check_array(
+            index_values.reshape(-1, 1),
+            dtype=None,
+            ensure_2d=False,
+            estimator="check_pairwise_arrays",
+        )
+
+        rows = [df_lookup[index] for index in index_values]
         workers = -1 if len(df) >= _THREAD_MIN_ROWS else 1
         distances = np.zeros((len(df), len(df)), dtype=np.float64)
         for metric in self.lookup:
@@ -133,8 +197,7 @@ class Cluster:
             for metric in self.pad_somatic_values:
                 rows_by_mutation: dict[str, list[int]] = {}
                 for row_index, row in enumerate(rows):
-                    mutations: Iterable[str] = row[metric]
-                    for mutation in set(mutations):
+                    for mutation in set(row[metric]):
                         rows_by_mutation.setdefault(mutation, []).append(row_index)
                 for row_indexes in rows_by_mutation.values():
                     distances[np.ix_(row_indexes, row_indexes)] -= 1
