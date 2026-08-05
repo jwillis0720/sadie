@@ -17,6 +17,7 @@ dist/
 .installed.cfg
 *.egg
 .pytest_cache
+.hypothesis/
 
 pip-log.txt
 .vscode
