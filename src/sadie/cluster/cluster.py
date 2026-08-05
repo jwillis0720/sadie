@@ -17,7 +17,7 @@ from sadie.airr import AirrTable, LinkedAirrTable
 
 logger = logging.getLogger("Cluster")
 
-# ponytail: measured thread crossover; expose tuning only if other hardware disagrees.
+# Measured threading crossover; keep private unless other hardware disagrees.
 _THREAD_MIN_ROWS = 150
 
 
