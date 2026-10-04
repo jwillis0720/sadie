@@ -17,6 +17,7 @@ from sadie.airr.exceptions import (
     MissingIgBLASTArgument,
 )
 from sadie.airr.igblast.igblast import IgBLASTArgument, IgBLASTN
+from sadie.reference.util import bundled_binary
 from tests.conftest import SadieFixture
 
 
@@ -25,8 +26,7 @@ def test_antibody_igblast_setup() -> None:
     testing if we can manually setup IgBlast databases
     """
 
-    system = platform.system().lower()
-    executable = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{system}/igblastn")
+    executable = bundled_binary(Path(os.path.dirname(sadie_airr_file)) / "bin", "igblastn")
 
     ig_blast = igblast.IgBLASTN(executable)
     # Check that version is a valid semantic version (e.g., 1.19.0, 1.22.0, etc.)
@@ -85,8 +85,7 @@ def test_antibody_igblast_file_run(fixture_setup: SadieFixture) -> None:
     """
 
     # this should be fixture
-    system = platform.system().lower()
-    executable = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{system}/igblastn")
+    executable = bundled_binary(Path(os.path.dirname(sadie_airr_file)) / "bin", "igblastn")
 
     ig_blast = igblast.IgBLASTN(executable)
     germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
@@ -125,8 +124,29 @@ def test_IgBLASTArgument_exceptions() -> None:
     assert str(igblast_argument) == "name-key"
 
 
+@pytest.mark.parametrize(
+    "system, machine, shipped, folder",
+    [
+        ("Darwin", "arm64", "darwin_arm64", "darwin_arm64"),
+        ("Darwin", "arm64", "linux_arm64", "darwin"),
+        ("Darwin", "x86_64", "darwin_arm64", "darwin"),
+        ("Linux", "aarch64", "linux_arm64", "linux_arm64"),
+        ("Linux", "aarch64", "darwin_arm64", "linux"),
+        ("Windows", "ARM64", "darwin_arm64", "windows"),
+    ],
+)
+def test_bundled_binary_follows_machine(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, system: str, machine: str, shipped: str, folder: str
+) -> None:
+    (tmp_path / shipped).mkdir()
+    (tmp_path / shipped / "igblastn").touch()
+    monkeypatch.setattr(platform, "system", lambda: system)
+    monkeypatch.setattr(platform, "machine", lambda: machine)
+    assert bundled_binary(tmp_path, "igblastn") == tmp_path / folder / "igblastn"
+
+
 class TestIgBLASTN:
-    igblastn_exe = os.path.join(os.path.dirname(sadie_airr_file), f"bin/{platform.system().lower()}/igblastn")
+    igblastn_exe = bundled_binary(Path(os.path.dirname(sadie_airr_file)) / "bin", "igblastn")
     germline_ref = os.path.join(os.path.dirname(os.path.abspath(sadie_airr_file)), "data/germlines")
     db_ref = os.path.join(germline_ref, "Ig/blastdb/human/")
     aux_path = os.path.join(germline_ref, "aux_db/imgt/")

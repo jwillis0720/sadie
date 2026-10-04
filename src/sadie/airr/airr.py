@@ -5,7 +5,6 @@ from __future__ import annotations
 import itertools
 import logging
 import os
-import platform
 import shutil
 import tempfile
 import warnings
@@ -26,6 +25,7 @@ from sadie.airr.airrtable import AirrTable, LinkedAirrTable
 from sadie.airr.exceptions import BadDataSet, BadIgBLASTExe, BadRequstedFileType
 from sadie.airr.igblast import GermlineData, IgBLASTN
 from sadie.reference.reference import References
+from sadie.reference.util import bundled_binary
 from sadie.utility.io import get_file_buffer, guess_input_compression
 
 logger = logging.getLogger("AIRR")
@@ -749,8 +749,7 @@ class Airr:
             executable = os.environ["IGBLASTN_MONEKY_PATCH"]
         else:
             executable = "igblastn"
-        system = platform.system().lower()
-        return Path(os.path.dirname(os.path.abspath(__file__))) / "bin" / system / executable
+        return bundled_binary(Path(os.path.dirname(os.path.abspath(__file__))) / "bin", executable)
 
     @staticmethod
     def get_available_datasets() -> Set[str]:

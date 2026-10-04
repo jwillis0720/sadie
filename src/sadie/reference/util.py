@@ -13,6 +13,16 @@ from Bio.SeqRecord import SeqRecord
 logger = logging.getLogger("Reference")
 
 
+def bundled_binary(bin_dir: Path, executable: str) -> Path:
+    """bin_dir/<system>_arm64/executable on arm64/aarch64 when that file ships, else bin_dir/<system>/executable"""
+    system = platform.system().lower()
+    arm64 = bin_dir / f"{system}_arm64" / executable
+    # Only darwin_arm64 ships; other arm64 hosts keep the bin/<system> binary they used before.
+    if platform.machine() in ("arm64", "aarch64") and arm64.is_file():
+        return arm64
+    return bin_dir / system / executable
+
+
 def make_blast_db_for_internal(df: pd.DataFrame, dboutput: Union[str, Path]) -> None:
     """Make a blast database from dataframe"""
     out_fasta = Path(dboutput).with_suffix(".fasta")
@@ -45,11 +55,10 @@ def write_blast_db(
     Exception
     """
 
-    system = platform.system().lower()
     if isinstance(filename, str):
         filename = Path(filename)
     if not make_blast_db_bin:
-        make_blast_db_bin = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"bin/{system}/makeblastdb")
+        make_blast_db_bin = bundled_binary(Path(os.path.dirname(os.path.abspath(__file__))) / "bin", "makeblastdb")
     if not shutil.which(make_blast_db_bin):
         raise ValueError(f"Make Blast DB {make_blast_db_bin} cant be found or is not executable")
     make_blast_db = subprocess.run(

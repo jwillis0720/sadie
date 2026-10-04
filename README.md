@@ -84,6 +84,8 @@ $ pip install sadie-antibody
 
 No G3 API setup is required for the bundled germline references after installation.
 
+SADIE also bundles `igblastn` (`src/sadie/airr/bin/`) and `makeblastdb` (`src/sadie/reference/bin/`) in the folders `darwin`, `linux` and `windows` (x86_64) and `darwin_arm64`. `igblastn` is IgBLAST 1.22.0 in all four; `makeblastdb` is 2.11.0+ in `darwin` and `linux`, 2.10.1+ in `windows` and 2.15.0+ in `darwin_arm64`. On macOS `arm64` or Linux `aarch64` SADIE uses `<system>_arm64/` when that binary exists and `<system>/` otherwise. NCBI's IgBLAST 1.22.0 release has only x86_64 macOS binaries, so the `darwin_arm64` pair is built from NCBI's 1.22.0 source with Apple clang (static NCBI libraries, no SRA input, macOS 11+). To rebuild it on an Apple Silicon Mac, run `scripts/build_igblast.sh DEST_DIR` (about 4 minutes), then copy `DEST_DIR/igblastn` to `src/sadie/airr/bin/darwin_arm64/` and `DEST_DIR/makeblastdb` to `src/sadie/reference/bin/darwin_arm64/`.
+
 ### Development installation.
 
 Pull requests are highly encouraged [here](https://github.com/jwillis0720/sadie/pulls). The development installation uses [pre-commit](https://pre-commit.com/), [flake8](https://flake8.pycqa.org/en/latest/) linting and [black](https://github.com/psf/black) style formatting to maintain code readability and reausability.

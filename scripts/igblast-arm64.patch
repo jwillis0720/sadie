@@ -1,0 +1,102 @@
+# IgBLAST 1.22.0 on arm64 macOS with Apple clang 21 (Xcode), no SRA/VDB.
+# 1. bm.h: BitMagic 7.13.3 calls bvector members that do not exist; clang 19+ rejects that even in
+#    uninstantiated templates. Use the allocator calls the other bulk_insert_iterator members use.
+# 2. igblastn: build without VDB (drop blast_sra_input/VDB libs and REQUIRES=VDB; -sra reports an error).
+--- a/c++/include/util/bitset/bm.h
++++ b/c++/include/util/bitset/bm.h
+@@ -523,7 +523,7 @@
+         {
+             bvect_ = ii.bvect_;
+             if (!buf_)
+-                buf_ = bvect_->allocate_tempblock();
++                buf_ = (value_type*) bvect_->blockman_.get_allocator().alloc_bit_block();
+             buf_size_ = ii.buf_size_;
+             ::memcpy(buf_, ii.buf_, buf_size_ * sizeof(*buf_));
+             sorted_ = ii.sorted_;
+@@ -534,7 +534,7 @@
+         {
+             bvect_ = ii.bvect_;
+             if (buf_)
+-                bvect_->free_tempblock(buf_);
++                bvect_->blockman_.get_allocator().free_bit_block((bm::word_t*)buf_);
+             buf_ = ii.buf_; ii.buf_ = 0;
+             buf_size_ = ii.buf_size_;
+             sorted_ = ii.sorted_;
+--- a/c++/src/app/igblast/Makefile.igblastn.app
++++ b/c++/src/app/igblast/Makefile.igblastn.app
+@@ -2,7 +2,7 @@
+ 
+ APP = igblastn
+ SRC = igblastn_app
+-LIB_ = blast_sra_input  $(SRAREAD_LIBS) blastinput xalgoalignutil $(BLAST_INPUT_LIBS) xqueryparse $(BLAST_LIBS) \
++LIB_ = blastinput xalgoalignutil $(BLAST_INPUT_LIBS) xqueryparse $(BLAST_LIBS) \
+ 	xregexp $(PCRE_LIB) $(OBJMGR_LIBS)
+ LIB = blast_app_util igblast $(LIB_:%=%$(STATIC))
+ 
+@@ -12,8 +12,8 @@
+ LDFLAGS  = $(FAST_LDFLAGS:ppc=i386)
+ 
+ LIBS = $(BLAST_THIRD_PARTY_LIBS) $(GENBANK_THIRD_PARTY_LIBS) \
+-       $(VDB_STATIC_LIBS) $(CMPRS_LIBS) $(DL_LIBS) $(NETWORK_LIBS) $(ORIG_LIBS)
++       $(CMPRS_LIBS) $(DL_LIBS) $(NETWORK_LIBS) $(ORIG_LIBS)
+ 
+-REQUIRES = VDB objects -Cygwin
++REQUIRES = objects -Cygwin
+ 
+ WATCHERS = camacho madden maning fongah2
+--- a/c++/src/app/igblast/igblastn.hpp
++++ b/c++/src/app/igblast/igblastn.hpp
+@@ -232,7 +232,9 @@
+     vector< CRef < CIgWorker >  >           m_workers;
+     CRef < CIgFormatter  >                  m_formatter;
+     size_t				    m_worker_thread_num;
++#ifdef HAVE_NCBI_VDB
+     CRef <CSraInputSource>                  m_sra_src;
++#endif
+     CBlastUsageReport m_UsageReport;
+ };
+ 
+--- a/c++/src/app/igblast/igblastn_app.cpp
++++ b/c++/src/app/igblast/igblastn_app.cpp
+@@ -45,7 +45,9 @@
+ #include <algo/blast/api/objmgr_query_data.hpp>
+ #include <algo/blast/format/blast_format.hpp>
+ #include <algo/blast/blastinput/blast_input.hpp>
++#ifdef HAVE_NCBI_VDB
+ #include <algo/blast/blast_sra_input/blast_sra_input.hpp>
++#endif
+ #include "../blast/blast_app_util.hpp"
+ 
+ #ifndef SKIP_DOXYGEN_PROCESSING
+@@ -687,7 +689,9 @@
+     
+     m_run_thread_count = 0;
+     m_worker_thread_num =1;
++#ifdef HAVE_NCBI_VDB
+     m_sra_src = NULL;
++#endif
+     
+ }
+ unsigned int  CIgBlastnApp::x_CountUserBatches(CBlastInputSourceConfig &iconfig, int batch_size )
+@@ -743,7 +747,13 @@
+         iconfig.SetQueryLocalIdMode();
+ 	//.......................................................
+ 	// construct input source from file or SRA accession
++#ifndef HAVE_NCBI_VDB
+ 	if( args[kArgSraAccession] && (args[kArgSraAccession].AsString() != "") ) {
++	    cout <<"Error: this igblastn was built without SRA/VDB support"<< endl;
++	    return -1;
++	}
++#else
++	if( args[kArgSraAccession] && (args[kArgSraAccession].AsString() != "") ) {
+ 	    // assuming SRA SUN accessions
+ 	    vector < string >  all_sra_runs;
+ 	    string sra_run_accessions = args[kArgSraAccession].AsString();
+@@ -777,6 +787,7 @@
+ 	    m_input.Reset( new CBlastInput( m_sra_src, 10000));
+ 	} // end if SRA run accession provided
+ 	else 
++#endif
+ 	{   
+ 	    m_fasta.Reset( new CBlastFastaInputSource(m_CmdLineArgs->GetInputStream(), iconfig));
+ 	    m_input.Reset( new CBlastInput(m_fasta.GetPointer(), 10000));
