@@ -249,7 +249,8 @@ def test_make_igblast_reference(fixture_setup: SadieFixture, tmp_path_factory: p
 
     # for the blast directory, let's check if all the fasta files are there
     blast_files = glob.glob(f"{tmpdir}/Ig/blastdb/**/*.*", recursive=True)
-    blast_files = [i.split(os.path.basename(tmpdir) + "/")[-1] for i in blast_files]
+    # makeblastdb 2.15.0+ (darwin_arm64) also writes <db>.njs metadata; the older build behind the fixtures did not
+    blast_files = [i.split(os.path.basename(tmpdir) + "/")[-1] for i in blast_files if not i.endswith(".njs")]
 
     # even though this could be done with a symmetric diff, using diff tells us which on is missing, expected or made
     made_diff = set(blast_files).difference(set(expected_blast_dir))
@@ -274,7 +275,7 @@ def test_make_igblast_reference(fixture_setup: SadieFixture, tmp_path_factory: p
     internal = [
         i.split(os.path.basename(tmpdir) + "/")[-1]
         for i in glob.glob(f"{tmpdir}/Ig/internal_data/**/*", recursive=True)
-        if not Path(i).is_dir()
+        if not Path(i).is_dir() and not i.endswith(".njs")
     ]
     made_diff = set(internal).difference(set(expected_internal))
     expected_diff = set(expected_internal).difference(set(internal))
