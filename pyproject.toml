@@ -121,6 +121,12 @@ format-jinja = """
 files = ["src/sadie/__init__.py"]
 patterns = ["(^__version__\\s*=\\s*['\"])[^'\"]*(['\"])"]
 
+[tool.uv]
+# poetry-dynamic-versioning rewrites this file during every build, so uv's default mtime key made projects that
+# install SADIE from a path rebuild it on every `uv run`. Key on the git commit and tags the version comes from.
+# Uncommitted dependency edits here then need `--refresh-package sadie-antibody` to take effect.
+cache-keys = [{ git = { commit = true, tags = true } }]
+
 # ------------------------------------------------ External Tools ------------------------------------------------ #
 [[tool.poetry_bumpversion.replacements]]
 files = ["src/sadie/__init__.py"]
