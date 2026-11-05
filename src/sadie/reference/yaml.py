@@ -1,11 +1,14 @@
 """yaml object for reference data"""
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Set, Type
 
 import pandas as pd
 from yaml import load
+
+logger = logging.getLogger("Reference")
 
 try:
     from yaml import CLoader, Loader
@@ -129,7 +132,46 @@ class YamlRef:
         duplicated = _df.set_index(lookup).loc[_df.groupby(lookup).size() > 1]  # type: ignore
         if not duplicated.empty:
             if len(duplicated["source"].unique()) == 1:
+                # Same gene duplicated within a single source - this is an error
                 raise ValueError(f"{duplicated}\nappears twice")
             else:
-                raise ValueError(f"{duplicated}\nappears twice from two difference sources")
+                # Cross-provider duplicates: keep first-come-first-serve, log and deduplicate
+                dup_genes = duplicated.reset_index()["genes"].unique()
+                for gene in dup_genes:
+                    logger.debug(f"Skipping duplicate allele '{gene}' from later provider (first-come-first-serve)")
+                # Drop duplicate (name, species, genes) rows, keeping the first occurrence
+                _df = _df.drop_duplicates(subset=["name", "species", "genes"], keep="first").reset_index(drop=True)
+                # Also update self.yaml to reflect deduplication so from_yaml sees deduped gene lists
+                self._deduplicate_yaml_data(data)
         return _df
+
+    def _deduplicate_yaml_data(self, data: Dict[str, Any]) -> None:
+        """Remove cross-provider duplicate alleles from the raw YAML data in-place.
+
+        For each reference name, tracks seen allele names per (name, species) and removes
+        duplicates from later providers, preserving first-come-first-serve ordering.
+
+        Parameters
+        ----------
+        data : dict
+            The raw YAML data dictionary (name → source → species → [genes]).
+        """
+        for name in data:
+            # Track seen genes per (name, species) key
+            seen: Dict[str, Set[str]] = {}
+            for source in data.get(name, {}):
+                for species in data.get(name, {}).get(source, {}):
+                    if species not in seen:
+                        seen[species] = set()
+                    gene_list: List[str] = data[name][source][species]
+                    deduped: List[str] = []
+                    for gene in gene_list:
+                        if gene not in seen[species]:
+                            seen[species].add(gene)
+                            deduped.append(gene)
+                        else:
+                            logger.debug(
+                                f"Duplicate allele '{gene}' in '{source}' for '{species}' "
+                                f"under '{name}' skipped (already seen from earlier provider)"
+                            )
+                    data[name][source][species] = deduped

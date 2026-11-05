@@ -2,6 +2,9 @@ from typing import Dict, List
 
 from pydantic import BaseModel, field_validator
 
+# Valid germline data sources
+VALID_SOURCES = ["imgt", "ogrdb", "vdjbase", "custom"]
+
 
 class Species(BaseModel):
     """What species to retrieve"""
@@ -38,8 +41,8 @@ class GeneEntry(BaseModel):
     @field_validator("source")
     @classmethod
     def check_source(cls, v: str) -> str:
-        if v not in ["imgt", "custom"]:
-            raise ValueError(f"{v} is not a valid source, chocies are 'imgt' or 'custom'")
+        if v not in VALID_SOURCES:
+            raise ValueError(f"{v} is not a valid source, choices are {VALID_SOURCES}")
         return v
 
 
@@ -66,6 +69,6 @@ class GeneEntries(BaseModel):
     @field_validator("source")
     @classmethod
     def check_source(cls, v: str) -> str:
-        if v not in ["imgt", "custom"]:
-            raise ValueError(f"{v} is not a valid source, chocies are 'imgt' or 'custom'")
+        if v not in VALID_SOURCES:
+            raise ValueError(f"{v} is not a valid source, choices are {VALID_SOURCES}")
         return v

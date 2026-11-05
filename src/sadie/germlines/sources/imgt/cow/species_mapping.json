@@ -1,0 +1,10 @@
+{
+  "internal_name": "cow",
+  "species_variants": [
+    "Bos taurus",
+    "Bos taurus_Hereford",
+    "Bos taurus_Holstein"
+  ],
+  "count": 3,
+  "updated_at": "2026-11-04T14:34:30.085426"
+}

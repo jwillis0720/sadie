@@ -1,3 +1,12 @@
+import json
+import logging
+from pathlib import Path
+from typing import Dict, Any, Optional
+from collections.abc import Mapping
+
+# Module-level logger
+logger = logging.getLogger(__name__)
+
 RECEPTORS = ["IG", "TR"]
 IMGT_DEF_nt = {
     "FW1": {"start": 1, "end": 78},
@@ -97,178 +106,267 @@ SEGMENTS = {
 }
 
 
-MOTIF_LOOKUP = {
-    "mouse": {
-        "IGHJ": r"WG.G",
-        "IGKJ": r"F[SG].G",
-        "IGLJ": r"FG.G",
-        "TRAJ": r"[FLWC][GSVA].[GEWE]",
-        "TRBJ": r"[FH][GA].G",
-        "TRGJ": r"FA[EK]G",
-        "ignore": ["IGLJ3P", "TRAJ41", "TRAJ60", "TRAJ61", "TRBJ2-6"],
-    },
-    "rat": {"IGHJ": r"WG.G", "IGKJ": r"FG.G", "IGLJ": r"[FL]G.G", "ignore": ["IGKJ3"]},
-    "human": {
-        "IGHJ": r"WG.G",
-        "IGKJ": r"FG",
-        "IGLJ": r"FG.G",
-        "TRAJ": r"[FWC][GA].[GEN]",
-        "TRBJ": r"[FVG][GR].[G]",
-        "TRGJ": r"F[GA].G",
-        "TRDJ": r"FG.G",
-        "ignore": "",
-    },
-    "macaque": {
-        "IGHJ": r"WG.G",
-        "IGKJ": r"FG.G",
-        "IGLJ": r"F[GC].GT",
-        "TRAJ": r"[FWS][GV].[GSRE][TMVS]",
-        "TRBJ": r"[F][G].[G]",
-        "TRDJ": r"FG.G",
-        "TRGJ": r"F[GA].[G*]",
-        "ignore": "",
-    },
-    "nhp": {
-        "TRAJ": r"[F][G].[G][T]",
-        "TRBJ": r"[F][G].[G][TS]",
-        "TRDJ": r"F[GDA].[GT]T",
-        "TRGJ": r"F[GDA].[GT]T",
-        "ignore": ["TRAJ34", "TRBJ1-1", "TRBJ1-4", "TRBJ1-5", "TRBJ2-5"],
-    },
-    "platypus": {"IGHJ": r"WGQG", "ignore": []},
-    "rabbit": {
-        "IGHJ": r"WG.GT",
-        "IGKJ": r"[FLR]G.[GE]T",
-        "IGLJ": r"F[GS].[RG]T",
-        "TRAJ": r"[FLW][GE].[CGRK][TMS]",
-        "TRBJ": r"[F]G.G[TS]",
-        "TRDJ": r"[F]G.G[TS]",
-        "TRGJ": r"[F]G.GT",
-        "ignore": [],
-    },
-    "night_monkey": {
-        "TRAJ": r"[F][G].[G][T]",
-        "TRBJ": r"[F][G].[G][TS]",
-        "TRDJ": r"F[GA].[G]T",
-        "TRGJ": r"F[GA].[G]T",
-        "ignore": ["TRAJ34", "TRBJ1-1", "TRBJ1-4", "TRBJ1-5", "TRBJ2-5", "TRDJ2"],
-    },
-    "boar": {
-        "ignore": "",
-        "IGHJ": r"WG.G",
-        "IGKJ": r"FG.GT",
-        "IGLJ": r"FG.GT",
-        "TRBJ": r"FG.G",
-    },
-    "cow": {
-        "ignore": "",
-        "IGHJ": r"[WC][SG][QPSR].",
-        "IGKJ": r"[FL]G.[GR]T..E",
-        "IGLJ": r"[FL][GI][SG][GR]T",
-        "TRAJ": r"[FWL][GAS].[GK][TS]",
-        "TRDJ": r"FG.[GE]",
-        "TRGJ": r"[FLY][GN][VEK][GA]",
-    },
-    "crabmacaque": {"ignore": "", "IGHJ": r"WG.G"},
-    "dolphin": {
-        "ignore": "",
-        "TRAJ": r"[FCLWSY][GS].[GRLK]",
-        "TRGJ": r"[FCLWSY]G.[GRL]",
-        "TRDJ": r"[FCLWSY][RG].[GRL]",
-    },
-    "ferret": {"ignore": "", "TRBJ": r"[F][GA].G", "TRAJ": r"[F][GA].G"},
-    "camel": {
-        "ignore": ["TRBJ3-4"],
-        "IGHJ": r"WG.G",
-        "IGKJ": r"[FL]G.GT",
-        "IGLJ": r"FG.GT",
-        "TRBJ": r"FG.G",
-        "TRGJ": r"FG.G",
-    },
-    "goat": {"ignore": [""], "IGKJ": r"[FL]G.GT", "IGLJ": r"[FL]G.GT"},
-    "horse": {"ignore": [""], "IGKJ": r"[F]G.GT", "IGHJ": r"[W][GD].G"},
-    "dog": {
-        "IGHJ": r"WG.G",
-        "IGKJ": r"F[GS].G",
-        "IGLJ": r"FG.G",
-        "TRAJ": r"[FSW][GW].[GRLER]",
-        "TRBJ": r"[F][GA].[G]",
-        "TRGJ": r"[LFM][GTA].[GDV]",
-        "TRDJ": r"FG.[GL]",
-        "ignore": "",
-    },
-    "cat": {
-        "IGHJ": r"WG.G",
-        "IGKJ": r"F[G].G",
-        "IGLJ": r"F[GNS].G",
-        "TRAJ": r"[FWL][ERGW].[GRCKEQ]",
-        "TRBJ": r"[F][TG].[G]",
-        "TRGJ": r"[SF][TGAD].[G]",
-        "TRDJ": r"FG.[G]",
-        "ignore": "",
-    },
-    "alpaca": {"IGHJ": r"[WL]G[TQK][VG]", "ignore": [""]},
-    "salmon": {"IGHJ": r"[W*][EG][KQ]GT", "ignore": [""]},
-    "sharks": {
-        "ignore": [
-            "PEKGVGTVLTVR",
-            "SYEYGGGTVVTVNP",
-            "RHGLLGTRDHGDGDC",
-            "RHGLLGTRDHGDGDC",
-            "ACGDGTFVTVNP",
-            "YGADTVVTVNP",
-            "YAACGAGTAVTVNP",
-            "LSRLLGTRDHGDGDC",
-            "YGSGTVLTVNP",
-            "YGGGTVVTVNP",
-            "HHGLLGTRDHGDGDF",
-            "GLLGTRDHGDGDC",
-            "YGGGTVVTVNP",
-            "SFDEYGGGTVVT",
-            "SPNYWGGGSMVTVTC",
-            "YAAVGDGTAVTVNP",
-            "YGGGTVVTVNP",
-            "YAACGDATAVTVNP",
-            "DYKGGDTLLTVK",
-            "SYEYGGGTVVT",
-            "CGDNTAVTVNP",
-            "ERPGTALTVK",
-            "QLCCMRRRHCRD",
-            "HHGLLGTRDHGDGDC",
-            "YGGGTVVTVNP",
-            "MLHAEMALRDCES",
-            "YEKGAGTVLTVK",
-            "HHGLLGTRDHGDGDC",
-            "NEKGAGTVLTVK",
-            "DEEGAGTVLTVK",
-            "GGAGTVLTVK",
-            "YGGGTGVTVNP",
-            "YGGGTVVTVNP",
-            "LPRLLGTRDHGDGDC",
-        ],
-        "IGHJ": r"[WCH][G].[RGS][TK]",
-    },
-    "sheep": {
-        "IGLJ": r"[LF]G[GS]GT",
-        "IGHJ": r"W[GD].[GR]",
-        "IGKJ": r"FG[PGQ]GT",
-        "TRAJ": r"[LFWE][GAKW].[GQ][TDRA]",
-        "TRBJ": r"[F][G].[G][TS]",
-        "TRDJ": r"FG.[EG]T",
-        "ignore": ["FGDFYFLRGEGRRLAVV", "RPGAALTYGAGSGLAAG"],
-    },
-    "trout": {
-        "ignore": ["SGAYAAYFGEXTKLTVL", "SYSEAYXXAGXKLTVL"],
-        "IGHJ": r"WG.G",
-        "TRBJ": r"FG.G[ATS]",
-    },
-    "zebrafish": {
-        "ignore": ["IGIJ1", "IGIJ2", "IGIJ3", "IGIJ5", "IGIJ6S1", "IGIJ7S1", "IGIJ8S1"],
-        "IGHJ": r"WG.GT",
-        "TRAJ": r"[FM][GAST].G[TVSM]",
-        "TRDJ": r"FG.P",
-    },
-}
+# JSON motif registry loader and cache
+_MOTIF_REGISTRY_CACHE: Optional[Dict[str, Any]] = None
+_MOTIF_LOOKUP_CACHE: Optional[Dict[str, Any]] = None
+_MOTIF_PROVENANCE_CACHE: Optional[Dict[str, Any]] = None
+
+
+def _get_motif_json_path() -> Path:
+    """Get the path to the motif JSON file."""
+    return Path(__file__).parent / "data" / "j_gene_motif.json"
+
+
+def _load_motif_registry() -> Dict[str, Any]:
+    """
+    Load the complete motif registry from JSON file.
+
+    Returns:
+        Complete motif registry with provenance metadata
+
+    Raises:
+        FileNotFoundError: If JSON file is not found
+        json.JSONDecodeError: If JSON file is malformed
+    """
+    global _MOTIF_REGISTRY_CACHE
+
+    if _MOTIF_REGISTRY_CACHE is not None:
+        return _MOTIF_REGISTRY_CACHE
+
+    json_path = _get_motif_json_path()
+
+    try:
+        with open(json_path, 'r', encoding='utf-8') as f:
+            registry = json.load(f)
+
+        # Validate loaded data structure
+        if not isinstance(registry, dict):
+            raise ValueError(f"Motif registry must be a dictionary, got {type(registry)}")
+
+        if len(registry) == 0:
+            raise ValueError("Motif registry is empty")
+
+        # Basic structure validation
+        for species, species_data in registry.items():
+            if not isinstance(species_data, dict):
+                raise ValueError(f"Species data for '{species}' must be a dictionary, got {type(species_data)}")
+
+            if '_provenance' not in species_data:
+                raise ValueError(f"Species '{species}' missing required _provenance metadata")
+
+            # Check for at least one pattern
+            pattern_count = sum(1 for k, v in species_data.items()
+                              if k not in ('_provenance', 'ignore') and isinstance(v, str))
+            if pattern_count == 0:
+                logger.warning(f"Species '{species}' has no motif patterns")
+
+        _MOTIF_REGISTRY_CACHE = registry
+        logger.info(f"Loaded motif registry with {len(registry)} species from {json_path}")
+
+        # Log validation counts
+        try:
+            imgt_validated = sum(1 for species_data in registry.values()
+                                if species_data.get('_provenance', {}).get('imgt_validated', False))
+            legacy_count = len(registry) - imgt_validated
+            logger.info(f"Motif registry: {imgt_validated} IMGT-validated, {legacy_count} legacy species")
+        except Exception as e:
+            logger.warning(f"Could not compute validation counts: {e}")
+
+        return registry
+
+    except FileNotFoundError:
+        logger.error(f"Motif registry file not found: {json_path}")
+        raise FileNotFoundError(
+            f"Motif registry file not found at {json_path}. "
+            f"Ensure the file exists or check the module installation."
+        )
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in motif registry: {e}")
+        raise json.JSONDecodeError(
+            f"Malformed JSON in motif registry {json_path}: {e}",
+            e.doc, e.pos
+        )
+    except (ValueError, TypeError) as e:
+        logger.error(f"Invalid data structure in motif registry: {e}")
+        raise ValueError(
+            f"Motif registry data is malformed at {json_path}: {e}. "
+            f"Check that the file contains valid motif registry data."
+        )
+    except PermissionError as e:
+        logger.error(f"Permission denied reading motif registry: {json_path}")
+        raise PermissionError(
+            f"Cannot read motif registry file {json_path}: {e}. "
+            f"Check file permissions."
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error loading motif registry: {e}")
+        raise RuntimeError(
+            f"Failed to load motif registry from {json_path}: {e}. "
+            f"This may indicate a corrupted file or installation issue."
+        )
+
+
+def _filter_provenance_metadata(data: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """
+    Filter out provenance metadata to maintain backward compatibility.
+
+    Args:
+        data: Complete motif registry data
+
+    Returns:
+        Filtered data without _provenance fields
+    """
+    filtered = {}
+
+    for species, species_data in data.items():
+        # Create copy without _provenance
+        filtered_species = {
+            key: value for key, value in species_data.items()
+            if key != "_provenance"
+        }
+        filtered[species] = filtered_species
+
+    return filtered
+
+
+def _extract_provenance_metadata(data: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """
+    Extract provenance metadata from the complete registry.
+
+    Args:
+        data: Complete motif registry data
+
+    Returns:
+        Dictionary mapping species to provenance metadata
+    """
+    provenance = {}
+
+    for species, species_data in data.items():
+        if "_provenance" in species_data:
+            provenance[species] = species_data["_provenance"]
+
+    return provenance
+
+
+def get_motif_lookup() -> Dict[str, Dict[str, Any]]:
+    """
+    Get the backward-compatible MOTIF_LOOKUP dictionary.
+
+    Returns:
+        Motif lookup dictionary without provenance metadata
+    """
+    global _MOTIF_LOOKUP_CACHE
+
+    if _MOTIF_LOOKUP_CACHE is not None:
+        return _MOTIF_LOOKUP_CACHE
+
+    registry = _load_motif_registry()
+    lookup = _filter_provenance_metadata(registry)
+    _MOTIF_LOOKUP_CACHE = lookup
+
+    logger.debug(f"Generated MOTIF_LOOKUP for {len(lookup)} species (provenance filtered)")
+    return lookup
+
+
+def get_motif_provenance() -> Dict[str, Dict[str, Any]]:
+    """
+    Get the provenance metadata for all species.
+
+    Returns:
+        Dictionary mapping species to provenance metadata
+    """
+    global _MOTIF_PROVENANCE_CACHE
+
+    if _MOTIF_PROVENANCE_CACHE is not None:
+        return _MOTIF_PROVENANCE_CACHE
+
+    registry = _load_motif_registry()
+    provenance = _extract_provenance_metadata(registry)
+    _MOTIF_PROVENANCE_CACHE = provenance
+
+    logger.debug(f"Generated MOTIF_PROVENANCE for {len(provenance)} species")
+    return provenance
+
+
+# Lazy-loaded backward-compatible MOTIF_LOOKUP
+# This preserves the original API while loading from JSON
+class _MotifLookupProxy(Mapping):
+    """Proxy object that loads MOTIF_LOOKUP on first access."""
+
+    def __getitem__(self, key):
+        try:
+            return get_motif_lookup()[key]
+        except KeyError:
+            available_species = list(get_motif_lookup().keys())[:10]  # Show first 10
+            raise KeyError(
+                f"Species '{key}' not found in MOTIF_LOOKUP. "
+                f"Available species: {available_species}... "
+                f"(total: {len(get_motif_lookup())}). "
+                f"Check species name spelling (lowercase with underscores)."
+            )
+        except Exception as e:
+            logger.error(f"Error accessing MOTIF_LOOKUP['{key}']: {e}")
+            raise RuntimeError(
+                f"Failed to access motif data for species '{key}': {e}. "
+                f"This may indicate a data loading issue."
+            )
+
+    def __iter__(self):
+        try:
+            return iter(get_motif_lookup())
+        except Exception as e:
+            logger.error(f"Error iterating MOTIF_LOOKUP: {e}")
+            raise RuntimeError(f"Failed to iterate motif data: {e}")
+
+    def __len__(self):
+        try:
+            return len(get_motif_lookup())
+        except Exception as e:
+            logger.error(f"Error getting MOTIF_LOOKUP length: {e}")
+            raise RuntimeError(f"Failed to get motif data length: {e}")
+
+    def keys(self):
+        try:
+            return get_motif_lookup().keys()
+        except Exception as e:
+            logger.error(f"Error getting MOTIF_LOOKUP keys: {e}")
+            raise RuntimeError(f"Failed to get motif data keys: {e}")
+
+    def values(self):
+        try:
+            return get_motif_lookup().values()
+        except Exception as e:
+            logger.error(f"Error getting MOTIF_LOOKUP values: {e}")
+            raise RuntimeError(f"Failed to get motif data values: {e}")
+
+    def items(self):
+        try:
+            return get_motif_lookup().items()
+        except Exception as e:
+            logger.error(f"Error getting MOTIF_LOOKUP items: {e}")
+            raise RuntimeError(f"Failed to get motif data items: {e}")
+
+    def get(self, key, default=None):
+        try:
+            return get_motif_lookup().get(key, default)
+        except Exception as e:
+            logger.error(f"Error getting MOTIF_LOOKUP key '{key}': {e}")
+            # Return default rather than raise, to maintain get() semantics
+            logger.warning(f"Returning default value due to error: {e}")
+            return default
+
+    def __contains__(self, key):
+        try:
+            return key in get_motif_lookup()
+        except Exception as e:
+            logger.error(f"Error checking MOTIF_LOOKUP contains '{key}': {e}")
+            # Return False rather than raise, to maintain contains semantics
+            return False
+
+
+# Backward-compatible MOTIF_LOOKUP that loads from JSON
+MOTIF_LOOKUP = _MotifLookupProxy()
+
 
 J_SEGMENTS = {"IG": ["IGHJ", "IGKJ", "IGKJ"], "TR": ["TRAJ", "TRBJ", "TRGJ", "TRDJ"]}
 RENAME_DICT = {

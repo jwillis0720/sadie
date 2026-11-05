@@ -1,7 +1,9 @@
-"""This module houses the main Refernce object to manipulate the backend references"""
+"""This module houses the main Reference object to manipulate the backend references"""
 
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
 from pathlib import Path
 from time import sleep
@@ -9,6 +11,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import quote as url_quote
 
 import pandas as pd
+import pyhmmer
 import requests
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -28,6 +31,99 @@ logger = logging.getLogger("Reference")
 # column typing from pandas stubs
 Column = Union[Union[int, str], str]
 
+# BLAST local ID limit (from makeblastdb -parse_seqids)
+_BLAST_MAX_ID_LEN = 50
+
+# Name mapping file stored alongside database
+_NAME_MAPPING_FILENAME = ".allele_name_mapping.json"
+
+
+def _truncate_allele_name(name: str, max_len: int = _BLAST_MAX_ID_LEN) -> str:
+    """Truncate an allele name to fit within BLAST's local ID length limit.
+
+    If the name is already within the limit, it is returned unchanged.
+    Otherwise, the name is truncated and a hash suffix is appended to ensure
+    uniqueness.  The format is ``<prefix>_<hash>`` where *prefix* is the first
+    ``max_len - 12`` characters and *hash* is an 11-character hex digest.
+
+    Parameters
+    ----------
+    name : str
+        The original allele name.
+    max_len : int, optional
+        Maximum allowed length, by default 50.
+
+    Returns
+    -------
+    str
+        The (possibly truncated) name.
+    """
+    if len(name) <= max_len:
+        return name
+    hash_suffix = hashlib.sha256(name.encode("utf-8")).hexdigest()[:11]
+    prefix_len = max_len - 12  # 11 hash chars + 1 underscore
+    return f"{name[:prefix_len]}_{hash_suffix}"
+
+
+def _build_name_mapping(names: List[str], max_len: int = _BLAST_MAX_ID_LEN) -> Dict[str, str]:
+    """Build a short→original name mapping for all names that need truncation.
+
+    Parameters
+    ----------
+    names : list of str
+        All allele names.
+    max_len : int, optional
+        Maximum allowed name length, by default 50.
+
+    Returns
+    -------
+    dict
+        Mapping from truncated name → original name. Only entries that were
+        actually truncated are included.
+
+    Raises
+    ------
+    ValueError
+        If two different original names produce the same truncated name,
+        indicating a collision that would cause silent data loss.
+    """
+    mapping: Dict[str, str] = {}
+    for name in names:
+        short = _truncate_allele_name(name, max_len)
+        if short != name:
+            if short in mapping and mapping[short] != name:
+                raise ValueError(
+                    f"Name mapping collision: truncated name '{short}' maps to both "
+                    f"'{mapping[short]}' and '{name}'. Consider increasing max_len or "
+                    f"using a different truncation strategy."
+                )
+            mapping[short] = name
+    return mapping
+
+
+def _apply_name_mapping_to_dataframe(database: pd.DataFrame, name_mapping: Dict[str, str]) -> pd.DataFrame:
+    """Replace original long gene names with truncated names in the dataframe.
+
+    Parameters
+    ----------
+    database : pd.DataFrame
+        The reference dataframe with a ``gene`` column.
+    name_mapping : dict
+        Mapping from truncated name → original name.
+
+    Returns
+    -------
+    pd.DataFrame
+        A copy of the dataframe with gene names replaced.
+    """
+    if not name_mapping:
+        return database
+    # Build reverse: original → truncated
+    reverse_map = {v: k for k, v in name_mapping.items()}
+    df = database.copy()
+    df["gene"] = df["gene"].map(lambda g: reverse_map.get(g, g))
+    return df
+
 
 class G3Error(Exception):
     """Exception for G3 - helps with being specific"""
@@ -43,16 +139,26 @@ class Reference:
     # G3 API Endpoint
     _endpoint = "https://g3.jordanrwillis.com/api/v1/genes"
 
-    def __init__(self, endpoint: str = _endpoint):
+    def __init__(self, endpoint: str = _endpoint, use_germlines: bool = True):
         """Initialize the reference object
 
         Parameters
         ----------
         endpoint : str, optional
            The endpoint API address to get the data. Defaults to the G3 API.
+           Ignored if use_germlines is True.
+        use_germlines : bool, optional
+           If True, use local germlines module instead of G3 API. Defaults to True.
         """
         self.data: List[Dict[Column, str] | Dict[str, str]] = []
-        self.endpoint = endpoint
+        self.use_germlines = use_germlines
+
+        if not use_germlines:
+            self.endpoint = endpoint
+        else:
+            # Skip G3 API validation when using germlines
+            # Components imported locally in _get_gene/_get_genes
+            self._endpoint = endpoint
 
     @property
     def endpoint(self) -> str:
@@ -99,6 +205,12 @@ class Reference:
         # make gene model
         gene_valid = GeneEntry(**gene)
 
+        if self.use_germlines:
+            from sadie.germlines import GermlineManager
+
+            manager = GermlineManager(providers=[gene_valid.source])
+            manager.validate_species(gene_valid.source, gene_valid.species)
+
         # add dictionaries to list from G3
         self.data.append(self._get_gene(gene_valid))
 
@@ -121,6 +233,13 @@ class Reference:
         ref_class.add_genes('human','imgt',genes)
         """
         genes_valid = GeneEntries(species=species, source=source, genes=genes)
+
+        if self.use_germlines:
+            from sadie.germlines import GermlineManager
+
+            manager = GermlineManager(providers=[genes_valid.source])
+            manager.validate_species(genes_valid.source, genes_valid.species)
+
         self.data += self._get_genes(genes_valid)
 
     def _g3_get(self, query: str) -> Tuple[int, List[Dict[str, str]]]:
@@ -149,7 +268,7 @@ class Reference:
         return response.status_code, response.json()
 
     def _get_gene(self, gene: GeneEntry) -> Dict[str, str]:
-        """Get a single gene from the G3 Restful API using a GeneEntry Model
+        """Get a single gene from the G3 Restful API or germlines module using a GeneEntry Model
 
         Parameters
         ----------
@@ -170,6 +289,25 @@ class Reference:
         if not isinstance(gene, GeneEntry):
             raise ValueError(f"{gene} is not GeneEntry")
 
+        # Use germlines module if enabled
+        if self.use_germlines:
+            from sadie.germlines import GermlineManager
+            from sadie.germlines.g3_adapter import GermlineToG3Adapter
+
+            # Create manager with explicit source (no priority fallback)
+            manager = GermlineManager(providers=[gene.source])
+            germline_gene = manager.get_gene_by_name(gene.gene, gene.species)
+
+            if not germline_gene:
+                raise G3Error(f"Gene {gene.gene} not found in {gene.source} database for species {gene.species}")
+
+            # Transform to G3 format
+            adapter = GermlineToG3Adapter()
+            g3_dict = adapter.to_g3_format(germline_gene)
+            logger.debug(f"Retrieved {gene.gene} from germlines module ({gene.source})")
+            return g3_dict
+
+        # Use G3 API (legacy path)
         # change weird characters to url characters
         gene_url = url_quote(gene.gene)
 
@@ -197,7 +335,7 @@ class Reference:
         Returns
         -------
         List[dict]
-            A list of Json-> Dict responses from G3
+            A list of Json-> Dict responses from G3 or germlines module
 
 
         Raises
@@ -208,6 +346,28 @@ class Reference:
         if not isinstance(genes, GeneEntries):
             raise ValueError(f"{genes} is not GeneEntries")
 
+        # Use germlines module if enabled
+        if self.use_germlines:
+            from sadie.germlines import GermlineManager
+            from sadie.germlines.g3_adapter import GermlineToG3Adapter
+
+            # Create manager with explicit source (no priority fallback)
+            manager = GermlineManager(providers=[genes.source])
+            adapter = GermlineToG3Adapter()
+
+            results = []
+            for gene_name in genes.genes:
+                germline_gene = manager.get_gene_by_name(gene_name, genes.species)
+                if germline_gene:
+                    g3_dict = adapter.to_g3_format(germline_gene)
+                    results.append(g3_dict)
+                else:
+                    logger.debug(f"Gene {gene_name} not found in {genes.source} database for {genes.species}")
+
+            logger.debug(f"Retrieved {len(results)} genes from germlines module ({genes.source})")
+            return results
+
+        # Use G3 API (legacy path)
         # url query
         query = f"{self.endpoint}?source={genes.source}&common={genes.species}&limit=-1"
 
@@ -281,9 +441,10 @@ class Reference:
                 "chimera",
             ]
         )
-        _diffs = matched_indexes.symmetric_difference(input_df.columns)
-        if not _diffs.empty:
-            raise ValueError(f"{_diffs} not in the dataframe")
+        allowed_indexes = matched_indexes.union(pd.Index(["species"]))
+        unexpected_columns = input_df.columns.difference(allowed_indexes)
+        if not unexpected_columns.empty:
+            raise ValueError(f"{unexpected_columns} not recognized in the dataframe")
 
         # fresh instance
         reference = Reference()
@@ -291,7 +452,7 @@ class Reference:
         # get dict as lis tof records
         input_list: List[Dict[Column, Any]] = input_df.to_dict(orient="records")  # type: ignore
 
-        # can't assign dirrectly so have to append to beat mypy
+        # can't assign directly so have to append to beat mypy
         for key in input_list:
             reference.data.append(key)
         return reference
@@ -300,6 +461,7 @@ class Reference:
 class References:
     def __init__(self, default_output_path: Path | str | None = None) -> None:
         self.references: Dict[str, Reference] = {}
+        self._name_mapping: Dict[str, str] = {}
         if not default_output_path:
             self.default_output_path = Path(__file__).parent / "../airr/data/germlines"
         else:
@@ -318,7 +480,7 @@ class References:
         if self._reference_dataframe_path.exists():
             self.reference_dataframe = pd.read_csv(self._reference_dataframe_path, index_col=0)
         else:
-            raise FileExistsError(
+            raise FileNotFoundError(
                 f"Reference dataframe does not exist in default path {self._reference_dataframe_path}"
             )
 
@@ -364,7 +526,7 @@ class References:
         # get the indexes which contain names that are to be chimerized
         indexes_to_chimera = concat_df[concat_df["name"].isin(list_of_chimera)].index
 
-        # set all cherics to false
+        # set all chimerics to false
         concat_df["chimera"] = False
         concat_df.loc[indexes_to_chimera, "chimera"] = True
 
@@ -376,12 +538,15 @@ class References:
         return concat_df
 
     @staticmethod
-    def from_yaml(yaml_path: Optional[Path] = None) -> "References":
+    def from_yaml(yaml_path: Optional[Path] = None, use_germlines: bool = True) -> "References":
         """Parse a yaml file into a references file object
 
         Parameters
         ----------
-        yaml_path : Path to yaml file
+        yaml_path : Path
+            Path to yaml file
+        use_germlines : bool, optional
+            If True, use local germlines module instead of G3 API. Defaults to True.
 
         Returns
         -------
@@ -397,7 +562,7 @@ class References:
 
         # iterate through names
         for name in yaml_ref:
-            reference_object = Reference()
+            reference_object = Reference(use_germlines=use_germlines)
 
             # iterate where they came from
             for source in yaml_ref.get(name):
@@ -424,8 +589,51 @@ class References:
 
         # get the database as a dataframe
         database = self.get_dataframe()
+        required_columns = [
+            "imgt.fwr1_start",
+            "imgt.fwr1_end",
+            "imgt.cdr1_start",
+            "imgt.cdr1_end",
+            "imgt.fwr2_start",
+            "imgt.fwr2_end",
+            "imgt.cdr2_start",
+            "imgt.cdr2_end",
+            "imgt.fwr3_start",
+            "imgt.fwr3_end",
+        ]
+
+        v_gene_df = database.loc[database["gene_segment"] == "V"].copy()
+        missing_columns = [col for col in required_columns if col not in database.columns]
+        if missing_columns:
+            missing_genes = sorted(v_gene_df["gene"].dropna().unique().tolist())
+            raise ValueError("Missing IMGT V-region position columns " f"{missing_columns} for genes: {missing_genes}")
+
+        # Skip V genes with missing IMGT position annotations instead of raising
+        missing_positions = v_gene_df[v_gene_df[required_columns].isna().any(axis=1)]
+        if not missing_positions.empty:
+            missing_genes = sorted(missing_positions["gene"].dropna().unique().tolist())
+            logger.warning(
+                f"Skipping {len(missing_genes)} V gene(s) with missing IMGT V-region positions: "
+                f"{missing_genes}. These alleles will be excluded from the BLAST database."
+            )
+            # Remove the genes with missing positions from the database
+            database = database.drop(missing_positions.index)
+            v_gene_df = database.loc[database["gene_segment"] == "V"].copy()
+
+        # If ALL V genes were removed, raise an error
+        if v_gene_df.empty:
+            raise ValueError(
+                "No valid V genes remain after skipping alleles with missing IMGT positions. "
+                "Ensure at least some V gene alleles have complete IMGT-gapped annotations."
+            )
+
         if database[database.label == "D-REGION"].empty:
             raise ValueError("No D-REGION found in reference object...make sure to add D gene")
+
+        # Apply pre-computed name mapping for long allele names (BLAST compatibility)
+        name_mapping = self._name_mapping
+        if name_mapping:
+            database = _apply_name_mapping_to_dataframe(database, name_mapping)
 
         # first name, i.e. "human" or "se09"
         groupby_dataframe = database.groupby("name")
@@ -466,6 +674,11 @@ class References:
         if database[database.label == "J-REGION"].empty:
             raise ValueError("No J-REGION found in reference object...make sure to add J def")
 
+        # Apply pre-computed name mapping for long allele names (BLAST compatibility)
+        name_mapping = self._name_mapping
+        if name_mapping:
+            database = _apply_name_mapping_to_dataframe(database, name_mapping)
+
         # group by source
         # for now we only have one scheme
         scheme = "imgt"
@@ -481,7 +694,7 @@ class References:
             bad_remainders = common_df[(common_df["imgt.remainder"].isna())]
             if not bad_remainders.empty:
                 logger.warning(f"Had to drop {bad_remainders.shape[0]} rows due to bad remainder for {group}")
-                common_df.drop(bad_remainders.index, inplace=True)
+                common_df = common_df.drop(bad_remainders.index)
 
             # make columns of an aux databaee common_df = common_df[(common_df["imgt.cdr3_end"] != "")]
             common_df.loc[:, "reading_frame"] = common_df["imgt.reading_frame"].astype(int)
@@ -499,22 +712,40 @@ class References:
             )
             logger.info(f"Wrote aux to {aux_file_name}")
 
-    def _make_internal_annotaion_file(self, outpath: Path) -> None:
-        """Generate the internal database file for IgBlast
+    def _make_internal_annotation_file(self, outpath: Path) -> None:
+        """Generate the internal database file for IgBlast.
+
+        Creates combined VDJC FASTA and BLAST database for each reference name.
+        The combined file is required for IgBLAST's complete_vdj calculation.
 
         Parameters
         ----------
         outpath : Path
             The output path to. example -> path/to/output.
             Then the database will dump to path/to/output/{Ig,TCR}/internal_data/{name}/{name}.ndm.imgt
+
+        Notes
+        -----
+        IgBLAST requires a single file named {name}_V in internal_data/ that
+        contains ALL gene segments (V, D, J, C) for proper complete_vdj calculation.
+        The NDM file still only includes V gene annotations (framework/CDR regions).
         """
         logger.debug(f"Generating internal annotation file at {outpath}")
         # The internal data file structure goes Ig/internal_path/{name}/
 
         database = self.get_dataframe()
+
+        # Apply pre-computed name mapping for long allele names (BLAST compatibility)
+        name_mapping = self._name_mapping
+        if name_mapping:
+            database = _apply_name_mapping_to_dataframe(database, name_mapping)
+
         for name, group_df in database.groupby("name"):
-            # get a filtered database for V genes
-            filtered_data = group_df.loc[group_df["gene_segment"] == "V"].copy()
+            # V genes for NDM file (framework/CDR regions)
+            v_genes = group_df.loc[group_df["gene_segment"] == "V"].copy()
+
+            # All segments for combined FASTA - IgBLAST needs V+D+J+C in internal_data
+            all_segments = group_df.loc[group_df["gene_segment"].isin(["V", "D", "J", "C"])].copy()
 
             # the species is the actual entity we are using for the annotation, e.g se09 or human
             name_internal_df_path = Path(outpath).joinpath(Path(f"Ig/internal_data/{name}/"))
@@ -522,42 +753,233 @@ class References:
                 logger.info(f"Creating {name_internal_df_path}")
                 name_internal_df_path.mkdir(parents=True)
 
-            # subselect and order
-            index_df = filtered_data[
-                [
-                    "gene",
-                    "imgt.fwr1_start",
-                    "imgt.fwr1_end",
-                    "imgt.cdr1_start",
-                    "imgt.cdr1_end",
-                    "imgt.fwr2_start",
-                    "imgt.fwr2_end",
-                    "imgt.cdr2_start",
-                    "imgt.cdr2_end",
-                    "imgt.fwr3_start",
-                    "imgt.fwr3_end",
-                ]
-            ].copy()
+            # Generate NDM file from V genes only (framework/CDR region annotations)
+            if not v_genes.empty:
+                # subselect and order
+                index_df = v_genes[
+                    [
+                        "gene",
+                        "imgt.fwr1_start",
+                        "imgt.fwr1_end",
+                        "imgt.cdr1_start",
+                        "imgt.cdr1_end",
+                        "imgt.fwr2_start",
+                        "imgt.fwr2_end",
+                        "imgt.cdr2_start",
+                        "imgt.cdr2_end",
+                        "imgt.fwr3_start",
+                        "imgt.fwr3_end",
+                    ]
+                ].copy()
 
-            # makes everything an integer. sets gene to index so its not affected
-            # add +1 to so we get 1-based indexing
-            index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
+                # makes everything an integer. sets gene to index so its not affected
+                # add +1 to so we get 1-based indexing
+                index_df = (index_df.set_index("gene") + 1).astype("Int64").reset_index()
 
-            # drop anything where there is an na in the annotation idnex
-            index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
-            scheme = "imgt"
-            internal_annotations_file_path = name_internal_df_path.joinpath(f"{name}.ndm.{scheme}")
+                # drop anything where there is an na in the annotation index
+                index_df = index_df.drop(index_df[index_df.isna().any(axis=1)].index)
+                scheme = "imgt"
+                internal_annotations_file_path = name_internal_df_path.joinpath(f"{name}.ndm.{scheme}")
 
-            segment = [i.split("|")[-1].split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
-            index_df["segment"] = segment
-            index_df["weird_buffer"] = 0
-            logger.info(f"Writing to annotation file {internal_annotations_file_path}")
-            index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
-            # blast reads these suffixes depending on receptor
+                segment = [i.split("|")[-1].split("-")[0][0:4][::-1][:2] for i in index_df["gene"]]
+                index_df["segment"] = segment
+                index_df["weird_buffer"] = 0
+                logger.info(f"Writing to annotation file {internal_annotations_file_path}")
+                index_df.to_csv(internal_annotations_file_path, sep="\t", header=False, index=False)
+
+            # Build combined VDJC BLAST database
+            # IgBLAST reads {name}_V from internal_data/ for its internal annotation
             suffix = "V"
             db_outpath = Path(str(name_internal_df_path) + f"/{name}_{suffix}")
-            # Pass the dataframe and write out the blast database
-            make_blast_db_for_internal(group_df, db_outpath)
+            # Pass ALL segments (V+D+J+C) to the BLAST database
+            make_blast_db_for_internal(all_segments, db_outpath)
+            logger.info(f"Built combined VDJC database with {len(all_segments)} sequences for {name}")
+
+    def _make_hmm_files(self, outpath: Path) -> None:
+        """Generate HMM files for renumbering from gapped AA sequences.
+
+        Creates Stockholm alignment files and HMM models from V and J gene
+        gapped AA sequences for each name/chain combination.
+
+        Parameters
+        ----------
+        outpath : Path
+            The output path. HMM files will be created in:
+            - outpath/stockholms/{name}_{chain}.sto
+            - outpath/hmms/{name}_{chain}.hmm
+        """
+        # Create output directories
+        stockholms_dir = Path(outpath) / "stockholms"
+        hmms_dir = Path(outpath) / "hmms"
+        stockholms_dir.mkdir(parents=True, exist_ok=True)
+        hmms_dir.mkdir(parents=True, exist_ok=True)
+
+        # Initialize pyhmmer components
+        alphabet = pyhmmer.easel.Alphabet.amino()
+        builder = pyhmmer.plan7.Builder(alphabet)
+        background = pyhmmer.plan7.Background(alphabet)
+
+        # Get reference dataframe
+        database = self.get_dataframe()
+
+        # Group by name (species/reference identifier)
+        for name, name_df in database.groupby("name"):
+            # Process each chain type (H, K, L)
+            for chain in ["H", "K", "L"]:
+                # Filter for V and J segments with matching chain type
+                # Chain type is at position 2 in gene name (e.g., IGHV1-69*01 -> H)
+                # Gene name format: IG{chain}{segment}...  (I=0, G=1, H=2, V=3)
+                chain_mask = name_df["gene"].str.get(2) == chain
+                segment_mask = name_df["gene_segment"].isin(["V", "J"])
+                chain_df = name_df[chain_mask & segment_mask].copy()
+
+                if chain_df.empty:
+                    continue
+
+                # Extract gapped AA sequences
+                # Handle both pipe-separated (chimeric) and regular gene names
+                pairs = []
+                for _, row in chain_df.iterrows():
+                    gene_name = str(row["gene"])
+                    gapped_aa = row.get("imgt.sequence_gapped_aa")
+
+                    # If no gapped AA, try to translate from gapped nucleotide
+                    if pd.isna(gapped_aa) or not gapped_aa:
+                        gapped_nt = row.get("imgt.sequence_gapped")
+                        if not pd.isna(gapped_nt) and gapped_nt:
+                            gapped_aa = self._translate_gapped_nt_to_aa(str(gapped_nt))
+
+                    # Skip if still no gapped AA sequence
+                    if not gapped_aa:
+                        continue
+
+                    # Clean gene name (remove pipe prefix for chimeric)
+                    clean_name = gene_name.split("|")[-1] if "|" in gene_name else gene_name
+                    pairs.append((clean_name, str(gapped_aa)))
+
+                if not pairs:
+                    logger.warning(f"No gapped AA sequences for {name} chain {chain}, skipping HMM")
+                    continue
+
+                # Write Stockholm alignment file
+                sto_path = stockholms_dir / f"{name}_{chain}.sto"
+                self._write_stockholm_file(pairs, name, chain, sto_path)
+
+                # Build HMM from Stockholm
+                try:
+                    with pyhmmer.easel.MSAFile(
+                        sto_path, digital=True, alphabet=alphabet, format="stockholm"
+                    ) as msa_file:
+                        msa = next(msa_file)
+                        hmm, _, _ = builder.build_msa(msa, background)
+
+                    # Save HMM to file
+                    hmm_path = hmms_dir / f"{name}_{chain}.hmm"
+                    with open(hmm_path, "wb") as f:
+                        hmm.write(f)
+
+                    logger.debug(f"Built HMM: {hmm_path}")
+
+                except Exception as e:
+                    logger.warning(f"Failed to build HMM for {name} chain {chain}: {e}")
+
+    def _write_stockholm_file(self, pairs: List[Tuple[str, str]], name: str, chain: str, sto_path: Path) -> None:
+        """Write Stockholm alignment file.
+
+        Parameters
+        ----------
+        pairs : List[Tuple[str, str]]
+            List of (gene_name, gapped_aa_sequence) tuples
+        name : str
+            Reference name (species identifier)
+        chain : str
+            Chain type (H, K, or L)
+        sto_path : Path
+            Output path for Stockholm file
+        """
+        # Find max sequence length and max name length
+        max_seq_len = max(len(seq) for _, seq in pairs)
+        max_name_len = max(len(gene_name) for gene_name, _ in pairs)
+
+        lines = ["# STOCKHOLM 1.0", f"#=GF ID {name}_{chain}", ""]
+
+        for gene_name, seq in pairs:
+            # Pad sequences to same length with gaps (.)
+            padded_seq = seq.ljust(max_seq_len, ".")
+            lines.append(f"{gene_name.ljust(max_name_len)}  {padded_seq}")
+
+        # Add reference line (RF) matching the alignment length and terminator
+        rf_label = "#=GC RF".ljust(max_name_len + 2)
+        lines.append(f"{rf_label}  {'x' * max_seq_len}")
+        lines.append("//")
+
+        sto_path.write_text("\n".join(lines))
+
+    def _translate_gapped_nt_to_aa(self, gapped_nt: str) -> Optional[str]:
+        """
+        Translate IMGT-gapped nucleotide sequence to gapped amino acid.
+
+        IMGT gaps are represented as dots. We preserve gap positions while
+        translating the nucleotide codons to amino acids.
+
+        Parameters
+        ----------
+        gapped_nt : str
+            IMGT-gapped nucleotide sequence (dots for gaps)
+
+        Returns
+        -------
+        str or None
+            Gapped amino acid sequence, or None if translation fails
+        """
+        # Remove gaps to get pure nucleotide sequence
+        nt_ungapped = gapped_nt.replace(".", "").replace("-", "")
+
+        # Must be multiple of 3 for translation
+        # Truncate to nearest codon boundary
+        codon_len = (len(nt_ungapped) // 3) * 3
+        if codon_len < 3:
+            return None
+
+        nt_for_translation = nt_ungapped[:codon_len]
+
+        try:
+            aa_seq = str(Seq(nt_for_translation).translate())
+        except Exception:
+            return None
+
+        # Now we need to insert gaps at the correct positions
+        # IMGT numbering: every 3 nucleotide positions = 1 AA position
+        # Gaps in NT sequence need to be mapped to AA positions
+
+        # Build the gapped AA sequence
+        aa_gapped_chars: List[str] = []
+        aa_pos = 0
+
+        i = 0
+        while i < len(gapped_nt) and aa_pos < len(aa_seq):
+            char = gapped_nt[i]
+            if char in (".", "-"):
+                # This is a gap - accumulate gaps until we have 3
+                gap_count = 0
+                while i < len(gapped_nt) and gapped_nt[i] in (".", "-"):
+                    gap_count += 1
+                    i += 1
+                # For every 3 NT gaps, insert 1 AA gap
+                aa_gaps = gap_count // 3
+                aa_gapped_chars.extend(["."] * aa_gaps)
+            else:
+                # This is a nucleotide - consume 3 NTs, output 1 AA
+                codon_chars = 0
+                while i < len(gapped_nt) and codon_chars < 3:
+                    if gapped_nt[i] not in (".", "-"):
+                        codon_chars += 1
+                    i += 1
+                if aa_pos < len(aa_seq):
+                    aa_gapped_chars.append(aa_seq[aa_pos])
+                    aa_pos += 1
+
+        return "".join(aa_gapped_chars) if aa_gapped_chars else None
 
     @staticmethod
     def from_json(path: Path | str) -> "References":
@@ -605,13 +1027,35 @@ class References:
         ref_class.to_airr_database("/path/to/output/")
         """
         if not self.references:
-            # If empty make a reference from the yaml from object and call G3
+            # If empty make a reference from the yaml from object using local germlines
             logger.warning("Reference data is empty - Generating from yaml")
-            self.references = self.from_yaml().references.copy()
+            self.references = self.from_yaml(use_germlines=True).references.copy()
         if isinstance(output_path, str):
             output_path = Path(output_path)
+
+        # Pre-compute the allele name mapping for long names (used by all sub-methods)
+        database = self.get_dataframe()
+        all_gene_names = database["gene"].dropna().unique().tolist()
+        name_mapping = _build_name_mapping(all_gene_names)
+        if name_mapping:
+            logger.info(
+                f"Truncating {len(name_mapping)} allele name(s) exceeding {_BLAST_MAX_ID_LEN} chars "
+                f"for BLAST DB compatibility."
+            )
+        # Save name mapping alongside database for reverse lookup
+        mapping_file = Path(output_path) / _NAME_MAPPING_FILENAME
+        mapping_file.parent.mkdir(parents=True, exist_ok=True)
+        if name_mapping:
+            mapping_file.write_text(json.dumps(name_mapping, indent=2, sort_keys=True))
+            logger.debug(f"Wrote allele name mapping to {mapping_file}")
+        elif mapping_file.exists():
+            mapping_file.unlink()
+
+        # Store mapping for sub-methods to use
+        self._name_mapping = name_mapping
+
         # dataframe to internal annotation structure
-        self._make_internal_annotaion_file(output_path)
+        self._make_internal_annotation_file(output_path)
         logger.info(f"Generated Internal Data {output_path}/Ig/internal_data")
         # dataframe to igblast annotation structure
         self._make_igblast_ref_database(output_path)
@@ -619,6 +1063,14 @@ class References:
         # dataframe to igblast aux structure
         self._make_auxillary_file(output_path)
         logger.info(f"Generated Aux Data {output_path}/aux_db")
+
+        # Build HMM files for renumbering
+        try:
+            self._make_hmm_files(output_path)
+            logger.info(f"Generated HMM files {output_path}/hmms/")
+        except Exception as e:
+            logger.warning(f"HMM generation skipped: {e}")
+
         self.default_output_path = Path(output_path)
         logger.debug(f"Regenerating frame to {self.reference_dataframe_path}")
         self.reference_dataframe = self.get_dataframe()
@@ -652,13 +1104,19 @@ class References:
             if pd.Dataframe is not suppplied
         """
         references = References()
+        dtype_overrides = {
+            "imgt.ignored": object,
+            "imgt.not_implemented": object,
+            "imgt.expression_match": object,
+        }
         for name, name_df in dataframe.groupby("name"):
+            name_df = name_df.copy()
             name_df["gene"] = name_df["gene"].str.split("|").str[-1]
-            ref = Reference().from_dataframe(
-                name_df.drop(columns=["name"]).astype(
-                    {"imgt.ignored": object, "imgt.not_implemented": object, "imgt.expression_match": object}
-                )
-            )
+            ref_df = name_df.drop(columns=["name"])
+            available_dtypes = {column: dtype for column, dtype in dtype_overrides.items() if column in ref_df.columns}
+            if available_dtypes:
+                ref_df = ref_df.astype(available_dtypes)
+            ref = Reference().from_dataframe(ref_df)
             references.add_reference(name, ref)
         references.reference_dataframe = dataframe
         return references

@@ -6,6 +6,13 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
 import pyhmmer
+
+
+def _ensure_str(value: str | bytes) -> str:
+    """Convert bytes to str, handling both pyhmmer <0.12 (bytes) and >=0.12 (str)."""
+    return value if isinstance(value, str) else value.decode()
+
+
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
@@ -13,16 +20,32 @@ from sadie.renumbering.clients import G3
 from sadie.renumbering.numbering_translator import NumberingTranslator
 from sadie.typing import Chain, Source, Species
 
+# Species aliases for HMM lookup: maps backward-compat names to canonical HMM filenames
+_HMM_SPECIES_ALIASES: Dict[str, str] = {
+    "rhesus": "macaque",
+}
+
+
+def _use_local_hmm_builder() -> bool:
+    """Check if germlines module should be used for HMM building."""
+    try:
+        from sadie.germlines.renumbering_integration import use_local_hmm_builder
+
+        return use_local_hmm_builder()
+    except ImportError:
+        return False
+
 
 class HMMER:
     """
-    Extension of Pyhmmer to accept local HMMs (from Numbering) and external HMMs (from G3).
+    Extension of Pyhmmer to accept local HMMs (from Numbering) and external HMMs (from G3 or germlines).
     """
 
     g3 = G3()
     numbering = (
         NumberingTranslator()
     )  # TODO: merge this with G3 created HMMs and record which ones are legacy and are not built live via G3
+    _local_hmm_builder = None  # Lazy initialization
 
     def __init__(
         self,
@@ -30,10 +53,40 @@ class HMMER:
         chains: Optional[Union[List[Chain], Chain]] = None,
         source: Source = "imgt",
         use_numbering_hmms: bool = False,
+        hmm_dir: Optional[Path] = None,
+        validate_pairs: bool = True,
     ) -> None:
+        """Initialize HMMER with optional custom HMM directory.
+
+        Parameters
+        ----------
+        species : Optional[Union[List[Species], Species]], optional
+            Species to load HMMs for, by default None (loads all)
+        chains : Optional[Union[List[Chain], Chain]], optional
+            Chains to load HMMs for, by default None (loads all)
+        source : Source, optional
+            Source database (e.g., "imgt"), by default "imgt"
+        use_numbering_hmms : bool, optional
+            If True, force use of legacy Numbering HMMs, by default False
+        hmm_dir : Optional[Path], optional
+            Path to custom HMM directory. When provided, HMMs are loaded from
+            `{hmm_dir}/{species}_{chain}.hmm`. Falls back to default HMM sources
+            if custom HMM not found. By default None.
+        validate_pairs : bool, optional
+            If True (default), validate that every explicitly requested
+            species/chain pair has a loaded HMM. Set to False when the caller
+            has its own validation (e.g., Renumbering). By default True.
+        """
+        # Store custom HMM directory path
+        self._hmm_dir = Path(hmm_dir) if hmm_dir else None
+
         # Force Numbering local HMMs to be used -- mostely for primiary testing
         self.hmms = self.get_hmm_models(
-            species=species, chains=chains, source=source, use_numbering_hmms=use_numbering_hmms
+            species=species,
+            chains=chains,
+            source=source,
+            use_numbering_hmms=use_numbering_hmms,
+            validate_pairs=validate_pairs,
         )
         # place holders for hmmer
         self.alphabet = pyhmmer.easel.Alphabet.amino()
@@ -44,6 +97,7 @@ class HMMER:
         chains: Optional[Union[List[Chain], Chain]] = None,
         source: Source = "imgt",
         use_numbering_hmms: bool = False,
+        validate_pairs: bool = True,
     ) -> List[pyhmmer.plan7.HMMFile]:
         """
         Return a HMMER model for a given specie.
@@ -59,26 +113,85 @@ class HMMER:
             HMM model for specific species
         """
         hmms = []
-        species = species if species else list(Species.species.values())  # type: ignore[assignment]
-        chains = chains if chains else list(Chain.chains)  # type: ignore[assignment]
-        for single_species in species:
-            for chain in chains:
-                # If not in G3 -- try Numbering
-                if chain not in self.g3.chains or single_species not in self.g3.species or use_numbering_hmms is True:
-                    # Legacy HMMs have rhesus as the species for macaque
-                    if single_species.strip() == "macaque":
-                        single_species = "rhesus"
-                    # If not in Numbering -- ignore
-                    if (single_species, chain) not in self.numbering.species_chain_to_paths:
+        # Normalize species to list
+        if species is None:
+            species_list: List[str] = list(Species.species.values())
+        elif isinstance(species, str):
+            species_list = [str(species)]
+        else:
+            species_list = [str(single_species) for single_species in species]
+        # Normalize chains to list
+        if chains is None:
+            chain_list: List[str] = list(Chain.chains)
+        elif isinstance(chains, str):
+            chain_list = [str(chains)]
+        else:
+            chain_list = [str(single_chain) for single_chain in chains]
+
+        # Check if we should use local HMM builder from germlines
+        use_local = _use_local_hmm_builder() and not use_numbering_hmms
+
+        # Track which (species, chain) pairs successfully loaded an HMM.
+        # Used by callers (e.g. Renumbering) to validate requested pairs.
+        self._loaded_pairs: set[tuple[str, str]] = set()
+
+        for single_species in species_list:
+            # Resolve species aliases (e.g., "rhesus" → "macaque") so that
+            # LocalHMMBuilder and custom-dir lookups find the correct HMM files.
+            canonical_species = _HMM_SPECIES_ALIASES.get(single_species, single_species)
+            for chain in chain_list:
+                # Priority 0: Custom HMM directory (highest priority)
+                if self._hmm_dir:
+                    custom_hmm_path = self._hmm_dir / f"{canonical_species}_{chain}.hmm"
+                    if custom_hmm_path.exists():
+                        with pyhmmer.plan7.HMMFile(custom_hmm_path) as hmm_file:
+                            hmms.append(next(hmm_file))
+                        self._loaded_pairs.add((canonical_species, chain))
                         continue
-                    # Build Numbering HMMs
-                    hmm_paths = self.numbering.species_chain_to_paths[(single_species, chain)]
+
+                # Priority 1: Numbering (legacy) HMMs — specifically designed
+                # for antibody numbering and produce correct IMGT gap patterns
+                # (e.g. conserved deletion at position 10 for VH).
+                numbering_species = single_species
+                if numbering_species.strip() == "macaque":
+                    numbering_species = "rhesus"
+                if (numbering_species, chain) in self.numbering.species_chain_to_paths:
+                    hmm_paths = self.numbering.species_chain_to_paths[(numbering_species, chain)]
                     for hmm_path in hmm_paths:
                         with pyhmmer.plan7.HMMFile(hmm_path) as hmm_file:
                             hmm = next(hmm_file)
                             hmms.append(hmm)
-                # Build G3 HMMs
-                else:
+                    self._loaded_pairs.add((canonical_species, chain))
+                    continue
+
+                # Priority 2: Local germlines HMM builder — fallback for
+                # species/chains not covered by legacy Numbering HMMs.
+                if use_local:
+                    try:
+                        if self._local_hmm_builder is None:
+                            from sadie.germlines.renumbering_integration import (
+                                LocalHMMBuilder,
+                            )
+
+                            self._local_hmm_builder = LocalHMMBuilder()
+
+                        hmm = self._local_hmm_builder.get_hmm(species=canonical_species, chain=chain, source=source)
+                        hmms.append(hmm)
+                        self._loaded_pairs.add((canonical_species, chain))
+                        continue
+                    except Exception as e:
+                        # Fall through to G3 on error
+                        import logging
+
+                        logging.warning(
+                            f"Local HMM builder failed for {canonical_species} {chain}: {e}. " f"Falling back to G3."
+                        )
+
+                # Priority 3: Build G3 HMMs (final fallback)
+                # g3.jordanrwillis.com may be unreachable; degrade gracefully.
+                try:
+                    if chain not in self.g3.chains or single_species not in self.g3.species or use_numbering_hmms is True:
+                        continue  # No HMM available for this pair
                     hmm = self.g3.get_hmm(
                         source=source,
                         chain=chain,
@@ -86,8 +199,71 @@ class HMMER:
                         limit=None,
                     )
                     hmms.append(hmm)
+                    self._loaded_pairs.add((canonical_species, chain))
+                except Exception as e:
+                    import logging
+                    logging.warning(f"G3 fallback unavailable for {single_species} {chain}: {e}")
+
+        # Guard rail: when both species and chains were explicitly provided
+        # (not defaults), validate every requested pair has a loaded HMM.
+        # This catches mixed requests where some pairs load successfully but
+        # others are silently dropped (e.g., alpaca H+K where only H exists).
+        if validate_pairs and species is not None and chains is not None:
+            errors = []
+            for single_species in species_list:
+                canonical = _HMM_SPECIES_ALIASES.get(single_species, single_species)
+                for chain in chain_list:
+                    if (canonical, chain) not in self._loaded_pairs:
+                        supported = self._get_supported_chains(canonical, source, use_local, use_numbering_hmms)
+                        errors.append(
+                            f"No HMM available for {canonical} {chain}. "
+                            f"Supported chains for {canonical}: {supported}"
+                        )
+            if errors:
+                raise ValueError("; ".join(errors))
 
         return hmms
+
+    def _get_supported_chains(self, species: str, source: str, use_local: bool, use_numbering_hmms: bool) -> List[str]:
+        """Determine which chains have HMMs available for a given species.
+
+        Parameters
+        ----------
+        species : str
+            Canonical species name (e.g., "alpaca", "chicken")
+        source : str
+            Data source (e.g., "imgt")
+        use_local : bool
+            Whether to check LocalHMMBuilder
+        use_numbering_hmms : bool
+            Whether legacy Numbering HMMs are forced
+
+        Returns
+        -------
+        List[str]
+            List of chain types with available HMMs (e.g., ["H"] or ["H", "K", "L"])
+        """
+        all_chains = ["H", "K", "L", "A", "B", "G", "D"]
+        supported = []
+        for chain in all_chains:
+            # Check custom HMM directory
+            if self._hmm_dir:
+                if (self._hmm_dir / f"{species}_{chain}.hmm").exists():
+                    supported.append(chain)
+                    continue
+            # Check local HMM builder
+            if use_local and not use_numbering_hmms:
+                try:
+                    if self._local_hmm_builder is not None:
+                        self._local_hmm_builder.get_hmm(species=species, chain=chain, source=source)
+                        supported.append(chain)
+                        continue
+                except Exception:
+                    pass
+            # Check legacy Numbering paths
+            if (species, chain) in self.numbering.species_chain_to_paths:
+                supported.append(chain)
+        return supported
 
     def digitize_seq(self, name: str | bytes, seq: Seq | str) -> pyhmmer.easel.DigitalSequence:
         """
@@ -109,7 +285,13 @@ class HMMER:
             name = name.encode()
         if isinstance(seq, Seq):
             seq = str(seq)
-        return pyhmmer.easel.TextSequence(name=name, sequence=seq).digitize(self.alphabet)
+        try:
+            return pyhmmer.easel.TextSequence(name=name, sequence=seq).digitize(self.alphabet)
+        except TypeError:
+            # pyhmmer >=0.12 expects str name, not bytes
+            if isinstance(name, bytes):
+                name = name.decode()
+            return pyhmmer.easel.TextSequence(name=name, sequence=seq).digitize(self.alphabet)
 
     def transform_seqs(
         self, seq_objs: Union[List[Union[Path, SeqRecord, str]], Path, SeqRecord, str]
@@ -249,10 +431,10 @@ class HMMER:
         sequences = self.transform_seqs(sequences)  # type: ignore[assignment]
 
         # Multiprocessing might scramble actual seq from order
-        seq_name_2_seq = {seq.name.decode(): seq.textize().sequence for seq in sequences}
+        seq_name_2_seq = {_ensure_str(seq.name): seq.textize().sequence for seq in sequences}
 
         # Maintain order of sequences since pyhmmer is async
-        results = {seq.name.decode(): [] for seq in sequences}
+        results = {_ensure_str(seq.name): [] for seq in sequences}
 
         # HMMs not big enough to be worth multiprocessing
         for top_hits in pyhmmer.hmmsearch(self.hmms, sequences, cpus=1):
@@ -263,17 +445,19 @@ class HMMER:
                 if domain.score < bit_score_threshold:
                     continue
 
-                results[hit.name.decode()].append(
+                hit_name = _ensure_str(hit.name)
+                hmm_name = _ensure_str(ali.hmm_name)
+                results[hit_name].append(
                     {
                         "order": 0,  # best domain always has order 0
                         # "order": _i,  # no need for it unless we allow multiple domain hits
                         "n": len(hit.domains),
-                        "query": hit.name.decode(),
-                        "query_length": len(seq_name_2_seq[hit.name.decode()]),
+                        "query": hit_name,
+                        "query_length": len(seq_name_2_seq[hit_name]),
                         "hmm_seq": ali.hmm_sequence,
                         "hmm_start": ali.hmm_from - 1,  # hmm seq starts with 1 and not 0
                         "hmm_end": ali.hmm_to,
-                        "id": ali.hmm_name.decode(),
+                        "id": hmm_name,
                         "description": hit.description or "",
                         "evalue": float("{:.2e}".format(domain.c_evalue)),
                         # "bitscore": round(hit.score, 1),  # TODO: numbering doesnt use hit score, but domain score; maybe use this as an option later?
@@ -282,8 +466,8 @@ class HMMER:
                         "query_seq": ali.target_sequence.upper(),
                         "query_start": ali.target_from - 1,  # target seq starts on pythonic index
                         "query_end": ali.target_to,
-                        "species": ali.hmm_name.decode().split("_")[0],
-                        "chain_type": ali.hmm_name.decode().split("_")[1],
+                        "species": hmm_name.split("_")[0],
+                        "chain_type": hmm_name.split("_")[1],
                     }
                 )
 
