@@ -19,6 +19,9 @@ except ImportError:
 from sadie.airr import Airr
 from sadie.airr.methods import run_igl_assignment, run_mutational_analysis
 
+# germlines
+from sadie.germlines.cli import germlines
+
 # reference
 from sadie.reference.reference import References
 
@@ -50,6 +53,9 @@ except Exception:
 def sadie(verbose: int) -> None:
     numeric_level = getVerbosityLevel(verbose)
     logging.basicConfig(level=numeric_level)
+
+
+sadie.add_command(germlines)
 
 
 @sadie.command("airr")

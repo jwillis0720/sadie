@@ -112,7 +112,14 @@ class TestGermlineDataPaths:
     """Tests for GermlineData path configuration."""
 
     def test_germline_data_paths_point_to_database(self) -> None:
-        """Test that V/D/J/C dirs point to database/, not internal_data/."""
+        """Test that V/D/J/C dirs point to the BLAST database dir, not internal_data/.
+
+        With the germlines module enabled (default), paths resolve through
+        germlines/igblast/database/.  With the legacy G3 path
+        (SADIE_USE_GERMLINES_MODULE=false), they resolve through
+        airr/data/germlines/Ig/blastdb/.  Either way they must not point
+        into internal_data/.
+        """
         from sadie.airr.igblast.germline import GermlineData
 
         try:
@@ -120,11 +127,12 @@ class TestGermlineDataPaths:
         except (FileNotFoundError, ValueError) as e:
             pytest.skip(f"Human germline data not available: {e}")
 
-        # V/D/J/C should point to database/
-        assert "database" in str(gd.v_gene_dir), f"v_gene_dir should point to database/, got {gd.v_gene_dir}"
-        assert "database" in str(gd.d_gene_dir), f"d_gene_dir should point to database/, got {gd.d_gene_dir}"
-        assert "database" in str(gd.j_gene_dir), f"j_gene_dir should point to database/, got {gd.j_gene_dir}"
-        assert "database" in str(gd.c_gene_dir), f"c_gene_dir should point to database/, got {gd.c_gene_dir}"
+        # Germlines module default: paths use germlines/igblast/database/
+        assert "database" in str(gd.v_gene_dir), f"v_gene_dir should use database/, got {gd.v_gene_dir}"
+        assert "database" in str(gd.d_gene_dir), f"d_gene_dir should use database/, got {gd.d_gene_dir}"
+        assert "database" in str(gd.j_gene_dir), f"j_gene_dir should use database/, got {gd.j_gene_dir}"
+        assert "database" in str(gd.c_gene_dir), f"c_gene_dir should use database/, got {gd.c_gene_dir}"
+        assert "internal_data" not in str(gd.v_gene_dir), "v_gene_dir must not point into internal_data/"
 
     def test_germline_data_igdata_points_to_ig(self) -> None:
         """Test that igdata points to Ig/ directory (contains internal_data)."""

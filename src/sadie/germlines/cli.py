@@ -15,6 +15,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Set
 
+import click
+
 from rich.console import Console
 from rich.progress import (
     BarColumn,
@@ -640,3 +642,81 @@ def _find_reference_name_for_species(config: dict, species: str) -> Optional[str
                 return ref_name
 
     return None
+
+
+# ---------------------------------------------------------------------------
+# Click command definitions
+# ---------------------------------------------------------------------------
+
+
+@click.group(name="germlines", help="Germline database management commands.")
+def germlines() -> None:
+    pass
+
+
+@germlines.command("populate")
+@click.option(
+    "--provider",
+    "-p",
+    default="all",
+    type=click.Choice(["all", "imgt", "ogrdb", "vdjbase"], case_sensitive=False),
+    show_default=True,
+    help="Provider to populate.",
+)
+@click.option(
+    "--species",
+    "-s",
+    multiple=True,
+    help="Species to download (may be repeated). Defaults to all species for the provider.",
+)
+@click.option("--force", "-f", is_flag=True, default=False, help="Force re-download even if up-to-date.")
+@click.option("--dry-run", is_flag=True, default=False, help="Show what would be downloaded without doing it.")
+def populate_cmd(provider: str, species: tuple, force: bool, dry_run: bool) -> None:
+    """Download and update germline sequences from a provider."""
+    populate_germlines(
+        provider=provider,
+        species=list(species) if species else None,
+        force=force,
+        dry_run=dry_run,
+    )
+
+
+@germlines.command("status")
+def status_cmd() -> None:
+    """Show download status for all germline providers."""
+    table = Table(title="Germline Provider Status")
+    table.add_column("Provider", style="cyan")
+    table.add_column("Version")
+    table.add_column("Species")
+    table.add_column("Up-to-date")
+
+    for prov in ["imgt", "ogrdb", "vdjbase", "custom"]:
+        local = get_local_version(prov)
+        if local:
+            version_str = local.get("version", "unknown")
+            species_count = str(local.get("species_count", "?"))
+            current = is_up_to_date(prov)
+            status_str = "[green]yes[/green]" if current else "[yellow]no[/yellow]"
+        else:
+            version_str = "not downloaded"
+            species_count = "-"
+            status_str = "[red]no[/red]"
+        table.add_row(prov, version_str, species_count, status_str)
+
+    console.print(table)
+
+
+@germlines.command("rebuild")
+@click.option(
+    "--species",
+    "-s",
+    multiple=True,
+    help="Species to rebuild (may be repeated). Defaults to all downloaded species.",
+)
+def rebuild_cmd(species: tuple) -> None:
+    """Rebuild IgBLAST databases from already-downloaded germline data via the Reference module.
+
+    Runs References.from_yaml() -> make_airr_database() to regenerate BLAST
+    databases in germlines/igblast/ without re-downloading source FASTA files.
+    """
+    rebuild_germlines(species=list(species) if species else None)

@@ -253,7 +253,7 @@ class TestAirrAnnotationRhesus:
         """Test AIRR annotation with rhesus macaque germlines."""
         from sadie.airr import Airr
 
-        airr = Airr(reference_name="rhesus_macaque")
+        airr = Airr(reference_name="macaque")
         result = airr.run_single("test_rhesus", self.RHESUS_VH_SEQ)
 
         # Verify annotation succeeded
