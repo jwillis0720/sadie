@@ -53,9 +53,17 @@ docs/docs_src/reference/my_output_database_path
 src/site/
 *.md
 !README.md
+!CHANGELOG.md
 !docs/
+!docs/**/*.md
+!.github/**/*.md
 !IGBLAST_PARAMETER_ANALYSIS.md
 !COERCE_FEATURE.md
+!specs/
+!specs/**/*.md
+!.planning/
+!.planning/**/*.md
+audit/
 
 # testing files
 scrap.ipynb
@@ -65,3 +73,27 @@ test.ipynb
 # ignore testing backup files
 *.bak.*
 nb/
+
+# Testing files and databases
+my_database/
+
+# helpers tailored for user specific needs
+.claude/
+.cursor/
+.vscode/
+.factory/
+
+# test env
+nb/
+
+# Data files
+PC68-L31 bnAb Lineage Details_Revised.xlsx
+
+# Additional Python patterns for comprehensive coverage
+.venv/
+venv/
+env/
+.env*
+*.log
+*.tmp
+*.swp
