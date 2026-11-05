@@ -186,9 +186,17 @@ class BlastDBBuilder:
         """
         db_name = fasta_path.stem
 
+        # Prefer bundled makeblastdb, fall back to system PATH
+        import platform
+        import shutil
+
+        system = platform.system().lower()
+        bundled = Path(__file__).parent.parent.parent / "reference" / "bin" / system / "makeblastdb"
+        makeblastdb_bin = str(bundled) if bundled.exists() else (shutil.which("makeblastdb") or "makeblastdb")
+
         try:
             cmd = [
-                "makeblastdb",
+                makeblastdb_bin,
                 "-dbtype",
                 "nucl",
                 "-in",

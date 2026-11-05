@@ -348,12 +348,14 @@ class OGRDBDownloader(OGRDBApiClient):
         logger.info("Checking API for missing alleles...")
 
         for sp in species:
-            taxonomy_id = TAXONOMY_ID_MAP_REVERSE.get(sp)
+            # Normalize alias (e.g. macaque -> rhesus_macaque) before taxonomy lookup
+            canonical_sp = SPECIES_ALIASES.get(sp, sp)
+            taxonomy_id = TAXONOMY_ID_MAP_REVERSE.get(canonical_sp) or TAXONOMY_ID_MAP_REVERSE.get(sp)
             if not taxonomy_id:
                 logger.debug(f"No taxonomy ID for {sp}, skipping API supplement")
                 continue
 
-            species_dir = self.output_dir / sp
+            species_dir = self.output_dir / canonical_sp
             if not species_dir.exists():
                 species_dir.mkdir(parents=True, exist_ok=True)
 
