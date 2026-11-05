@@ -216,7 +216,7 @@ def _compare_with_allele_flexibility(reference_df, current_df, chain_type):
     For other columns, use exact comparison.
     """
     # Columns that contain allele information that may vary with database updates
-    allele_columns = ["v_call_top", "d_call_top", "j_call_top", "v_call", "d_call", "j_call"]
+    allele_columns = ["v_call_top", "d_call_top", "j_call_top", "v_call", "d_call", "j_call", "c_call"]
 
     # Sequence alignment columns that depend on allele assignments and may vary
     sequence_columns = [
@@ -329,6 +329,23 @@ def _compare_with_allele_flexibility(reference_df, current_df, chain_type):
         # Correction columns that depend on alignment quality
         "germline_alignment_aa_corrected",
         "v_germline_alignment_aa_corrected",
+        # C gene columns that change with expanded OGRDB constant gene database
+        "c_germline_alignment",
+        "c_germline_alignment_aa",
+        "c_sequence_alignment",
+        "c_sequence_alignment_aa",
+        "c_germline_start",
+        "c_germline_end",
+        "c_sequence_start",
+        "c_sequence_end",
+        "c_alignment_start",
+        "c_alignment_end",
+        "c_identity",
+        "c_score",
+        "c_support",
+        "c_mutation",
+        "c_mutation_aa",
+        "c_cigar",
     ]
 
     # Combine all flexible columns

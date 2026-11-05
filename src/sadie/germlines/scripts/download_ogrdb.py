@@ -390,8 +390,16 @@ class OGRDBDownloader(OGRDBApiClient):
                 # Group by segment (V, D, J, C)
                 for segment in ["V", "D", "J", "C"]:
                     if segment == "C" and chain == "H":
-                        # Heavy-chain constants use isotype names (IGHA, IGHE, IGHG, IGHM)
-                        segment_pattern = re.compile(r"IGH(?![VDJ])", re.IGNORECASE)
+                        # Heavy-chain constants: IGHA*, IGHE*, IGHG*, IGHM*, AND IgD constants
+                        # (IGHD*02 etc. are IgD constant genes, NOT D-segment genes).
+                        # The negative lookahead excludes real V/D/J genes but we must
+                        # also capture IGHD* (asterisk immediately after IGHD = constant).
+                        segment_pattern = re.compile(r"IGH(?![VJ])(?!D[^*])", re.IGNORECASE)
+                    elif segment == "D":
+                        # D-segment genes always have a family number or hash after the
+                        # segment letter (e.g. IGHD1-1*01, IGHD-JK26). IgD constant genes
+                        # (IGHD*02, IGHD*04, IGHD*05) have an asterisk immediately after.
+                        segment_pattern = re.compile(rf"IG{chain}{segment}(?!\*)", re.IGNORECASE)
                     else:
                         segment_pattern = re.compile(rf"IG{chain}{segment}", re.IGNORECASE)
 

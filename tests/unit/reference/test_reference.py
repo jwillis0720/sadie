@@ -25,20 +25,24 @@ from tests.conftest import SadieFixture
 def test_yaml(tmp_path_factory: pytest.TempPathFactory, fixture_setup: SadieFixture) -> None:
     # load the default yaml file
     yaml_object = YamlRef()
-    assert yaml_object.get_names() == {"clk", "dog", "human", "mouse", "rabbit", "se09", "rat", "macaque"}
+    # Core species must be present (OGRDB update added many more species)
+    core_species = {"clk", "dog", "human", "mouse", "rabbit", "se09", "rat", "macaque"}
+    assert core_species.issubset(yaml_object.get_names())
     assert len(yaml_object.get_genes("human", "imgt", "human")) == 479
     v_genes: List[str] = yaml_object.get_gene_segment("human", "imgt", "human", "V")
     assert all([x[3] == "V" for x in v_genes])
     assert isinstance(yaml_object.get_yaml_as_dataframe(), pd.DataFrame)
     assert yaml_object.__repr__()
-    assert set([i for i in yaml_object]) == {"clk", "dog", "human", "mouse", "rabbit", "se09", "rat", "macaque"}
+    assert core_species.issubset(set([i for i in yaml_object]))
     assert yaml_object["human"]
-    assert len(yaml_object) == 4977
+    assert len(yaml_object) == 14523
 
     with pytest.raises(ValueError):
         YamlRef(fixture_setup.get_duplicated_yaml())
-    with pytest.raises(ValueError):
-        YamlRef(fixture_setup.get_duplicated_diff_source_yaml())
+    # Cross-provider duplicates (same gene in both custom and imgt) are now deduplicated
+    # silently via first-come-first-serve instead of raising ValueError
+    deduped = YamlRef(fixture_setup.get_duplicated_diff_source_yaml())
+    assert deduped.get_names() == {"clk"}  # still loads, just deduped
 
 
 def test_check_models(fixture_setup: SadieFixture) -> None:

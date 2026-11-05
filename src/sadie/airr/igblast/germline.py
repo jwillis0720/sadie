@@ -174,11 +174,7 @@ class GermlineData:
             # make_airr_database creates: output_path/Ig/blastdb/{name}/{name}_V, etc.
             self.blast_dir = self.base_dir / f"Ig/blastdb/{name}/{name}_"
             self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
-            try:
-                self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
-            except FileNotFoundError:
-                # Some species/chains may not have D genes (e.g., light chains)
-                self._d_gene_dir = Path(self.blast_dir.__str__() + "D")
+            self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
             self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
             self.c_gene_dir = Path(self.blast_dir.__str__() + "C")
             self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
@@ -200,11 +196,7 @@ class GermlineData:
                 blast_prefix = database_species / f"{name}_"
                 self.blast_dir = blast_prefix
                 self.v_gene_dir = Path(str(blast_prefix) + "V")
-                try:
-                    self.d_gene_dir = Path(str(blast_prefix) + "D")
-                except FileNotFoundError:
-                    # Some species/chains may not have D genes (e.g., light chains)
-                    self._d_gene_dir = Path(str(blast_prefix) + "D")
+                self.d_gene_dir = Path(str(blast_prefix) + "D")
                 self.j_gene_dir = Path(str(blast_prefix) + "J")
                 self.c_gene_dir = Path(str(blast_prefix) + "C")
 
@@ -241,11 +233,7 @@ class GermlineData:
         self.base_dir = Path(__file__).absolute().parent / "../data/germlines/"
         self.blast_dir = Path(str(self.base_dir) + f"/{receptor}/blastdb/{name}/{name}_")
         self.v_gene_dir = Path(self.blast_dir.__str__() + "V")
-        try:
-            self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
-        except FileNotFoundError:
-            # Some species/chains may not have D genes (e.g., light chains)
-            self._d_gene_dir = Path(self.blast_dir.__str__() + "D")
+        self.d_gene_dir = Path(self.blast_dir.__str__() + "D")
         self.j_gene_dir = Path(self.blast_dir.__str__() + "J")
         self.c_gene_dir = Path(self.blast_dir.__str__() + "C")
         self.aux_path = self.base_dir / f"aux_db/{scheme}/{name}_gl.aux"
@@ -316,7 +304,7 @@ class GermlineData:
     def d_gene_dir(self, directory: str | Path) -> None:
         _path = Path(directory)
         if not ensure_prefix_to(_path):
-            raise FileNotFoundError(f"D gene directory glob, {directory} not found")
+            warnings.warn(f"D gene directory not found for {self.name}", UserWarning)
         self._d_gene_dir = _path
 
     @property
